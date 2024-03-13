@@ -15,7 +15,7 @@
       }
     ],
     "cSpell.words": ["COMPSCI", "COMPSYS", "ECSE", "ELECTENG", "ENGGEN", "Jeffers", "SOFTENG"],
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
     "files.exclude": {
@@ -32,10 +32,9 @@
   },
   "extensions": {
     "recommendations": [
-      "dbaeumer.vscode-eslint",
+      "biomejs.biome",
       "eamodio.gitlens",
       "EditorConfig.EditorConfig",
-      "esbenp.prettier-vscode",
       "streetsidesoftware.code-spell-checker"
     ]
   }

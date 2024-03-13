@@ -1,0 +1,12 @@
+{
+  "formatter": {
+    "indentStyle": "space",
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "trailingComma": "all",
+      "quoteStyle": "single"
+    }
+  }
+}
