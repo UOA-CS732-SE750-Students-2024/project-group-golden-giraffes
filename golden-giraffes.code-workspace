@@ -14,15 +14,7 @@
         "caseSensitive": true
       }
     ],
-    "cSpell.words": [
-      "COMPSCI",
-      "COMPSYS",
-      "ECSE",
-      "ELECTENG",
-      "ENGGEN",
-      "Jeffers",
-      "SOFTENG"
-    ],
+    "cSpell.words": ["COMPSCI", "COMPSYS", "ECSE", "ELECTENG", "ENGGEN", "Jeffers", "SOFTENG"],
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
@@ -36,9 +28,6 @@
       "no-hard-tabs": false,
       "no-inline-html": false,
       "no-trailing-punctuation": false
-    },
-    "[python]": {
-      "editor.defaultFormatter": "ms-python.autopep8"
     }
   },
   "extensions": {
