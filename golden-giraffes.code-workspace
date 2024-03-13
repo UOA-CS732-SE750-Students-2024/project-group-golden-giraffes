@@ -1,0 +1,53 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "cSpell.caseSensitive": false,
+    "cSpell.language": "en-GB",
+    "cSpell.overrides": [
+      {
+        "filename": "**/*.{md,tex}",
+        "caseSensitive": true
+      }
+    ],
+    "cSpell.words": [
+      "COMPSCI",
+      "COMPSYS",
+      "ECSE",
+      "ELECTENG",
+      "ENGGEN",
+      "Jeffers",
+      "SOFTENG"
+    ],
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "eslint.format.enable": true,
+    "files.exclude": {
+      "packages/": true
+    },
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "markdownlint.config": {
+      "first-line-heading": false,
+      "no-hard-tabs": false,
+      "no-inline-html": false,
+      "no-trailing-punctuation": false
+    },
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.autopep8"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "eamodio.gitlens",
+      "EditorConfig.EditorConfig",
+      "esbenp.prettier-vscode",
+      "streetsidesoftware.code-spell-checker"
+    ]
+  }
+}
