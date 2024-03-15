@@ -35,6 +35,7 @@
       "biomejs.biome",
       "eamodio.gitlens",
       "EditorConfig.EditorConfig",
+      "humao.rest-client",
       "streetsidesoftware.code-spell-checker"
     ]
   }
