@@ -14,7 +14,16 @@
         "caseSensitive": true
       }
     ],
-    "cSpell.words": ["COMPSCI", "COMPSYS", "ECSE", "ELECTENG", "ENGGEN", "Jeffers", "SOFTENG"],
+    "cSpell.words": [
+      "COMPSCI",
+      "COMPSYS",
+      "ECSE",
+      "ELECTENG",
+      "ENGGEN",
+      "Jeffers",
+      "MERN",
+      "SOFTENG"
+    ],
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
