@@ -5,8 +5,7 @@
   },
   "javascript": {
     "formatter": {
-      "trailingComma": "all",
-      "quoteStyle": "single"
+      "trailingComma": "all"
     }
   }
 }
