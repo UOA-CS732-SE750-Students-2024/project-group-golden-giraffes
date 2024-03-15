@@ -36,6 +36,7 @@
       "eamodio.gitlens",
       "EditorConfig.EditorConfig",
       "esbenp.prettier-vscode",
+      "humao.rest-client",
       "streetsidesoftware.code-spell-checker"
     ]
   }
