@@ -58,6 +58,6 @@ pnpm --filter frontend dev
 
 ![](./group-image/Golden%20Giraffes.webp)
 
-## Licence
+## 📜 Licence
 
-We’ll open source this at some point—probably after deadline-we just haven’t decided on a licence yet. Will likely end up being MIT.
+We’ll open source this at some point—probably after deadline—we just haven’t decided on a licence yet. Will likely end up being MIT.
