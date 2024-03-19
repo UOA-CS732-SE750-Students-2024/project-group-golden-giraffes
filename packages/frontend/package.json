@@ -6,7 +6,7 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "biome lint ."
   },
   "dependencies": {
     "react": "^18",
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "typescript": "^5.4.2",
+    "@biomejs/biome": "^1.6.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18"
