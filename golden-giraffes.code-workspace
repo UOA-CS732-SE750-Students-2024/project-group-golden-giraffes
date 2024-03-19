@@ -24,7 +24,7 @@
       "MERN",
       "SOFTENG"
     ],
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
     "files.exclude": {
@@ -41,10 +41,9 @@
   },
   "extensions": {
     "recommendations": [
-      "dbaeumer.vscode-eslint",
+      "biomejs.biome",
       "eamodio.gitlens",
       "EditorConfig.EditorConfig",
-      "esbenp.prettier-vscode",
       "humao.rest-client",
       "streetsidesoftware.code-spell-checker"
     ]
