@@ -1,0 +1,26 @@
+{
+  "name": "blurple-canvas-web",
+  "displayName": "Blurple Canvas Web",
+  "description": "Monorepo for the web app for the pixel-placing Blurple Canvas event.",
+  "private": true,
+  "contributors": [
+    "Aaron Guo <aaronjoshguo@gmail.com>",
+    "Emily Zou <yzou415@aucklanduni.ac.nz>",
+    "Henry Wang <hwan513@aucklanduni.ac.nz> (http://henryh.wang)",
+    "Jasper Lai <klai866@aucklanduni.ac.nz> (https://lai.nz)",
+    "Josh Jeffers <joshjeffers600@gmail.com> (https://pumbas.net)",
+    "Samuel Ou <sou323@aucklanduni.ac.nz>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes.git"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@biomejs/biome": "^1.6.1"
+  }
+}
