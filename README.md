@@ -1,28 +1,63 @@
-# COMPSCI 732 / SOFTENG 750 project - Team Golden Giraffes
+# Blurple Canvas Web
 
-### Getting Started
+A [SOFTENG 750](https://courseoutline.auckland.ac.nz/dco/course/SOFTENG/750) project, by Team Golden Giraffes
 
-We recommend using pnpm for this project. You can find [installation instructions on their website](https://pnpm.io/installation).
+> [!IMPORTANT]
+> Blurple Canvas Web is under development. It’s not even in alpha yet.
 
-```bash
-# Install the dependencies for all packages
-pnpm install
+Blurple Canvas Web is a web alternative to the [Blurple Canvas](https://github.com/Rocked03/Blurple-Canvas) Discord bot with (hopefully, eventually) a couple extra bells and whistles.
 
-# Start the frontend
-pnpm -F frontend dev
+## 🥪 Tech stack & logistics
+
+This is a [monorepo](https://monorepo.tools), with three packages:
+
+- **[@blurple-canvas-web/backend](/packages/backend#readme)**: The [Node](https://nodejs.org)–[Express](https://expressjs.com) back-end server
+- **[@blurple-canvas-web/frontend](/packages/frontend#readme)**: The [React](https://react.dev) front-end
+- **[@blurple-canvas-web/types](/packages/types#readme)**: Where [TypeScript](https://www.typescriptlang.org) types shared by the front- and back-end live
+
+## 🌱 Getting started
+
+### ☑️ Prerequisites
+
+**Install [nvm](https://github.com/nvm-sh/nvm).** If you don’t use Homebrew, see [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for other ways to install.
+
+```sh
+brew install nvm
 ```
 
-You can find more information for starting and running the front- and back-end within their respective package folders.
+**Use the appropriate version of Node.** You may be prompted to run `nvm install`.
 
+```sh
+nvm use
+```
 
-Welcome to the project! I look forward to seeing your progress and your final results this semester!
+**Enable [Corepack](https://nodejs.org/api/corepack.html).** We recommend using Corepack to manage your pnpm version, but if you’d prefer installing pnpm a different way, [go ahead](https://pnpm.io/installation).
 
-Your team members are:
+```sh
+corepack enable pnpm
+```
+
+### 🚀 Build and deploy
+
+```sh
+# Install dependencies for all packages
+pnpm install
+
+# Start the front-end
+pnpm --filter frontend dev
+```
+
+## 🤓 Contributors
+
 - Aaron Guo
+- Emily Zou
 - Henry Wang
-- Samuel Ou
 - Jasper Lai
 - Josh Jeffers
-- Emily Zou
+- Samuel Ou
 
 ![](./group-image/Golden%20Giraffes.webp)
+
+## Licence
+
+We’ll open source this at some point—probably after deadline-we just haven’t decided on a licence yet. Will likely end up being MIT.
