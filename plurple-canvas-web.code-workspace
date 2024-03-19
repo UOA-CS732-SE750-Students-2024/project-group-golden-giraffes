@@ -1,0 +1,61 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "path": "backend"
+    },
+    {
+      "path": "frontend"
+    },
+    {
+      "path": "types"
+    }
+  ],
+  "settings": {
+    "cSpell.caseSensitive": false,
+    "cSpell.language": "en-GB",
+    "cSpell.overrides": [
+      {
+        "filename": "**/*.{md,tex}",
+        "caseSensitive": true
+      }
+    ],
+    "cSpell.words": [
+      "Blurple",
+      "COMPSCI",
+      "COMPSYS",
+      "ECSE",
+      "ELECTENG",
+      "ENGGEN",
+      "Jeffers",
+      "MERN",
+      "SOFTENG"
+    ],
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.formatOnSave": true,
+    "eslint.format.enable": true,
+    "files.exclude": {
+      "packages/": true
+    },
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "markdownlint.config": {
+      "first-line-heading": false,
+      "no-hard-tabs": false,
+      "no-inline-html": false,
+      "no-trailing-punctuation": false
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "biomejs.biome",
+      "eamodio.gitlens",
+      "EditorConfig.EditorConfig",
+      "humao.rest-client",
+      "streetsidesoftware.code-spell-checker"
+    ]
+  }
+}
