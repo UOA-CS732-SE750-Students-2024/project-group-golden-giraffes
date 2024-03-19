@@ -19,6 +19,9 @@
   "bugs": {
     "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues"
   },
+  "engines": {
+    "pnpm": ">=8.15.5"
+  },
   "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "^1.6.1"
