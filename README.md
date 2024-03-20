@@ -82,8 +82,8 @@ Blurple Canvas Web started as a [SOFTENG 750](https://courseoutline.auckland.ac
 Blurple Canvas Web wouldn’t exist without these lovely people and projects. Thanks to:
 
 - [Samuel Ou](https://github.com/Rocked03) for creating the [Blurple Canvas](https://github.com/Rocked03/Blurple-Canvas) Discord bot[^samuel]
-- the [Place Atlas Initiative](https://github.com/placeAtlas) for their efforts cataloguing r/place, and
-- [Josh Wardle](https://www.powerlanguage.co.uk) and [r/Place](https://www.reddit.com/r/place) participants (no introduction needed),
+- the [Place Atlas Initiative](https://github.com/placeAtlas) for their efforts cataloguing r/place,
+- [Josh Wardle](https://www.powerlanguage.co.uk) and [r/Place](https://www.reddit.com/r/place) participants (no introduction needed), and
 - you, for your interest in this project!
 
 [^samuel]: Pretty sure Samuel isn’t happy about me putting him on this list. Tough cookies.&emsp;—Jasper
