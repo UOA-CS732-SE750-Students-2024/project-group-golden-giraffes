@@ -13,16 +13,13 @@ This is a [monorepo](https://monorepo.tools), with three packages:
 
 - **[@blurple-canvas-web/backend](/packages/backend#readme)**: The [Node](https://nodejs.org)–[Express](https://expressjs.com) back-end server
 - **[@blurple-canvas-web/frontend](/packages/frontend#readme)**: The [React](https://react.dev) front-end
-- **[@blurple-canvas-web/types](/packages/types#readme)**: Where [TypeScript](https://www.typescriptlang.org) types shared by the front- and back-ends live
+- **[@blurple-canvas-web/types](/packages/types#readme)**: Where [TypeScript](https://www.typescriptlang.org) types shared by the front- and back-end live
 
 ## 🌱 Getting started
 
 ### ☑️ Prerequisites
 
-<details>
-<summary>Setting up for the first time? Here are a few one-off setup steps</summary>
-
-**Install [nvm](https://github.com/nvm-sh/nvm).** If you don’t use [Homebrew](https://brew.sh), see [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for other ways to install.
+**Install [nvm](https://github.com/nvm-sh/nvm).** If you don’t use Homebrew, see [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for other ways to install.
 
 ```sh
 brew install nvm
@@ -39,11 +36,6 @@ nvm use
 ```sh
 corepack enable pnpm
 ```
-
-</details>
-
-
-
 
 ### 🚀 Build and deploy
 
