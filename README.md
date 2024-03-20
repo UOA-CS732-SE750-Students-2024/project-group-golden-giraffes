@@ -8,6 +8,9 @@ We recommend using pnpm for this project. You can find [installation instruction
 # Install the dependencies for all packages
 pnpm install
 
+# Start the backend
+pnpm -F backend dev
+
 # Start the frontend
 pnpm -F frontend dev
 ```

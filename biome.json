@@ -3,6 +3,13 @@
     "indentStyle": "space",
     "lineWidth": 100
   },
+  "linter": {
+    "rules": {
+      "style": {
+        "useImportType": "off"
+      }
+    }
+  },
   "javascript": {
     "formatter": {
       "trailingComma": "all"
