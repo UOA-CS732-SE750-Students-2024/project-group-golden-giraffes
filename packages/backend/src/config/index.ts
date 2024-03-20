@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 function requiredEnv(key: keyof NodeJS.ProcessEnv): string {
@@ -10,8 +10,10 @@ function requiredEnv(key: keyof NodeJS.ProcessEnv): string {
   return value;
 }
 
+console.log(process.env.PORT);
+
 export default {
   api: {
-    port: Number(process.env.PORT ?? 8000),
-  }
+    port: Number(process.env.PORT || 8000),
+  },
 } as const;
