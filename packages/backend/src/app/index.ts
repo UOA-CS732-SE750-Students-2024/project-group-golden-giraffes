@@ -1,0 +1,25 @@
+import config from '../config';
+import express, { type Express } from 'express';
+import type { Server } from 'node:http';
+
+export interface ExpressServer {
+  app: Express;
+  server: Server;
+}
+
+export function createApp(): ExpressServer {
+  const app = express();
+
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+
+  app.get('/', (req, res) => {
+    res.json({ message: 'Hello, world!' });
+  });
+
+  const server = app.listen(config.api.port, () => {
+    console.log(`⚡[server]: Server is running on port ${config.api.port}`);
+  });
+
+  return { app, server };
+}
