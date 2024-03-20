@@ -1,0 +1,13 @@
+{
+  // See: https://www.npmjs.com/package/@tsconfig/node20
+  "extends": "@tsconfig/node20/tsconfig.json",
+
+  // Reference: https://www.typescriptlang.org/tsconfig
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build",
+    "noFallthroughCasesInSwitch": true
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/**/*"]
+}
