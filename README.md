@@ -1,7 +1,5 @@
 # <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/02ac039f-67da-4aeb-a7be-c0363fee3917" width="23" height="23" /> Blurple Canvas Web
 
-A [SOFTENG 750](https://courseoutline.auckland.ac.nz/dco/course/SOFTENG/750) project, by Team Golden Giraffes
-
 > [!IMPORTANT]
 > Blurple Canvas Web is under development. It’s not even in alpha yet.
 
@@ -66,6 +64,10 @@ pnpm --filter frontend dev
 
 ## 🤓 Contributors
 
+Blurple Canvas Web started as a [SOFTENG 750](https://courseoutline.auckland.ac.nz/dco/course/SOFTENG/750) project at [Waipapa Taumata Rau](https://www.auckland.ac.nz). We are Team Golden Giraffes.[^teamname]
+
+[^teamname]: Not sure we would’ve chosen this name for ourselves, though…
+
 - Aaron Guo
 - Emily Zou
 - Henry Wang
@@ -74,6 +76,17 @@ pnpm --filter frontend dev
 - Samuel Ou
 
 ![](./group-image/Golden%20Giraffes.webp)
+
+## 💌 Acknowledgements
+
+Blurple Canvas Web wouldn’t exist without these lovely people and projects. Thanks to:
+
+- [Samuel Ou](https://github.com/Rocked03) for creating the [Blurple Canvas](https://github.com/Rocked03/Blurple-Canvas) Discord bot[^samuel]
+- the [Place Atlas Initiative](https://github.com/placeAtlas) for their efforts cataloguing r/place, and
+- [Josh Wardle](https://www.powerlanguage.co.uk) and [r/Place](https://www.reddit.com/r/place) participants (no introduction needed),
+- you, for your interest in this project!
+
+[^samuel]: Pretty sure Samuel isn’t happy about me putting him on this list. Tough cookies.&emsp;—Jasper
 
 ## 📜 Licence
 
