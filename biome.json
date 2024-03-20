@@ -1,4 +1,11 @@
 {
+  "linter": {
+    "rules": {
+      "style": {
+        "useImportType": "off"
+      }
+    }
+  },
   "formatter": {
     "indentStyle": "space",
     "lineWidth": 100

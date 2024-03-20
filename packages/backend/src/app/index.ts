@@ -1,5 +1,5 @@
-import express, { type Express } from "express";
-import type { Server } from "node:http";
+import express, { Express } from "express";
+import { Server } from "node:http";
 import config from "../config";
 
 export interface ExpressServer {
