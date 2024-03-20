@@ -1,6 +1,6 @@
-import config from '../config';
-import express, { type Express } from 'express';
-import type { Server } from 'node:http';
+import express, { type Express } from "express";
+import type { Server } from "node:http";
+import config from "../config";
 
 export interface ExpressServer {
   app: Express;
@@ -13,8 +13,8 @@ export function createApp(): ExpressServer {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
-  app.get('/', (req, res) => {
-    res.json({ message: 'Hello, world!' });
+  app.get("/", (req, res) => {
+    res.json({ message: "Hello, world!" });
   });
 
   const server = app.listen(config.api.port, () => {
