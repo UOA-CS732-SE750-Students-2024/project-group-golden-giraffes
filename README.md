@@ -1,4 +1,4 @@
-# Blurple Canvas Web
+# <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/73e0ef18-9519-45d5-93dc-82b21fa40b4e" width="" height="" /> Blurple Canvas Web
 
 A [SOFTENG 750](https://courseoutline.auckland.ac.nz/dco/course/SOFTENG/750) project, by Team Golden Giraffes
 
