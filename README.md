@@ -52,12 +52,12 @@ pnpm install
 
 **Deploy!** Run these in separate terminals.[^You can also use `-F` instead of `--filter`] Things will hot-reload as you make changes.
 
-```
-# Start the front-end
-pnpm --filter frontend dev
+```sh
+# Start the back-end
+pnpm --filter backend dev
 ```
 
-```
+```sh
 # Start the front-end
 pnpm --filter frontend dev
 ```
