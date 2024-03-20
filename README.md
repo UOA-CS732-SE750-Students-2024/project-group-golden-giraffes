@@ -1,4 +1,4 @@
-# <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/73e0ef18-9519-45d5-93dc-82b21fa40b4e" width="" height="" /> Blurple Canvas Web
+# <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/02ac039f-67da-4aeb-a7be-c0363fee3917" width="" height="" /> Blurple Canvas Web
 
 A [SOFTENG 750](https://courseoutline.auckland.ac.nz/dco/course/SOFTENG/750) project, by Team Golden Giraffes
 
@@ -17,9 +17,14 @@ This is a [monorepo](https://monorepo.tools), with three packages:
 
 ## 🌱 Getting started
 
+We suggest opening this project as a Visual Studio Code [multi-root workspace](https://code.visualstudio.com/docs/editor/multi-root-workspaces): just open the [`blurple-canvas-web.code-workspace`](/blurple-canvas-web.code-workspace) file. The workspace is configured to use the right linter and formatter, and recommends a few extensions. But, you’re welcome to use your preferred editor.
+
+> [!NOTE]
+> Windows users, the instructions below assume you use [WSL](https://learn.microsoft.com/en-us/windows/wsl). You’re welcome to use PowerShell—things still work—but you’ll have to “translate” these steps for yourself.
+
 ### ☑️ Prerequisites
 
-**Install [nvm](https://github.com/nvm-sh/nvm).** If you don’t use Homebrew, see [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for other ways to install.
+**Install [Node Version Manager](https://github.com/nvm-sh/nvm).** If you don’t use Homebrew, see [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) for other ways to install.
 
 ```sh
 brew install nvm
@@ -39,10 +44,20 @@ corepack enable pnpm
 
 ### 🚀 Build and deploy
 
-```sh
-# Install dependencies for all packages
-pnpm install
+**Install dependencies.** Run this from the monorepo root, and it will install dependencies for all packages.
 
+```sh
+pnpm install
+```
+
+**Deploy!** Run these in separate terminals.[^You can also use `-F` instead of `--filter`] Things will hot-reload as you make changes.
+
+```
+# Start the front-end
+pnpm --filter frontend dev
+```
+
+```
 # Start the front-end
 pnpm --filter frontend dev
 ```
