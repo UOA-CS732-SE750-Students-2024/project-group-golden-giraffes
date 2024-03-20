@@ -40,7 +40,7 @@ nvm use
 corepack enable pnpm
 ```
 
-### 🚀 Build and deploy
+### 🚀 Build & deploy
 
 **Install dependencies.** Run this from the monorepo root, and it will install dependencies for all packages.
 
