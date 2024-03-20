@@ -12,7 +12,7 @@ pnpm dev # Start the API locally with hot reloading
 
 ### Building
 
-You can compile the API to Javascript using:
+You can transpile the API to JavaScript using:
 
 ```shell
 pnpm build

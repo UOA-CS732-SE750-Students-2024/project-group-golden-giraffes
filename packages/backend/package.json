@@ -8,17 +8,18 @@
     "start": "node build/index.js"
   },
   "dependencies": {
-    "@prisma/client": "^4.16.2",
+    "@prisma/client": "^5.11.0",
     "express": "^4.18.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@tsconfig/node20": "^20.1.2",
     "@types/express": "^4.17.21",
-    "@types/node": "^18.19.26",
+    "@types/node": "^20",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.0",
-    "prisma": "^4.16.2",
+    "prisma": "^5.11.0",
     "ts-node": "^10.9.2",
-    "typescript": "^4.9.5"
+    "typescript": "^5.4.2"
   }
 }
