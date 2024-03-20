@@ -50,7 +50,9 @@ corepack enable pnpm
 pnpm install
 ```
 
-**Deploy!** Run these in separate terminals.[^You can also use `-F` instead of `--filter`.] Things will hot-reload as you make changes.
+**Deploy!** Run these in separate terminals.[^filter] Things will hot-reload as you make changes.
+
+[^filter]: You can also use `-F` instead of `--filter`.
 
 ```sh
 # Start the back-end
