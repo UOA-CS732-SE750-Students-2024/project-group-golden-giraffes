@@ -17,7 +17,7 @@ This is a [monorepo](https://monorepo.tools), with three packages:
 
 We suggest opening this project as a Visual Studio Code [multi-root workspace](https://code.visualstudio.com/docs/editor/multi-root-workspaces): just open the [`blurple-canvas-web.code-workspace`](/blurple-canvas-web.code-workspace) file. The workspace is configured to use the right linter and formatter, and recommends a few extensions. But, you’re welcome to use your preferred editor.
 
-> [!NOTE]
+> [!WARNING]
 > Windows users, the instructions below assume you use [WSL](https://learn.microsoft.com/en-us/windows/wsl). You’re welcome to use PowerShell—things still work—but you’ll have to “translate” these steps for yourself.
 
 ### ☑️ Prerequisites
@@ -81,7 +81,8 @@ Blurple Canvas Web started as a [SOFTENG 750](https://courseoutline.auckland.ac
 
 Blurple Canvas Web wouldn’t exist without these lovely people and projects. Thanks to:
 
-- [Samuel Ou](https://github.com/Rocked03) for creating the [Blurple Canvas](https://github.com/Rocked03/Blurple-Canvas) Discord bot;[^samuel]
+- [Project Blurple](https://projectblurple.com) and the Project Blurple community, for obvious reasons;
+- [Rocked03](https://github.com/Rocked03) for creating the [Blurple Canvas](https://github.com/Rocked03/Blurple-Canvas) Discord bot;[^samuel]
 - the [Place Atlas Initiative](https://github.com/placeAtlas) for their efforts cataloguing r/Place;
 - [Josh Wardle](https://www.powerlanguage.co.uk) and [r/Place](https://www.reddit.com/r/place) participants (no introduction needed); and
 - you, for your interest in this project!
