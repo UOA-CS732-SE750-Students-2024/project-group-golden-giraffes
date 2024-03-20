@@ -5,7 +5,7 @@
 
 Blurple Canvas Web is a web alternative to the [Blurple Canvas](https://github.com/Rocked03/Blurple-Canvas) Discord bot with (hopefully, eventually) a couple extra bells and whistles.
 
-## 🥪 Tech stack & logistics
+## 🥪 Tech stack & repo structure
 
 This is a [monorepo](https://monorepo.tools), with three packages:
 
