@@ -1,4 +1,6 @@
-## Getting Started
+# @blurple-canvas-web/backend
+
+## Getting started
 
 ### Prerequisites
 
@@ -6,7 +8,7 @@
 
 ### Running
 
-```shell
+```sh
 pnpm dev # Start the API locally with hot reloading
 ```
 
@@ -14,7 +16,7 @@ pnpm dev # Start the API locally with hot reloading
 
 You can transpile the API to JavaScript using:
 
-```shell
+```sh
 pnpm build
 
 pnpm start # This will run the built code
