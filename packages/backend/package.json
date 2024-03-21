@@ -20,6 +20,10 @@
   "bugs": {
     "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues"
   },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8.15.5"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "nodemon src/index.ts --devmode",
