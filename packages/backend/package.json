@@ -1,6 +1,6 @@
 {
   "name": "@blurple-canvas-web/backend",
-  "description": "API for Blurple Canvas",
+  "description": "API server for Blurple Canvas",
   "version": "0.1.0",
   "private": true,
   "contributors": [
