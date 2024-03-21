@@ -16,10 +16,10 @@
     "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes.git",
     "directory": "packages/backend"
   },
+  "license": "SEE LICENSE IN LICENSE.md",
   "bugs": {
     "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues"
   },
-  "license": "SEE LICENSE IN LICENSE.md",
   "scripts": {
     "build": "tsc",
     "dev": "nodemon src/index.ts --devmode",

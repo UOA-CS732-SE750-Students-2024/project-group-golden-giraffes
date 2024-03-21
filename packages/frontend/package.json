@@ -16,10 +16,10 @@
     "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes.git",
     "directory": "packages/frontend"
   },
+  "license": "SEE LICENSE IN LICENSE.md",
   "bugs": {
     "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues"
   },
-  "license": "SEE LICENSE IN LICENSE.md",
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
