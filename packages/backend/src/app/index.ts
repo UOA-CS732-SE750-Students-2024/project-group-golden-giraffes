@@ -1,6 +1,7 @@
 import { Server } from "node:http";
 import express, { Express } from "express";
 import config from "../config";
+import { prisma } from "../client";
 
 export interface ExpressServer {
   app: Express;
@@ -15,6 +16,20 @@ export function createApp(): ExpressServer {
 
   app.get("/", (req, res) => {
     res.json({ message: "Hello, world!" });
+  });
+
+  app.get("/pixels", async (req, res) => {
+    // Example usage :)
+    const pixels = await prisma.pixels.findMany({
+      // Only select a subset of the table
+      select: { x: true, y: true, color_id: true },
+      where: {
+        x: { lte: 10 },
+        y: { lte: 10 },
+      },
+    });
+
+    res.status(200).json(pixels);
   });
 
   const server = app.listen(config.api.port, () => {
