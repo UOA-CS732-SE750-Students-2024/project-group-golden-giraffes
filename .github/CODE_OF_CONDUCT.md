@@ -1,1 +1,1 @@
-See: [asshole.fyi](https://asshole.fyi)
+🧑‍⚖️ See [asshole.fyi](https://asshole.fyi)
