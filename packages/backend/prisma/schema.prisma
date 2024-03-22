@@ -47,6 +47,7 @@ model cooldown {
   user          user      @relation(fields: [user_id], references: [id])
   canvas_id     Int
   canvas        canvas    @relation(fields: [canvas_id], references: [id])
+  // A cooldown might be set to null to skip the cooldown
   cooldown_time DateTime? @db.Timestamptz(6)
 
   @@id([user_id, canvas_id])
@@ -107,9 +108,10 @@ model info {
 model participation {
   guild_id BigInt
   event_id Int
-  event    event @relation(fields: [event_id], references: [id])
-  color_id Int   @unique
-  color    color @relation(fields: [color_id], references: [id])
+  event    event  @relation(fields: [event_id], references: [id])
+  // Not all participants may have a color, or it might not be set straight away
+  color_id Int?   @unique
+  color    color? @relation(fields: [color_id], references: [id])
 
   @@id([guild_id, event_id])
 }
