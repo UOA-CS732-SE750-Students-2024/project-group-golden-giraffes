@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model blacklist {
+  user_id    BigInt   @id
+  user       user     @relation(fields: [user_id], references: [id])
+  date_added DateTime @db.Timestamptz(6)
+}
+
+model canvas {
+  id                Int     @id @default(autoincrement())
+  name              String
+  locked            Boolean @default(true)
+  event_id          Int
+  event             event   @relation(fields: [event_id], references: [id])
+  width             Int
+  height            Int
+  cooldown_length   Int?
+  start_coordinates Int[]
+  frames            frame[]
+  pixels            pixels[]
+  history           history[]
+  cooldowns         cooldown[]
+}
+
+model color {
+  id          Int            @id @default(autoincrement())
+  code        String
+  emoji_name  String
+  emoji_id    BigInt
+  global      Boolean        @default(true)
+  name        String
+  rgba        Int[]
+  pixels      pixels[]
+  history     history[]
+  participant participation?
+}
+
+model cooldown {
+  user_id       BigInt
+  user          user      @relation(fields: [user_id], references: [id])
+  canvas_id     Int
+  canvas        canvas    @relation(fields: [canvas_id], references: [id])
+  cooldown_time DateTime? @db.Timestamptz(6)
+
+  @@id([user_id, canvas_id])
+}
+
+model event {
+  id           Int      @id
+  name         String
+  canvases     canvas[]
+  participants participation[]
+}
+
+model frame {
+  frame     Int     @id
+  canvas_id Int
+  canvas    canvas  @relation(fields: [canvas_id], references: [id])
+  guild_id  BigInt?
+  name      String
+  x_0       Int
+  x_1       Int
+  y_0       Int
+  y_1       Int
+}
+
+model guild {
+  id           BigInt  @id
+  manager_role BigInt?
+  invite       String?
+}
+
+model history {
+  id        BigInt   @id @default(autoincrement())
+  canvas_id Int
+  canvas    canvas   @relation(fields: [canvas_id], references: [id])
+  user_id   BigInt
+  user      user     @relation(fields: [user_id], references: [id])
+  x         Int
+  y         Int
+  color_id  Int
+  color     color    @relation(fields: [color_id], references: [id])
+  timestamp DateTime @db.Timestamptz(6)
+  guild_id  BigInt?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma.
+model info {
+  canvas_admin            BigInt[]
+  current_event_id        Int
+  cached_canvas_ids       Int[]
+  highlight_color         Int?
+  title                   String
+  admin_server_id         BigInt
+  current_emoji_server_id BigInt
+
+  @@ignore
+}
+
+model participation {
+  guild_id BigInt
+  event_id Int
+  event    event @relation(fields: [event_id], references: [id])
+  color_id Int   @unique
+  color    color @relation(fields: [color_id], references: [id])
+
+  @@id([guild_id, event_id])
+}
+
+model pixels {
+  canvas_id Int
+  canvas    canvas @relation(fields: [canvas_id], references: [id])
+  x         Int
+  y         Int
+  color_id  Int
+  color     color  @relation(fields: [color_id], references: [id])
+
+  @@id([canvas_id, x, y])
+}
+
+model user {
+  id                BigInt     @id
+  current_canvas_id Int?
+  skip_confirm      Boolean    @default(false)
+  cooldown_remind   Boolean    @default(false)
+  blacklist         blacklist?
+  cooldowns         cooldown[]
+  history           history[]
+}
