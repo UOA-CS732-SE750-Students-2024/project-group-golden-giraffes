@@ -1,8 +1,7 @@
 #!/usr/bin/env sh
 
 # Prevent commits to main branch
-current_branch=$(git branch | grep '*' | cut -d ' ' -f 2)
-if [ "$current_branch" = 'main' ]; then
+if [ $(git branch --show-current) = 'main' ]; then
   printf '\033[1;31mCommit aborted.\033[m Please switch to a feature branch.\n'
   exit 1
 fi
