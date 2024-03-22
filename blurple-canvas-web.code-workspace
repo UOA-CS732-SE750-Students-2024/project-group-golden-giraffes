@@ -31,8 +31,11 @@
       "ELECTENG",
       "ENGGEN",
       "Jeffers",
+      "Makaurau",
       "MERN",
-      "SOFTENG"
+      "SOFTENG",
+      "Tāmaki",
+      "WCAG"
     ],
     "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true,
