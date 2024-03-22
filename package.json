@@ -30,7 +30,6 @@
   },
   "scripts": {
     "lint": "biome lint .",
-    "check-main-branch": "if [ $(git branch --show-current) = 'main' ]; then echo 'Cannot commit directly to main branch'; exit 1; fi",
     "prepare": "husky"
   }
 }
