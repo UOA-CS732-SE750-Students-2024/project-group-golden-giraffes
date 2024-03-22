@@ -65,6 +65,7 @@ model frame {
   canvas_id Int
   canvas    canvas  @relation(fields: [canvas_id], references: [id])
   guild_id  BigInt?
+  guild     guild?  @relation(fields: [guild_id], references: [id])
   name      String
   x_0       Int
   x_1       Int
@@ -73,9 +74,12 @@ model frame {
 }
 
 model guild {
-  id           BigInt  @id
-  manager_role BigInt?
-  invite       String?
+  id              BigInt         @id
+  manager_role    BigInt?
+  invite          String?
+  frames          frame[]
+  history         history[]
+  participantions participation[]
 }
 
 model history {
@@ -90,6 +94,7 @@ model history {
   color     color    @relation(fields: [color_id], references: [id])
   timestamp DateTime @db.Timestamptz(6)
   guild_id  BigInt?
+  guild     guild?   @relation(fields: [guild_id], references: [id])
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma.
@@ -107,6 +112,7 @@ model info {
 
 model participation {
   guild_id BigInt
+  guild    guild  @relation(fields: [guild_id], references: [id])
   event_id Int
   event    event  @relation(fields: [event_id], references: [id])
   // Not all participants may have a color, or it might not be set straight away
