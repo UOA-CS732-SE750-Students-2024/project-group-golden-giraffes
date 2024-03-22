@@ -50,16 +50,16 @@ pnpm install
 
 **Deploy!** Run these in separate terminals.[^filter] Things will hot-reload as you make changes.
 
-[^filter]: You can also use `-F` instead of `--filter`.
+[^filter]: These are shorthand for `pnpm --filter @blurple-canvas-web/backend dev` and `pnpm --filter @blurple-canvas-web/frontend dev`.
 
 ```sh
 # Start the back-end
-pnpm --filter backend dev
+pnpm -F backend dev
 ```
 
 ```sh
 # Start the front-end
-pnpm --filter frontend dev
+pnpm -F frontend dev
 ```
 
 ## 🤓 Contributors
