@@ -1,11 +1,39 @@
 {
-  "name": "backend",
+  "name": "@blurple-canvas-web/backend",
+  "description": "API server for Blurple Canvas",
   "version": "0.1.0",
   "private": true,
+  "contributors": [
+    "Aaron Guo <aaronjoshguo@gmail.com>",
+    "Emily Zou <yzou415@aucklanduni.ac.nz>",
+    "Henry Wang <hwan513@aucklanduni.ac.nz> (http://henryh.wang)",
+    "Jasper Lai <klai866@aucklanduni.ac.nz> (https://lai.nz)",
+    "Josh Jeffers <joshjeffers600@gmail.com> (https://pumbas.net)",
+    "Samuel Ou <sou323@aucklanduni.ac.nz>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes.git",
+    "directory": "packages/backend"
+  },
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8.15.5"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "nodemon src/index.ts --devmode",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --apply .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --apply ."
   },
   "dependencies": {
     "@prisma/client": "^5.11.0",

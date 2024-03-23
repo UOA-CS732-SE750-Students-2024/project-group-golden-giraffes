@@ -1,7 +1,13 @@
-### Getting Started
+# @blurple-canvas-web/frontend
 
-```bash
-pnpm install # Install the dependencies
+## Getting started
 
-pnpm dev # Start the frontend
+```sh
+# Install the dependencies
+pnpm install
+```
+
+```sh
+# Start the frontend
+pnpm dev
 ```
