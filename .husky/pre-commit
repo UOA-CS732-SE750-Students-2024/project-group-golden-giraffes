@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# Prevent commits to main branch
+if [ $(git branch --show-current) = 'main' ]; then
+  printf '\033[1;31mCommit aborted.\033[m Please switch to a feature branch.\n'
+  exit 1
+fi
+
+pnpm check:fix

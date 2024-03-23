@@ -28,7 +28,12 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "biome lint ./src"
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --apply .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --apply ."
   },
   "dependencies": {
     "react": "^18",
