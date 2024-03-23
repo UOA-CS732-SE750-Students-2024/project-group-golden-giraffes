@@ -28,9 +28,12 @@
     "build": "tsc",
     "dev": "nodemon src/index.ts --devmode",
     "start": "node build/index.js",
-    "lint": "biome lint ./src",
-    "format": "biome format ./src",
-    "check": "biome check ./src"
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --apply .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --apply ."
   },
   "dependencies": {
     "@prisma/client": "^5.11.0",

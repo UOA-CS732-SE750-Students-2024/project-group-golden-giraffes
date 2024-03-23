@@ -30,8 +30,11 @@
   },
   "scripts": {
     "lint": "pnpm --recursive lint",
+    "lint:fix": "pnpm --recursive lint:fix",
     "format": "pnpm --recursive format",
+    "format:fix": "pnpm --recursive format:fix",
     "check": "pnpm --recursive check",
+    "check:fix": "pnpm --recursive check:fix",
     "prepare": "husky"
   }
 }
