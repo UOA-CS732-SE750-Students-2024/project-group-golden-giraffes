@@ -31,6 +31,7 @@
   "scripts": {
     "lint": "pnpm --recursive lint",
     "format": "pnpm --recursive format",
+    "check": "pnpm --recursive check",
     "prepare": "husky"
   }
 }

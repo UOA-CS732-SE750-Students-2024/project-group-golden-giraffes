@@ -29,7 +29,8 @@
     "dev": "nodemon src/index.ts --devmode",
     "start": "node build/index.js",
     "lint": "biome lint ./src",
-    "format": "biome format ./src"
+    "format": "biome format ./src",
+    "check": "biome check ./src"
   },
   "dependencies": {
     "@prisma/client": "^5.11.0",
