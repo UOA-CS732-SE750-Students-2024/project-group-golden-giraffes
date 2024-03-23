@@ -27,7 +27,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon src/index.ts --devmode",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "lint": "biome lint ./src"
   },
   "dependencies": {
     "@prisma/client": "^5.11.0",

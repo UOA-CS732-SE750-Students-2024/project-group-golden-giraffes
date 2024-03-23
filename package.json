@@ -29,7 +29,7 @@
     "husky": "^9.0.11"
   },
   "scripts": {
-    "lint": "biome lint .",
+    "lint": "pnpm --recursive lint",
     "prepare": "husky"
   }
 }
