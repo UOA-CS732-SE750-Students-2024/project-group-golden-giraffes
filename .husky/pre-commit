@@ -6,4 +6,4 @@ if [ $(git branch --show-current) = 'main' ]; then
   exit 1
 fi
 
-pnpm lint
+pnpm check
