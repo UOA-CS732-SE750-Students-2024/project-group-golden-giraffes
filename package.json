@@ -24,8 +24,17 @@
     "pnpm": ">=8.15.5"
   },
   "packageManager": "pnpm@8.15.5",
-  "dependencies": {},
   "devDependencies": {
-    "@biomejs/biome": "^1.6.1"
+    "@biomejs/biome": "^1.6.1",
+    "husky": "^9.0.11"
+  },
+  "scripts": {
+    "lint": "pnpm --recursive lint",
+    "lint:fix": "pnpm --recursive lint:fix",
+    "format": "pnpm --recursive format",
+    "format:fix": "pnpm --recursive format:fix",
+    "check": "pnpm --recursive check",
+    "check:fix": "pnpm --recursive check:fix",
+    "prepare": "husky"
   }
 }
