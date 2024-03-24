@@ -30,8 +30,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
-        run: pnpm run build
+      - name: Build Frontend
+        run: pnpm --filter frontend run build
+
+      - name: Build Backend
+        run: pnpm --filter backend run build
 
       - name: CI lint and format
         run: pnpm biome ci .
