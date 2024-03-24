@@ -59,6 +59,9 @@
     },
     "[css]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
   },
   "extensions": {
@@ -66,6 +69,7 @@
       "biomejs.biome",
       "eamodio.gitlens",
       "EditorConfig.EditorConfig",
+      "esbenp.prettier-vscode",
       "humao.rest-client",
       "streetsidesoftware.code-spell-checker"
     ]
