@@ -21,7 +21,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v3.0.0
 
-      - name: Set node version to respect package.json
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version-file: "package.json"
@@ -48,7 +48,7 @@ jobs:
       - name: Build Backend
         run: pnpm --filter backend build
 
-      - name: CI lint and format
+      - name: Check linting & formatting
         run: pnpm biome ci .
 
       # From https://github.com/rhysd/actionlint/blob/main/docs/usage.md#use-actionlint-on-github-actions
