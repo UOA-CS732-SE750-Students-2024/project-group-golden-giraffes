@@ -1,7 +1,6 @@
 {
   "formatter": {
-    "indentStyle": "space",
-    "lineWidth": 100
+    "indentStyle": "space"
   },
   "linter": {
     "rules": {
