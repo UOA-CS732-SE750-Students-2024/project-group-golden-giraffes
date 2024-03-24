@@ -36,7 +36,7 @@
     "check": "pnpm --recursive check",
     "check:fix": "pnpm --recursive check:fix",
     "prepare": "husky",
-    "build": "pnpm --recursive run build",
-    "dev": "pnpm --recursive --parallel run dev"
+    "build": "pnpm --recursive build",
+    "dev": "pnpm --recursive --parallel dev"
   }
 }

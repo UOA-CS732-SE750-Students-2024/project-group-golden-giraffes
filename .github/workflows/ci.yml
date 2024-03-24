@@ -43,10 +43,10 @@ jobs:
         run: pnpm install
 
       - name: Build Frontend
-        run: pnpm --filter frontend run build
+        run: pnpm --filter frontend build
 
       - name: Build Backend
-        run: pnpm --filter backend run build
+        run: pnpm --filter backend build
 
       - name: CI lint and format
         run: pnpm biome ci .
