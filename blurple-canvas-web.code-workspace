@@ -50,6 +50,15 @@
       "no-hard-tabs": false,
       "no-inline-html": false,
       "no-trailing-punctuation": false
+    },
+    "search.exclude": {
+      "**/.next": true,
+      "**/build": true,
+      "**/dist": true,
+      "**/node_modules": true
+    },
+    "[css]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
   },
   "extensions": {
