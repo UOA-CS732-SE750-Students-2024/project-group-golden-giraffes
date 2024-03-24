@@ -19,8 +19,5 @@
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
-  },
-  "files": {
-    "ignore": [".pnpm-store/"]
   }
 }
