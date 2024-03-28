@@ -24,7 +24,7 @@ model canvas {
   cooldown_length   Int?
   start_coordinates Int[]
   frames            frame[]
-  pixels            pixels[]
+  pixels            pixel[]
   history           history[]
   cooldowns         cooldown[]
 }
@@ -37,7 +37,7 @@ model color {
   global      Boolean        @default(true)
   name        String
   rgba        Int[]
-  pixels      pixels[]
+  pixels      pixel[]
   history     history[]
   participant participation?
 }
@@ -122,7 +122,7 @@ model participation {
   @@id([guild_id, event_id])
 }
 
-model pixels {
+model pixel {
   canvas_id Int
   canvas    canvas @relation(fields: [canvas_id], references: [id])
   x         Int

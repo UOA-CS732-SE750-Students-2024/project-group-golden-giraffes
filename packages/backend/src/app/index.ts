@@ -20,7 +20,7 @@ export function createApp(): ExpressServer {
 
   app.get("/pixels", async (req, res) => {
     // Example usage :)
-    const pixels = await prisma.pixels.findMany({
+    const pixels = await prisma.pixel.findMany({
       // Only select a subset of the table
       select: { x: true, y: true, color_id: true },
       where: {
