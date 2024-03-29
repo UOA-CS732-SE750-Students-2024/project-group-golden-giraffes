@@ -1,7 +1,7 @@
 import { Server } from "node:http";
 import express, { Express } from "express";
-import config from "../config";
 import { prisma } from "../client";
+import config from "../config";
 
 export interface ExpressServer {
   app: Express;
