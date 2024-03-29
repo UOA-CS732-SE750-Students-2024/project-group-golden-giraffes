@@ -61,23 +61,23 @@ model event {
 }
 
 model frame {
-  frame     Int     @id
-  canvas_id Int
-  canvas    canvas  @relation(fields: [canvas_id], references: [id])
-  guild_id  BigInt?
-  guild     guild?  @relation(fields: [guild_id], references: [id])
-  name      String
-  x_0       Int
-  x_1       Int
-  y_0       Int
-  y_1       Int
+  id              String  @id
+  canvas_id       Int
+  canvas          canvas  @relation(fields: [canvas_id], references: [id])
+  owner_id        BigInt
+  is_guild_owned  Boolean
+  name            String
+  x_0             Int
+  x_1             Int
+  y_0             Int
+  y_1             Int
+  style_id        Int?
 }
 
 model guild {
   id              BigInt         @id
   manager_role    BigInt?
   invite          String?
-  frames          frame[]
   history         history[]
   participantions participation[]
 }
