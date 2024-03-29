@@ -27,6 +27,10 @@ model canvas {
   pixels            pixel[]
   history           history[]
   cooldowns         cooldown[]
+  user_stats        user_stats[]
+  guild_stats       guild_stats[]
+  leaderboard       leaderboard[]
+  leaderboard_guild leaderboard_guild[]
 }
 
 model color {
@@ -40,6 +44,8 @@ model color {
   pixels      pixel[]
   history     history[]
   participant participation?
+  user_stats  user_stats[]
+  guild_stats guild_stats[]
 }
 
 model cooldown {
@@ -80,6 +86,8 @@ model guild {
   invite          String?
   history         history[]
   participantions participation[]
+  guild_stats     guild_stats[]
+  leaderboard     leaderboard_guild[]
 }
 
 model history {
@@ -144,4 +152,62 @@ model user {
   blacklist         blacklist?
   cooldowns         cooldown[]
   history           history[]
+  user_stats        user_stats[]
+  leaderboard       leaderboard[]
+  leaderboard_guild leaderboard_guild[]
+}
+
+model user_stats {
+  user_id   BigInt
+  user      user @relation(fields: [user_id], references: [id])
+  canvas_id Int
+  canvas    canvas @relation(fields: [canvas_id], references: [id])
+  total_pixels Int
+  rank         Int
+  most_frequent_color_id Int
+  most_frequent_color color @relation(fields: [most_frequent_color_id], references: [id])
+  color_count Int
+  // place_frequency Interval     Prisma doesn't support Intervals!!!!!
+  most_recent_timestamp DateTime @db.Timestamptz(6)
+
+  @@id([user_id, canvas_id])
+}
+
+model guild_stats {
+  guild_id   BigInt
+  guild      guild @relation(fields: [guild_id], references: [id])
+  canvas_id Int
+  canvas    canvas @relation(fields: [canvas_id], references: [id])
+  total_pixels Int
+  most_frequent_color_id Int
+  most_frequent_color color @relation(fields: [most_frequent_color_id], references: [id])
+  color_count Int
+  // place_frequency Interval     Prisma doesn't support Intervals!!!!!
+  most_recent_timestamp DateTime @db.Timestamptz(6)
+
+  @@id([guild_id, canvas_id])
+}
+
+model leaderboard {
+  user_id       BigInt
+  user          user   @relation(fields: [user_id], references: [id])
+  canvas_id     Int
+  canvas        canvas @relation(fields: [canvas_id], references: [id])
+  total_pixles  Int
+  rank          Int
+
+  @@id([user_id, canvas_id])
+}
+
+model leaderboard_guild {
+  user_id       BigInt
+  user          user   @relation(fields: [user_id], references: [id])
+  canvas_id     Int
+  canvas        canvas @relation(fields: [canvas_id], references: [id])
+  guild_id      BigInt
+  guild         guild  @relation(fields: [guild_id], references: [id])
+  total_pixles  Int
+  rank          Int
+
+  @@id([user_id, guild_id, canvas_id])
 }
