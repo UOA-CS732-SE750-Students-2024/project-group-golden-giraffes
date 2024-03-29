@@ -106,6 +106,9 @@ model info {
   title                   String
   admin_server_id         BigInt
   current_emoji_server_id BigInt
+  host_server_id           BigInt
+  event_role_id           BigInt?
+  default_canvas_id       Int?
 
   @@ignore
 }
