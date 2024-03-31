@@ -27,6 +27,9 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@blurple-canvas-web/types':
+        specifier: workspace:*
+        version: link:../types
       '@tsconfig/node20':
         specifier: ^20.1.2
         version: 20.1.2
@@ -67,6 +70,9 @@ importers:
       '@biomejs/biome':
         specifier: ^1.6.1
         version: 1.6.1
+      '@blurple-canvas-web/types':
+        specifier: workspace:*
+        version: link:../types
       '@types/node':
         specifier: ^20
         version: 20.11.29
@@ -76,6 +82,12 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.2.22
+      typescript:
+        specifier: ^5.4.2
+        version: 5.4.2
+
+  packages/types:
+    devDependencies:
       typescript:
         specifier: ^5.4.2
         version: 5.4.2
