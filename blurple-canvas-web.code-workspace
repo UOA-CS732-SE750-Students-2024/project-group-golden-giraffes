@@ -16,6 +16,18 @@
   ],
   "settings": {
     "cSpell.caseSensitive": false,
+    "cSpell.enabledLanguageIds": [
+      "css",
+      "javascript",
+      "javascriptreact",
+      "markdown",
+      "plaintext",
+      "text",
+      "typescript",
+      "typescriptreact",
+      "yaml",
+      "yml"
+    ],
     "cSpell.language": "en-GB",
     "cSpell.overrides": [
       {
