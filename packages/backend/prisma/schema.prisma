@@ -1,0 +1,253 @@
+generator client {
+  provider        = "prisma-client-js"
+  // pnpm workspaces cause the types to be generated in the wrong place, so we need to manually make
+  // it install in the root node_modules folder. See: https://github.com/prisma/prisma/issues/6603
+  output          = "../../../node_modules/.prisma/client"
+  previewFeatures = ["views"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model blacklist {
+  user_id    BigInt   @id
+  user       user     @relation(fields: [user_id], references: [id])
+  date_added DateTime @db.Timestamptz(6)
+}
+
+model canvas {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  locked            Boolean             @default(true)
+  // It's theoretically possible to have a canvas without an event. E.g. An off-season canvas
+  event_id          Int?
+  event             event?              @relation(fields: [event_id], references: [id])
+  width             Int
+  height            Int
+  cooldown_length   Int?
+  // The top-left coordinate from the user-perspective. For users, this is (1, 1)
+  start_coordinates Int[]               @default([1, 1])
+  frames            frame[]
+  pixels            pixel[]
+  history           history[]
+  cooldowns         cooldown[]
+  user_stats        user_stats[]
+  guild_stats       guild_stats[]
+  leaderboard       leaderboard[]
+  leaderboard_guild leaderboard_guild[]
+}
+
+model color {
+  id             Int             @id @default(autoincrement())
+  code           String
+  emoji_name     String
+  emoji_id       BigInt
+  global         Boolean         @default(true)
+  name           String
+  rgba           Int[]
+  pixels         pixel[]
+  history        history[]
+  user_stats     user_stats[]
+  guild_stats    guild_stats[]
+  participations participation[]
+}
+
+model cooldown {
+  user_id       BigInt
+  user          user      @relation(fields: [user_id], references: [id])
+  canvas_id     Int
+  canvas        canvas    @relation(fields: [canvas_id], references: [id])
+  // A cooldown might be set to null to skip the cooldown
+  cooldown_time DateTime? @db.Timestamptz(6)
+
+  @@id([user_id, canvas_id])
+}
+
+model event {
+  id           Int             @id
+  name         String
+  canvases     canvas[]
+  participants participation[]
+}
+
+model frame {
+  id             String  @id
+  canvas_id      Int
+  canvas         canvas  @relation(fields: [canvas_id], references: [id])
+  owner_id       BigInt
+  is_guild_owned Boolean
+  name           String
+  x_0            Int
+  x_1            Int
+  y_0            Int
+  y_1            Int
+  style_id       Int?
+}
+
+model guild {
+  id              BigInt              @id
+  manager_role    BigInt?
+  invite          String?
+  history         history[]
+  participantions participation[]
+  guild_stats     guild_stats[]
+  leaderboard     leaderboard_guild[]
+}
+
+model history {
+  id        BigInt   @id @default(autoincrement())
+  canvas_id Int
+  canvas    canvas   @relation(fields: [canvas_id], references: [id])
+  user_id   BigInt
+  user      user     @relation(fields: [user_id], references: [id])
+  x         Int
+  y         Int
+  color_id  Int
+  color     color    @relation(fields: [color_id], references: [id])
+  timestamp DateTime @db.Timestamptz(6)
+  guild_id  BigInt?
+  guild     guild?   @relation(fields: [guild_id], references: [id])
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma.
+model info {
+  canvas_admin            BigInt[]
+  current_event_id        Int
+  cached_canvas_ids       Int[]
+  highlight_color         Int?
+  title                   String
+  admin_server_id         BigInt
+  current_emoji_server_id BigInt
+  host_server_id          BigInt
+  event_role_id           BigInt?
+  default_canvas_id       Int?
+
+  @@ignore
+}
+
+model participation {
+  guild_id BigInt
+  guild    guild  @relation(fields: [guild_id], references: [id])
+  event_id Int
+  event    event  @relation(fields: [event_id], references: [id])
+  // Not all participants may have a color, or it might not be set straight away
+  color_id Int?
+  color    color? @relation(fields: [color_id], references: [id])
+
+  @@id([guild_id, event_id])
+}
+
+model pixel {
+  canvas_id Int
+  canvas    canvas @relation(fields: [canvas_id], references: [id])
+  x         Int
+  y         Int
+  color_id  Int
+  color     color  @relation(fields: [color_id], references: [id])
+
+  @@id([canvas_id, x, y])
+}
+
+model user {
+  id                BigInt              @id
+  current_canvas_id Int?
+  skip_confirm      Boolean             @default(false)
+  cooldown_remind   Boolean             @default(false)
+  blacklist         blacklist?
+  cooldowns         cooldown[]
+  history           history[]
+  user_stats        user_stats[]
+  leaderboard       leaderboard[]
+  leaderboard_guild leaderboard_guild[]
+}
+
+view user_stats {
+  user_id                BigInt
+  user                   user     @relation(fields: [user_id], references: [id])
+  canvas_id              Int
+  canvas                 canvas   @relation(fields: [canvas_id], references: [id])
+  total_pixels           Int
+  rank                   Int
+  most_frequent_color_id Int
+  most_frequent_color    color    @relation(fields: [most_frequent_color_id], references: [id])
+  color_count            Int
+  // place_frequency        Unsupported("interval")
+  most_recent_timestamp  DateTime @db.Timestamptz(6)
+
+  @@id([user_id, canvas_id])
+}
+
+view guild_stats {
+  guild_id               BigInt
+  guild                  guild    @relation(fields: [guild_id], references: [id])
+  canvas_id              Int
+  canvas                 canvas   @relation(fields: [canvas_id], references: [id])
+  total_pixels           Int
+  most_frequent_color_id Int
+  most_frequent_color    color    @relation(fields: [most_frequent_color_id], references: [id])
+  color_count            Int
+  // place_frequency        Unsupported("interval")
+  most_recent_timestamp  DateTime @db.Timestamptz(6)
+
+  @@id([guild_id, canvas_id])
+}
+
+view leaderboard {
+  user_id      BigInt
+  user         user   @relation(fields: [user_id], references: [id])
+  canvas_id    Int
+  canvas       canvas @relation(fields: [canvas_id], references: [id])
+  total_pixles Int
+  rank         Int
+
+  @@id([user_id, canvas_id])
+}
+
+view leaderboard_guild {
+  user_id      BigInt
+  user         user   @relation(fields: [user_id], references: [id])
+  canvas_id    Int
+  canvas       canvas @relation(fields: [canvas_id], references: [id])
+  guild_id     BigInt
+  guild        guild  @relation(fields: [guild_id], references: [id])
+  total_pixles Int
+  rank         Int
+
+  @@id([user_id, guild_id, canvas_id])
+}
+
+view color_place_frequency {
+  user_id          BigInt
+  canvas_id        Int
+  median_time_diff Unsupported("interval")
+
+  @@id([user_id, canvas_id])
+}
+
+view color_place_frequency_guild {
+  guild_id         BigInt
+  canvas_id        Int
+  median_time_diff Unsupported("interval")
+
+  @@id([guild_id, canvas_id])
+}
+
+view most_frequent_color_guild {
+  guild_id  BigInt
+  canvas_id Int
+  color_id  Int
+  count     Int
+
+  @@id([guild_id, canvas_id])
+}
+
+view most_frequent_color {
+  user_id   BigInt
+  canvas_id Int
+  color_id  Int
+  count     Int
+
+  @@id([user_id, canvas_id])
+}

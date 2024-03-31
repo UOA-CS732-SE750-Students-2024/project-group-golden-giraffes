@@ -28,6 +28,7 @@
     "build": "tsc",
     "dev": "nodemon src/index.ts --devmode",
     "start": "node build/index.js",
+    "postinstall": "prisma generate",
     "lint": "biome lint .",
     "lint:fix": "biome lint --apply .",
     "format": "biome format .",
