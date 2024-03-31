@@ -1,0 +1,6 @@
+@localhost = http://localhost:8000
+@basePath = {{localhost}}
+
+# Hello world
+GET {{basePath}}/ HTTP/3.0
+content-type: text/plain
