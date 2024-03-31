@@ -1,5 +1,9 @@
 generator client {
   provider = "prisma-client-js"
+  // pnpm workspaces cause the types to be generated in the wrong place, so we need to manually make
+  // it install in the root node_modules folder. See: https://github.com/prisma/prisma/issues/6603
+  output = "../../../node_modules/.prisma/client"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -157,38 +161,38 @@ model user {
   leaderboard_guild leaderboard_guild[]
 }
 
-model user_stats {
-  user_id   BigInt
-  user      user @relation(fields: [user_id], references: [id])
-  canvas_id Int
-  canvas    canvas @relation(fields: [canvas_id], references: [id])
-  total_pixels Int
-  rank         Int
+view user_stats {
+  user_id                BigInt
+  user                   user     @relation(fields: [user_id], references: [id])
+  canvas_id              Int
+  canvas                 canvas   @relation(fields: [canvas_id], references: [id])
+  total_pixels           Int
+  rank                   Int
   most_frequent_color_id Int
-  most_frequent_color color @relation(fields: [most_frequent_color_id], references: [id])
-  color_count Int
-  // place_frequency Interval     Prisma doesn't support Intervals!!!!!
-  most_recent_timestamp DateTime @db.Timestamptz(6)
+  most_frequent_color    color    @relation(fields: [most_frequent_color_id], references: [id])
+  color_count            Int
+  place_frequency        Unsupported("interval")
+  most_recent_timestamp  DateTime @db.Timestamptz(6)
 
   @@id([user_id, canvas_id])
 }
 
-model guild_stats {
-  guild_id   BigInt
-  guild      guild @relation(fields: [guild_id], references: [id])
-  canvas_id Int
-  canvas    canvas @relation(fields: [canvas_id], references: [id])
-  total_pixels Int
+view guild_stats {
+  guild_id               BigInt
+  guild                  guild    @relation(fields: [guild_id], references: [id])
+  canvas_id              Int
+  canvas                 canvas   @relation(fields: [canvas_id], references: [id])
+  total_pixels           Int
   most_frequent_color_id Int
-  most_frequent_color color @relation(fields: [most_frequent_color_id], references: [id])
-  color_count Int
-  // place_frequency Interval     Prisma doesn't support Intervals!!!!!
-  most_recent_timestamp DateTime @db.Timestamptz(6)
+  most_frequent_color    color    @relation(fields: [most_frequent_color_id], references: [id])
+  color_count            Int
+  place_frequency        Unsupported("interval")
+  most_recent_timestamp  DateTime @db.Timestamptz(6)
 
   @@id([guild_id, canvas_id])
 }
 
-model leaderboard {
+view leaderboard {
   user_id       BigInt
   user          user   @relation(fields: [user_id], references: [id])
   canvas_id     Int
@@ -199,7 +203,7 @@ model leaderboard {
   @@id([user_id, canvas_id])
 }
 
-model leaderboard_guild {
+view leaderboard_guild {
   user_id       BigInt
   user          user   @relation(fields: [user_id], references: [id])
   canvas_id     Int
@@ -210,4 +214,38 @@ model leaderboard_guild {
   rank          Int
 
   @@id([user_id, guild_id, canvas_id])
+}
+
+view color_place_frequency {
+  user_id          BigInt
+  canvas_id        Int
+  median_time_diff Unsupported("interval")
+
+  @@id([user_id, canvas_id])
+}
+
+view color_place_frequency_guild {
+  guild_id         BigInt
+  canvas_id        Int
+  median_time_diff Unsupported("interval")
+
+  @@id([guild_id, canvas_id])
+}
+
+view most_frequent_color_guild {
+  guild_id  BigInt
+  canvas_id Int
+  color_id  Int
+  count     Int
+
+  @@id([guild_id, canvas_id])
+}
+
+view most_frequent_color {
+  user_id   BigInt
+  canvas_id Int
+  color_id  Int
+  count     Int
+
+  @@id([user_id, canvas_id])
 }
