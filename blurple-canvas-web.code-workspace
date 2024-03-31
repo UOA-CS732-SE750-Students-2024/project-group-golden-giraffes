@@ -65,6 +65,9 @@
     },
     "[markdown]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[prisma]": {
+      "editor.defaultFormatter": "Prisma.prisma"
     }
   },
   "extensions": {
@@ -74,6 +77,7 @@
       "EditorConfig.EditorConfig",
       "esbenp.prettier-vscode",
       "humao.rest-client",
+      "Prisma.prisma",
       "streetsidesoftware.code-spell-checker"
     ]
   }
