@@ -38,18 +38,18 @@ model canvas {
 }
 
 model color {
-  id          Int            @id @default(autoincrement())
-  code        String
-  emoji_name  String
-  emoji_id    BigInt
-  global      Boolean        @default(true)
-  name        String
-  rgba        Int[]
-  pixels      pixel[]
-  history     history[]
-  participant participation?
-  user_stats  user_stats[]
-  guild_stats guild_stats[]
+  id             Int             @id @default(autoincrement())
+  code           String
+  emoji_name     String
+  emoji_id       BigInt
+  global         Boolean         @default(true)
+  name           String
+  rgba           Int[]
+  pixels         pixel[]
+  history        history[]
+  user_stats     user_stats[]
+  guild_stats    guild_stats[]
+  participations participation[]
 }
 
 model cooldown {
@@ -131,7 +131,7 @@ model participation {
   event_id Int
   event    event  @relation(fields: [event_id], references: [id])
   // Not all participants may have a color, or it might not be set straight away
-  color_id Int?   @unique
+  color_id Int?
   color    color? @relation(fields: [color_id], references: [id])
 
   @@id([guild_id, event_id])
