@@ -3,5 +3,5 @@
 # @basePath = https://example.projectblurple.com/api/v1
 
 # Hello world
-GET {{basePath}}/ HTTP/3.0
+GET {{basePath}}/ HTTP/1.1
 content-type: text/plain
