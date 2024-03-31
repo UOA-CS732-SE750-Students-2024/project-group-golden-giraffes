@@ -14,8 +14,8 @@
 
 <ol type="a">
 <li>the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or
-<li> ownership of fifty percent (50%) or more of the outstanding shares, or
-<li> beneficial ownership of such entity.
+<li>ownership of fifty percent (50%) or more of the outstanding shares, or
+<li>beneficial ownership of such entity.
 </ol>
 
 “**You**” (or “**Your**”) shall mean an individual or Legal Entity exercising permissions granted by this License.
