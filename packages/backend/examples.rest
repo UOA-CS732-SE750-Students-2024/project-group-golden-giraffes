@@ -1,5 +1,4 @@
-@localhost = http://localhost:8000
-@basePath = {{localhost}}
+@basePath = http://localhost:8000
 # Amend and uncomment next line to use a remote deployment
 # @basePath = https://example.projectblurple.com/api/v1
 
