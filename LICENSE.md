@@ -13,9 +13,9 @@
 “**Legal Entity**” shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, “**control**” means
 
 <ol type="a">
-<li>the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or
-<li>ownership of fifty percent (50%) or more of the outstanding shares, or
-<li>beneficial ownership of such entity.
+  <li>the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or</li>
+  <li>ownership of fifty percent (50%) or more of the outstanding shares, or</li>
+  <li>beneficial ownership of such entity.</li>
 </ol>
 
 “**You**” (or “**Your**”) shall mean an individual or Legal Entity exercising permissions granted by this License.
@@ -71,4 +71,4 @@ In no event and under no legal theory, whether in tort (including negligence), c
 
 While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.
 
-*End of terms and conditions.*
+_End of terms and conditions._
