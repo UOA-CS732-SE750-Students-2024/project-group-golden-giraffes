@@ -91,4 +91,6 @@ Blurple Canvas Web wouldn’t exist without these lovely people and projects. Th
 
 ## 📜 Licence
 
+The code for Blurple Canvas Web is licensed under the [Apache License, Version 2.0](https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes?tab=License-1-ov-file).
+
 We’ll open source this at some point—probably after deadline—we just haven’t decided on a licence yet. Will likely end up being MIT.
