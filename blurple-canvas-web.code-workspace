@@ -23,11 +23,12 @@
       "javascriptreact",
       "markdown",
       "plaintext",
+      "shellscript",
+      "sql",
       "text",
       "typescript",
       "typescriptreact",
-      "yaml",
-      "yml"
+      "yaml"
     ],
     "cSpell.language": "en-GB",
     "cSpell.overrides": [
