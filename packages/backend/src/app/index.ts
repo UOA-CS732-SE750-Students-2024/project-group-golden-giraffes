@@ -2,7 +2,7 @@ import { Server } from "node:http";
 import express, { Express } from "express";
 import { prisma } from "../client";
 import config from "../config";
-import "../utils/bigInt"; // Make BigInt JSON serializable
+import "../utils"; // Make BigInt JSON serializable
 
 export interface ExpressServer {
   app: Express;
