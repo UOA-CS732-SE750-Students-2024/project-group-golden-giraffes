@@ -1,0 +1,7 @@
+@basePath = http://localhost:{{$dotenv PORT}}
+# Amend and uncomment next line to use a remote deployment
+# @basePath = https://example.projectblurple.com/api/v1
+
+### Hello world
+GET {{basePath}}/ HTTP/1.1
+content-type: application/json
