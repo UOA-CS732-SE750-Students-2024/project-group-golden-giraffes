@@ -2,7 +2,7 @@ import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 import { prisma } from "../client";
 
-export async function canvasToImage(canvas: canvas): Promise<PNG> {
+export async function canvasToPng(canvas: canvas): Promise<PNG> {
   const pixels = await prisma.pixel.findMany({
     select: {
       color: {
@@ -10,10 +10,16 @@ export async function canvasToImage(canvas: canvas): Promise<PNG> {
       },
     },
     where: { canvas_id: canvas.id },
-    orderBy: { y: "asc", x: "asc" },
+    orderBy: [{ y: "asc" }, { x: "asc" }],
   });
 
   const image = new PNG({ width: canvas.width, height: canvas.height, filterType: 0 });
+
+  console.log(pixels.length);
+  console.log(pixels[0]);
+  console.log(pixels[1]);
+  console.log(pixels[2]);
+  console.log(pixels[3]);
 
   pixels.forEach((pixel, index) => {
     const imageIndex = index * 4;
