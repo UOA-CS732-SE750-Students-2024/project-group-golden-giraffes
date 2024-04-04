@@ -15,12 +15,6 @@ export async function canvasToPng(canvas: canvas): Promise<PNG> {
 
   const image = new PNG({ width: canvas.width, height: canvas.height, filterType: 0 });
 
-  console.log(pixels.length);
-  console.log(pixels[0]);
-  console.log(pixels[1]);
-  console.log(pixels[2]);
-  console.log(pixels[3]);
-
   pixels.forEach((pixel, index) => {
     const imageIndex = index * 4;
     image.data[imageIndex] = pixel.color.rgba[0];

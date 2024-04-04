@@ -10,12 +10,10 @@ canvasRouter.get("/", async (req, res) => {
 
 canvasRouter.get("/:canvasId", async (req, res) => {
   // TODO: Validate that the canvasId is a number
-
+  const canvasId = Number.parseInt(req.params.canvasId);
   const canvas = await prisma.canvas.findFirst({
-    where: { id: Number.parseInt(req.params.canvasId) },
+    where: { id: canvasId },
   });
-
-  console.log(canvas);
 
   if (!canvas) {
     // TODO: Create error handling middleware
@@ -23,5 +21,15 @@ canvasRouter.get("/:canvasId", async (req, res) => {
   }
 
   const png = await canvasToPng(canvas);
-  png.pack().pipe(res.status(200).setHeader("Content-Type", "image/png"));
+  const now = Date.now();
+  const filename = `blurple-canvas-${canvasId}-${now}.png`;
+
+  png
+    .pack()
+    .pipe(
+      res
+        .status(200)
+        .setHeader("Content-Type", "image/png")
+        .setHeader("Content-Disposition", `inline; filename="${filename}"`),
+    );
 });
