@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { prisma } from "../../../client";
-import { canvasToPng } from "../../../services/canvasService";
+import { getCanvasPng } from "../../../services/canvasService";
 
 export const canvasRouter = Router();
 
@@ -11,16 +10,13 @@ canvasRouter.get("/", async (req, res) => {
 canvasRouter.get("/:canvasId", async (req, res) => {
   // TODO: Validate that the canvasId is a number
   const canvasId = Number.parseInt(req.params.canvasId);
-  const canvas = await prisma.canvas.findFirst({
-    where: { id: canvasId },
-  });
+  const png = await getCanvasPng(canvasId);
 
-  if (!canvas) {
+  if (!png) {
     // TODO: Create error handling middleware
     return res.status(404).json({ message: "Canvas not found" });
   }
 
-  const png = await canvasToPng(canvas);
   const now = Date.now();
   const filename = `blurple-canvas-${canvasId}-${now}.png`;
 

@@ -2,6 +2,8 @@ import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 import { prisma } from "../client";
 
+const canvasCache: Record<number, PNG> = {};
+
 export async function canvasToPng(canvas: canvas): Promise<PNG> {
   const pixels = await prisma.pixel.findMany({
     select: {
@@ -24,4 +26,24 @@ export async function canvasToPng(canvas: canvas): Promise<PNG> {
   });
 
   return image;
+}
+
+export async function getCanvasPng(canvasId: number): Promise<PNG | null> {
+  if (!canvasCache[canvasId]) {
+    console.debug(`Cache miss for canvas: ${canvasId}`);
+
+    const canvas = await prisma.canvas.findFirst({
+      where: { id: canvasId },
+    });
+
+    if (!canvas) {
+      // TODO: Throw error
+      return null;
+    }
+
+    canvasCache[canvasId] = await canvasToPng(canvas);
+    console.debug(`Canvas cached: ${canvasId}`);
+  }
+
+  return canvasCache[canvasId];
 }
