@@ -21,3 +21,7 @@ pnpm build
 
 pnpm start # This will run the built code
 ```
+
+### Generating types
+
+We use [Prisma](https://www.prisma.io) for connecting to our database. Running `pnpm install` also automatically generates type definitions for all the database tables used.
