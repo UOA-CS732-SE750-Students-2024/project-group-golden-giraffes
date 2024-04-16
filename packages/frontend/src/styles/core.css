@@ -1,0 +1,36 @@
+@import url("normalize.css") layer(normalize);
+
+@layer fonts {
+  @font-face {
+    font-family: "Mona Sans";
+    src: url("../fonts/mona-sans.woff2") format("woff2 supports variations"),
+      url("../fonts/mona-sans.woff2") format("woff2-variations");
+    font-weight: 200 900;
+    font-stretch: 75% 125%;
+  }
+}
+
+@layer core {
+  :root {
+    --discord-blurple-oklch: 57.74% 0.209 273.85;
+    --discord-green-oklch: 85.48% 0.197 150.16;
+    --discord-yellow-oklch: 92.18% 0.157 99.87;
+    --discord-fuchsia-oklch: 65.34% 0.217 351.92;
+    --discord-red-oklch: 63.18% 0.207 24.57;
+    --discord-white-oklch: 100% 0 0;
+    --discord-black-oklch: 0% 0 0;
+
+    --discord-old-blurple: 64.74% 0.124 270.62;
+    --discord-old-full-white: 100% 0 0;
+    --discord-old-greyple: 72.83% 0.025 236.13;
+    --discord-old-dark-but-not-black: 30.38% 0.008 255.56;
+    --discord-old-not-quite-black: 26.99% 0.008 240.16;
+    --discord-old-actually-black: 0% 0 0;
+    --font-sans: "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", "Inter", Roboto, Ubuntu, sans-serif;
+
+    background-color: oklch(var(--discord-not-quite-black-oklch));
+    color-scheme: dark;
+    font-family: var(--font-sans);
+  }
+}
