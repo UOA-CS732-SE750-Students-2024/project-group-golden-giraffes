@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-. scripts/ansiControlSequences.sh
+. "$(dirname "$0")/../scripts/ansiControlSequences.sh"
 
 # Prevent commits to main branch
 if [ $(git branch --show-current) = main ]; then
