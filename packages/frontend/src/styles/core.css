@@ -20,18 +20,19 @@
     --discord-white-oklch: 100% 0 0;
     --discord-black-oklch: 0% 0 0;
 
-    --discord-old-blurple: 64.74% 0.124 270.62;
-    --discord-old-full-white: 100% 0 0;
-    --discord-old-greyple: 72.83% 0.025 236.13;
-    --discord-old-dark-but-not-black: 30.38% 0.008 255.56;
-    --discord-old-not-quite-black: 26.99% 0.008 240.16;
-    --discord-old-actually-black: 0% 0 0;
+    --discord-old-blurple-oklch: 64.74% 0.124 270.62;
+    --discord-old-full-white-oklch: 100% 0 0;
+    --discord-old-greyple-oklch: 72.83% 0.025 236.13;
+    --discord-old-dark-but-not-black-oklch: 30.38% 0.008 255.56;
+    --discord-old-not-quite-black-oklch: 26.99% 0.008 240.16;
+    --discord-old-actually-black-oklch: 0% 0 0;
 
     --font-sans: "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont,
-      "Segoe UI", "Inter", Roboto, Ubuntu, sans-serif;
+      "Inter", "Segoe UI", Roboto, Ubuntu, sans-serif;
 
     background-color: oklch(var(--discord-not-quite-black-oklch));
-    color-scheme: dark;
+    color: oklch(var(--discord-white-oklch));
+    color-scheme: only dark;
     font-family: var(--font-sans);
   }
 }
