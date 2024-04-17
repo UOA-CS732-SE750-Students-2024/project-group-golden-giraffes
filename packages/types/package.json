@@ -26,15 +26,15 @@
   },
   "scripts": {
     "build": "tsc",
+    "format": "prettier --check --cache . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write --cache . --ignore-path ../../.gitignore",
     "lint": "biome lint .",
     "lint:fix": "biome lint --apply .",
-    "format": "biome format .",
-    "format:fix": "biome format --write .",
-    "check": "biome check .",
-    "check:fix": "biome check --apply ."
+    "check": "pnpm format && pnpm lint",
+    "check:fix": "pnpm format:fix && pnpm lint:fix"
   },
-  "dependencies": {},
   "devDependencies": {
+    "prettier": "^3.2.5",
     "typescript": "^5.4.2"
   }
 }
