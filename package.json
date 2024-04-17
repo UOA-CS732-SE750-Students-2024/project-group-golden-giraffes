@@ -19,15 +19,6 @@
   "bugs": {
     "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues"
   },
-  "engines": {
-    "node": ">=20",
-    "pnpm": ">=9.0.1"
-  },
-  "packageManager": "pnpm@9.0.1",
-  "devDependencies": {
-    "@biomejs/biome": "^1.6.4",
-    "husky": "^9.0.11"
-  },
   "scripts": {
     "lint": "pnpm --recursive lint",
     "lint:fix": "pnpm --recursive lint:fix",
@@ -36,7 +27,24 @@
     "check": "pnpm --recursive check",
     "check:fix": "pnpm --recursive check:fix",
     "prepare": "husky",
-    "build": "pnpm --recursive --parallel build",
+    "build": "pnpm --recursive build",
     "dev": "pnpm --recursive --parallel dev"
+  },
+  "lint-staged": {
+    "*.{css,html,md,markdown,yaml,yml}": "prettier --write",
+    "*.{cjs,d.cts,d.mts,js,json,jsonc,jsx,mjs,ts,tsx}": [
+      "prettier --write",
+      "biome lint --apply --files-ignore-unknown=true --no-errors-on-unmatched"
+    ]
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9.0.1"
+  },
+  "packageManager": "pnpm@9.0.1",
+  "devDependencies": {
+    "@biomejs/biome": "^1.6.4",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
   }
 }
