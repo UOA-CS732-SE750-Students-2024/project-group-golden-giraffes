@@ -21,11 +21,11 @@
   },
   "engines": {
     "node": ">=20",
-    "pnpm": ">=8.15.5"
+    "pnpm": ">=9.0.1"
   },
-  "packageManager": "pnpm@8.15.5",
+  "packageManager": "pnpm@9.0.1",
   "devDependencies": {
-    "@biomejs/biome": "^1.6.1",
+    "@biomejs/biome": "^1.6.4",
     "husky": "^9.0.11"
   },
   "scripts": {
@@ -36,7 +36,7 @@
     "check": "pnpm --recursive check",
     "check:fix": "pnpm --recursive check:fix",
     "prepare": "husky",
-    "build": "pnpm --recursive build",
+    "build": "pnpm --recursive --parallel build",
     "dev": "pnpm --recursive --parallel dev"
   }
 }
