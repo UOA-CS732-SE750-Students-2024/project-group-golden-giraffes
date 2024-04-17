@@ -3,7 +3,8 @@
 @layer fonts {
   @font-face {
     font-family: "Mona Sans";
-    src: url("../fonts/mona-sans.woff2") format("woff2 supports variations"),
+    src:
+      url("../fonts/mona-sans.woff2") format("woff2 supports variations"),
       url("../fonts/mona-sans.woff2") format("woff2-variations");
     font-weight: 200 900;
     font-stretch: 75% 125%;

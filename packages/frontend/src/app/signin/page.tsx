@@ -36,7 +36,8 @@ const Footer = styled("footer")`
 const Disclaimer = () => (
   <Footer>
     <p>
-      Project Blurple and Blurple Canvas are community-driven projects, not affiliated with Discord.
+      Project Blurple and Blurple Canvas are community-driven projects, not
+      affiliated with Discord.
     </p>
     <p>
       Blurple Canvas Web is{" "}
