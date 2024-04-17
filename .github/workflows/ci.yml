@@ -28,7 +28,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dev dependencies
-        run: pnpm install --dev --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Check formatting
         run: pnpm format
