@@ -1,13 +1,17 @@
 #!/usr/bin/env sh
-
+set -e
 . "$(dirname "$0")/../scripts/ansiControlSequences.sh"
 
 # Prevent commits to main branch
 if [ $(git branch --show-current) = main ]; then
-  printf '%b%bCommit aborted.%b Commits to the main branch aren’t allowed. Please switch to a feature branch:\n' "$BOLD" "$RED" "$RESET"
   printf '\n'
-  printf '  %bgit switch -c new-branch-name%b\n' "$BOLD" "$RESET"
+  printf '%b%b%b ERROR %b Committing to main branch isn’t allowed. Please switch to a feature branch:\n' "$BOLD" "$PURE_WHITE" "$ON_RED" "$RESET"
   printf '\n'
+  printf '  %bgit switch -c feature-branch-name%b\n' "$BOLD" "$RESET"
+  printf '\n'
+  printf 'You can override this by committing with the %b--no-verify%b (%b-n%b) flag, if you must\n' "$BOLD" "$RESET" "$BOLD" "$RESET"
+  printf '\n'
+
   exit 1
 fi
 
