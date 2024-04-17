@@ -9,22 +9,22 @@ export const Theme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#5865F2",
+      main: "#5865F2", // Blurple
     },
     secondary: {
-      main: "#EB459E",
+      main: "#EB459E", // Fuchsia
     },
     success: {
-      main: "#57F287",
+      main: "#57F287", // Green
     },
     error: {
-      main: "#ED4245",
+      main: "#ED4245", // Red
     },
     warning: {
-      main: "#FEE75C",
+      main: "#FEE75C", // Yellow
     },
     info: {
-      main: "#5865F2",
+      main: "#5865F2", // Blurple
     },
   },
   typography: {
