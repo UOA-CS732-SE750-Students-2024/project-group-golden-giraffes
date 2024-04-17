@@ -31,7 +31,7 @@
     --font-body: "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont,
       "Inter", "Segoe UI", Roboto, Ubuntu, sans-serif;
 
-    background-color: oklch(var(--discord-not-quite-black-oklch));
+    background-color: oklch(var(--discord-old-not-quite-black-oklch));
     color: oklch(var(--discord-white-oklch));
     color-scheme: only dark;
     font-family: var(--font-body);
