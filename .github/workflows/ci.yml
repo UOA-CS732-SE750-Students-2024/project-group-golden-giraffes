@@ -27,7 +27,7 @@ jobs:
           node-version-file: "package.json"
           cache: "pnpm"
 
-      - name: Install dev dependencies
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Check formatting
