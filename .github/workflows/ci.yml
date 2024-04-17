@@ -60,6 +60,12 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v3.0.0
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "pnpm"
+
       - name: Check formatting
         run: pnpm format
 
