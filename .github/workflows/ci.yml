@@ -27,8 +27,8 @@ jobs:
           node-version-file: "package.json"
           cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install dev dependencies
+        run: pnpm install --dev --frozen-lockfile
 
       - name: Check formatting
         run: pnpm format
@@ -61,7 +61,7 @@ jobs:
           restore-keys: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build frontend
         run: pnpm --filter frontend build
