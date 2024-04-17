@@ -11,6 +11,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  format_and_lint:
+    name: "Format & lint"
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3.0.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check formatting
+        run: pnpm format
+
+      - name: Check linting
+        run: pnpm lint
   build:
     name: "Build"
     timeout-minutes: 10
@@ -50,27 +74,3 @@ jobs:
         run: |
           bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
           ./actionlint -color -shellcheck=""
-  format_and_lint:
-    name: "Format & lint"
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3.0.0
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: "package.json"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Check formatting
-        run: pnpm format
-
-      - name: Check linting
-        run: pnpm lint
