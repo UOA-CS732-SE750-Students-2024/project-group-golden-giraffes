@@ -5,7 +5,6 @@ import Image from "next/image";
 
 const Background = styled("div")`
   align-items: center;
-  background-color: var(--discord-not-quite-black);
   block-size: 100vh;
   display: grid;
   gap: 4rem;
