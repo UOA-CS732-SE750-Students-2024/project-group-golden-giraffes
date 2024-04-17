@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { Button, Typography, styled } from "@mui/material";
+import Image from "next/image";
 
 const Background = styled("div")`
   align-items: center;
