@@ -35,6 +35,12 @@ jobs:
 
       - name: Check linting
         run: pnpm lint
+
+      # From https://github.com/rhysd/actionlint/blob/main/docs/usage.md#use-actionlint-on-github-actions
+      - name: Lint GitHub Actions workflows
+        run: |
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color -shellcheck=""
   build:
     name: "Build"
     timeout-minutes: 10
@@ -68,9 +74,3 @@ jobs:
 
       - name: Build backend
         run: pnpm --filter backend build
-
-      # From https://github.com/rhysd/actionlint/blob/main/docs/usage.md#use-actionlint-on-github-actions
-      - name: Check workflow files
-        run: |
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint -color -shellcheck=""
