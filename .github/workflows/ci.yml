@@ -14,7 +14,7 @@ jobs:
   lint:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    name: "Biome CI checks"
+    name: "CI"
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +38,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
-
       - name: Install dependencies
         run: pnpm install
 
@@ -48,8 +47,11 @@ jobs:
       - name: Build Backend
         run: pnpm --filter backend build
 
-      - name: Check linting & formatting
-        run: pnpm biome ci .
+      - name: Check formatting
+        run: pnpm format
+
+      - name: Check linting
+        run: pnpm lint
 
       # From https://github.com/rhysd/actionlint/blob/main/docs/usage.md#use-actionlint-on-github-actions
       - name: Check workflow files

@@ -29,12 +29,12 @@
     "dev": "nodemon src/index.ts --devmode",
     "start": "node build/index.js",
     "postinstall": "prisma generate",
+    "format": "prettier .",
+    "format:fix": "prettier --write .",
     "lint": "biome lint .",
     "lint:fix": "biome lint --apply .",
-    "format": "biome format .",
-    "format:fix": "biome format --write .",
-    "check": "biome check .",
-    "check:fix": "biome check --apply ."
+    "check": "pnpm format && pnpm lint",
+    "check:fix": "pnpm format:fix && pnpm lint:fix"
   },
   "dependencies": {
     "@prisma/client": "^5.11.0",
