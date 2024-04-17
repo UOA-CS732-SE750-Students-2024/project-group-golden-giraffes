@@ -39,7 +39,13 @@ const Disclaimer = () => (
       Project Blurple and Blurple Canvas are community-driven projects, not
       affiliated with Discord.
     </p>
-    <p>Blurple Canvas Web is open source.</p>
+    <p>
+      Blurple Canvas Web is{" "}
+      <a href="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes">
+        open source
+      </a>
+      .
+    </p>
   </Footer>
 );
 

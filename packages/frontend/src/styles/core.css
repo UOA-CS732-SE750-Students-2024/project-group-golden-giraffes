@@ -35,4 +35,18 @@
     color-scheme: only dark;
     font-family: var(--font-sans);
   }
+
+  @supports (font-tech(variations)) {
+    :root {
+      --text-slnt: 0;
+      font-variation-settings: "slnt" var(--text-slnt);
+    }
+
+    em,
+    i,
+    var {
+      font-style: normal;
+      --text-slnt: -12;
+    }
+  }
 }

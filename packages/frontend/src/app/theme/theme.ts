@@ -34,18 +34,11 @@ export const Theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          fontWeight: 450,
-          // backgroundColor: theme.palette.primary.main,
-          letterSpacing: "0.02em",
-          textTransform: "none",
-          boxShadow: "none",
           borderRadius: ".5rem",
-          "&:hover": {
-            boxShadow: "none",
-          },
-          "&:active": {
-            boxShadow: "none",
-          },
+          fontSize: "1rem",
+          fontWeight: 500,
+          letterSpacing: "0.005em",
+          textTransform: "none",
         },
       },
     },

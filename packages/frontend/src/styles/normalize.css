@@ -6,8 +6,6 @@
 }
 
 html {
-  color-scheme: light dark;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, Inter, sans-serif;
   font-kerning: normal;
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
@@ -19,7 +17,6 @@ html {
   orphans: 2;
   overflow-wrap: break-word;
   padding: 0;
-  print-color-adjust: exact;
   tab-size: 2;
   text-rendering: geometricPrecision;
   text-underline-position: from-font;
