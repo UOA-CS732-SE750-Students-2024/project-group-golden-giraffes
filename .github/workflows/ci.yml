@@ -66,6 +66,9 @@ jobs:
           node-version-file: "package.json"
           cache: "pnpm"
 
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Check formatting
         run: pnpm format
 
