@@ -45,6 +45,9 @@ importers:
       nodemon:
         specifier: ^3.1.0
         version: 3.1.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.2.5
       prisma:
         specifier: ^5.11.0
         version: 5.11.0
@@ -97,12 +100,18 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.2.22
+      prettier:
+        specifier: ^3.2.5
+        version: 3.2.5
       typescript:
         specifier: ^5.4.2
         version: 5.4.2
 
   packages/types:
     devDependencies:
+      prettier:
+        specifier: ^3.2.5
+        version: 3.2.5
       typescript:
         specifier: ^5.4.2
         version: 5.4.2
@@ -1726,6 +1735,12 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.1.0
     dev: false
+
+  /prettier@3.2.5:
+    resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
 
   /prisma@5.11.0:
     resolution: {integrity: sha512-KCLiug2cs0Je7kGkQBN9jDWoZ90ogE/kvZTUTgz2h94FEo8pczCkPH7fPNXkD1sGU7Yh65risGGD1HQ5DF3r3g==}
