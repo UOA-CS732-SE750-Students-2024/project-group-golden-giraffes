@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+import path from "node:path";
+
 dotenv.config();
 
 function requiredEnv(key: keyof NodeJS.ProcessEnv): string {
@@ -16,4 +18,5 @@ export default {
   api: {
     port: Number(process.env.PORT || 8000),
   },
+  rootDirectory: path.resolve(),
 } as const;
