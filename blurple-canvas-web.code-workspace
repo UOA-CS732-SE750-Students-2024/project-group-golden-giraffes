@@ -47,10 +47,10 @@
       "Jeffers",
       "Makaurau",
       "MERN",
+      "pngjs",
       "SOFTENG",
       "Tāmaki",
       "WCAG",
-      "pngjs"
     ],
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
