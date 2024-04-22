@@ -32,10 +32,16 @@ export function getCanvasFilename(canvasId: number, isLocked = false): string {
 }
 
 export function canvasPixelsToPng(canvasPixels: CanvasPixels): PNG {
-  return pixelsToPng(canvasPixels.width, canvasPixels.height, canvasPixels.pixels);
+  return pixelsToPng(
+    canvasPixels.width,
+    canvasPixels.height,
+    canvasPixels.pixels,
+  );
 }
 
-export async function getCanvasPng(canvasId: number): Promise<CachedCanvas | null> {
+export async function getCanvasPng(
+  canvasId: number,
+): Promise<CachedCanvas | null> {
   if (!CANVAS_CACHE[canvasId]) {
     return cacheCanvas(canvasId);
   }
@@ -76,7 +82,9 @@ function saveCanvasToFilesystem(canvas: canvas, pixels: PixelColor[]): string {
   const filename = getCanvasFilename(canvas.id, canvas.locked);
   const path = `${config.paths.canvases}/${filename}`;
 
-  pixelsToPng(canvas.width, canvas.height, pixels).pack().pipe(fs.createWriteStream(path));
+  pixelsToPng(canvas.width, canvas.height, pixels)
+    .pack()
+    .pipe(fs.createWriteStream(path));
 
   return path;
 }

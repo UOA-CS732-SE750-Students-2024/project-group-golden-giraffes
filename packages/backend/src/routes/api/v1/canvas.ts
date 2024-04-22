@@ -16,7 +16,10 @@ canvasRouter.get("/", async (req, res) => {
 canvasRouter.get("/:canvasId", async (req, res) => {
   const result = await CanvasIdParamModel.safeParseAsync(req.params);
   if (!result.success) {
-    res.status(400).json({ message: "The canvasId is not valid", errors: result.error.issues });
+    res.status(400).json({
+      message: "The canvasId is not valid",
+      errors: result.error.issues,
+    });
     return;
   }
 
