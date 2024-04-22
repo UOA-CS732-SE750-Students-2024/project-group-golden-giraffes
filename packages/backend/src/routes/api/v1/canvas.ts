@@ -1,5 +1,4 @@
 import { Router } from "express";
-import config from "../../../config";
 import { CanvasIdParamModel } from "../../../models/paramModels";
 import {
   canvasPixelsToPng,
