@@ -5,6 +5,7 @@ import {
   getCanvasFilename,
   getCanvasPng,
 } from "../../../services/canvasService";
+import { CanvasIdParamModel } from "../../../models/paramModels";
 
 export const canvasRouter = Router();
 
@@ -14,8 +15,13 @@ canvasRouter.get("/", async (req, res) => {
 });
 
 canvasRouter.get("/:canvasId", async (req, res) => {
-  // TODO: Validate that the canvasId is a number
-  const canvasId = Number.parseInt(req.params.canvasId);
+  const result = await CanvasIdParamModel.safeParseAsync(req.params);
+  if (!result.success) {
+    res.status(400).json({ message: 'The provided canvasId is not valid', errors: result.error.issues });
+    return;
+  }
+
+  const { canvasId } = result.data;
   const cachedCanvas = await getCanvasPng(canvasId);
 
   if (!cachedCanvas) {
