@@ -9,6 +9,7 @@ import {
 export const canvasRouter = Router();
 
 canvasRouter.get("/", async (req, res) => {
+  console.log(config.paths.canvases);
   res.status(200).json({ message: "Hello, World!" });
 });
 

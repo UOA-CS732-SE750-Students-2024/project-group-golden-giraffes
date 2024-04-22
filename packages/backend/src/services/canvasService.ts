@@ -74,7 +74,7 @@ function pixelsToPng(width: number, height: number, pixels: PixelColor[]): PNG {
 
 function saveCanvasToFilesystem(canvas: canvas, pixels: PixelColor[]): string {
   const filename = getCanvasFilename(canvas.id, canvas.locked);
-  const path = `${config.rootDirectory}/static/canvas/${filename}`;
+  const path = `${config.paths.canvases}/${filename}`;
 
   pixelsToPng(canvas.width, canvas.height, pixels).pack().pipe(fs.createWriteStream(path));
 
