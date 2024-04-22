@@ -1,6 +1,10 @@
 import { Router } from "express";
-import { canvasPixelsToPng, getCanvasFilename, getCanvasPng } from "../../../services/canvasService";
 import config from "../../../config";
+import {
+  canvasPixelsToPng,
+  getCanvasFilename,
+  getCanvasPng,
+} from "../../../services/canvasService";
 
 export const canvasRouter = Router();
 
