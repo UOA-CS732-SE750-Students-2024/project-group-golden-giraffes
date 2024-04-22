@@ -2,9 +2,17 @@ import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 import { prisma } from "../client";
 
-const canvasCache: Record<number, PNG> = {};
+type PixelColor = number[]; // [r, g, b, a]
 
-export async function canvasToPng(canvas: canvas): Promise<PNG> {
+interface CanvasPixels {
+  width: number;
+  height: number;
+  pixels: PixelColor[];
+}
+
+const canvasCache: Record<number, CanvasPixels> = {};
+
+export async function getCanvasPixels(canvas: canvas): Promise<CanvasPixels> {
   const pixels = await prisma.pixel.findMany({
     select: {
       color: {
@@ -15,14 +23,22 @@ export async function canvasToPng(canvas: canvas): Promise<PNG> {
     orderBy: [{ y: "asc" }, { x: "asc" }],
   });
 
-  const image = new PNG({ width: canvas.width, height: canvas.height, filterType: 0 });
+  return {
+    width: canvas.width,
+    height: canvas.height,
+    pixels: pixels.map((pixel) => pixel.color.rgba),
+  };
+}
 
-  pixels.forEach((pixel, index) => {
+export function canvasPixelsToPng(canvasPixels: CanvasPixels): PNG {
+  const image = new PNG({ width: canvasPixels.width, height: canvasPixels.height, filterType: 0 });
+
+  canvasPixels.pixels.forEach((color, index) => {
     const imageIndex = index * 4;
-    image.data[imageIndex] = pixel.color.rgba[0];
-    image.data[imageIndex + 1] = pixel.color.rgba[1];
-    image.data[imageIndex + 2] = pixel.color.rgba[2];
-    image.data[imageIndex + 3] = pixel.color.rgba[3];
+    image.data[imageIndex] = color[0];
+    image.data[imageIndex + 1] = color[1];
+    image.data[imageIndex + 2] = color[2];
+    image.data[imageIndex + 3] = color[3];
   });
 
   return image;
@@ -41,9 +57,12 @@ export async function getCanvasPng(canvasId: number): Promise<PNG | null> {
       return null;
     }
 
-    canvasCache[canvasId] = await canvasToPng(canvas);
+    const canvasPixels = await getCanvasPixels(canvas);
+    canvasCache[canvasId] = canvasPixels;
     console.debug(`Canvas cached: ${canvasId}`);
+  } else {
+    console.debug(`Cache hit for canvas: ${canvasId}`);
   }
 
-  return canvasCache[canvasId];
+  return canvasPixelsToPng(canvasCache[canvasId]);
 }
