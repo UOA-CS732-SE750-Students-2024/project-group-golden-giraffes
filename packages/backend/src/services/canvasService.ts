@@ -12,6 +12,10 @@ interface CanvasPixels {
 
 const canvasCache: Record<number, CanvasPixels> = {};
 
+export function getCanvasFilename(canvasId: number): string {
+  return `blurple-canvas__${canvasId}__${Date.now()}.png`;
+}
+
 export async function getCanvasPixels(canvas: canvas): Promise<CanvasPixels> {
   const pixels = await prisma.pixel.findMany({
     select: {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getCanvasPng } from "../../../services/canvasService";
+import { getCanvasFilename, getCanvasPng } from "../../../services/canvasService";
 
 export const canvasRouter = Router();
 
@@ -17,8 +17,7 @@ canvasRouter.get("/:canvasId", async (req, res) => {
     return res.status(404).json({ message: "Canvas not found" });
   }
 
-  const now = Date.now();
-  const filename = `blurple-canvas-${canvasId}-${now}.png`;
+  const filename = getCanvasFilename(canvasId);
 
   png
     .pack()
