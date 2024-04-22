@@ -67,13 +67,10 @@ jobs:
           restore-keys: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build frontend
         run: pnpm --filter frontend build
 
       - name: Build backend
-        run: |
-          cd packages/backend
-          pnpm prisma generate
-          pnpm build
+        run: pnpm --filter backend build
