@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { CanvasIdParamModel } from "../../../models/paramModels";
 import {
-  canvasPixelsToPng,
+  unlockedCanvasToPng,
   getCanvasFilename,
   getCanvasPng,
 } from "../../../services/canvasService";
@@ -37,7 +37,7 @@ canvasRouter.get("/:canvasId", async (req, res) => {
 
   const filename = getCanvasFilename(canvasId);
 
-  canvasPixelsToPng(cachedCanvas)
+  unlockedCanvasToPng(cachedCanvas)
     .pack()
     .pipe(
       res

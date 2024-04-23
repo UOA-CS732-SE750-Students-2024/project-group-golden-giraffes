@@ -6,19 +6,28 @@ import config from "../config";
 
 type PixelColor = number[]; // [r, g, b, a]
 
+/**
+ * A locked canvas cannot be edited by users. It is therefore, safe to store it as an image on the
+ * filesystem.
+ */
 interface LockedCanvas {
   isLocked: true;
   canvasPath: string;
 }
 
-interface CanvasPixels {
+/**
+ * An unlocked canvas can be edited by users so the pixels are stored in memory. This allows for
+ * easy updating of the canvas, while also allowing it to be rapidly returned from requests (as
+ * most of the time to build a canvas image from scratch is fetching the pixels from the database).
+ */
+interface UnlockedCanvas {
   isLocked: false;
   width: number;
   height: number;
   pixels: PixelColor[];
 }
 
-type CachedCanvas = LockedCanvas | CanvasPixels;
+type CachedCanvas = LockedCanvas | UnlockedCanvas;
 
 /**
  * An in-memory cache of canvases. Each canvas is either the width, height and pixels of the image
@@ -27,23 +36,45 @@ type CachedCanvas = LockedCanvas | CanvasPixels;
  */
 const CANVAS_CACHE: Record<number, CachedCanvas> = {};
 
+/**
+ * Generates a filename for a canvas image. If the canvas is not locked (And therefore, can change)
+ * the filename will include the current timestamp.
+ *
+ * @param canvasId The ID of the canvas
+ * @param isLocked Whether the canvas is locked or not
+ * @returns The generated filename
+ */
 export function getCanvasFilename(canvasId: number, isLocked = false): string {
   return `blurple-canvas__${canvasId}__${isLocked ? "locked" : Date.now()}.png`;
 }
 
-export function canvasPixelsToPng(canvasPixels: CanvasPixels): PNG {
+/**
+ * Converts an unlocked canvas from the cache to a PNG image.
+ *
+ * @param unlockedCanvas The unlocked canvas to convert
+ * @returns The PNG image
+ */
+export function unlockedCanvasToPng(unlockedCanvas: UnlockedCanvas): PNG {
   return pixelsToPng(
-    canvasPixels.width,
-    canvasPixels.height,
-    canvasPixels.pixels,
+    unlockedCanvas.width,
+    unlockedCanvas.height,
+    unlockedCanvas.pixels,
   );
 }
 
+/**
+ * Retrieves a canvas from the cache. If the canvas is not in the cache it will be fetched from the
+ * database and added to it.
+ *
+ * @param canvasId The ID of the canvas to retrieve
+ * @returns The cached canvas or null if there is no canvas with the provided ID
+ */
 export async function getCanvasPng(
   canvasId: number,
 ): Promise<CachedCanvas | null> {
   if (!CANVAS_CACHE[canvasId]) {
-    return cacheCanvas(canvasId);
+    console.debug(`Cache miss for canvas: ${canvasId}`);
+    return getAndCacheCanvas(canvasId);
   }
 
   console.debug(`Cache hit for canvas: ${canvasId}`);
@@ -89,9 +120,9 @@ function saveCanvasToFilesystem(canvas: canvas, pixels: PixelColor[]): string {
   return path;
 }
 
-async function cacheCanvas(canvasId: number): Promise<CachedCanvas | null> {
-  console.debug(`Cache miss for canvas: ${canvasId}`);
-
+async function getAndCacheCanvas(
+  canvasId: number,
+): Promise<CachedCanvas | null> {
   const canvas = await prisma.canvas.findFirst({
     where: { id: canvasId },
   });
@@ -102,7 +133,7 @@ async function cacheCanvas(canvasId: number): Promise<CachedCanvas | null> {
   }
 
   const pixels = await getCanvasPixels(canvas);
-  const canvasPixels: CanvasPixels = {
+  const canvasPixels: UnlockedCanvas = {
     isLocked: false,
     width: canvas.width,
     height: canvas.height,
@@ -119,7 +150,7 @@ async function cacheCanvas(canvasId: number): Promise<CachedCanvas | null> {
     console.debug(`Canvas saved to filesystem: ${canvasId} -> ${path}`);
   } else {
     CANVAS_CACHE[canvasId] = canvasPixels;
-    console.debug(`Canvas cached: ${canvasId}`);
+    console.debug(`Canvas cached in memory: ${canvasId}`);
   }
 
   // We always want to return the pixels, even if the image is locked as sometimes the image
