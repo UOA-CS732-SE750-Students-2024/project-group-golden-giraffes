@@ -9,8 +9,8 @@ export default class ApiError extends Error {
   }
 
   /**
-   * This method provides a default way of applying an error to a response. Subclasses can override
-   * this method to provide more complex error responses.
+   * This provides a default way of applying an error to a response. Subclasses can override this
+   * to provide more complex error responses.
    *
    * @param res The response to apply the error to
    */
