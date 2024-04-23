@@ -64,6 +64,25 @@ export function unlockedCanvasToPng(unlockedCanvas: UnlockedCanvas): PNG {
 }
 
 /**
+ * Retrieves a canvas from the cache using the default canvas ID defined in the database.
+ *
+ * @returns The cached canvas
+ */
+export async function getCurrentCanvas(): Promise<CachedCanvas> {
+  const info = await prisma.info.findFirst({
+    select: { default_canvas_id: true },
+  });
+
+  // To get rid of the nullable type from info. This should never happen
+  if (!info) {
+    throw new Error("The info table is empty! 😱");
+  }
+
+  const defaultCanvasId = info.default_canvas_id;
+  return getCanvasPng(defaultCanvasId);
+}
+
+/**
  * Retrieves a canvas from the cache. If the canvas is not in the cache it will be fetched from the
  * database and added to it.
  *
