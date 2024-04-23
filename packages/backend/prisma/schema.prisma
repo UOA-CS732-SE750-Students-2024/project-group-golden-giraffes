@@ -2,7 +2,7 @@ generator client {
   provider        = "prisma-client-js"
   // pnpm workspaces cause the types to be generated in the wrong place, so we need to manually make
   // it install in the root node_modules folder. See: https://github.com/prisma/prisma/issues/6603
-  output          = "../../../node_modules/.prisma/client"
+  output          = "../../../node_modules/.pnpm/@prisma+client@5.12.1_prisma@5.12.1/node_modules/.prisma/client"
   previewFeatures = ["views"]
 }
 

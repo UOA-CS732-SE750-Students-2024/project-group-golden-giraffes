@@ -37,7 +37,7 @@
     "check:fix": "pnpm format:fix && pnpm lint:fix"
   },
   "dependencies": {
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^5.12.1",
     "@types/pngjs": "^6.0.4",
     "express": "^4.19.2",
     "pngjs": "^7.0.0",
@@ -51,7 +51,7 @@
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
-    "prisma": "^5.11.0",
+    "prisma": "^5.12.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   }
