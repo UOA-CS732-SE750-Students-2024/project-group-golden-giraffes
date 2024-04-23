@@ -11,10 +11,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  format_and_lint:
+    name: "Format & lint"
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    name: "CI"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3.0.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Check formatting
+        run: pnpm format
+
+      - name: Check linting
+        run: pnpm lint
+
+      # From https://github.com/rhysd/actionlint/blob/main/docs/usage.md#use-actionlint-on-github-actions
+      - name: Lint GitHub Actions workflows
+        run: |
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color -shellcheck=""
+  build:
+    name: "Build"
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -30,31 +60,17 @@ jobs:
       - name: Restore Next.js cache
         uses: actions/cache@v4
         with:
-          path: |
-            ${{ github.workspace }}/packages/frontend/.next/cache
-          # Generate a new cache whenever packages or source files change.
+          path: ${{ github.workspace }}/packages/frontend/.next/cache
+          # Generate a new cache whenever packages or source files change
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/frontend/**/*.[jt]s', '**/frontend/**/*.[jt]sx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+          # If source files changed but packages didn’t, rebuild from a prior cache
+          restore-keys: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build Frontend
+      - name: Build frontend
         run: pnpm --filter frontend build
 
-      - name: Build Backend
+      - name: Build backend
         run: pnpm --filter backend build
-
-      - name: Check formatting
-        run: pnpm format
-
-      - name: Check linting
-        run: pnpm lint
-
-      # From https://github.com/rhysd/actionlint/blob/main/docs/usage.md#use-actionlint-on-github-actions
-      - name: Check workflow files
-        run: |
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint -color -shellcheck=""
