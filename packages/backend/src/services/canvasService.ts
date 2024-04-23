@@ -28,7 +28,7 @@ interface UnlockedCanvas {
   pixels: PixelColor[];
 }
 
-type CachedCanvas = LockedCanvas | UnlockedCanvas;
+export type CachedCanvas = LockedCanvas | UnlockedCanvas;
 
 /**
  * An in-memory cache of canvases. Each canvas is either the width, height and pixels of the image
@@ -66,9 +66,9 @@ export function unlockedCanvasToPng(unlockedCanvas: UnlockedCanvas): PNG {
 /**
  * Retrieves a canvas from the cache using the default canvas ID defined in the database.
  *
- * @returns The cached canvas
+ * @returns A tuple containing the id of the canvas and the cached canvas
  */
-export async function getCurrentCanvas(): Promise<CachedCanvas> {
+export async function getCurrentCanvas(): Promise<[number, CachedCanvas]> {
   const info = await prisma.info.findFirst({
     select: { default_canvas_id: true },
   });
@@ -79,7 +79,9 @@ export async function getCurrentCanvas(): Promise<CachedCanvas> {
   }
 
   const defaultCanvasId = info.default_canvas_id;
-  return getCanvasPng(defaultCanvasId);
+  const cachedCanvas = await getCanvasPng(defaultCanvasId);
+
+  return [defaultCanvasId, cachedCanvas];
 }
 
 /**
