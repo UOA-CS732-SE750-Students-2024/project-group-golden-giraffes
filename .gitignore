@@ -1,3 +1,6 @@
+# Cached canvas images
+**/backend/static/canvas
+
 # Generated code
 **/node_modules/
 **/.pnp
@@ -90,5 +93,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-**/backend/static/canvas
