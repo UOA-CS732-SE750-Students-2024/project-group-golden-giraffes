@@ -8,7 +8,7 @@ type PixelColor = number[]; // [r, g, b, a]
 
 /**
  * A locked canvas cannot be edited by users. It is therefore, safe to store it as an image on the
- * filesystem.
+ * file system.
  */
 interface LockedCanvas {
   isLocked: true;
@@ -32,7 +32,7 @@ type CachedCanvas = LockedCanvas | UnlockedCanvas;
 /**
  * An in-memory cache of canvases. Each canvas is either the width, height and pixels of the image
  * or if the image is locked (and therefore cannot be modified) the path to the canvas image on the
- * filesystem.
+ * file system.
  */
 const CANVAS_CACHE: Record<number, CachedCanvas> = {};
 
@@ -73,11 +73,11 @@ export async function getCanvasPng(
   canvasId: number,
 ): Promise<CachedCanvas | null> {
   if (!CANVAS_CACHE[canvasId]) {
-    console.debug(`Cache miss for canvas: ${canvasId}`);
+    console.debug(`Cache miss for canvas ${canvasId}`);
     return getAndCacheCanvas(canvasId);
   }
 
-  console.debug(`Cache hit for canvas: ${canvasId}`);
+  console.debug(`Cache hit for canvas ${canvasId}`);
   return CANVAS_CACHE[canvasId];
 }
 
@@ -109,7 +109,7 @@ function pixelsToPng(width: number, height: number, pixels: PixelColor[]): PNG {
   return image;
 }
 
-function saveCanvasToFilesystem(canvas: canvas, pixels: PixelColor[]): string {
+function saveCanvasToFileSystem(canvas: canvas, pixels: PixelColor[]): string {
   const filename = getCanvasFilename(canvas.id, canvas.locked);
   const path = `${config.paths.canvases}/${filename}`;
 
@@ -133,7 +133,7 @@ async function getAndCacheCanvas(
   }
 
   const pixels = await getCanvasPixels(canvas);
-  const canvasPixels: UnlockedCanvas = {
+  const unlockedCanvas: UnlockedCanvas = {
     isLocked: false,
     width: canvas.width,
     height: canvas.height,
@@ -141,19 +141,20 @@ async function getAndCacheCanvas(
   };
 
   if (canvas.locked) {
-    const path = saveCanvasToFilesystem(canvas, pixels);
+    const path = saveCanvasToFileSystem(canvas, pixels);
     CANVAS_CACHE[canvasId] = {
       isLocked: true,
       canvasPath: path,
     };
 
-    console.debug(`Canvas saved to filesystem: ${canvasId} -> ${path}`);
+    console.debug(`Canvas ${canvasId} saved to ${path}`);
   } else {
-    CANVAS_CACHE[canvasId] = canvasPixels;
-    console.debug(`Canvas cached in memory: ${canvasId}`);
+    CANVAS_CACHE[canvasId] = unlockedCanvas;
+    console.debug(`Canvas ${canvasId} cached in memory`);
   }
 
-  // We always want to return the pixels, even if the image is locked as sometimes the image
-  // hasn't finished being written to the filesystem when express tries to send it in the response.
-  return canvasPixels;
+  // We always want to return the unlocked canvas, even if the image is locked as sometimes the
+  // image hasn’t finished being written to the file system when Express tries to send it in the
+  // response.
+  return unlockedCanvas;
 }
