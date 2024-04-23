@@ -1,4 +1,4 @@
-name: actionlint
+name: GitHub Actions
 
 on:
   push:
@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   format_and_lint:
-    name: "Lint GitHub Actions workflows"
+    name: "Lint workflows"
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
