@@ -128,7 +128,7 @@ async function getAndCacheCanvas(
   });
 
   if (!canvas) {
-    // TODO: Throw error
+    // TODO: Throw error?
     return null;
   }
 
