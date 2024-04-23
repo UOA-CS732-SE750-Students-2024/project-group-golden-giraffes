@@ -5,7 +5,7 @@ import {
   getCanvasFilename,
   getCanvasPng,
 } from "@/services/canvasService";
-import ApiError from "@/errors/ApiError";
+import { ApiError } from "@/errors";
 
 export const canvasRouter = Router();
 

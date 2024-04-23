@@ -3,7 +3,7 @@ import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 import { prisma } from "@/client";
 import config from "@/config";
-import NotFoundError from "@/errors/NotFoundError";
+import { NotFoundError } from "@/errors";
 
 type PixelColor = number[]; // [r, g, b, a]
 
