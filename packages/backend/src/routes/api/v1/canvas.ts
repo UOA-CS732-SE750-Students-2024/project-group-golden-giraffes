@@ -15,11 +15,10 @@ canvasRouter.get("/", async (req, res) => {
 canvasRouter.get("/:canvasId", async (req, res) => {
   const result = await CanvasIdParamModel.safeParseAsync(req.params);
   if (!result.success) {
-    res.status(400).json({
-      message: "The canvasId is not valid",
+    return res.status(400).json({
+      message: `${req.params.canvasId} is not a valid canvas ID`,
       errors: result.error.issues,
     });
-    return;
   }
 
   const { canvasId } = result.data;
@@ -32,8 +31,7 @@ canvasRouter.get("/:canvasId", async (req, res) => {
   }
 
   if (cachedCanvas.isLocked) {
-    res.sendFile(cachedCanvas.canvasPath);
-    return;
+    return res.sendFile(cachedCanvas.canvasPath);
   }
 
   const filename = getCanvasFilename(canvasId);
@@ -43,7 +41,7 @@ canvasRouter.get("/:canvasId", async (req, res) => {
     .pipe(
       res
         .status(200)
-        .setHeader("Content-Type", "image/png")
+        .type("png")
         .setHeader("Content-Disposition", `inline; filename="${filename}"`),
     );
 });
