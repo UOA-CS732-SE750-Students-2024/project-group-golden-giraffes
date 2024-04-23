@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
-import { prisma } from "../client";
-import config from "../config";
-import NotFoundError from "../errors/NotFoundError";
+import { prisma } from "@/client";
+import config from "@/config";
+import NotFoundError from "@/errors/NotFoundError";
 
 type PixelColor = number[]; // [r, g, b, a]
 

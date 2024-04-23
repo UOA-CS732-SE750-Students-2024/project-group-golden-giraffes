@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { CanvasIdParamModel } from "../../../models/paramModels";
+import { CanvasIdParamModel } from "@/models/paramModels";
 import {
   unlockedCanvasToPng,
   getCanvasFilename,
   getCanvasPng,
-} from "../../../services/canvasService";
-import ApiError from "../../../errors/ApiError";
+} from "@/services/canvasService";
+import ApiError from "@/errors/ApiError";
 
 export const canvasRouter = Router();
 
