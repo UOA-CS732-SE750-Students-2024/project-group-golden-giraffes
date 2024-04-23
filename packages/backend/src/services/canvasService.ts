@@ -3,6 +3,7 @@ import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 import { prisma } from "../client";
 import config from "../config";
+import NotFoundError from "../errors/NotFoundError";
 
 type PixelColor = number[]; // [r, g, b, a]
 
@@ -67,11 +68,9 @@ export function unlockedCanvasToPng(unlockedCanvas: UnlockedCanvas): PNG {
  * database and added to it.
  *
  * @param canvasId The ID of the canvas to retrieve
- * @returns The cached canvas or null if there is no canvas with the provided ID
+ * @returns The cached canvas
  */
-export async function getCanvasPng(
-  canvasId: number,
-): Promise<CachedCanvas | null> {
+export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
   if (!CANVAS_CACHE[canvasId]) {
     console.debug(`Cache miss for canvas ${canvasId}`);
     return getAndCacheCanvas(canvasId);
@@ -120,16 +119,13 @@ function saveCanvasToFileSystem(canvas: canvas, pixels: PixelColor[]): string {
   return path;
 }
 
-async function getAndCacheCanvas(
-  canvasId: number,
-): Promise<CachedCanvas | null> {
+async function getAndCacheCanvas(canvasId: number): Promise<CachedCanvas> {
   const canvas = await prisma.canvas.findFirst({
     where: { id: canvasId },
   });
 
   if (!canvas) {
-    // TODO: Throw error?
-    return null;
+    throw new NotFoundError(`There is no canvas with ID ${canvasId}`);
   }
 
   const pixels = await getCanvasPixels(canvas);

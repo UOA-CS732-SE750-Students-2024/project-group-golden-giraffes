@@ -12,7 +12,7 @@ export default class ApiError extends Error {
     res.status(this.status).json({ message: this.message });
   }
 
-  public static handleError(res: Response, error: Error): void {
+  public static handleError(res: Response, error: unknown): void {
     if (error instanceof ApiError) {
       error.applyToResponse(res);
     } else {
