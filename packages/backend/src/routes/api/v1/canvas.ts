@@ -26,7 +26,9 @@ canvasRouter.get("/:canvasId", async (req, res) => {
   const cachedCanvas = await getCanvasPng(canvasId);
 
   if (!cachedCanvas) {
-    return res.status(404).json({ message: "There is no canvas with that id" });
+    return res
+      .status(404)
+      .json({ message: `There is no canvas with ID ${canvasId}` });
   }
 
   if (cachedCanvas.isLocked) {
