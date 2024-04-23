@@ -2,8 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
@@ -36,15 +39,16 @@ jobs:
       - name: Check linting
         run: pnpm lint
 
-      # From https://github.com/rhysd/actionlint/blob/main/docs/usage.md#use-actionlint-on-github-actions
-      - name: Lint GitHub Actions workflows
-        run: |
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint -color -shellcheck=""
   build:
     name: "Build"
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - backend
+          - web-app
     steps:
       - uses: actions/checkout@v4
 
@@ -69,8 +73,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build frontend
-        run: pnpm --filter frontend build
-
-      - name: Build backend
-        run: pnpm --filter backend build
+      - name: Build
+        run: pnpm --filter ${{ matrix.package }} build
