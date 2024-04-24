@@ -16,7 +16,7 @@ canvasRouter.get("/", async (req, res) => {
     const [canvasId, cachedCanvas] = await getCurrentCanvas();
     sendCachedCanvas(res, canvasId, cachedCanvas);
   } catch (error) {
-    ApiError.handleError(res, error);
+    ApiError.sendError(res, error);
   }
 });
 
@@ -36,7 +36,7 @@ canvasRouter.get("/:canvasId", async (req, res) => {
 
     sendCachedCanvas(res, canvasId, cachedCanvas);
   } catch (error) {
-    ApiError.handleError(res, error);
+    ApiError.sendError(res, error);
   }
 });
 
