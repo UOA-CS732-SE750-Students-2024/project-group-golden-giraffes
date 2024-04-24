@@ -52,6 +52,9 @@
       "Tāmaki",
       "WCAG",
     ],
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.biome": "explicit",
+    },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
@@ -71,15 +74,6 @@
       "**/build": true,
       "**/dist": true,
       "**/node_modules": true,
-    },
-    "[css]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
-    },
-    "[html]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
-    },
-    "[markdown]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "[prisma]": {
       "editor.defaultFormatter": "Prisma.prisma",
