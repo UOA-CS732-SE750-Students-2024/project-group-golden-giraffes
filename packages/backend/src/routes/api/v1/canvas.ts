@@ -1,6 +1,5 @@
 import { ApiError } from "@/errors";
 import { CanvasIdParamModel } from "@/models/paramModels";
-import { Response, Router } from "express";
 import {
   CachedCanvas,
   getCanvasFilename,
@@ -8,6 +7,7 @@ import {
   getCurrentCanvas,
   unlockedCanvasToPng,
 } from "@/services/canvasService";
+import { Response, Router } from "express";
 
 export const canvasRouter = Router();
 
