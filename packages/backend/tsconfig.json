@@ -6,8 +6,15 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "build",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "exclude": ["node_modules"],
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "ts-node": {
+    // This is required to use path aliases with nodemon
+    "require": ["tsconfig-paths/register"]
+  }
 }
