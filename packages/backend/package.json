@@ -41,6 +41,7 @@
     "@types/pngjs": "^6.0.4",
     "express": "^4.19.2",
     "pngjs": "^7.0.0",
+    "tsconfig-paths": "^4.2.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
