@@ -31,6 +31,7 @@ export async function getCurrentEventPalette(): Promise<PaletteColor[]> {
 export async function getEventPalette(
   eventId: number,
 ): Promise<PaletteColor[]> {
+  console.debug(`Getting palette for event ${eventId}`);
   const eventPalette = await prisma.color.findMany({
     select: {
       id: true,
