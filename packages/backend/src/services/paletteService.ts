@@ -1,6 +1,14 @@
 import { prisma } from "@/client";
 import { PaletteColor } from "@blurple-canvas-web/types";
 
+/**
+ * Retrieves the palette for an event. This includes all global colors and the partner colors for
+ * the specific event. If there is not event with the given ID, only the global colors will be
+ * returned.
+ *
+ * @param eventId The ID of the event to get the palette for
+ * @returns The palette for the event
+ */
 export async function getEventPalette(
   eventId: number,
 ): Promise<PaletteColor[]> {
