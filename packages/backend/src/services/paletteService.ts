@@ -15,7 +15,8 @@ export async function getPaletteForEvent(
         select: {
           guild: { select: { invite: true } }, // Include the guild invite
         },
-        // Only include the participation for the event we're looking at
+        // Only include the participation for the event we're looking at. This way the only element
+        // in the participations array will be the one for the event we're looking at.
         where: {
           event_id: eventId,
         },
@@ -32,6 +33,14 @@ export async function getPaletteForEvent(
     },
   });
 
-  // TODO: Map the eventPalette to a PaletteDto
-  return {} as PaletteDto;
+  return eventPalette.map((color) => ({
+    id: color.id,
+    code: color.code,
+    name: color.name,
+    rgba: color.rgba,
+    global: color.global,
+    // We don't need to worry about the size of participations because JS doesn't throw index out
+    // of bounds errors, instead it just returns undefined.
+    invite: color.participations[0]?.guild?.invite ?? null,
+  }));
 }

@@ -1,18 +1,8 @@
-interface Color {
+export interface PaletteColor {
   id: number;
   code: string;
   name: string;
   rgba: number[]; // [r, g, b, a]
+  global: boolean;
+  invite: string | null;
 }
-
-export interface GlobalColor extends Color {
-  global: true;
-  invite: null;
-}
-
-export interface PartnerColor extends Color {
-  global: false;
-  invite: string;
-}
-
-export type PaletteColor = GlobalColor | PartnerColor;
