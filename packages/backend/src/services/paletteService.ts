@@ -1,7 +1,9 @@
 import { prisma } from "@/client";
-import { PaletteDto } from "@blurple-canvas-web/types";
+import { PaletteColor } from "@blurple-canvas-web/types";
 
-export async function getPaletteForEvent(eventId: number): Promise<PaletteDto> {
+export async function getPaletteForEvent(
+  eventId: number,
+): Promise<PaletteColor[]> {
   const eventPalette = await prisma.color.findMany({
     select: {
       id: true,

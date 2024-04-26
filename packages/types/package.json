@@ -26,6 +26,7 @@
     "pnpm": ">=9.0.1"
   },
   "scripts": {
+    "dev": "tsc --watch",
     "build": "tsc",
     "format": "prettier --check --cache . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write --cache . --ignore-path ../../.gitignore",

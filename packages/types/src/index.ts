@@ -1,1 +1,1 @@
-export * from "./paletteDto";
+export * from "./paletteColor";
