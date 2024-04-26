@@ -2,6 +2,25 @@ import { prisma } from "@/client";
 import { PaletteColor } from "@blurple-canvas-web/types";
 
 /**
+ * Retrieves the palette for the current event defined in the database.
+ *
+ * @returns The palette for the current event
+ */
+export async function getCurrentEventPalette(): Promise<PaletteColor[]> {
+  const info = await prisma.info.findFirst({
+    select: { current_event_id: true },
+  });
+
+  // To get rid of the nullable type from info. This should never happen
+  if (!info) {
+    throw new Error("The info table is empty! 😱");
+  }
+
+  const currentEventId = info.current_event_id;
+  return await getEventPalette(currentEventId);
+}
+
+/**
  * Retrieves the palette for an event. This includes all global colors and the partner colors for
  * the specific event. If there is not event with the given ID, only the global colors will be
  * returned.
