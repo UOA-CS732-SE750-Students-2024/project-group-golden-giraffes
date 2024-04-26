@@ -1,16 +1,23 @@
 import { ApiError } from "@/errors";
 import { CanvasIdParamModel } from "@/models/paramModels";
 import {
+  CachedCanvas,
   getCanvasFilename,
   getCanvasPng,
+  getCurrentCanvas,
   unlockedCanvasToPng,
 } from "@/services/canvasService";
-import { Router } from "express";
+import { Response, Router } from "express";
 
 export const canvasRouter = Router();
 
 canvasRouter.get("/", async (req, res) => {
-  res.status(200).json({ message: "Hello, World!" });
+  try {
+    const [canvasId, cachedCanvas] = await getCurrentCanvas();
+    sendCachedCanvas(res, canvasId, cachedCanvas);
+  } catch (error) {
+    ApiError.sendError(res, error);
+  }
 });
 
 canvasRouter.get("/:canvasId", async (req, res) => {
@@ -27,29 +34,33 @@ canvasRouter.get("/:canvasId", async (req, res) => {
     const { canvasId } = result.data;
     const cachedCanvas = await getCanvasPng(canvasId);
 
-    if (!cachedCanvas) {
-      res
-        .status(404)
-        .json({ message: `There is no canvas with ID ${canvasId}` });
-      return;
-    }
-
-    if (cachedCanvas.isLocked) {
-      res.sendFile(cachedCanvas.canvasPath);
-      return;
-    }
-
-    const filename = getCanvasFilename(canvasId);
-
-    unlockedCanvasToPng(cachedCanvas)
-      .pack()
-      .pipe(
-        res
-          .status(200)
-          .type("png")
-          .setHeader("Content-Disposition", `inline; filename="${filename}"`),
-      );
+    sendCachedCanvas(res, canvasId, cachedCanvas);
   } catch (error) {
-    ApiError.handleError(res, error);
+    ApiError.sendError(res, error);
   }
 });
+
+/**
+ * Handles sending a cached canvas as a response.
+ */
+function sendCachedCanvas(
+  res: Response,
+  canvasId: number,
+  cachedCanvas: CachedCanvas,
+): void {
+  if (cachedCanvas.isLocked) {
+    res.sendFile(cachedCanvas.canvasPath);
+    return;
+  }
+
+  const filename = getCanvasFilename(canvasId);
+
+  unlockedCanvasToPng(cachedCanvas)
+    .pack()
+    .pipe(
+      res
+        .status(200)
+        .type("png")
+        .setHeader("Content-Disposition", `inline; filename="${filename}"`),
+    );
+}
