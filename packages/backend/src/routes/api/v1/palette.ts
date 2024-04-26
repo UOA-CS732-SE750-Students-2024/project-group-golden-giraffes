@@ -13,7 +13,7 @@ paletteRouter.get("/", async (req, res) => {
     const palette = await getCurrentEventPalette();
     return res.status(200).json(palette);
   } catch (error) {
-    ApiError.handleError(res, error);
+    ApiError.sendError(res, error);
   }
 });
 
@@ -33,6 +33,6 @@ paletteRouter.get("/:eventId", async (req, res) => {
 
     res.status(200).json(palette);
   } catch (error) {
-    ApiError.handleError(res, error);
+    ApiError.sendError(res, error);
   }
 });
