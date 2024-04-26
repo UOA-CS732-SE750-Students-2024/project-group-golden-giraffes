@@ -1,13 +1,20 @@
 import { ApiError } from "@/errors";
 import { EventIdParamModel } from "@/models/paramModels";
-import { getEventPalette } from "@/services/paletteService";
+import {
+  getCurrentEventPalette,
+  getEventPalette,
+} from "@/services/paletteService";
 import { Router } from "express";
 
 export const paletteRouter = Router();
 
 paletteRouter.get("/", async (req, res) => {
-  getEventPalette(2023);
-  res.end();
+  try {
+    const palette = await getCurrentEventPalette();
+    return res.status(200).json(palette);
+  } catch (error) {
+    ApiError.handleError(res, error);
+  }
 });
 
 paletteRouter.get("/:eventId", async (req, res) => {
@@ -24,7 +31,7 @@ paletteRouter.get("/:eventId", async (req, res) => {
     const { eventId } = result.data;
     const palette = await getEventPalette(eventId);
 
-    res.status(200).send(palette);
+    res.status(200).json(palette);
   } catch (error) {
     ApiError.handleError(res, error);
   }
