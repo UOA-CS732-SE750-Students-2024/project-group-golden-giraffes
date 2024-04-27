@@ -11,7 +11,7 @@ import { Response, Router } from "express";
 
 export const canvasRouter = Router();
 
-canvasRouter.get("/", async (req, res) => {
+canvasRouter.get("/current", async (req, res) => {
   try {
     const [canvasId, cachedCanvas] = await getCurrentCanvas();
     sendCachedCanvas(res, canvasId, cachedCanvas);

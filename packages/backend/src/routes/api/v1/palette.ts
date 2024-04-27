@@ -8,7 +8,7 @@ import { Router } from "express";
 
 export const paletteRouter = Router();
 
-paletteRouter.get("/", async (req, res) => {
+paletteRouter.get("/current", async (req, res) => {
   try {
     const palette = await getCurrentEventPalette();
     return res.status(200).json(palette);
