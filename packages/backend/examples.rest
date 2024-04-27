@@ -4,4 +4,16 @@
 
 ### Hello world
 GET {{basePath}}/ HTTP/1.1
-content-type: application/json
+Content-Type: application/json
+
+## Event Palette
+
+### Get palette for an event
+@eventId = 2023
+
+GET {{basePath}}/api/v1/palette/{{eventId}} HTTP/1.1
+Content-Type: application/json
+
+### Get palette for current event
+GET {{basePath}}/api/v1/palette/current HTTP/1.1
+Content-Type: application/json
