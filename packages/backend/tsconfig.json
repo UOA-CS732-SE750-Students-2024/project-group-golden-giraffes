@@ -11,7 +11,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "**/*.test.ts"],
   "include": ["src/**/*"],
   "ts-node": {
     // This is required to use path aliases with nodemon
