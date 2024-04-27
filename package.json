@@ -28,7 +28,8 @@
     "check:fix": "pnpm --recursive check:fix",
     "prepare": "husky",
     "build": "pnpm --recursive build",
-    "dev": "pnpm --recursive --parallel dev"
+    "dev": "pnpm --recursive --parallel dev",
+    "test": "pnpm --recursive test"
   },
   "lint-staged": {
     "*.{css,html,md,markdown,yaml,yml}": "prettier --write",
