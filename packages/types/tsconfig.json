@@ -1,0 +1,21 @@
+{
+  // See: https://www.npmjs.com/package/@tsconfig/node20
+  "extends": "@tsconfig/node20/tsconfig.json",
+
+  // Reference: https://www.typescriptlang.org/tsconfig
+  "compilerOptions": {
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "build",
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/**/*"],
+  "ts-node": {
+    // This is required to use path aliases with nodemon
+    "require": ["tsconfig-paths/register"]
+  }
+}

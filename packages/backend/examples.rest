@@ -1,7 +1,26 @@
-@basePath = http://localhost:{{$dotenv PORT}}
+@basePath = http://localhost:{{$dotenv PORT}}/api/v1
 # Amend and uncomment next line to use a remote deployment
 # @basePath = https://example.projectblurple.com/api/v1
 
-### Hello world
-GET {{basePath}}/ HTTP/1.1
-content-type: application/json
+### Canvas
+
+### Get specific canvas
+@canvasId = 2023
+GET {{basePath}}/canvas/{{canvasId}} HTTP/1.1
+Content-Type: application/json
+
+### Get current canvas
+GET {{basePath}}/canvas/current HTTP/1.1
+Content-Type: application/json
+
+
+### Event Palette
+
+### Get palette for an event
+@eventId = 2023
+GET {{basePath}}/palette/{{eventId}} HTTP/1.1
+Content-Type: application/json
+
+### Get palette for current event
+GET {{basePath}}/palette/current HTTP/1.1
+Content-Type: application/json
