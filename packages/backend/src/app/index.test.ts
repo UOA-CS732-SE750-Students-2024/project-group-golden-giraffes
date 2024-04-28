@@ -2,7 +2,6 @@ import request from "supertest";
 import { createApp } from "./index";
 
 import { prisma } from "@/client";
-import { PrismockClient } from "prismock";
 
 // Instantiates the entire server of the app here since the hello world route is not exported
 // It would be better to create an express app at the start and then add the specific route
