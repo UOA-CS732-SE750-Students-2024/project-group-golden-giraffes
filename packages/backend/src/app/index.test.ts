@@ -47,7 +47,6 @@ describe("Test Prisma Stuff", () => {
     const canvas = await prisma.canvas.findMany();
     expect(canvas.length).toEqual(1);
   });
-  //
 });
 
 server.close();
