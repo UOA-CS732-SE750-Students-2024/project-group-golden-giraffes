@@ -17,7 +17,12 @@ const discordStrategy = new DiscordStrategy(
     scope: ["identify"],
   },
   (accessToken, refreshToken, profile, done) => {
-    done(null, profile);
+    const user = {
+      accessToken,
+      refreshToken,
+      profile,
+    };
+    done(null, user);
   },
 );
 
