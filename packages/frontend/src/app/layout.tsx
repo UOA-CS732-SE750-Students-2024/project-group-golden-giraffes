@@ -2,7 +2,7 @@ import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import type { Metadata, Viewport } from "next";
 import "../styles/core.css";
-import { Theme } from "./theme";
+import { Theme } from "../theme";
 
 export const metadata: Metadata = {
   title: "Blurple Canvas",
