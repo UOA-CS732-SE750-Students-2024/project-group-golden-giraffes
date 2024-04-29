@@ -31,7 +31,7 @@ export default function AnimatedText({ children }: AnimatedTextProps) {
   const totalCharacters = text.length;
 
   return (
-    <LoadingText>
+    <LoadingText className="loader">
       {text.split("").map((char, index) => (
         <AnimatedCharacter
           key={`${index}-${char}`}

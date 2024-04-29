@@ -1,19 +1,34 @@
 "use client";
 
-import { Typography, styled } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import AnimatedText from "../loaders/AnimatedText";
+import { CircularProgress, styled } from "@mui/material";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
 export interface CanvasViewProps {
   imageUrl: string;
+  children?: ReactNode;
 }
 
-const CanvasContainer = styled("div")`
-  display: flex;
-  justify-content: center;
+const FullscreenContainer = styled("div")`
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+
+  & canvas {
+    position: fixed;
+    z-index: -1;
+    width: 100%;
+    height: auto;
+  }
+
+  & .loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 `;
 
-export default function CanvasView({ imageUrl }: CanvasViewProps) {
+export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const [isLoading, setIsLoading] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -43,9 +58,10 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   }, [imageUrl]);
 
   return (
-    <CanvasContainer>
-      <canvas ref={canvasRef} id="canvas" width={0} height={0} />
-      {isLoading && <AnimatedText>Loading</AnimatedText>}
-    </CanvasContainer>
+    <FullscreenContainer>
+      <canvas ref={canvasRef} id="canvas" />
+      {isLoading && <CircularProgress className="loader" />}
+      {children}
+    </FullscreenContainer>
   );
 }
