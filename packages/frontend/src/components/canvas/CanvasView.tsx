@@ -14,10 +14,12 @@ const FullscreenContainer = styled("div")`
   overflow: hidden;
 
   & canvas {
+    image-rendering: pixelated;
     position: fixed;
     z-index: -1;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
   }
 
   & .loader {
