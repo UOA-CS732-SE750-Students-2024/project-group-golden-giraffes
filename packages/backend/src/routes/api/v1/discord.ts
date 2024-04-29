@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import config from "@/config";
 import { Router } from "express";
 import session from "express-session";
@@ -6,7 +7,7 @@ import { Strategy as DiscordStrategy } from "passport-discord";
 
 export const discordRouter = Router();
 
-const dev = process.env.NODE_ENV !== "production";
+const randomSecret = crypto.randomBytes(64).toString("hex");
 
 const discordStrategy = new DiscordStrategy(
   {
@@ -32,7 +33,7 @@ passport.deserializeUser<string>((user, done) => {
 
 discordRouter.use(
   session({
-    secret: process.env.SESSION_SECRET || "",
+    secret: randomSecret,
     resave: false,
     saveUninitialized: false,
   }),
