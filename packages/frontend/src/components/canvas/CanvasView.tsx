@@ -2,6 +2,7 @@
 
 import { Typography, styled } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import AnimatedText from "../loaders/AnimatedText";
 
 export interface CanvasViewProps {
   imageUrl: string;
@@ -44,7 +45,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   return (
     <CanvasContainer>
       <canvas ref={canvasRef} id="canvas" width={0} height={0} />
-      {isLoading && <Typography>Loading...</Typography>}
+      {isLoading && <AnimatedText>Loading</AnimatedText>}
     </CanvasContainer>
   );
 }
