@@ -1,4 +1,5 @@
 import { CanvasView } from "@/components/canvas";
+import config from "@/config";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,8 +10,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <div>
-      This is the homepage
-      <CanvasView imageUrl="http://localhost:8000/api/v1/canvas/current" />
+      <CanvasView imageUrl={`${config.apiUrl}/api/v1/canvas/current`} />
     </div>
   );
 }
