@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import config from "@/config";
+import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
 import session from "express-session";
 import passport from "passport";
@@ -17,7 +18,7 @@ const discordStrategy = new DiscordStrategy(
     scope: ["identify"],
   },
   (accessToken, refreshToken, profile, done) => {
-    const user = {
+    const user: DiscordUserLoginInfo = {
       accessToken,
       refreshToken,
       profile,
@@ -28,11 +29,11 @@ const discordStrategy = new DiscordStrategy(
 
 passport.use(discordStrategy);
 
-passport.serializeUser((user: Express.User, done) => {
+passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-passport.deserializeUser<string>((user, done) => {
+passport.deserializeUser<DiscordUserLoginInfo>((user, done) => {
   done(null, user);
 });
 
@@ -53,6 +54,16 @@ discordRouter.get(
   "/callback",
   passport.authenticate("discord", { failureRedirect: "/" }),
   (req, res) => {
+    const { accessToken, refreshToken, profile } =
+      req.user as DiscordUserLoginInfo;
+
+    res.cookie("accessToken", accessToken, { httpOnly: true, secure: true });
+    res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
+    res.cookie("profile", JSON.stringify(profile), {
+      httpOnly: true,
+      secure: true,
+    });
+
     res.json(req.user);
   },
 );
