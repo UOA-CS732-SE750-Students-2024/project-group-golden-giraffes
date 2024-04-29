@@ -8,7 +8,7 @@ jest.mock("@prisma/client", () => {
   };
 });
 
-beforeEach(() => {
+afterEach(() => {
   const prismock = prisma as PrismockClientType;
   prismock.reset();
 });
