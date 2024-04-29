@@ -12,10 +12,7 @@ const discordStrategy = new DiscordStrategy(
   {
     clientID: config.discord.clientId,
     clientSecret: config.discord.clientSecret,
-    callbackURL:
-      dev ?
-        "http://localhost:8000/api/v1/discord/callback"
-      : "https://canvas.projectblurple.com/api/v1/discord/callback",
+    callbackURL: "/api/v1/discord/callback",
     scope: ["identify"],
   },
   (accessToken, refreshToken, profile, done) => {
@@ -52,6 +49,6 @@ discordRouter.get(
   "/callback",
   passport.authenticate("discord", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("/");
+    res.json(req.user);
   },
 );
