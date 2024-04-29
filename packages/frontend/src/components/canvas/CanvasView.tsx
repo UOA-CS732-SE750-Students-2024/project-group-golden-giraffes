@@ -48,6 +48,8 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       console.log(`Loaded image in ${Date.now() - start}ms`);
       setIsLoading(false);
 
+      // We need to set the width of the canvas first, otherwise if the image is bigger than
+      // the canvas it'll get cut off.
       canvas.width = image.width;
       canvas.height = image.height;
       ctx.drawImage(image, 0, 0);
@@ -55,6 +57,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     image.src = imageUrl;
 
     return () => {
+      // Remove the onload handler to prevent a redundant GET request being made.
       image.onload = null;
     };
   }, [imageUrl]);
