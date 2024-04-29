@@ -24,7 +24,7 @@ pnpm start # This will run the built code
 
 ### 🧪 Testing
 
-You can run the unit tests with:
+Run the unit tests with:
 
 ```sh
 pnpm test

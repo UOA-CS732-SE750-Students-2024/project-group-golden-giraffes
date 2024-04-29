@@ -29,14 +29,14 @@
     "dev": "nodemon src/index.ts --devmode",
     "start": "node build/index.js",
     "postinstall": "prisma generate",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "format": "prettier --check --cache . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write --cache . --ignore-path ../../.gitignore",
     "lint": "biome check --formatter-enabled=false .",
     "lint:fix": "biome check --formatter-enabled=false --apply .",
     "check": "pnpm format && pnpm lint",
-    "check:fix": "pnpm format:fix && pnpm lint:fix",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "check:fix": "pnpm format:fix && pnpm lint:fix"
   },
   "dependencies": {
     "@prisma/client": "^5.12.1",
