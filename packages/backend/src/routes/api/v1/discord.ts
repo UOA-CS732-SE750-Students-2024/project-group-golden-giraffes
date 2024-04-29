@@ -1,3 +1,4 @@
+import config from "@/config";
 import { Router } from "express";
 import session from "express-session";
 import passport from "passport";
@@ -9,8 +10,8 @@ const dev = process.env.NODE_ENV !== "production";
 
 const discordStrategy = new DiscordStrategy(
   {
-    clientID: process.env.DISCORD_CLIENT_ID || "",
-    clientSecret: process.env.DISCORD_CLIENT_SECRET || "",
+    clientID: config.discord.clientId,
+    clientSecret: config.discord.clientSecret,
     callbackURL:
       dev ?
         "http://localhost:8000/api/v1/discord/callback"
