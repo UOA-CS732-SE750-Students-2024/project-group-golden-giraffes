@@ -26,11 +26,9 @@ passport.serializeUser((user: Express.User, done) => {
   done(null, user);
 });
 
-passport.deserializeUser(
-  (user: false | Express.User | null | undefined, done) => {
-    done(null, user);
-  },
-);
+passport.deserializeUser<string>((user, done) => {
+  done(null, user);
+});
 
 discordRouter.use(
   session({
