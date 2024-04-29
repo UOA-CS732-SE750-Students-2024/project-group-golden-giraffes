@@ -1,7 +1,7 @@
 "use client";
 
-import { styled } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { Typography, styled } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 
 export interface CanvasViewProps {
   imageUrl: string;
@@ -13,15 +13,22 @@ const CanvasContainer = styled("div")`
 `;
 
 export default function CanvasView({ imageUrl }: CanvasViewProps) {
+  const [isLoading, setIsLoading] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    setIsLoading(true);
+    const start = Date.now();
+
     const image = new Image();
     image.onload = () => {
       if (!canvasRef.current) return;
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
+
+      console.log(`Loaded image in ${Date.now() - start}ms`);
+      setIsLoading(false);
 
       canvas.width = image.width;
       canvas.height = image.height;
@@ -36,7 +43,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
   return (
     <CanvasContainer>
-      <canvas ref={canvasRef} id="canvas" />
+      <canvas ref={canvasRef} id="canvas" width={0} height={0} />
+      {isLoading && <Typography>Loading...</Typography>}
     </CanvasContainer>
   );
 }
