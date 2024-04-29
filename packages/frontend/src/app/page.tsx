@@ -1,5 +1,6 @@
 import { CanvasView } from "@/components/canvas";
 import config from "@/config";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,8 +10,12 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   return (
-    <div>
-      <CanvasView imageUrl={`${config.apiUrl}/api/v1/canvas/current`} />
-    </div>
+    <CanvasView imageUrl={`${config.apiUrl}/api/v1/canvas/current`}>
+      <Box padding={10}>
+        <Card sx={{ width: "min(400px, 80%)" }}>
+          <CardContent>Blurple Canvas 😎</CardContent>
+        </Card>
+      </Box>
+    </CanvasView>
   );
 }
