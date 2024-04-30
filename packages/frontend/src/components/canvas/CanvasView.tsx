@@ -5,7 +5,7 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -22,9 +22,6 @@ const FullscreenContainer = styled("div")`
   & canvas {
     image-rendering: pixelated;
     position: fixed;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 
   & .loader {
@@ -65,6 +62,10 @@ function scalePoint(p1: Point, scale: number): Point {
   return { x: p1.x / scale, y: p1.y / scale };
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
 function getViewportDimensions(): Dimensions {
   const htmlElement = document.documentElement;
 
@@ -75,17 +76,48 @@ function getViewportDimensions(): Dimensions {
   };
 }
 
+function getEffectiveCanvasDimensions(
+  image: HTMLImageElement | null,
+): Dimensions {
+  if (!image) {
+    return { width: 0, height: 0 };
+  }
+
+  const viewport = getViewportDimensions();
+  const scale = Math.max(
+    viewport.width / image.width,
+    viewport.height / image.height,
+  );
+  const effectiveWidth = image.width * scale;
+  const effectiveHeight = image.height * scale;
+
+  return { width: effectiveWidth, height: effectiveHeight };
+}
+
+function getCentredCanvasOrigin(effectiveCanvas: Dimensions): Point {
+  const viewport = getViewportDimensions();
+
+  return {
+    x: (viewport.width - effectiveCanvas.width) / 2,
+    y: (viewport.height - effectiveCanvas.height) / 2,
+  };
+}
+
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastOffsetRef = useRef(ORIGIN);
   const lastMousePosRef = useRef(ORIGIN);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
   const [mousePos, setMousePos] = useState<Point>(ORIGIN);
+
+  const effectiveCanvas = useMemo(
+    () => getEffectiveCanvasDimensions(image),
+    [image],
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -105,9 +137,13 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
       context.drawImage(image, 0, 0);
 
+      const effectiveCanvas = getEffectiveCanvasDimensions(image);
+      const centredOrigin = getCentredCanvasOrigin(effectiveCanvas);
+
       console.log(`Loaded image in ${Date.now() - start}ms`);
 
       setImage(image);
+      setOffset(centredOrigin);
       setIsLoading(false);
     };
     image.src = imageUrl;
@@ -122,15 +158,43 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    * PANNING FUNCTIONALITY.       *
    ********************************/
 
-  const handleMouseMove = useCallback((event: MouseEvent) => {
-    const lastMousePos = lastMousePosRef.current;
-    const currentMousePos: Point = { x: event.pageX, y: event.pageY }; // use document so can pan off element
-    lastMousePosRef.current = currentMousePos;
+  const clampOffset = useCallback(
+    (offset: Point): Point => {
+      if (image == null) return offset;
 
-    const mouseDiff = diffPoints(currentMousePos, lastMousePos);
+      const centredOrigin = getCentredCanvasOrigin(effectiveCanvas);
 
-    setOffset((prevOffset) => addPoints(prevOffset, mouseDiff));
-  }, []);
+      const widthLimit = effectiveCanvas.width / 2;
+      const heightLimit = effectiveCanvas.height / 2;
+
+      return {
+        x: clamp(
+          offset.x,
+          -widthLimit + centredOrigin.x,
+          widthLimit + centredOrigin.x,
+        ),
+        y: clamp(
+          offset.y,
+          -heightLimit + centredOrigin.y,
+          heightLimit + centredOrigin.y,
+        ),
+      };
+    },
+    [effectiveCanvas, image],
+  );
+
+  const handleMouseMove = useCallback(
+    (event: MouseEvent) => {
+      const lastMousePos = lastMousePosRef.current;
+      const currentMousePos: Point = { x: event.pageX, y: event.pageY }; // use document so can pan off element
+      lastMousePosRef.current = currentMousePos;
+
+      const mouseDiff = diffPoints(currentMousePos, lastMousePos);
+
+      setOffset((prevOffset) => clampOffset(addPoints(prevOffset, mouseDiff)));
+    },
+    [clampOffset],
+  );
 
   const handleMouseUp = useCallback(() => {
     document.removeEventListener("mousemove", handleMouseMove);
@@ -151,7 +215,11 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       <canvas
         ref={canvasRef}
         onMouseDown={handleStartPan}
-        style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
+        style={{
+          width: effectiveCanvas.width,
+          height: effectiveCanvas.height,
+          transform: `translate(${offset.x}px, ${offset.y}px)`,
+        }}
       />
       {isLoading && <CircularProgress className="loader" />}
       {children}
