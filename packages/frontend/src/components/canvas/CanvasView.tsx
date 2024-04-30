@@ -65,10 +65,6 @@ function scalePoint(p1: Point, scale: number): Point {
   return { x: p1.x / scale, y: p1.y / scale };
 }
 
-function getDevicePixelRatio(): number {
-  return window?.devicePixelRatio ?? 1;
-}
-
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastOffsetRef = useRef(ORIGIN);
@@ -81,16 +77,23 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const [offset, setOffset] = useState(ORIGIN);
   const [mousePos, setMousePos] = useState<Point>(ORIGIN);
 
-  console.log(offset);
-
   useEffect(() => {
     setIsLoading(true);
     const start = Date.now();
 
     const image = new Image();
     image.onload = () => {
+      if (!canvasRef.current) return;
+
+      const context = canvasRef.current.getContext("2d");
+      if (!context) return;
+
       // We need to set the width of the canvas first, otherwise if the image is bigger than
       // the canvas it'll get cut off.
+      canvasRef.current.width = image.width;
+      canvasRef.current.height = image.height;
+
+      context.drawImage(image, 0, 0);
 
       console.log(`Loaded image in ${Date.now() - start}ms`);
 
@@ -105,75 +108,9 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     };
   }, [imageUrl]);
 
-  const reset = useCallback(
-    (context: CanvasRenderingContext2D) => {
-      if (!context || !image) return;
-
-      const devicePixelRatio = getDevicePixelRatio();
-
-      // adjust for device pixel density
-      const scale = 1.5;
-
-      context.canvas.width = image.width * devicePixelRatio * scale;
-      context.canvas.height = image.height * devicePixelRatio * scale;
-
-      context.imageSmoothingEnabled = false;
-      context.scale(devicePixelRatio * scale, devicePixelRatio * scale);
-      context.translate(100, 100);
-
-      context.drawImage(image, 0, 0);
-
-      setScale(1);
-
-      // reset state and refs
-      setContext(context);
-      setOffset(ORIGIN);
-      setMousePos(ORIGIN);
-      // setViewportTopLeft(ORIGIN);
-      lastOffsetRef.current = ORIGIN;
-      lastMousePosRef.current = ORIGIN;
-
-      console.log("reset");
-
-      // this thing is so multiple resets in a row don't clear canvas
-      // isResetRef.current = true;
-    },
-    [image],
-  );
-
-  // setup canvas and set context
-  useLayoutEffect(() => {
-    if (canvasRef.current) {
-      // get new drawing context
-      const context = canvasRef.current.getContext("2d");
-
-      if (context) {
-        reset(context);
-      }
-    }
-  }, [reset]);
-
   /********************************
    * PANNING FUNCTIONALITY.       *
    ********************************/
-
-  useLayoutEffect(() => {
-    console.log("layout");
-    if (!canvasRef.current || !lastOffsetRef.current) return;
-
-    const ctx = canvasRef.current.getContext("2d");
-    if (!ctx) return;
-
-    const offsetDiff = scalePoint(
-      diffPoints(offset, lastOffsetRef.current),
-      scale,
-    );
-
-    console.log("translate");
-    ctx.translate(offsetDiff.x, offsetDiff.y);
-    // setViewportTopLeft((prevVal) => diffPoints(prevVal, offsetDiff));
-    // isResetRef.current = false;
-  }, [offset, scale]);
 
   const handleMouseMove = useCallback((event: MouseEvent) => {
     const lastMousePos = lastMousePosRef.current;
@@ -181,6 +118,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     lastMousePosRef.current = currentMousePos;
 
     const mouseDiff = diffPoints(currentMousePos, lastMousePos);
+
     setOffset((prevOffset) => addPoints(prevOffset, mouseDiff));
   }, []);
 
@@ -200,7 +138,11 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
   return (
     <FullscreenContainer>
-      <canvas ref={canvasRef} onMouseDown={handleStartPan} />
+      <canvas
+        ref={canvasRef}
+        onMouseDown={handleStartPan}
+        style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
+      />
       {isLoading && <CircularProgress className="loader" />}
       {children}
     </FullscreenContainer>
