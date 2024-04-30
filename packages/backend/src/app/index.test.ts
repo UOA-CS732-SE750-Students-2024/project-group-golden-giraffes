@@ -2,7 +2,7 @@ import request from "supertest";
 import { createApp } from "./index";
 
 import { prisma } from "@/client";
-import initialiseCanvases from "@/test/initialiseCanvases";
+import initialiseCanvases, { testCanvas } from "@/test/initialiseCanvases";
 
 // Instantiates the entire server of the app here since the hello world route is not exported
 // It would be better to create an express app at the start and then add the specific route
@@ -24,21 +24,22 @@ describe("Hello world test", () => {
 
 describe("Test Prisma Stuff", () => {
   beforeEach(() => {
-    initialiseCanvases;
-  });
-  it("can find no canvases", async () => {
-    const canvas = await prisma.canvas.findMany();
-    expect(canvas).toStrictEqual([]);
+    initialiseCanvases();
   });
 
   it("can write to in memory prisma instance", async () => {
-    const canvas = await prisma.canvas.findFirst({ where: { id: 1 } });
-    expect(canvas?.name).toStrictEqual("Test Canvas");
+    await prisma.canvas.create({
+      data: { ...testCanvas, name: "New Canvas" },
+    });
+    const canvas = await prisma.canvas.findFirst({
+      where: { name: "New Canvas" },
+    });
+    expect(canvas?.name).toStrictEqual("New Canvas");
   });
 
   it("resets after each test", async () => {
     const canvas = await prisma.canvas.findMany();
-    expect(canvas.length).toEqual(1);
+    expect(canvas.length).toEqual(2);
   });
 });
 
