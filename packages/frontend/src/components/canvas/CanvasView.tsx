@@ -40,7 +40,7 @@ interface Point {
   y: number;
 }
 
-interface CanvasDimensions {
+interface Dimensions {
   width: number;
   height: number;
 }
@@ -63,6 +63,16 @@ function addPoints(p1: Point, p2: Point): Point {
 // TODO: Round to nearest integer
 function scalePoint(p1: Point, scale: number): Point {
   return { x: p1.x / scale, y: p1.y / scale };
+}
+
+function getViewportDimensions(): Dimensions {
+  const htmlElement = document.documentElement;
+
+  // This doesn't include the scrollbar width
+  return {
+    width: htmlElement.clientWidth,
+    height: htmlElement.clientHeight,
+  };
 }
 
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
