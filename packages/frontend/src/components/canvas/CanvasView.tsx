@@ -73,8 +73,6 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const isLoading = image === null;
 
   useEffect(() => {
-    const start = Date.now();
-
     const image = new Image();
     image.onload = () => {
       if (!canvasRef.current) return;
@@ -88,8 +86,6 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       canvasRef.current.height = image.height;
 
       context.drawImage(image, 0, 0);
-
-      console.log(`Loaded image in ${Date.now() - start}ms`);
 
       setImage(image);
       setScale(getDefaultScale(image));
