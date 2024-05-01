@@ -49,9 +49,12 @@ function clamp(value: number, min: number, max: number): number {
 function getDefaultScale(image: HTMLImageElement): number {
   const screenDimensions = getScreenDimensions();
 
-  const scale = Math.max(
-    screenDimensions.width / image.width,
-    screenDimensions.height / image.height,
+  // Don't add any padding on the initial scale for small devices
+  const padding = screenDimensions.width < 500 ? 0 : 50;
+
+  const scale = Math.min(
+    (screenDimensions.width - padding) / image.width,
+    (screenDimensions.height - padding) / image.height,
   );
 
   return scale;
