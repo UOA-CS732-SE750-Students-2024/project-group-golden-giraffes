@@ -131,19 +131,23 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     [image],
   );
 
-  const handleMouseMove = useCallback(
-    (event: MouseEvent): void => {
-      const mouseDiff = scalePoint(
-        { x: event.movementX, y: event.movementY },
-        scale,
-      );
+  const updateOffset = useCallback(
+    (diff: Point): void => {
+      const scaledDiff = scalePoint(diff, scale);
 
       setOffset((prevOffset) => {
-        const newOffset = addPoints(prevOffset, mouseDiff);
+        const newOffset = addPoints(prevOffset, scaledDiff);
         return clampOffset(newOffset);
       });
     },
     [scale, clampOffset],
+  );
+
+  const handleMouseMove = useCallback(
+    (event: MouseEvent): void => {
+      updateOffset({ x: event.movementX, y: event.movementY });
+    },
+    [updateOffset],
   );
 
   /**
@@ -177,22 +181,15 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       const startTouch = startTouchesRef.current[0];
       const touch = event.touches[0];
 
-      const touchDiff = scalePoint(
-        {
-          x: touch.pageX - startTouch.pageX,
-          y: touch.pageY - startTouch.pageY,
-        },
-        scale,
-      );
+      const touchDiff: Point = {
+        x: touch.pageX - startTouch.pageX,
+        y: touch.pageY - startTouch.pageY,
+      };
 
-      setOffset((prevOffset) => {
-        const newOffset = addPoints(prevOffset, touchDiff);
-        return clampOffset(newOffset);
-      });
-
+      updateOffset({ x: touchDiff.x, y: touchDiff.y });
       startTouchesRef.current = [touch];
     },
-    [scale, clampOffset],
+    [updateOffset],
   );
 
   const handleTouchEnd = useCallback((): void => {
