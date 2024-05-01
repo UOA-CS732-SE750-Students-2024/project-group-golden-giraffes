@@ -1,9 +1,9 @@
 "use client";
 
-import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
+import { getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { ORIGIN, Point, addPoints, diffPoints } from "./point";
+import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
 const FullscreenContainer = styled("div")`
   position: fixed;
@@ -127,14 +127,17 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       const currentMousePos: Point = { x: event.pageX, y: event.pageY }; // use document so can pan off element
       lastMousePosRef.current = currentMousePos;
 
-      const mouseDiff = diffPoints(currentMousePos, lastMousePos);
+      const mouseDiff = scalePoint(
+        diffPoints(currentMousePos, lastMousePos),
+        scale,
+      );
 
       setOffset((prevOffset) => {
         const newOffset = addPoints(prevOffset, mouseDiff);
         return clampOffset(newOffset);
       });
     },
-    [clampOffset],
+    [scale, clampOffset],
   );
 
   const handleMouseUp = useCallback((): void => {
