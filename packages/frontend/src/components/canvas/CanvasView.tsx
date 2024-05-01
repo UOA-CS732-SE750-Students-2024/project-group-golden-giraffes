@@ -5,7 +5,7 @@ import { CircularProgress, styled } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
-const FullscreenContainer = styled("div")`
+const FullscreenContainer = styled("main")`
   position: fixed;
 
   > * {
