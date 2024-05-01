@@ -1,10 +1,12 @@
 "use client";
 
+import { Dimensions, useScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
 import {
   ReactNode,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -22,6 +24,8 @@ const FullscreenContainer = styled("div")`
   & canvas {
     image-rendering: pixelated;
     position: fixed;
+    height: auto;
+    max-width: inherit;
   }
 
   & .loader {
@@ -35,11 +39,6 @@ const FullscreenContainer = styled("div")`
 interface Point {
   x: number;
   y: number;
-}
-
-interface Dimensions {
-  width: number;
-  height: number;
 }
 
 export interface CanvasViewProps {
@@ -66,27 +65,17 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-function getViewportDimensions(): Dimensions {
-  const htmlElement = document.documentElement;
-
-  // This doesn't include the scrollbar width
-  return {
-    width: htmlElement.clientWidth,
-    height: htmlElement.clientHeight,
-  };
-}
-
 function getEffectiveCanvasDimensions(
   image: HTMLImageElement | null,
+  screenDimensions: Dimensions,
 ): Dimensions {
   if (!image) {
     return { width: 0, height: 0 };
   }
 
-  const viewport = getViewportDimensions();
   const scale = Math.max(
-    viewport.width / image.width,
-    viewport.height / image.height,
+    screenDimensions.width / image.width,
+    screenDimensions.height / image.height,
   );
   const effectiveWidth = image.width * scale;
   const effectiveHeight = image.height * scale;
@@ -94,19 +83,24 @@ function getEffectiveCanvasDimensions(
   return { width: effectiveWidth, height: effectiveHeight };
 }
 
-function getCentredCanvasOrigin(effectiveCanvas: Dimensions): Point {
-  const viewport = getViewportDimensions();
-
+/**
+ * Get the offset required to centre the canvas on the screen.
+ */
+function getCentredCanvasOffset(
+  effectiveCanvasDimensions: Dimensions,
+  screenDimensions: Dimensions,
+): Point {
   return {
-    x: (viewport.width - effectiveCanvas.width) / 2,
-    y: (viewport.height - effectiveCanvas.height) / 2,
+    x: (screenDimensions.width - effectiveCanvasDimensions.width) / 2,
+    y: (screenDimensions.height - effectiveCanvasDimensions.height) / 2,
   };
 }
 
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const lastOffsetRef = useRef(ORIGIN);
   const lastMousePosRef = useRef(ORIGIN);
+
+  const screenDimensions = useScreenDimensions();
 
   const [isLoading, setIsLoading] = useState(true);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
@@ -114,11 +108,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const [offset, setOffset] = useState(ORIGIN);
   const [mousePos, setMousePos] = useState<Point>(ORIGIN);
 
-  const effectiveCanvas = useMemo(
-    () => getEffectiveCanvasDimensions(image),
-    [image],
-  );
-
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We don't want to reload the image when the screen size changes.
   useEffect(() => {
     setIsLoading(true);
     const start = Date.now();
@@ -137,8 +127,15 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
       context.drawImage(image, 0, 0);
 
-      const effectiveCanvas = getEffectiveCanvasDimensions(image);
-      const centredOrigin = getCentredCanvasOrigin(effectiveCanvas);
+      const effectiveCanvasDimensions = getEffectiveCanvasDimensions(
+        image,
+        screenDimensions,
+      );
+
+      const centredOrigin = getCentredCanvasOffset(
+        effectiveCanvasDimensions,
+        screenDimensions,
+      );
 
       console.log(`Loaded image in ${Date.now() - start}ms`);
 
@@ -158,30 +155,49 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    * PANNING FUNCTIONALITY.       *
    ********************************/
 
+  /**
+   * Ensure that the offset is within bounds. This is defined as at least half the canvas being on
+   * screen along an axis.
+   */
   const clampOffset = useCallback(
-    (offset: Point): Point => {
+    (offset: Point, screenDimensions: Dimensions): Point => {
       if (image == null) return offset;
 
-      const centredOrigin = getCentredCanvasOrigin(effectiveCanvas);
+      const effectiveCanvasDimensions = getEffectiveCanvasDimensions(
+        image,
+        screenDimensions,
+      );
 
-      const widthLimit = effectiveCanvas.width / 2;
-      const heightLimit = effectiveCanvas.height / 2;
+      const centredOffset = getCentredCanvasOffset(
+        effectiveCanvasDimensions,
+        screenDimensions,
+      );
+
+      const widthLimit = effectiveCanvasDimensions.width / 2;
+      const heightLimit = effectiveCanvasDimensions.height / 2;
 
       return {
         x: clamp(
           offset.x,
-          -widthLimit + centredOrigin.x,
-          widthLimit + centredOrigin.x,
+          -widthLimit + centredOffset.x,
+          widthLimit + centredOffset.x,
         ),
         y: clamp(
           offset.y,
-          -heightLimit + centredOrigin.y,
-          heightLimit + centredOrigin.y,
+          -heightLimit + centredOffset.y,
+          heightLimit + centredOffset.y,
         ),
       };
     },
-    [effectiveCanvas, image],
+    [image],
   );
+
+  /**
+   * Whenever the screen size changes, we need to check that the offset is still within bounds.
+   */
+  useEffect(() => {
+    setOffset((prevOffset) => clampOffset(prevOffset, screenDimensions));
+  }, [screenDimensions, clampOffset]);
 
   const handleMouseMove = useCallback(
     (event: MouseEvent) => {
@@ -191,9 +207,12 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
       const mouseDiff = diffPoints(currentMousePos, lastMousePos);
 
-      setOffset((prevOffset) => clampOffset(addPoints(prevOffset, mouseDiff)));
+      setOffset((prevOffset) => {
+        const newOffset = addPoints(prevOffset, mouseDiff);
+        return clampOffset(newOffset, screenDimensions);
+      });
     },
-    [clampOffset],
+    [screenDimensions, clampOffset],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -216,8 +235,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         ref={canvasRef}
         onMouseDown={handleStartPan}
         style={{
-          width: effectiveCanvas.width,
-          height: effectiveCanvas.height,
+          width: getEffectiveCanvasDimensions(image, screenDimensions).width,
           transform: `translate(${offset.x}px, ${offset.y}px)`,
         }}
       />
