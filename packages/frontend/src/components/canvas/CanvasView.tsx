@@ -36,7 +36,6 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
   useEffect(() => {
     setIsLoading(true);
-    const start = Date.now();
 
     const image = new Image();
     image.onload = () => {
@@ -45,7 +44,6 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      console.log(`Loaded image in ${Date.now() - start}ms`);
       setIsLoading(false);
 
       // We need to set the width of the canvas first, otherwise if the image is bigger than
