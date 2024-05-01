@@ -1,6 +1,6 @@
 import { CanvasView } from "@/components/canvas";
 import config from "@/config";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent } from "@mui/material";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
