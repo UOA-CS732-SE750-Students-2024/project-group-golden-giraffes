@@ -142,14 +142,14 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   );
 
   const handleMouseUp = useCallback((): void => {
-    document.removeEventListener("pointermove", handleMouseMove);
-    document.removeEventListener("pointerup", handleMouseUp);
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
   }, [handleMouseMove]);
 
   const handleStartPan = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-      document.addEventListener("pointermove", handleMouseMove);
-      document.addEventListener("pointerup", handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
       lastMousePosRef.current = { x: event.pageX, y: event.pageY };
     },
     [handleMouseMove, handleMouseUp],
@@ -157,7 +157,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
   return (
     <FullscreenContainer>
-      <CanvasContainer onPointerDown={handleStartPan}>
+      <CanvasContainer onMouseDown={handleStartPan}>
         <div
           id="canvas-pan-and-zoom"
           style={{
