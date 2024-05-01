@@ -102,15 +102,15 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
   const screenDimensions = useScreenDimensions();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
-  const [mousePos, setMousePos] = useState<Point>(ORIGIN);
+  const [mousePos, setMousePos] = useState(ORIGIN);
+
+  const isLoading = image === null;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: We don't want to reload the image when the screen size changes.
   useEffect(() => {
-    setIsLoading(true);
     const start = Date.now();
 
     const image = new Image();
@@ -141,7 +141,6 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
       setImage(image);
       setOffset(centredOrigin);
-      setIsLoading(false);
     };
     image.src = imageUrl;
 
