@@ -6,11 +6,11 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
+import { ORIGIN, Point, addPoints, diffPoints } from "./point";
 
 const FullscreenContainer = styled("div")`
   height: 100vh;
@@ -36,35 +36,16 @@ const FullscreenContainer = styled("div")`
   }
 `;
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-export interface CanvasViewProps {
-  imageUrl: string;
-  children?: ReactNode;
-}
-
-const ORIGIN: Point = { x: 0, y: 0 };
-
-function diffPoints(p1: Point, p2: Point): Point {
-  return { x: p1.x - p2.x, y: p1.y - p2.y };
-}
-
-function addPoints(p1: Point, p2: Point): Point {
-  return { x: p1.x + p2.x, y: p1.y + p2.y };
-}
-
-// TODO: Round to nearest integer
-function scalePoint(p1: Point, scale: number): Point {
-  return { x: p1.x / scale, y: p1.y / scale };
-}
-
+/**
+ * Return the value clamped so that it is within the range [min, max].
+ */
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * Calculate the effective size of the canvas after scaling it up so that it covers the screen.
+ */
 function getEffectiveCanvasDimensions(
   image: HTMLImageElement | null,
   screenDimensions: Dimensions,
@@ -84,7 +65,7 @@ function getEffectiveCanvasDimensions(
 }
 
 /**
- * Get the offset required to centre the canvas on the screen.
+ * Calculate the offset required to centre the canvas on the screen.
  */
 function getCentredCanvasOffset(
   effectiveCanvasDimensions: Dimensions,
@@ -96,6 +77,11 @@ function getCentredCanvasOffset(
   };
 }
 
+export interface CanvasViewProps {
+  imageUrl: string;
+  children?: ReactNode;
+}
+
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastMousePosRef = useRef(ORIGIN);
@@ -103,9 +89,12 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const screenDimensions = useScreenDimensions();
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
-  const [mousePos, setMousePos] = useState(ORIGIN);
+
+  const effectiveCanvasDimensions = useMemo(
+    () => getEffectiveCanvasDimensions(image, screenDimensions),
+    [image, screenDimensions],
+  );
 
   const isLoading = image === null;
 
@@ -132,7 +121,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         screenDimensions,
       );
 
-      const centredOrigin = getCentredCanvasOffset(
+      const centredOffset = getCentredCanvasOffset(
         effectiveCanvasDimensions,
         screenDimensions,
       );
@@ -140,7 +129,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       console.log(`Loaded image in ${Date.now() - start}ms`);
 
       setImage(image);
-      setOffset(centredOrigin);
+      setOffset(centredOffset);
     };
     image.src = imageUrl;
 
@@ -161,11 +150,6 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const clampOffset = useCallback(
     (offset: Point, screenDimensions: Dimensions): Point => {
       if (image == null) return offset;
-
-      const effectiveCanvasDimensions = getEffectiveCanvasDimensions(
-        image,
-        screenDimensions,
-      );
 
       const centredOffset = getCentredCanvasOffset(
         effectiveCanvasDimensions,
@@ -188,7 +172,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         ),
       };
     },
-    [image],
+    [effectiveCanvasDimensions, image],
   );
 
   /**
@@ -234,7 +218,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         ref={canvasRef}
         onMouseDown={handleStartPan}
         style={{
-          width: getEffectiveCanvasDimensions(image, screenDimensions).width,
+          width: effectiveCanvasDimensions.width,
           transform: `translate(${offset.x}px, ${offset.y}px)`,
         }}
       />
