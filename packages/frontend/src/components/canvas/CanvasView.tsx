@@ -8,11 +8,11 @@ import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 const FullscreenContainer = styled("div")`
   position: fixed;
 
-  & > * {
+  > * {
     position: relative;
   }
 
-  & .loader {
+  .loader {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -29,7 +29,7 @@ const CanvasContainer = styled("div")`
   justify-content: center;
   align-items: center;
 
-  & canvas {
+  canvas {
     image-rendering: pixelated;
     max-width: inherit;
   }
@@ -143,11 +143,18 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     [scale, clampOffset],
   );
 
+  /**
+   * Remove the mouse move listener when the mouse is released to stop panning.
+   */
   const handleMouseUp = useCallback((): void => {
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   }, [handleMouseMove]);
 
+  /**
+   * Only add the mouse move listener when you click down so that moving your mouse normally doesn't
+   * cause the canvas to pan.
+   */
   const handleStartPan = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
       document.addEventListener("mousemove", handleMouseMove);
