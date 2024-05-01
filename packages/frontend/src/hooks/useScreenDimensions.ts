@@ -6,7 +6,7 @@ export interface Dimensions {
   height: number;
 }
 
-function getViewportDimensions(): Dimensions {
+export function getScreenDimensions(): Dimensions {
   const htmlElement = document.documentElement;
 
   // This doesn't include the scrollbar width
@@ -18,12 +18,12 @@ function getViewportDimensions(): Dimensions {
 
 export function useScreenDimensions(): Dimensions {
   const [dimensions, setDimensions] = useState<Dimensions>(
-    getViewportDimensions(),
+    getScreenDimensions(),
   );
 
   useEffect(() => {
     const handleResize = debounce(() => {
-      setDimensions(getViewportDimensions());
+      setDimensions(getScreenDimensions());
     }, 350);
 
     window.addEventListener("resize", handleResize);

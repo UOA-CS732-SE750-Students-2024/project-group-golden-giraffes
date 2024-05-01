@@ -1,6 +1,6 @@
 "use client";
 
-import { Dimensions } from "@/hooks/useScreenDimensions";
+import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { ORIGIN, Point, addPoints, diffPoints } from "./point";
@@ -31,6 +31,7 @@ const CanvasContainer = styled("div")`
 
   & canvas {
     image-rendering: pixelated;
+    max-width: inherit;
   }
 `;
 
@@ -42,24 +43,18 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 /**
- * Calculate the effective size of the canvas after scaling it up so that it covers the screen.
+ * Calculate the default scale to use for the canvas. This is the required scaling to get the canvas
+ * to cover the entire screen.
  */
-function getEffectiveCanvasDimensions(
-  image: HTMLImageElement | null,
-  screenDimensions: Dimensions,
-): Dimensions {
-  if (!image) {
-    return { width: 0, height: 0 };
-  }
+function getDefaultScale(image: HTMLImageElement): number {
+  const screenDimensions = getScreenDimensions();
 
   const scale = Math.max(
     screenDimensions.width / image.width,
     screenDimensions.height / image.height,
   );
-  const effectiveWidth = image.width * scale;
-  const effectiveHeight = image.height * scale;
 
-  return { width: effectiveWidth, height: effectiveHeight };
+  return scale;
 }
 
 export interface CanvasViewProps {
@@ -72,6 +67,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const lastMousePosRef = useRef(ORIGIN);
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
 
   const isLoading = image === null;
@@ -96,6 +92,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       console.log(`Loaded image in ${Date.now() - start}ms`);
 
       setImage(image);
+      setScale(getDefaultScale(image));
     };
     image.src = imageUrl;
 
@@ -162,9 +159,10 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     <FullscreenContainer>
       <CanvasContainer onMouseDown={handleStartPan}>
         <div
-          id="canvas-panning"
+          id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
+            scale,
           }}
         >
           <canvas ref={canvasRef} />
