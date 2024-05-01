@@ -98,6 +98,26 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
   const isLoading = image === null;
 
+  /**
+   * Update the offset to centre the canvas on the screen.
+   */
+  const centreCanvas = useCallback(
+    (image: HTMLImageElement): void => {
+      const effectiveCanvasDimensions = getEffectiveCanvasDimensions(
+        image,
+        screenDimensions,
+      );
+
+      const centredOffset = getCentredCanvasOffset(
+        effectiveCanvasDimensions,
+        screenDimensions,
+      );
+
+      setOffset(centredOffset);
+    },
+    [screenDimensions],
+  );
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: We don't want to reload the image when the screen size changes.
   useEffect(() => {
     const start = Date.now();
@@ -116,20 +136,10 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
       context.drawImage(image, 0, 0);
 
-      const effectiveCanvasDimensions = getEffectiveCanvasDimensions(
-        image,
-        screenDimensions,
-      );
-
-      const centredOffset = getCentredCanvasOffset(
-        effectiveCanvasDimensions,
-        screenDimensions,
-      );
-
       console.log(`Loaded image in ${Date.now() - start}ms`);
 
       setImage(image);
-      setOffset(centredOffset);
+      centreCanvas(image);
     };
     image.src = imageUrl;
 
@@ -183,7 +193,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   }, [screenDimensions, clampOffset]);
 
   const handleMouseMove = useCallback(
-    (event: MouseEvent) => {
+    (event: MouseEvent): void => {
       const lastMousePos = lastMousePosRef.current;
       const currentMousePos: Point = { x: event.pageX, y: event.pageY }; // use document so can pan off element
       lastMousePosRef.current = currentMousePos;
@@ -198,13 +208,13 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     [screenDimensions, clampOffset],
   );
 
-  const handleMouseUp = useCallback(() => {
+  const handleMouseUp = useCallback((): void => {
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   }, [handleMouseMove]);
 
   const handleStartPan = useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+    (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void => {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
       lastMousePosRef.current = { x: event.pageX, y: event.pageY };
