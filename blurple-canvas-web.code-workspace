@@ -51,6 +51,8 @@
       "SOFTENG",
       "Tāmaki",
       "WCAG",
+      "wdth",
+      "wght",
     ],
     "editor.codeActionsOnSave": {
       "source.organizeImports.biome": "explicit",

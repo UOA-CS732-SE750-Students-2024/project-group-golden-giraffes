@@ -26,11 +26,26 @@ export const Theme = createTheme({
     info: {
       main: "#5865F2", // Blurple
     },
+    background: {
+      paper: "oklch(var(--discord-old-not-quite-black-oklch))",
+    },
   },
   typography: {
     fontFamily: "var(--font-body)",
   },
   components: {
+    MuiCard: {
+      defaultProps: {
+        elevation: 0,
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: "0.75rem",
+          border:
+            "0.125rem solid oklch(var(--discord-old-dark-but-not-black-oklch))",
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
