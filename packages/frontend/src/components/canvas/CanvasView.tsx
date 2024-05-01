@@ -2,8 +2,15 @@
 
 import { getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
+import {
+  ReactNode,
+  Touch,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { ORIGIN, Point, addPoints, scalePoint } from "./point";
 
 const FullscreenContainer = styled("main")`
   position: fixed;
@@ -67,6 +74,7 @@ export interface CanvasViewProps {
 
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const startTouchesRef = useRef<Touch[]>([]);
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [scale, setScale] = useState(1);
@@ -150,14 +158,74 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    * Only add the mouse move listener when you click down so that moving your mouse normally doesn't
    * cause the canvas to pan.
    */
-  const handleStartPan = useCallback((): void => {
+  const handleStartMousePan = useCallback((): void => {
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   }, [handleMouseMove, handleMouseUp]);
 
+  const handleTouchMove = useCallback(
+    (event: TouchEvent): void => {
+      const touchCount = event.touches.length;
+
+      // TODO: Implement multi-touch zooming
+      if (touchCount !== 1) return;
+
+      // Check that the touch event is the same as the one that started the pan
+      if (event.touches[0].identifier !== startTouchesRef.current[0].identifier)
+        return;
+
+      const startTouch = startTouchesRef.current[0];
+      const touch = event.touches[0];
+
+      const touchDiff = scalePoint(
+        {
+          x: touch.pageX - startTouch.pageX,
+          y: touch.pageY - startTouch.pageY,
+        },
+        scale,
+      );
+
+      setOffset((prevOffset) => {
+        const newOffset = addPoints(prevOffset, touchDiff);
+        return clampOffset(newOffset);
+      });
+
+      startTouchesRef.current = [touch];
+    },
+    [scale, clampOffset],
+  );
+
+  const handleTouchEnd = useCallback((): void => {
+    document.removeEventListener("touchmove", handleTouchMove);
+    document.removeEventListener("touchend", handleTouchEnd);
+    document.removeEventListener("touchcancel", handleTouchEnd);
+  }, [handleTouchMove]);
+
+  /**
+   * Note: The `React` prefix to `TouchEvent` is necessary to distinguish it from the non-react
+   * version used by handleTouchMove.
+   */
+  const handleStartTouchPan = useCallback(
+    (event: React.TouchEvent<HTMLDivElement>): void => {
+      const touchCount = event.touches.length;
+
+      // TODO: Implement multi-touch zooming
+      if (touchCount !== 1) return;
+
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleTouchEnd);
+      document.addEventListener("touchcancel", handleTouchEnd);
+      startTouchesRef.current = Array.from(event.touches);
+    },
+    [handleTouchMove, handleTouchEnd],
+  );
+
   return (
     <FullscreenContainer>
-      <CanvasContainer onMouseDown={handleStartPan}>
+      <CanvasContainer
+        onMouseDown={handleStartMousePan}
+        onTouchStart={handleStartTouchPan}
+      >
         <div
           id="canvas-pan-and-zoom"
           style={{
