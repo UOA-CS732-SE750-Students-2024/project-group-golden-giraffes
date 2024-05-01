@@ -67,7 +67,6 @@ export interface CanvasViewProps {
 
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const lastMousePosRef = useRef(ORIGIN);
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [scale, setScale] = useState(1);
@@ -126,12 +125,8 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
   const handleMouseMove = useCallback(
     (event: MouseEvent): void => {
-      const lastMousePos = lastMousePosRef.current;
-      const currentMousePos: Point = { x: event.pageX, y: event.pageY }; // use document so can pan off element
-      lastMousePosRef.current = currentMousePos;
-
       const mouseDiff = scalePoint(
-        diffPoints(currentMousePos, lastMousePos),
+        { x: event.movementX, y: event.movementY },
         scale,
       );
 
@@ -155,14 +150,10 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    * Only add the mouse move listener when you click down so that moving your mouse normally doesn't
    * cause the canvas to pan.
    */
-  const handleStartPan = useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      lastMousePosRef.current = { x: event.pageX, y: event.pageY };
-    },
-    [handleMouseMove, handleMouseUp],
-  );
+  const handleStartPan = useCallback((): void => {
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  }, [handleMouseMove, handleMouseUp]);
 
   return (
     <FullscreenContainer>
