@@ -10,9 +10,14 @@ export const testCanvas = {
 
 export default function () {
   prisma.canvas.create({
-    data: { ...testCanvas, name: "Unlocked Canvas", locked: false },
+    data: {
+      ...testCanvas,
+      name: "Unlocked Canvas",
+      locked: false,
+      event_id: 1,
+    },
   });
   prisma.canvas.create({
-    data: { ...testCanvas, name: "Locked Canvas", locked: true },
+    data: { ...testCanvas, name: "Locked Canvas", locked: true, event_id: 9 },
   });
 }
