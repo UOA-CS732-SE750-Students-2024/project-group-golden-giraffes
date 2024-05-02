@@ -29,8 +29,8 @@ const FullscreenContainer = styled("main")`
 
 const CanvasContainer = styled("div")`
   position: fixed;
-  height: 100vh;
-  width: 100vw;
+  height: 100svh;
+  width: 100svw;
   overflow: hidden;
   display: flex;
   justify-content: center;
