@@ -199,7 +199,7 @@ view leaderboard {
   user         user   @relation(fields: [user_id], references: [id])
   canvas_id    Int
   canvas       canvas @relation(fields: [canvas_id], references: [id])
-  total_pixles Int
+  total_pixels Int
   rank         Int
 
   @@id([user_id, canvas_id])
@@ -212,7 +212,7 @@ view leaderboard_guild {
   canvas       canvas @relation(fields: [canvas_id], references: [id])
   guild_id     BigInt
   guild        guild  @relation(fields: [guild_id], references: [id])
-  total_pixles Int
+  total_pixels Int
   rank         Int
 
   @@id([user_id, guild_id, canvas_id])
