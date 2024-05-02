@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   return (
-    <CanvasView imageUrl={`${config.apiUrl}/api/v1/canvas/current`}>
+    <CanvasView imageSrc={`${config.apiUrl}/api/v1/canvas/current`}>
       <Box margin={10} width="fit-content">
         <Card sx={{ minWidth: "min(400px, 80%)" }}>
           <CardContent>Blurple Canvas 😎</CardContent>
