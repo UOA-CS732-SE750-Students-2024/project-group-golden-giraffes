@@ -60,6 +60,13 @@ function getDefaultScale(image: HTMLImageElement): number {
   return scale;
 }
 
+/**
+ * A lower value causes faster zooming.
+ */
+function zoomSensitivity(currentZoom: number): number {
+  return 100 / currentZoom + 30;
+}
+
 export interface CanvasViewProps {
   imageUrl: string;
   children?: ReactNode;
@@ -100,6 +107,25 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       image.onload = null;
     };
   }, [imageUrl]);
+
+  /********************************
+   * ZOOMING FUNCTIONALITY.       *
+   ********************************/
+
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent): void => {
+      event.preventDefault();
+
+      setScale((oldZoom) => {
+        const zoomDiff = -event.deltaY / zoomSensitivity(oldZoom);
+        return clamp(oldZoom + zoomDiff, 0.2, 10);
+      });
+    };
+
+    canvasRef.current?.addEventListener("wheel", handleWheel);
+
+    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
+  }, []);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
