@@ -1,8 +1,9 @@
 import { Server } from "node:http";
+import { prisma } from "@/client";
+import config from "@/config";
+import { apiRouter } from "@/routes";
+import "@/utils"; // Make BigInt JSON serializable
 import express, { Express } from "express";
-import { prisma } from "../client";
-import config from "../config";
-import "../utils"; // Make BigInt JSON serializable
 
 export interface ExpressServer {
   app: Express;
@@ -14,6 +15,8 @@ export function createApp(): ExpressServer {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
+
+  app.use(apiRouter);
 
   app.get("/", (req, res) => {
     res.json({ message: "Hello, world!" });

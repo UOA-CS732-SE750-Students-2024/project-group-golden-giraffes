@@ -31,14 +31,23 @@
     "postinstall": "prisma generate",
     "format": "prettier --check --cache . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write --cache . --ignore-path ../../.gitignore",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --apply .",
+    "lint": "biome check --formatter-enabled=false .",
+    "lint:fix": "biome check --formatter-enabled=false --apply .",
     "check": "pnpm format && pnpm lint",
     "check:fix": "pnpm format:fix && pnpm lint:fix"
   },
   "dependencies": {
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^5.12.1",
+    "@types/express-session": "^1.18.0",
+    "@types/passport": "^1.0.16",
+    "@types/passport-discord": "^0.1.13",
+    "@types/pngjs": "^6.0.4",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4",
+    "pngjs": "^7.0.0",
+    "tsconfig-paths": "^4.2.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -49,7 +58,7 @@
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
-    "prisma": "^5.11.0",
+    "prisma": "^5.12.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   }

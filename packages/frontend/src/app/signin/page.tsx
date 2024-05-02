@@ -61,7 +61,9 @@ export default function SignInPage() {
           />
         </picture>
         <Title variant="h1">Blurple Canvas</Title>
-        <Button variant="contained">Sign in with Discord</Button>
+        <a href="http://localhost:8000/api/v1/discord/">
+          <Button variant="contained">Sign in with Discord</Button>
+        </a>
         <p>
           <em>That it. There are no other options.</em>
         </p>

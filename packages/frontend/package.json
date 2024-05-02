@@ -30,8 +30,8 @@
     "start": "next start",
     "format": "prettier --check --cache . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write --cache . --ignore-path ../../.gitignore",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --apply .",
+    "lint": "biome check --formatter-enabled=false .",
+    "lint:fix": "biome check --formatter-enabled=false --apply .",
     "check": "pnpm format && pnpm lint",
     "check:fix": "pnpm format:fix && pnpm lint:fix"
   },

@@ -4,6 +4,7 @@
 
   // Reference: https://www.typescriptlang.org/tsconfig
   "compilerOptions": {
+    "declaration": true,
     "rootDir": "src",
     "outDir": "build",
     "noFallthroughCasesInSwitch": true,

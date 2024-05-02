@@ -3,8 +3,6 @@
  */
 declare namespace NodeJS {
   export interface ProcessEnv {
-    PORT?: string;
-    NODE_ENV?: string;
-    DISCORD_CLIENT_ID?: string;
+    NEXT_PUBLIC_API_URL?: string;
   }
 }

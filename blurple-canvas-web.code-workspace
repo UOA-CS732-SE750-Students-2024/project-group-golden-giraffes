@@ -2,17 +2,17 @@
   "folders": [
     {
       "name": "root",
-      "path": "."
+      "path": ".",
     },
     {
-      "path": "packages/backend"
+      "path": "packages/backend",
     },
     {
-      "path": "packages/frontend"
+      "path": "packages/frontend",
     },
     {
-      "path": "packages/types"
-    }
+      "path": "packages/types",
+    },
   ],
   "settings": {
     "cSpell.caseSensitive": false,
@@ -28,14 +28,14 @@
       "text",
       "typescript",
       "typescriptreact",
-      "yaml"
+      "yaml",
     ],
     "cSpell.language": "en-GB",
     "cSpell.overrides": [
       {
         "filename": "**/*.{md,tex}",
-        "caseSensitive": true
-      }
+        "caseSensitive": true,
+      },
     ],
     "cSpell.words": [
       "Blurple",
@@ -47,15 +47,21 @@
       "Jeffers",
       "Makaurau",
       "MERN",
+      "pngjs",
       "SOFTENG",
       "Tāmaki",
-      "WCAG"
+      "WCAG",
+      "wdth",
+      "wght",
     ],
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.biome": "explicit",
+    },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
     "files.exclude": {
-      "packages/": true
+      "packages/": true,
     },
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
@@ -63,26 +69,17 @@
       "first-line-heading": false,
       "no-hard-tabs": false,
       "no-inline-html": false,
-      "no-trailing-punctuation": false
+      "no-trailing-punctuation": false,
     },
     "search.exclude": {
       "**/.next": true,
       "**/build": true,
       "**/dist": true,
-      "**/node_modules": true
-    },
-    "[css]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[html]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[markdown]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "**/node_modules": true,
     },
     "[prisma]": {
-      "editor.defaultFormatter": "Prisma.prisma"
-    }
+      "editor.defaultFormatter": "Prisma.prisma",
+    },
   },
   "extensions": {
     "recommendations": [
@@ -92,7 +89,7 @@
       "esbenp.prettier-vscode",
       "humao.rest-client",
       "Prisma.prisma",
-      "streetsidesoftware.code-spell-checker"
-    ]
-  }
+      "streetsidesoftware.code-spell-checker",
+    ],
+  },
 }

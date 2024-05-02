@@ -2,6 +2,7 @@
   "name": "@blurple-canvas-web/types",
   "description": "Types package Blurple Canvas Web",
   "version": "0.1.0",
+  "main": "src/index.ts",
   "private": true,
   "contributors": [
     "Aaron Guo <aaronjoshguo@gmail.com>",
@@ -26,15 +27,20 @@
   },
   "scripts": {
     "build": "tsc",
+    "dev": "tsc --watch",
     "format": "prettier --check --cache . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write --cache . --ignore-path ../../.gitignore",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --apply .",
+    "lint": "biome check --formatter-enabled=false .",
+    "lint:fix": "biome check --formatter-enabled=false --apply .",
     "check": "pnpm format && pnpm lint",
     "check:fix": "pnpm format:fix && pnpm lint:fix"
   },
   "devDependencies": {
+    "@tsconfig/node20": "^20.1.2",
     "prettier": "^3.2.5",
     "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@types/passport-discord": "^0.1.13"
   }
 }

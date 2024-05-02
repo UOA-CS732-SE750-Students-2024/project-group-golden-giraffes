@@ -1,8 +1,8 @@
 generator client {
   provider        = "prisma-client-js"
   // pnpm workspaces cause the types to be generated in the wrong place, so we need to manually make
-  // it install in the root node_modules folder. See: https://github.com/prisma/prisma/issues/6603
-  output          = "../../../node_modules/.prisma/client"
+  // sure it's being installed in the right place.
+  output          = "../../../node_modules/.pnpm/@prisma+client@5.12.1_prisma@5.12.1/node_modules/.prisma/client"
   previewFeatures = ["views"]
 }
 
@@ -111,20 +111,20 @@ model history {
   guild     guild?   @relation(fields: [guild_id], references: [id])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma.
+/// This is a special table that will only ever have one row. The title being the primary key
+/// is only to make it compatible with Prisma.
 model info {
+  title                   String   @id
   canvas_admin            BigInt[]
   current_event_id        Int
   cached_canvas_ids       Int[]
   highlight_color         Int?
-  title                   String
   admin_server_id         BigInt
   current_emoji_server_id BigInt
   host_server_id          BigInt
   event_role_id           BigInt?
-  default_canvas_id       Int?
-
-  @@ignore
+  default_canvas_id       Int
+  all_colors_global       Boolean
 }
 
 model participation {
