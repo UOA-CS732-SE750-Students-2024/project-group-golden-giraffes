@@ -2,7 +2,7 @@ import request from "supertest";
 import { createApp } from "./index";
 
 import { prisma } from "@/client";
-import initialisePrismock from "@/test";
+import initializePrismock from "@/test";
 
 // Instantiates the entire server of the app here since the hello world route is not exported
 // It would be better to create an express app at the start and then add the specific route
@@ -24,7 +24,7 @@ describe("Hello world test", () => {
 
 describe("Test Prisma Stuff", () => {
   beforeEach(() => {
-    initialisePrismock();
+    initializePrismock();
   });
 
   it("can write to in memory prisma instance", async () => {
