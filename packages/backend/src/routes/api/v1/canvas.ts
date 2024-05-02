@@ -8,8 +8,11 @@ import {
   unlockedCanvasToPng,
 } from "@/services/canvasService";
 import { Response, Router } from "express";
+import { pixelRouter } from "./pixel";
 
 export const canvasRouter = Router();
+
+canvasRouter.use("/:canvasId", pixelRouter);
 
 canvasRouter.get("/current", async (req, res) => {
   try {
