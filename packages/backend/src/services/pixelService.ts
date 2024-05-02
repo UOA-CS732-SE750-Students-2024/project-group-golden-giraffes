@@ -4,8 +4,8 @@ import { history } from "@prisma/client";
 
 export async function getPixelHistory(
   canvasId: number,
-  xCoordinate: number,
-  yCoordinate: number,
+  x: number,
+  y: number,
 ): Promise<history[]> {
   // check if canvas exists
   const canvas = await prisma.canvas.findFirst({
@@ -18,23 +18,23 @@ export async function getPixelHistory(
   }
 
   // check if pixel is within bounds
-  if (xCoordinate < 0 || xCoordinate >= canvas.width) {
+  if (x < 0 || x >= canvas.width) {
     throw new NotFoundError(
-      `X coordinate ${xCoordinate} is out of bounds for canvas ${canvasId}`, //TODO update to have better error
+      `X coordinate ${x} is out of bounds for canvas ${canvasId}`, //TODO update to have better error
     );
   }
 
-  if (yCoordinate < 0 || yCoordinate >= canvas.height) {
+  if (y < 0 || y >= canvas.height) {
     throw new NotFoundError(
-      `Y coordinate ${yCoordinate} is out of bounds for canvas ${canvasId}`,
+      `Y coordinate ${y} is out of bounds for canvas ${canvasId}`,
     );
   }
 
   const pixelHistory = await prisma.history.findMany({
     where: {
       canvas_id: canvasId,
-      x: xCoordinate,
-      y: yCoordinate,
+      x: x,
+      y: y,
     },
   });
   return pixelHistory;
