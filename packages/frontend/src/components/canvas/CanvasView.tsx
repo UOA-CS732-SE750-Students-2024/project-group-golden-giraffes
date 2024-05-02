@@ -100,7 +100,9 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   }, []);
 
   useEffect(() => {
-    // It seems sometimes the image onLoad doesn't fire.
+    // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
+    // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
+    // need to check it's working correctly when we start placing pixels.
     if (imageRef.current?.complete) {
       handleLoadImage(imageRef.current);
     }
