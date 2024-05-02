@@ -60,12 +60,9 @@ function getDefaultScale(image: HTMLImageElement): number {
   return scale;
 }
 
-/**
- * A lower value causes faster zooming.
- */
-function zoomSensitivity(currentZoom: number): number {
-  return 100 / currentZoom + 30;
-}
+const SCALE_FACTOR = 0.2;
+const MAX_ZOOM = 10;
+const MIN_ZOOM = 0.5;
 
 export interface CanvasViewProps {
   imageUrl: string;
@@ -117,8 +114,9 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       event.preventDefault();
 
       setScale((oldZoom) => {
-        const zoomDiff = -event.deltaY / zoomSensitivity(oldZoom);
-        return clamp(oldZoom + zoomDiff, 0.2, 10);
+        const newZoom =
+          oldZoom * Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
+        return clamp(newZoom, MIN_ZOOM, MAX_ZOOM);
       });
     };
 
