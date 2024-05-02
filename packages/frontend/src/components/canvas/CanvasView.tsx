@@ -73,6 +73,7 @@ export interface CanvasViewProps {
 }
 
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
@@ -151,11 +152,13 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   );
 
   /**
-   * Remove the mouse move listener when the mouse is released to stop panning.
+   * Remove the listeners when the mouse is released to stop panning.
    */
   const handleMouseUp = useCallback((): void => {
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
+    if (!containerRef.current) return;
+
+    containerRef.current.removeEventListener("mousemove", handleMouseMove);
+    containerRef.current.removeEventListener("mouseup", handleMouseUp);
   }, [handleMouseMove]);
 
   /**
@@ -163,8 +166,10 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    * cause the canvas to pan.
    */
   const handleStartMousePan = useCallback((): void => {
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    if (!containerRef.current) return;
+
+    containerRef.current.addEventListener("mousemove", handleMouseMove);
+    containerRef.current.addEventListener("mouseup", handleMouseUp);
   }, [handleMouseMove, handleMouseUp]);
 
   const handleTouchMove = useCallback(
@@ -193,9 +198,11 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   );
 
   const handleTouchEnd = useCallback((): void => {
-    document.removeEventListener("touchmove", handleTouchMove);
-    document.removeEventListener("touchend", handleTouchEnd);
-    document.removeEventListener("touchcancel", handleTouchEnd);
+    if (!containerRef.current) return;
+
+    containerRef.current.removeEventListener("touchmove", handleTouchMove);
+    containerRef.current.removeEventListener("touchend", handleTouchEnd);
+    containerRef.current.removeEventListener("touchcancel", handleTouchEnd);
   }, [handleTouchMove]);
 
   /**
@@ -204,14 +211,16 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    */
   const handleStartTouchPan = useCallback(
     (event: React.TouchEvent<HTMLDivElement>): void => {
+      if (!containerRef.current) return;
+
       const touchCount = event.touches.length;
 
       // TODO: Implement multi-touch zooming
       if (touchCount !== 1) return;
 
-      document.addEventListener("touchmove", handleTouchMove);
-      document.addEventListener("touchend", handleTouchEnd);
-      document.addEventListener("touchcancel", handleTouchEnd);
+      containerRef.current.addEventListener("touchmove", handleTouchMove);
+      containerRef.current.addEventListener("touchend", handleTouchEnd);
+      containerRef.current.addEventListener("touchcancel", handleTouchEnd);
       startTouchesRef.current = Array.from(event.touches);
     },
     [handleTouchMove, handleTouchEnd],
@@ -220,6 +229,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   return (
     <FullscreenContainer>
       <CanvasContainer
+        ref={containerRef}
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
