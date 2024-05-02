@@ -110,9 +110,28 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    ********************************/
 
   useEffect(() => {
+    if (!image) return;
+
     const handleWheel = (event: WheelEvent): void => {
       event.preventDefault();
 
+      const mousePositionOnCanvas: Point = {
+        x: event.offsetX,
+        y: event.offsetY,
+      };
+
+      // We need to update the offset so that the zoom is centred around the mouse position.
+      const newOffset = scalePoint(
+        diffPoints(
+          { x: image.width / 2, y: image.height / 2 },
+          mousePositionOnCanvas,
+        ),
+        scale,
+      );
+
+      console.log(newOffset);
+
+      setOffset(clampOffset(newOffset));
       setScale((oldZoom) => {
         const newZoom =
           oldZoom * Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
@@ -123,7 +142,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     canvasRef.current?.addEventListener("wheel", handleWheel);
 
     return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
-  }, []);
+  }, [scale, image]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
