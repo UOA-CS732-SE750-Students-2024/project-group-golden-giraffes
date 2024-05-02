@@ -2,8 +2,8 @@ import { prisma } from "@/client";
 
 // Only use 2 canvases for testing purposes
 export const testCanvas = {
-  width: 4,
-  height: 4,
+  width: 2,
+  height: 2,
   start_coordinates: [1, 1],
   cooldown_length: 30,
 };
