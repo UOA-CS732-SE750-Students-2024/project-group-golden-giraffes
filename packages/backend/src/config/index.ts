@@ -21,6 +21,10 @@ const config = {
     root: path.resolve(),
     canvases: path.resolve("static", "canvas"),
   },
+  discord: {
+    clientId: requiredEnv("DISCORD_CLIENT_ID"),
+    clientSecret: requiredEnv("DISCORD_CLIENT_SECRET"),
+  },
 } as const;
 
 if (!fs.existsSync(config.paths.canvases)) {
