@@ -65,11 +65,11 @@ function getDefaultScale(image: HTMLImageElement): number {
 }
 
 export interface CanvasViewProps {
-  imageSrc: string;
+  imageUrl: string;
   children?: ReactNode;
 }
 
-export default function CanvasView({ imageSrc, children }: CanvasViewProps) {
+export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastMousePosRef = useRef(ORIGIN);
@@ -173,7 +173,7 @@ export default function CanvasView({ imageSrc, children }: CanvasViewProps) {
     <FullscreenContainer>
       <HiddenImage
         ref={imageRef}
-        src={imageSrc}
+        src={imageUrl}
         alt="Blurple Canvas 2023"
         onLoad={(event) => handleLoadImage(event.currentTarget)}
       />
