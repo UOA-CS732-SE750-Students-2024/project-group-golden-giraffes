@@ -1,6 +1,6 @@
 "use client";
 
-import { getScreenDimensions } from "@/hooks/useScreenDimensions";
+import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
@@ -35,6 +35,10 @@ const CanvasContainer = styled("div")`
   }
 `;
 
+const HiddenImage = styled("img")`
+  display: none;
+`;
+
 /**
  * Return the value clamped so that it is within the range [min, max].
  */
@@ -66,40 +70,43 @@ export interface CanvasViewProps {
 }
 
 export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
+  const imageRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastMousePosRef = useRef(ORIGIN);
 
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
+    null,
+  );
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
 
-  const isLoading = image === null;
+  const isLoading = imageDimensions === null;
+
+  const handleLoadImage = useCallback((image: HTMLImageElement): void => {
+    if (!canvasRef.current) return;
+
+    const context = canvasRef.current.getContext("2d");
+    if (!context) return;
+
+    // We need to set the width of the canvas first, otherwise if the image is bigger than
+    // the canvas it'll get cut off.
+    canvasRef.current.width = image.width;
+    canvasRef.current.height = image.height;
+
+    context.drawImage(image, 0, 0);
+
+    setScale(getDefaultScale(image));
+    setImageDimension({ width: image.width, height: image.height });
+  }, []);
 
   useEffect(() => {
-    const image = new Image();
-    image.onload = () => {
-      if (!canvasRef.current) return;
-
-      const context = canvasRef.current.getContext("2d");
-      if (!context) return;
-
-      // We need to set the width of the canvas first, otherwise if the image is bigger than
-      // the canvas it'll get cut off.
-      canvasRef.current.width = image.width;
-      canvasRef.current.height = image.height;
-
-      context.drawImage(image, 0, 0);
-
-      setImage(image);
-      setScale(getDefaultScale(image));
-    };
-    image.src = imageUrl;
-
-    return () => {
-      // Remove the onload handler to prevent a redundant GET request being made.
-      image.onload = null;
-    };
-  }, [imageUrl]);
+    // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
+    // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
+    // need to check it's working correctly when we start placing pixels.
+    if (imageRef.current?.complete) {
+      handleLoadImage(imageRef.current);
+    }
+  }, [handleLoadImage]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -111,17 +118,17 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    */
   const clampOffset = useCallback(
     (offset: Point): Point => {
-      if (image == null) return offset;
+      if (imageDimensions == null) return offset;
 
-      const widthLimit = image.width / 2;
-      const heightLimit = image.height / 2;
+      const widthLimit = imageDimensions.width / 2;
+      const heightLimit = imageDimensions.height / 2;
 
       return {
         x: clamp(offset.x, -widthLimit, widthLimit),
         y: clamp(offset.y, -heightLimit, heightLimit),
       };
     },
-    [image],
+    [imageDimensions],
   );
 
   const handleMouseMove = useCallback(
@@ -166,6 +173,12 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
   return (
     <FullscreenContainer>
+      <HiddenImage
+        ref={imageRef}
+        src={imageUrl}
+        alt="Blurple Canvas 2023"
+        onLoad={(event) => handleLoadImage(event.currentTarget)}
+      />
       <CanvasContainer onMouseDown={handleStartPan}>
         <div
           id="canvas-pan-and-zoom"
