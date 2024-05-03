@@ -1,13 +1,19 @@
 import { prisma } from "@/client";
 import { NotFoundError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
-import { history } from "@prisma/client";
+
+interface PixelHistory {
+  userId: string;
+  colorId: number;
+  timestamp: Date;
+  guildId?: string;
+}
 
 export async function getPixelHistory(
   canvasId: number,
   x: number,
   y: number,
-): Promise<history[]> {
+): Promise<PixelHistory[]> {
   // check if canvas exists
   const canvas = await prisma.canvas.findFirst({
     where: {
@@ -32,11 +38,18 @@ export async function getPixelHistory(
   }
 
   const pixelHistory = await prisma.history.findMany({
+    select: { user_id: true, color_id: true, timestamp: true, guild_id: true },
     where: {
       canvas_id: canvasId,
       x: x,
       y: y,
     },
   });
-  return pixelHistory;
+
+  return pixelHistory.map((history) => ({
+    userId: history.user_id.toString(),
+    colorId: history.color_id,
+    timestamp: history.timestamp,
+    guildId: history.guild_id?.toString(),
+  }));
 }
