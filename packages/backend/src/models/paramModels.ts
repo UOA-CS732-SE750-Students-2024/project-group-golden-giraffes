@@ -1,7 +1,7 @@
 import BadRequestError from "@/errors/BadRequestError";
 import z from "zod";
 
-export const CanvasIdParamModel = z.object({
+const CanvasIdParamModel = z.object({
   canvasId: z.coerce.number().int().positive(),
 });
 
