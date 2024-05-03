@@ -3,8 +3,8 @@ export interface UserStats {
   canvasId: number;
   totalPixels: number;
   rank: number;
-  mostFrequentColorId: number;
-  placeFrequency: string;
+  mostFrequentColor: PaletteColor;
+  // placeFrequency: string;
   mostRecentTimestamp: string;
 }
 

@@ -83,8 +83,13 @@ const UserStatsComponent: React.FC<UserStatsComponentProps> = ({ userId }) => {
         canvasId: 2024,
         totalPixels: 1000,
         rank: 1,
-        mostFrequentColorId: 1,
-        placeFrequency: "1 day 00:00:00",
+        mostFrequentColor: {
+          id: 1,
+          code: "reed",
+          name: "Red",
+          rgba: [255, 0, 0, 255],
+        },
+        // placeFrequency: "1 day 00:00:00",
         mostRecentTimestamp: "2023-05-13 06:41:37",
       });
     };
@@ -108,12 +113,12 @@ const UserStatsComponent: React.FC<UserStatsComponentProps> = ({ userId }) => {
       />
       <IndividualStat
         label="Most Frequent Color ID"
-        value={stats.mostFrequentColorId}
+        value={stats.mostFrequentColor.id}
       />
-      <IndividualStat
+      {/* <IndividualStat
         label="Place Frequency"
         value={formatInterval(stats.placeFrequency)}
-      />
+      /> */}
       <IndividualStat
         label="Most Recent Pixel"
         value={formatTimestampLocalTZ(stats.mostRecentTimestamp)}
