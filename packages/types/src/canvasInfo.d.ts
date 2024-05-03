@@ -7,3 +7,8 @@ export interface CanvasInfo {
   isLocked: boolean;
   eventId: number | null;
 }
+
+export interface CanvasSummary {
+  id: number;
+  name: string;
+}

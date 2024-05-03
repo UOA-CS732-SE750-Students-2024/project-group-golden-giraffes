@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { prisma } from "@/client";
 import config from "@/config";
 import { NotFoundError } from "@/errors";
-import { CanvasInfo } from "@blurple-canvas-web/types";
+import { CanvasInfo, CanvasSummary } from "@blurple-canvas-web/types";
 import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 
@@ -65,6 +65,28 @@ export function unlockedCanvasToPng(unlockedCanvas: UnlockedCanvas): PNG {
 }
 
 /**
+ * Retrieves canvas summary info for all canvases.
+ *
+ * @returns The canvas summary info of all canvases
+ */
+export async function getCanvases(): Promise<CanvasSummary[]> {
+  const canvases = await prisma.canvas.findMany({
+    orderBy: {
+      id: "desc",
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  return canvases.map((canvas) => ({
+    id: canvas.id,
+    name: canvas.name,
+  }));
+}
+
+/**
  * Retrieves canvas info from the cache of the default canvas ID defined in the database.
  *
  * @returns The canvas info of the default canvas
@@ -83,9 +105,9 @@ export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
 }
 
 /**
- * Gets the info for a canvas.
+ * Retrieves the info for a canvas.
  *
- * @param canvasId The ID of the canvas to get info for
+ * @param canvasId The ID of the canvas to retrieve the info for
  * @returns The canvas info
  */
 export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
