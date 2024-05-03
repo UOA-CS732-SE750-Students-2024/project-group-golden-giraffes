@@ -1,8 +1,10 @@
 import { ApiError } from "@/errors";
+import BadRequestError from "@/errors/BadRequestError";
 import {
   CanvasIdParam,
   CanvasIdParamModel,
   PixelHistoryParamModel,
+  parseCanvasId,
 } from "@/models/paramModels";
 import { getPixelHistory } from "@/services/pixelService";
 import { Router } from "express";
@@ -10,28 +12,17 @@ import { Router } from "express";
 export const pixelRouter = Router({ mergeParams: true });
 
 pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
-  // grabbing the canvasId from the path
   try {
-    console.log(req.query);
-    const pathResult = await CanvasIdParamModel.safeParseAsync(req.params);
-    if (!pathResult.success) {
-      res.status(400).json({
-        message: `${req.params.canvasId} is not a valid canvas ID`,
-        errors: pathResult.error.issues,
-      });
-      return;
-    }
-
-    const { canvasId } = pathResult.data;
+    // grabbing the canvasId from the path
+    const canvasId = await parseCanvasId(req.params);
 
     // grabbing the x and y from the query
     const queryResult = await PixelHistoryParamModel.safeParseAsync(req.query);
     if (!queryResult.success) {
-      res.status(400).json({
-        message: "Invalid parameters. Expected x, and y.",
-        errors: queryResult.error.issues,
-      });
-      return;
+      throw new BadRequestError(
+        "Invalid query parameters. Expected x, and y as positive integers",
+        queryResult.error.issues,
+      );
     }
 
     const { x, y } = queryResult.data;

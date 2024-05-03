@@ -1,5 +1,5 @@
 import { ApiError } from "@/errors";
-import { CanvasIdParamModel } from "@/models/paramModels";
+import { CanvasIdParamModel, parseCanvasId } from "@/models/paramModels";
 import {
   CachedCanvas,
   getCanvasFilename,
@@ -25,16 +25,7 @@ canvasRouter.get("/current", async (req, res) => {
 
 canvasRouter.get("/:canvasId", async (req, res) => {
   try {
-    const result = await CanvasIdParamModel.safeParseAsync(req.params);
-    if (!result.success) {
-      res.status(400).json({
-        message: `${req.params.canvasId} is not a valid canvas ID`,
-        errors: result.error.issues,
-      });
-      return;
-    }
-
-    const { canvasId } = result.data;
+    const canvasId = await parseCanvasId(req.params);
     const cachedCanvas = await getCanvasPng(canvasId);
 
     sendCachedCanvas(res, canvasId, cachedCanvas);
