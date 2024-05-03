@@ -1,4 +1,5 @@
 import { ApiError } from "@/errors";
+import BadRequestError from "@/errors/BadRequestError";
 import { EventIdParamModel } from "@/models/paramModels";
 import {
   getCurrentEventPalette,
@@ -21,11 +22,10 @@ paletteRouter.get("/:eventId", async (req, res) => {
   try {
     const result = await EventIdParamModel.safeParseAsync(req.params);
     if (!result.success) {
-      res.status(400).json({
-        message: `${req.params.eventId} is not a valid event ID`,
-        errors: result.error.issues,
-      });
-      return;
+      throw new BadRequestError(
+        `${req.params.eventId} is not a valid event ID`,
+        result.error.issues,
+      );
     }
 
     const { eventId } = result.data;
