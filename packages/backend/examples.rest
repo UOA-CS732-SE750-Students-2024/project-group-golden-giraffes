@@ -20,7 +20,7 @@ Content-Type: application/json
 GET {{basePath}}/canvas/{{canvasId}}/pixel/history
   ?x=1
   &y=1 HTTP/1.1
-Content-Type = application/json
+Content-Type: application/json
 
 ### Event Palette
 
