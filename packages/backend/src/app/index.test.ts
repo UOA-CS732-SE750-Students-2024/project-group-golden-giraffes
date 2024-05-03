@@ -10,13 +10,13 @@ const { app, server } = createApp();
 
 describe("Hello world test", () => {
   describe("GET /", () => {
-    it("Recieves hello world", async () => {
+    it("Receives hello world", async () => {
       const response = await request(app).get("/");
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual({ message: "Hello, world!" });
     });
 
-    it("Recieves hello world but with a different syntax", async () => {
+    it("Receives hello world but with a different syntax", async () => {
       await request(app).get("/").expect(200, { message: "Hello, world!" });
     });
   });
