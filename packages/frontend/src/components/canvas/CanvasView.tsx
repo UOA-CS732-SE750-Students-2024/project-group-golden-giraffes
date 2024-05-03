@@ -127,22 +127,21 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         y: event.offsetY,
       };
 
+      // Offset to get to the mouse position
+      const mouseOffsetDirection = diffPoints(
+        { x: image.width / 2, y: image.height / 2 },
+        mousePositionOnCanvas,
+      );
+
+      console.log(mouseOffsetDirection);
+
       const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
       const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
 
       // Clamping the zoom means the actual scale may be different.
       const effectiveScale = newZoom / zoom;
 
-      console.log(scale, effectiveScale);
-
       setOffset((prevOffset) => {
-        // Offset to get to the mouse position
-        const mouseOffsetDirection = diffPoints(
-          { x: image.width / 2, y: image.height / 2 },
-          mousePositionOnCanvas,
-        );
-
-        // Offset from the previous offset
         const offsetDiffDirection = diffPoints(
           mouseOffsetDirection,
           prevOffset,
@@ -154,13 +153,9 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
           effectiveScale - 1,
         );
 
-        console.log(mouseOffsetDirection);
         return clampOffset(addPoints(offsetDiff, prevOffset));
       });
-      setZoom((prevZoom) => {
-        const newZoom = prevZoom * scale;
-        return clamp(newZoom, MIN_ZOOM, MAX_ZOOM);
-      });
+      setZoom(newZoom);
     };
 
     canvasRef.current?.addEventListener("wheel", handleWheel);
