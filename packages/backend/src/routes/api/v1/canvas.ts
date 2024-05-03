@@ -5,6 +5,7 @@ import {
   getCanvasFilename,
   getCanvasInfo,
   getCanvasPng,
+  getCanvases,
   getCurrentCanvas,
   getCurrentCanvasInfo,
   unlockedCanvasToPng,
@@ -15,6 +16,15 @@ import { pixelRouter } from "./pixel";
 export const canvasRouter = Router();
 
 canvasRouter.use("/:canvasId/pixel", pixelRouter);
+
+canvasRouter.get("/", async (req, res) => {
+  try {
+    const canvases = await getCanvases();
+    return res.status(200).json(canvases);
+  } catch (error) {
+    ApiError.sendError(res, error);
+  }
+});
 
 canvasRouter.get("/current/info", async (req, res) => {
   try {
