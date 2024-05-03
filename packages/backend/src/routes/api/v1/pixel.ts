@@ -2,7 +2,6 @@ import { ApiError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
 import {
   CanvasIdParam,
-  CanvasIdParamModel,
   PixelHistoryParamModel,
   parseCanvasId,
 } from "@/models/paramModels";

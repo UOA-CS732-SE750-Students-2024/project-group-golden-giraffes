@@ -1,5 +1,5 @@
 import { ApiError } from "@/errors";
-import { CanvasIdParamModel, parseCanvasId } from "@/models/paramModels";
+import { parseCanvasId } from "@/models/paramModels";
 import {
   CachedCanvas,
   getCanvasFilename,
