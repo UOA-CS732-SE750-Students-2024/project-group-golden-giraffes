@@ -3,8 +3,10 @@ import { CanvasIdParamModel } from "@/models/paramModels";
 import {
   CachedCanvas,
   getCanvasFilename,
+  getCanvasInfo,
   getCanvasPng,
   getCurrentCanvas,
+  getCurrentCanvasInfo,
   unlockedCanvasToPng,
 } from "@/services/canvasService";
 import { Response, Router } from "express";
@@ -13,6 +15,35 @@ import { pixelRouter } from "./pixel";
 export const canvasRouter = Router();
 
 canvasRouter.use("/:canvasId/pixel", pixelRouter);
+
+canvasRouter.get("/current/info", async (req, res) => {
+  try {
+    const canvasInfo = await getCurrentCanvasInfo();
+    return res.status(200).json(canvasInfo);
+  } catch (error) {
+    ApiError.sendError(res, error);
+  }
+});
+
+canvasRouter.get("/:canvasId/info", async (req, res) => {
+  try {
+    const result = await CanvasIdParamModel.safeParseAsync(req.params);
+    if (!result.success) {
+      res.status(400).json({
+        message: `${req.params.canvasId} is not a valid canvas ID`,
+        errors: result.error.issues,
+      });
+      return;
+    }
+
+    const { canvasId } = result.data;
+    const canvasInfo = await getCanvasInfo(canvasId);
+
+    return res.status(200).json(canvasInfo);
+  } catch (error) {
+    ApiError.sendError(res, error);
+  }
+});
 
 canvasRouter.get("/current", async (req, res) => {
   try {

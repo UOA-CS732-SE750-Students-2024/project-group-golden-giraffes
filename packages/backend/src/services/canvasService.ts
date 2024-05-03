@@ -65,6 +65,24 @@ export function unlockedCanvasToPng(unlockedCanvas: UnlockedCanvas): PNG {
 }
 
 /**
+ * Retrieves canvas info from the cache of the default canvas ID defined in the database.
+ *
+ * @returns The canvas info of the default canvas
+ */
+export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
+  const info = await prisma.info.findFirst({
+    select: { default_canvas_id: true },
+  });
+
+  // To get rid of the nullable type from info. This should never happen
+  if (!info) {
+    throw new Error("The info table is empty! 😱");
+  }
+
+  return getCanvasInfo(info.default_canvas_id);
+}
+
+/**
  * Gets the info for a canvas.
  *
  * @param canvasId The ID of the canvas to get info for
@@ -109,11 +127,11 @@ export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
 }
 
 /**
- * Retrieves canvas info from the cache of the default canvas ID defined in the database.
+ * Retrieves a canvas from the cache using the default canvas ID defined in the database.
  *
- * @returns The canvas info of the default canvas
+ * @returns A tuple containing the id of the canvas and the cached canvas
  */
-export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
+export async function getCurrentCanvas(): Promise<[number, CachedCanvas]> {
   const info = await prisma.info.findFirst({
     select: { default_canvas_id: true },
   });
@@ -123,7 +141,10 @@ export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
     throw new Error("The info table is empty! 😱");
   }
 
-  return getCanvasInfo(info.default_canvas_id);
+  const defaultCanvasId = info.default_canvas_id;
+  const cachedCanvas = await getCanvasPng(defaultCanvasId);
+
+  return [defaultCanvasId, cachedCanvas];
 }
 
 /**
