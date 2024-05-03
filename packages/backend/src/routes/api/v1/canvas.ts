@@ -8,8 +8,11 @@ import {
   unlockedCanvasToPng,
 } from "@/services/canvasService";
 import { Response, Router } from "express";
+import { pixelRouter } from "./pixel";
 
 export const canvasRouter = Router();
+
+canvasRouter.use("/:canvasId/pixel", pixelRouter);
 
 canvasRouter.get("/current", async (req, res) => {
   try {
@@ -61,6 +64,7 @@ function sendCachedCanvas(
       res
         .status(200)
         .type("png")
+        .setHeader("Cache-Control", "no-cache no-store")
         .setHeader("Content-Disposition", `inline; filename="${filename}"`),
     );
 }

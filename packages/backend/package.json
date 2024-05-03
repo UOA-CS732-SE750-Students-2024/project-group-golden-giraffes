@@ -25,10 +25,12 @@
     "pnpm": ">=9.0.1"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
     "dev": "nodemon src/index.ts --devmode",
     "start": "node build/index.js",
     "postinstall": "prisma generate",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "format": "prettier --check --cache . --ignore-path ../../.gitignore",
     "format:fix": "prettier --write --cache . --ignore-path ../../.gitignore",
     "lint": "biome check --formatter-enabled=false .",
@@ -54,11 +56,17 @@
     "@blurple-canvas-web/types": "workspace:*",
     "@tsconfig/node20": "^20.1.2",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20",
+    "@types/supertest": "^6.0.2",
     "dotenv": "^16.4.5",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "prisma": "^5.12.1",
+    "prismock": "^1.30.3",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
   }
