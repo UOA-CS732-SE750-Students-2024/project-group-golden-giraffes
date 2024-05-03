@@ -9,7 +9,7 @@ import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
 
-pixelRouter.get<CanvasIdParam>("/pixel_history", async (req, res) => {
+pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
   // grabbing the canvasId from the path
   try {
     console.log(req.query);
