@@ -1,5 +1,6 @@
 import { prisma } from "@/client";
 import { LeaderboardRow } from "@blurple-canvas-web/types";
+
 /**
  * Retrieves the top 20 users on the leaderboard for a canvas.
  *
