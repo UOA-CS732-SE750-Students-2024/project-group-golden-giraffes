@@ -28,7 +28,7 @@ export async function getLeaderboard(
 
   return leaderboard.map((row) => ({
     rank: row.rank,
-    userId: row.user_id,
+    userId: row.user_id.toString(),
     canvasId: row.canvas_id,
     totalPixels: row.total_pixels,
   }));

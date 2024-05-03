@@ -1,6 +1,6 @@
 export interface LeaderboardRow {
   rank: number;
-  userId: bigint;
+  userId: string;
   canvasId: number;
   totalPixels: number;
 }
