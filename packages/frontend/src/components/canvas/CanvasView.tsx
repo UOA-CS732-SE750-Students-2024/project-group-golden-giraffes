@@ -3,7 +3,14 @@
 import { getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
+import {
+  ORIGIN,
+  Point,
+  addPoints,
+  diffPoints,
+  dividePoint,
+  multiplyPoint,
+} from "./point";
 
 const FullscreenContainer = styled("main")`
   position: fixed;
@@ -74,7 +81,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const lastMousePosRef = useRef(ORIGIN);
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [scale, setScale] = useState(1);
+  const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
 
   const isLoading = image === null;
@@ -95,7 +102,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       context.drawImage(image, 0, 0);
 
       setImage(image);
-      setScale(getDefaultScale(image));
+      setZoom(getDefaultScale(image));
     };
     image.src = imageUrl;
 
@@ -120,21 +127,38 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         y: event.offsetY,
       };
 
-      // We need to update the offset so that the zoom is centred around the mouse position.
-      const newOffset = scalePoint(
-        diffPoints(
+      const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
+      const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
+
+      // Clamping the zoom means the actual scale may be different.
+      const effectiveScale = newZoom / zoom;
+
+      console.log(scale, effectiveScale);
+
+      setOffset((prevOffset) => {
+        // Offset to get to the mouse position
+        const mouseOffsetDirection = diffPoints(
           { x: image.width / 2, y: image.height / 2 },
           mousePositionOnCanvas,
-        ),
-        scale,
-      );
+        );
 
-      console.log(newOffset);
+        // Offset from the previous offset
+        const offsetDiffDirection = diffPoints(
+          mouseOffsetDirection,
+          prevOffset,
+        );
 
-      setOffset(clampOffset(newOffset));
-      setScale((oldZoom) => {
-        const newZoom =
-          oldZoom * Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
+        // The amount we move in the direction of the offset is based on how much we're zooming in
+        const offsetDiff = multiplyPoint(
+          offsetDiffDirection,
+          effectiveScale - 1,
+        );
+
+        console.log(mouseOffsetDirection);
+        return clampOffset(addPoints(offsetDiff, prevOffset));
+      });
+      setZoom((prevZoom) => {
+        const newZoom = prevZoom * scale;
         return clamp(newZoom, MIN_ZOOM, MAX_ZOOM);
       });
     };
@@ -142,7 +166,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     canvasRef.current?.addEventListener("wheel", handleWheel);
 
     return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
-  }, [scale, image]);
+  }, [zoom, image]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -173,9 +197,9 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       const currentMousePos: Point = { x: event.pageX, y: event.pageY }; // use document so can pan off element
       lastMousePosRef.current = currentMousePos;
 
-      const mouseDiff = scalePoint(
+      const mouseDiff = dividePoint(
         diffPoints(currentMousePos, lastMousePos),
-        scale,
+        zoom,
       );
 
       setOffset((prevOffset) => {
@@ -183,7 +207,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         return clampOffset(newOffset);
       });
     },
-    [scale, clampOffset],
+    [zoom, clampOffset],
   );
 
   /**
@@ -214,7 +238,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
           id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
-            scale,
+            scale: zoom,
           }}
         >
           <canvas ref={canvasRef} />
