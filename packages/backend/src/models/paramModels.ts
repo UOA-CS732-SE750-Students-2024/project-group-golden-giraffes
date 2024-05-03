@@ -14,7 +14,9 @@ export const PixelHistoryParamModel = z.object({
   y: z.coerce.number().int().positive(),
 });
 
-export type CanvasIdParam = z.infer<typeof CanvasIdParamModel>;
+export interface CanvasIdParam {
+  canvasId: string;
+}
 
 export async function parseCanvasId(params: CanvasIdParam): Promise<number> {
   const result = await CanvasIdParamModel.safeParseAsync(params);
