@@ -1,5 +1,6 @@
 import { prisma } from "@/client";
 import { NotFoundError } from "@/errors";
+import BadRequestError from "@/errors/BadRequestError";
 import { history } from "@prisma/client";
 
 export async function getPixelHistory(
@@ -19,13 +20,13 @@ export async function getPixelHistory(
 
   // check if pixel is within bounds
   if (x < 0 || x >= canvas.width) {
-    throw new NotFoundError(
-      `X coordinate ${x} is out of bounds for canvas ${canvasId}`, //TODO update to have better error
+    throw new BadRequestError(
+      `X coordinate ${x} is out of bounds for canvas ${canvasId}`,
     );
   }
 
   if (y < 0 || y >= canvas.height) {
-    throw new NotFoundError(
+    throw new BadRequestError(
       `Y coordinate ${y} is out of bounds for canvas ${canvasId}`,
     );
   }
