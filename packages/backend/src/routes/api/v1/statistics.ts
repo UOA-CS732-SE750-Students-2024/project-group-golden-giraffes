@@ -5,6 +5,14 @@ import { Router } from "express";
 
 export const statisticsRouter = Router();
 
+// Enable CORS headers
+statisticsRouter.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+
 statisticsRouter.get("/user/:userId/:canvasId", async (req, res) => {
   try {
     const userId = req.params.userId;

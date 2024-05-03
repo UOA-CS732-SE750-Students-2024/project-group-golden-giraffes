@@ -1,7 +1,8 @@
 "use client";
 
-import { UserStats } from "@blurple-canvas-web/types";
-import React, { useState, useEffect } from "react";
+import config from "@/config";
+import { PaletteColor, UserStats } from "@blurple-canvas-web/types";
+import React, { useState, useEffect, ReactNode } from "react";
 
 function getOrdinalSuffix(rank: number): string {
   if (rank % 100 >= 11 && rank % 100 <= 13) {
@@ -67,35 +68,26 @@ function dateToString(date: Date, timezone?: boolean): string {
 
 interface UserStatsComponentProps {
   userId: string;
+  canvasId: number;
 }
 
-const UserStatsComponent: React.FC<UserStatsComponentProps> = ({ userId }) => {
+const UserStatsComponent: React.FC<UserStatsComponentProps> = ({
+  userId,
+  canvasId,
+}) => {
   const [stats, setStats] = useState<UserStats | null>(null);
 
   useEffect(() => {
-    // Dummy function to retrieve user stats
     const fetchUserStats = async () => {
-      // const response = await fetch(`/api/user/${userId}/stats`);
-      // const data = await response.json();
-      // setStats(data);
-      setStats({
-        userId: userId,
-        canvasId: 2024,
-        totalPixels: 1000,
-        rank: 1,
-        mostFrequentColor: {
-          id: 1,
-          code: "reed",
-          name: "Red",
-          rgba: [255, 0, 0, 255],
-        },
-        // placeFrequency: "1 day 00:00:00",
-        mostRecentTimestamp: "2023-05-13 06:41:37",
-      });
+      const response = await fetch(
+        `${config.apiUrl}/api/v1/statistics/user/${userId}/${canvasId}`,
+      );
+      const data = await response.json();
+      setStats(data);
     };
 
     fetchUserStats();
-  }, [userId]);
+  }, [userId, canvasId]);
 
   if (!stats) {
     return <div>Loading...</div>;
@@ -113,7 +105,8 @@ const UserStatsComponent: React.FC<UserStatsComponentProps> = ({ userId }) => {
       />
       <IndividualStat
         label="Most Frequent Color ID"
-        value={stats.mostFrequentColor.id}
+        value={<Color color={stats.mostFrequentColor} />}
+        tooltip={stats.mostFrequentColor.code}
       />
       {/* <IndividualStat
         label="Place Frequency"
@@ -132,7 +125,7 @@ export default UserStatsComponent;
 
 const IndividualStat: React.FC<{
   label: string;
-  value: string | number;
+  value: ReactNode;
   tooltip?: string;
 }> = ({ label, value, tooltip }) => (
   <div>
@@ -140,5 +133,22 @@ const IndividualStat: React.FC<{
     <span title={tooltip}>
       <p>{value}</p>
     </span>
+  </div>
+);
+
+const Color: React.FC<{ color: PaletteColor }> = (
+  { color }, // This could probably be refactored to be somewhere else, and called whenever a color is needed to be displayed
+) => (
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <div
+      style={{
+        backgroundColor: `rgba(${color.rgba.toString()})`,
+        width: "25px",
+        height: "25px",
+        marginRight: "5px",
+        borderRadius: "15%",
+      }}
+    />
+    {color.name}
   </div>
 );
