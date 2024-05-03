@@ -6,7 +6,8 @@ import { ForbiddenError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
 import NotFoundError from "@/errors/NotFoundError";
 import initializeCanvases from "@/test/initializeCanvases";
-import { validatePixel } from "./pixelService";
+import initializeColors from "@/test/initializeColors";
+import { validateColor, validatePixel } from "./pixelService";
 
 describe("Pixel Validation Tests", () => {
   beforeEach(() => {
@@ -57,5 +58,23 @@ describe("Pixel Validation Tests", () => {
 
   it("Resolves locked canvas when respectLocked is false", async () => {
     return expect(validatePixel(9, 0, 0, false)).resolves.not.toThrow();
+  });
+});
+
+describe("Color Validation Tests", () => {
+  beforeEach(() => {
+    initializeColors();
+  });
+
+  it("Resolves valid color", async () => {
+    return expect(validateColor(1)).resolves.not.toThrow();
+  });
+
+  it("Rejects color that is not global", async () => {
+    return expect(validateColor(3)).rejects.toThrow(ForbiddenError);
+  });
+
+  it("Rejects invalid color", async () => {
+    return expect(validateColor(99)).rejects.toThrow(NotFoundError);
   });
 });

@@ -31,6 +31,7 @@ export async function getPixelHistory(
   }));
 }
 
+/* Ensures that the given pixel coordinates are within the bounds of the canvas, and the canvas exists*/
 export async function validatePixel(
   canvasId: number,
   x: number,
@@ -62,5 +63,24 @@ export async function validatePixel(
 
   if (respectLocked && canvas.locked) {
     throw new ForbiddenError(`Canvas with ID ${canvasId} is locked`);
+  }
+}
+
+/* Ensures that the given color exists in the DB and is allowed to be used in the given canvas*/
+export async function validateColor(colorId: number) {
+  const color = await prisma.color.findFirst({
+    where: {
+      id: colorId,
+    },
+  });
+  //
+  if (!color) {
+    throw new NotFoundError(`There is no color with ID ${colorId}`);
+  }
+
+  if (!color.global) {
+    throw new ForbiddenError(
+      `Partnered color with ID ${colorId} is not allowed from web client`,
+    );
   }
 }

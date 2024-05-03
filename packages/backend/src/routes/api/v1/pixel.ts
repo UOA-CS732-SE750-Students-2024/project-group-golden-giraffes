@@ -7,7 +7,11 @@ import {
   PixelHistoryParamModel,
   parseCanvasId,
 } from "@/models/paramModels";
-import { getPixelHistory, validatePixel } from "@/services/pixelService";
+import {
+  getPixelHistory,
+  validateColor,
+  validatePixel,
+} from "@/services/pixelService";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
@@ -52,6 +56,7 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
 
     // TODO: check for canvas discord_only status (not sure which table to look here)
     await validatePixel(canvasId, data.x, data.y, true);
+    await validateColor(data.colorId);
 
     return res.status(200).json({ message: "pixel endpoint1" });
   } catch (error) {
@@ -90,23 +95,6 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
   //   }
   // }
   //
-  // // check for color (also not allow for partnered colours)
-  // // temped to hard code this even
-  // const color = await prisma.color.findFirst({
-  //   where: {
-  //     id: body.color,
-  //   },
-  // });
-  //
-  // if (!color) {
-  //   return res.status(400).json({ message: "Invalid pixel color" });
-  // }
-  //
-  // if (!color.global) {
-  //   return res
-  //     .status(400)
-  //     .json({ message: "Partnered colours not allowed from web client" });
-  // }
 
   // Do both of these within one transaction
   // TODO: update users cooldown table
