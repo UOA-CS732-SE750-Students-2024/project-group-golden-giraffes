@@ -9,6 +9,29 @@ export async function getPixelHistory(
   y: number,
 ): Promise<PixelHistory[]> {
   // check if canvas exists
+  await validatePixel(canvasId, x, y);
+
+  const pixelHistory = await prisma.history.findMany({
+    select: { user_id: true, color_id: true, timestamp: true, guild_id: true },
+    where: {
+      canvas_id: canvasId,
+      x: x,
+      y: y,
+    },
+    orderBy: {
+      timestamp: "desc",
+    },
+  });
+
+  return pixelHistory.map((history) => ({
+    userId: history.user_id.toString(),
+    colorId: history.color_id,
+    timestamp: history.timestamp,
+    guildId: history.guild_id?.toString(),
+  }));
+}
+
+async function validatePixel(canvasId: number, x: number, y: number) {
   const canvas = await prisma.canvas.findFirst({
     where: {
       id: canvasId,
@@ -30,23 +53,4 @@ export async function getPixelHistory(
       `Y coordinate ${y} is out of bounds for canvas ${canvasId}`,
     );
   }
-
-  const pixelHistory = await prisma.history.findMany({
-    select: { user_id: true, color_id: true, timestamp: true, guild_id: true },
-    where: {
-      canvas_id: canvasId,
-      x: x,
-      y: y,
-    },
-    orderBy: {
-      timestamp: "desc",
-    },
-  });
-
-  return pixelHistory.map((history) => ({
-    userId: history.user_id.toString(),
-    colorId: history.color_id,
-    timestamp: history.timestamp,
-    guildId: history.guild_id?.toString(),
-  }));
 }
