@@ -1,3 +1,4 @@
+import BadRequestError from "@/errors/BadRequestError";
 import z from "zod";
 
 export const CanvasIdParamModel = z.object({
@@ -14,3 +15,15 @@ export const PixelHistoryParamModel = z.object({
 });
 
 export type CanvasIdParam = z.infer<typeof CanvasIdParamModel>;
+
+export async function parseCanvasId(params: CanvasIdParam): Promise<number> {
+  const result = await CanvasIdParamModel.safeParseAsync(params);
+  if (!result.success) {
+    throw new BadRequestError(
+      `${params.canvasId} is not a valid canvas ID`,
+      result.error.issues,
+    );
+  }
+
+  return result.data.canvasId;
+}
