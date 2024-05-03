@@ -37,7 +37,7 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
     const { x, y } = queryResult.data;
     const pixelHistory = await getPixelHistory(canvasId, x, y);
 
-    res.json(pixelHistory);
+    res.status(200).json(pixelHistory);
   } catch (error) {
     ApiError.sendError(res, error);
   }
