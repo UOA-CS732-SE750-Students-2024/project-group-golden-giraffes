@@ -1,5 +1,6 @@
 import { ApiError } from "@/errors";
 import {
+  CanvasIdParam,
   CanvasIdParamModel,
   PixelHistoryParamModel,
 } from "@/models/paramModels";
@@ -8,11 +9,7 @@ import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
 
-type CanvasParam = {
-  canvasId: string;
-};
-
-pixelRouter.get<CanvasParam>("/pixel_history", async (req, res) => {
+pixelRouter.get<CanvasIdParam>("/pixel_history", async (req, res) => {
   // grabbing the canvasId from the path
   try {
     console.log(req.query);
