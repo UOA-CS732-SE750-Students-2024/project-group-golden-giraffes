@@ -1,5 +1,5 @@
 import { prisma } from "@/client";
-import { NotFoundError } from "@/errors";
+import { ForbiddenError, NotFoundError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
 import { PixelHistory } from "@blurple-canvas-web/types";
 
@@ -9,7 +9,7 @@ export async function getPixelHistory(
   y: number,
 ): Promise<PixelHistory[]> {
   // check if canvas exists
-  await validatePixel(canvasId, x, y);
+  await validatePixel(canvasId, x, y, false);
 
   const pixelHistory = await prisma.history.findMany({
     select: { user_id: true, color_id: true, timestamp: true, guild_id: true },
@@ -31,7 +31,12 @@ export async function getPixelHistory(
   }));
 }
 
-async function validatePixel(canvasId: number, x: number, y: number) {
+async function validatePixel(
+  canvasId: number,
+  x: number,
+  y: number,
+  respectLocked: boolean,
+) {
   const canvas = await prisma.canvas.findFirst({
     where: {
       id: canvasId,
@@ -52,5 +57,9 @@ async function validatePixel(canvasId: number, x: number, y: number) {
     throw new BadRequestError(
       `Y coordinate ${y} is out of bounds for canvas ${canvasId}`,
     );
+  }
+
+  if (respectLocked && canvas.locked) {
+    throw new ForbiddenError(`Canvas with ID ${canvasId} is locked`);
   }
 }
