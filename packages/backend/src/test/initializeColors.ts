@@ -1,7 +1,7 @@
 import { prisma } from "@/client";
 
 // Only have 4 colours for testing purposes; selected colours reflect prod database
-export default function () {
+export default function initializeColors() {
   prisma.color.createMany({
     data: [
       {

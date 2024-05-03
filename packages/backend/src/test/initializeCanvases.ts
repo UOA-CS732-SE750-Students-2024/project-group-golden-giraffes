@@ -8,7 +8,7 @@ export const testCanvas = {
   cooldown_length: 30,
 };
 
-export default function () {
+export default function intializeCanvases() {
   prisma.canvas.create({
     data: {
       ...testCanvas,

@@ -1,6 +1,6 @@
 import { prisma } from "@/client";
 
-export function initialisePixels() {
+export default function initialisePixels() {
   // Initialise both canvases of size 4 to have the same pixel arrangement of:
   // [ 1, 2 ]
   // [ 3, 0 ]
