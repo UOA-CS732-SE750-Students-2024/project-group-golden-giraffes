@@ -38,6 +38,9 @@ export async function getPixelHistory(
       x: x,
       y: y,
     },
+    orderBy: {
+      timestamp: "desc",
+    },
   });
 
   return pixelHistory.map((history) => ({
