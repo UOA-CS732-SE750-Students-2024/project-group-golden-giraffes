@@ -1,13 +1,7 @@
 import { prisma } from "@/client";
 import { NotFoundError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
-
-interface PixelHistory {
-  userId: string;
-  colorId: number;
-  timestamp: Date;
-  guildId?: string;
-}
+import { PixelHistory } from "@blurple-canvas-web/types";
 
 export async function getPixelHistory(
   canvasId: number,
