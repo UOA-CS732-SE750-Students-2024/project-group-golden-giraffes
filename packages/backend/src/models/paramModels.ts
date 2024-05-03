@@ -10,8 +10,8 @@ export const EventIdParamModel = z.object({
 });
 
 export const PixelHistoryParamModel = z.object({
-  x: z.coerce.number().int().positive(),
-  y: z.coerce.number().int().positive(),
+  x: z.coerce.number().int().min(0),
+  y: z.coerce.number().int().min(0),
 });
 
 export interface CanvasIdParam {
