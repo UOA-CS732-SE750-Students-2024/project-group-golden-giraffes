@@ -31,7 +31,7 @@ export async function getPixelHistory(
   }));
 }
 
-async function validatePixel(
+export async function validatePixel(
   canvasId: number,
   x: number,
   y: number,
@@ -42,6 +42,7 @@ async function validatePixel(
       id: canvasId,
     },
   });
+
   if (!canvas) {
     throw new NotFoundError(`There is no canvas with ID ${canvasId}`);
   }
