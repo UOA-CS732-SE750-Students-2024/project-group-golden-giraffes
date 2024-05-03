@@ -1,12 +1,13 @@
 import { prisma } from "@/client";
 import { ApiError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
+import { PlacePixelBodyModel } from "@/models/bodyModels";
 import {
   CanvasIdParam,
   PixelHistoryParamModel,
   parseCanvasId,
 } from "@/models/paramModels";
-import { getPixelHistory } from "@/services/pixelService";
+import { getPixelHistory, validatePixel } from "@/services/pixelService";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
@@ -36,34 +37,27 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
 
 // Temporary post route until branch with ROUTE setup is merged
 pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
-  return res.status(200).json({ message: "pixel endpoint1" });
-
   // TODO: check for authentication
   // Somehow access to user ID after authentication
   // const userID = "204778476102877187";
-  //
-  // // Don't really know what the way to add types to this is
-  // // const body: PlacePixel = req.body;
-  // const body: PlacePixel = { x: 0, y: 0, color: 0 };
-  // req.params;
-  //
-  // const canvasId = req.params.canvasId;
-  //
-  // // Huge await section; not really leveraging async
-  // const canvas = await prisma.canvas.findFirst({
-  //   where: { id: canvasId },
-  // });
-  //
-  // if (!canvas) {
-  //   return res.status(404).json({ message: "Canvas not found" });
-  // }
-  //
-  // if (canvas.locked) {
-  //   return res.status(403).json({ message: "Canvas is read-only" });
-  // }
-  //
-  // // TODO: check for canvas discord_only status (not sure which table to look here)
-  //
+  try {
+    const result = await PlacePixelBodyModel.safeParseAsync(req.body);
+    if (!result.success) {
+      throw new BadRequestError("Body is not valid", result.error.issues);
+    }
+    const data = result.data;
+
+    // grabbing the canvasId from the path
+    const canvasId = await parseCanvasId(req.params);
+
+    // TODO: check for canvas discord_only status (not sure which table to look here)
+    await validatePixel(canvasId, data.x, data.y, true);
+
+    return res.status(200).json({ message: "pixel endpoint1" });
+  } catch (error) {
+    ApiError.sendError(res, error);
+  }
+
   // // Check against blacklist
   // const blacklist = await prisma.blacklist.findFirst({
   //   where: {
@@ -89,21 +83,11 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
   // if (cooldown?.cooldown_time && canvas.cooldown_length) {
   //   const placedCooldown = cooldown.cooldown_time?.valueOf();
   //   // Using milliseconds from unix epoch for calculations
-  //   if (placedCooldown + canvas.cooldown_length * 1000 * 60 <= Date.now()) {
+  //   if (placedCooldown + canvas.cooldown_length * 1000 <= Date.now()) {
   //     return res
   //       .status(403)
   //       .json({ message: "Pixel placement is on cooldown" });
   //   }
-  // }
-  //
-  // // check for valid position
-  // if (
-  //   body.x < 0 ||
-  //   body.y < 0 ||
-  //   body.x >= canvas.width ||
-  //   body.y > canvas.height
-  // ) {
-  //   return res.status(400).json({ message: "Invalid pixel position" });
   // }
   //
   // // check for color (also not allow for partnered colours)
