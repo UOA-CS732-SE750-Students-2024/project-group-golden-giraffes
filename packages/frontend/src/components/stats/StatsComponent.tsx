@@ -1,5 +1,6 @@
 "use client";
 
+import { UserStats } from "@blurple-canvas-web/types";
 import React, { useState, useEffect } from "react";
 
 function getOrdinalSuffix(rank: number): string {
@@ -68,17 +69,6 @@ interface UserStatsComponentProps {
   userId: string;
 }
 
-interface UserStats {
-  // Placeholder for now
-  user_id: string;
-  canvas_id: number;
-  total_pixels: number;
-  rank: number;
-  most_frequent_color_id: number;
-  place_frequency: string;
-  most_recent_timestamp: string;
-}
-
 const UserStatsComponent: React.FC<UserStatsComponentProps> = ({ userId }) => {
   const [stats, setStats] = useState<UserStats | null>(null);
 
@@ -89,13 +79,13 @@ const UserStatsComponent: React.FC<UserStatsComponentProps> = ({ userId }) => {
       // const data = await response.json();
       // setStats(data);
       setStats({
-        user_id: userId,
-        canvas_id: 2024,
-        total_pixels: 1000,
+        userId: userId,
+        canvasId: 2024,
+        totalPixels: 1000,
         rank: 1,
-        most_frequent_color_id: 1,
-        place_frequency: "1 day 00:00:00",
-        most_recent_timestamp: "2023-05-13 06:41:37",
+        mostFrequentColorId: 1,
+        placeFrequency: "1 day 00:00:00",
+        mostRecentTimestamp: "2023-05-13 06:41:37",
       });
     };
 
@@ -110,7 +100,7 @@ const UserStatsComponent: React.FC<UserStatsComponentProps> = ({ userId }) => {
     <div>
       <IndividualStat
         label="Total Pixels Placed"
-        value={`${stats.total_pixels} pixels`}
+        value={`${stats.totalPixels} pixels`}
       />
       <IndividualStat
         label="Leaderboard Ranking"
@@ -118,16 +108,16 @@ const UserStatsComponent: React.FC<UserStatsComponentProps> = ({ userId }) => {
       />
       <IndividualStat
         label="Most Frequent Color ID"
-        value={stats.most_frequent_color_id}
+        value={stats.mostFrequentColorId}
       />
       <IndividualStat
         label="Place Frequency"
-        value={formatInterval(stats.place_frequency)}
+        value={formatInterval(stats.placeFrequency)}
       />
       <IndividualStat
         label="Most Recent Pixel"
-        value={formatTimestampLocalTZ(stats.most_recent_timestamp)}
-        tooltip={formatTimestamp(stats.most_recent_timestamp)}
+        value={formatTimestampLocalTZ(stats.mostRecentTimestamp)}
+        tooltip={formatTimestamp(stats.mostRecentTimestamp)}
       />
     </div>
   );
