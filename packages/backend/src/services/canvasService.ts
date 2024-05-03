@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { prisma } from "@/client";
 import config from "@/config";
 import { NotFoundError } from "@/errors";
+import { CanvasInfo } from "@blurple-canvas-web/types";
 import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 
@@ -64,11 +65,55 @@ export function unlockedCanvasToPng(unlockedCanvas: UnlockedCanvas): PNG {
 }
 
 /**
- * Retrieves a canvas from the cache using the default canvas ID defined in the database.
+ * Gets the info for a canvas.
  *
- * @returns A tuple containing the id of the canvas and the cached canvas
+ * @param canvasId The ID of the canvas to get info for
+ * @returns The canvas info
  */
-export async function getCurrentCanvas(): Promise<[number, CachedCanvas]> {
+export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
+  const info = await prisma.info.findFirst({
+    select: { default_canvas_id: true },
+  });
+
+  const canvas = await prisma.canvas.findFirst({
+    select: {
+      id: true,
+      name: true,
+      width: true,
+      height: true,
+      start_coordinates: true,
+      locked: true,
+      event_id: true,
+    },
+    where: {
+      id: canvasId,
+    },
+  });
+
+  if (!canvas) {
+    throw new NotFoundError(`There is no canvas with ID ${canvasId}`);
+  }
+
+  return {
+    id: canvas.id,
+    name: canvas.name,
+    width: canvas.width,
+    height: canvas.height,
+    startCoordinates: [
+      canvas.start_coordinates[0],
+      canvas.start_coordinates[1],
+    ],
+    isLocked: canvas.locked,
+    eventId: canvas.event_id,
+  };
+}
+
+/**
+ * Retrieves canvas info from the cache of the default canvas ID defined in the database.
+ *
+ * @returns The canvas info of the default canvas
+ */
+export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
   const info = await prisma.info.findFirst({
     select: { default_canvas_id: true },
   });
@@ -78,10 +123,7 @@ export async function getCurrentCanvas(): Promise<[number, CachedCanvas]> {
     throw new Error("The info table is empty! 😱");
   }
 
-  const defaultCanvasId = info.default_canvas_id;
-  const cachedCanvas = await getCanvasPng(defaultCanvasId);
-
-  return [defaultCanvasId, cachedCanvas];
+  return getCanvasInfo(info.default_canvas_id);
 }
 
 /**
