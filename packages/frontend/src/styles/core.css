@@ -51,6 +51,21 @@
     }
   }
 
+  /*
+   * On mobile we want to prevent panning from causing the page to refresh, but we only want
+   * this behaviour when the canvas is rendered, and not on other pages, so it can't be applied
+   * globally. The before pseudo-element with a height of 101% makes mobile browsers think its
+   * scrollable, which is required for the overscroll-behavior to apply to some browsers.
+   */
+  body:has(#canvas-pan-and-zoom) {
+    overscroll-behavior: contain;
+  }
+
+  body:has(#canvas-pan-and-zoom)::before {
+    content: "";
+    height: 101%;
+  }
+
   @keyframes breathe {
     0% {
       font-variation-settings:

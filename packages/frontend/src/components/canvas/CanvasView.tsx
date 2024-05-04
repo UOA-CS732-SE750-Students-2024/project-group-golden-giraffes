@@ -101,11 +101,6 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
       setImage(image);
       setScale(getDefaultScale(image));
-
-      // On mobile we want to prevent panning from causing the page to refresh, but we only want
-      // this behaviour when the canvas is rendered, and not on other pages, so it can't be applied
-      // globally.
-      document.body.style.overscrollBehavior = "contain";
     };
     image.src = imageUrl;
 
