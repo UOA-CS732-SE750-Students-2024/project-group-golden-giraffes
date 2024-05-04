@@ -133,9 +133,8 @@ export async function placePixel(
   canvasId: number,
   userID: bigint,
   placePixel: PlacePixel,
-  placeTime: Date,
+  cooldownTimeStamp: Date,
 ) {
-  const cooldownTimeStamp = new Date();
   const { x, y, colorId } = placePixel;
 
   // Assumes that the user already exists in the DB
