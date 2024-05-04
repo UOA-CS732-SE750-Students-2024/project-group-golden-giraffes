@@ -150,17 +150,13 @@ describe("Place Pixel Tests", () => {
   it("Resolves places the pixel", async () => {
     const canvasId = 1;
     const userId = BigInt(1);
-    const placePixelModel: PlacePixel = {
-      x: 1,
-      y: 1,
-      colorId: 1,
-    };
-    await placePixel(canvasId, userId, placePixelModel, new Date());
+
+    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, new Date(0));
     const before = await fetchCooldownPixelHistory();
-    await placePixel(canvasId, userId, placePixelModel, new Date());
+    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 2 }, new Date());
     const after = await fetchCooldownPixelHistory();
 
-    expect(before.pixel).toStrictEqual(after.pixel);
+    expect(before.pixel).not.toStrictEqual(after.pixel);
     expect(before.history).not.toStrictEqual(after.history);
     expect(before.cooldown).not.toStrictEqual(after.cooldown);
 
@@ -174,15 +170,15 @@ describe("Place Pixel Tests", () => {
       const pixel = await prisma.pixel.findFirst({
         where: {
           canvas_id: canvasId,
-          x: placePixelModel.x,
-          y: placePixelModel.y,
+          x: 1,
+          y: 1,
         },
       });
       const history = await prisma.history.findMany({
         where: {
           canvas_id: canvasId,
-          x: placePixelModel.x,
-          y: placePixelModel.y,
+          x: 1,
+          y: 1,
         },
       });
       return { cooldown, pixel, history };
