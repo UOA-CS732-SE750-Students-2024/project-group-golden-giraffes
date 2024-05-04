@@ -20,13 +20,28 @@
     --discord-red-oklch: 63.18% 0.207 24.57;
     --discord-white-oklch: 100% 0 0;
     --discord-black-oklch: 0% 0 0;
-
     --discord-old-blurple-oklch: 64.74% 0.124 270.62;
     --discord-old-full-white-oklch: 100% 0 0;
     --discord-old-greyple-oklch: 72.83% 0.025 236.13;
     --discord-old-dark-but-not-black-oklch: 30.38% 0.008 255.56;
     --discord-old-not-quite-black-oklch: 26.99% 0.008 240.16;
     --discord-old-actually-black-oklch: 0% 0 0;
+
+    --discord-blurple: oklch(var(--discord-blurple));
+    --discord-green: oklch(var(--discord-green));
+    --discord-yellow: oklch(var(--discord-yellow));
+    --discord-fuchsia: oklch(var(--discord-fuchsia));
+    --discord-red: oklch(var(--discord-red));
+    --discord-white: oklch(var(--discord-white));
+    --discord-black: oklch(var(--discord-black));
+    --discord-old-blurple: oklch(var(--discord-old-blurple));
+    --discord-old-full-white: oklch(var(--discord-old-full-white));
+    --discord-old-greyple: oklch(var(--discord-old-greyple));
+    --discord-old-dark-but-not-black: oklch(
+      var(--discord-old-dark-but-not-black)
+    );
+    --discord-old-not-quite-black: oklch(var(--discord-old-not-quite-black));
+    --discord-old-actually-black: oklch(var(--discord-old-actually-black));
 
     --font-body: "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont,
       "Inter", "Segoe UI", Roboto, Ubuntu, sans-serif;
