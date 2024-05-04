@@ -54,6 +54,7 @@
       "WCAG",
       "wdth",
       "wght",
+      "wordmark",
     ],
     "editor.codeActionsOnSave": {
       "source.organizeImports.biome": "explicit",
