@@ -73,10 +73,10 @@ interface UserStatsComponentProps {
   canvasId: number;
 }
 
-const UserStatsComponent: React.FC<UserStatsComponentProps> = ({
+export default function UserStatsComponent({
   userId,
   canvasId,
-}) => {
+}: UserStatsComponentProps) {
   const [stats, setStats] = useState<UserStats | null>(null);
 
   useEffect(() => {
@@ -121,36 +121,41 @@ const UserStatsComponent: React.FC<UserStatsComponentProps> = ({
       />
     </div>
   );
-};
+}
 
-export default UserStatsComponent;
-
-const IndividualStat: React.FC<{
+const IndividualStat = ({
+  label,
+  value,
+  tooltip,
+}: {
   label: string;
   value: ReactNode;
   tooltip?: string;
-}> = ({ label, value, tooltip }) => (
-  <div>
-    <h3>{label}</h3>
-    <span title={tooltip}>
-      <p>{value}</p>
-    </span>
-  </div>
-);
+}): ReactNode => {
+  return (
+    <div>
+      <h3>{label}</h3>
+      <span title={tooltip}>
+        <p>{value}</p>
+      </span>
+    </div>
+  );
+};
 
-const Color: React.FC<{ color: PaletteColor }> = (
-  { color }, // This could probably be refactored to be somewhere else, and called whenever a color is needed to be displayed
-) => (
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <div
-      style={{
-        backgroundColor: `rgba(${color.rgba.toString()})`,
-        width: "25px",
-        height: "25px",
-        marginRight: "5px",
-        borderRadius: "15%",
-      }}
-    />
-    {color.name}
-  </div>
-);
+const Color = ({ color }: { color: PaletteColor }): ReactNode => {
+  // This could probably be refactored to be somewhere else, and called whenever a color is needed to be displayed
+  return (
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <div
+        style={{
+          backgroundColor: `rgba(${color.rgba.toString()})`,
+          width: "25px",
+          height: "25px",
+          marginRight: "5px",
+          borderRadius: "15%",
+        }}
+      />
+      {color.name}
+    </div>
+  );
+};
