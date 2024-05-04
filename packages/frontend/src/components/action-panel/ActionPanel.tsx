@@ -59,7 +59,12 @@ const ZenTab = styled(Tab)`
   margin-inline-start: auto;
 `;
 
+const Palette = styled("div")`
+  background-color: var(--discord-old-dark-but-not-black);
+`;
+
 export default function ActionPanel() {
+  // const { data: colours, isLoading: colorsAreLoading } = usePalette();
   return (
     <>
       <TabBar>
@@ -67,7 +72,9 @@ export default function ActionPanel() {
         <Tab>Place</Tab>
         <ZenTab>🧘</ZenTab>
       </TabBar>
-      <Container />
+      <Container>
+        <Palette />
+      </Container>
     </>
   );
 }

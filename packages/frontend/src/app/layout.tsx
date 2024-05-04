@@ -1,8 +1,10 @@
-import "@/styles/core.css";
-import { Theme } from "@/theme";
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Metadata, Viewport } from "next";
+
+import "@/styles/core.css";
+import { Theme } from "@/theme";
 
 export const metadata: Metadata = {
   title: "Blurple Canvas",
@@ -13,6 +15,8 @@ export const viewport: Viewport = {
   themeColor: "#23272a",
 };
 
+const queryClient = new QueryClient();
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +26,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+          </QueryClientProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
