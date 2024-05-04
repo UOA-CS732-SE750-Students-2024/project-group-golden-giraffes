@@ -31,6 +31,11 @@ const CanvasContainer = styled("div")`
   place-content: center;
   place-items: center;
 
+  cursor: grab;
+  :active {
+    cursor: grabbing;
+  }
+
   canvas {
     image-rendering: pixelated;
     max-width: inherit;
