@@ -135,9 +135,7 @@ const IndividualStat = ({
   return (
     <div>
       <h3>{label}</h3>
-      <span title={tooltip}>
-        <p>{value}</p>
-      </span>
+      <span title={tooltip}>{value}</span>
     </div>
   );
 };
