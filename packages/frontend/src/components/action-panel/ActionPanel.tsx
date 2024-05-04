@@ -3,8 +3,8 @@
 import { styled } from "@mui/material";
 
 const Container = styled("div")`
-  border: var(--card-border);
   background-color: var(--color-not-quite-black);
+  border: var(--card-border);
   border-radius: 1.5rem;
   height: 100%;
   width: 100%;
