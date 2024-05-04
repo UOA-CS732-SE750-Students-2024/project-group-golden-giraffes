@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { prisma } from "@/client";
 import config from "@/config";
 import { NotFoundError } from "@/errors";
+import { CanvasInfo, CanvasSummary } from "@blurple-canvas-web/types";
 import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 
@@ -61,6 +62,87 @@ export function unlockedCanvasToPng(unlockedCanvas: UnlockedCanvas): PNG {
     unlockedCanvas.height,
     unlockedCanvas.pixels,
   );
+}
+
+/**
+ * Retrieves canvas summary info for all canvases.
+ *
+ * @returns The canvas summary info of all canvases
+ */
+export async function getCanvases(): Promise<CanvasSummary[]> {
+  const canvases = await prisma.canvas.findMany({
+    orderBy: {
+      id: "desc",
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  return canvases;
+}
+
+/**
+ * Retrieves canvas info from the cache of the default canvas ID defined in the database.
+ *
+ * @returns The canvas info of the default canvas
+ */
+export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
+  const info = await prisma.info.findFirst({
+    select: { default_canvas_id: true },
+  });
+
+  // To get rid of the nullable type from info. This should never happen
+  if (!info) {
+    throw new Error("The info table is empty! 😱");
+  }
+
+  return getCanvasInfo(info.default_canvas_id);
+}
+
+/**
+ * Retrieves the info for a canvas.
+ *
+ * @param canvasId The ID of the canvas to retrieve the info for
+ * @returns The canvas info
+ */
+export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
+  const info = await prisma.info.findFirst({
+    select: { default_canvas_id: true },
+  });
+
+  const canvas = await prisma.canvas.findFirst({
+    select: {
+      id: true,
+      name: true,
+      width: true,
+      height: true,
+      start_coordinates: true,
+      locked: true,
+      event_id: true,
+    },
+    where: {
+      id: canvasId,
+    },
+  });
+
+  if (!canvas) {
+    throw new NotFoundError(`There is no canvas with ID ${canvasId}`);
+  }
+
+  return {
+    id: canvas.id,
+    name: canvas.name,
+    width: canvas.width,
+    height: canvas.height,
+    startCoordinates: [
+      canvas.start_coordinates[0],
+      canvas.start_coordinates[1],
+    ],
+    isLocked: canvas.locked,
+    eventId: canvas.event_id,
+  };
 }
 
 /**
