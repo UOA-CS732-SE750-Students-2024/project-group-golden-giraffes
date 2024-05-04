@@ -162,7 +162,6 @@ export default function CanvasView({ imageUrl }: { imageUrl: string }) {
           }}
         />
       </CanvasContainer>
-      {/* Some sort of wild performance optimisation */}
       <img
         alt="Blurple Canvas 2023"
         hidden
