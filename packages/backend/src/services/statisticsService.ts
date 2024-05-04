@@ -35,11 +35,11 @@ export async function getUserStats(
   return {
     userId: userId.toString(),
     canvasId: canvasId,
-    totalPixels: totalPixels || 0,
-    rank: rank || -1,
+    totalPixels: totalPixels,
+    rank: rank,
     mostFrequentColor: mostFrequentColor,
     // placeFrequency: place_frequency,
-    mostRecentTimestamp: mostRecentTimestamp?.toISOString() ?? "",
+    mostRecentTimestamp: mostRecentTimestamp?.toISOString(),
   };
 }
 

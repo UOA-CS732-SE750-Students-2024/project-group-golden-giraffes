@@ -101,24 +101,32 @@ export default function UserStatsComponent({
         label="Total Pixels Placed"
         value={`${stats.totalPixels} pixels`}
       />
-      <IndividualStat
-        label="Leaderboard Ranking"
-        value={`${stats.rank}${getOrdinalSuffix(stats.rank)}`}
-      />
-      <IndividualStat
-        label="Most Frequent Color ID"
-        value={<Color color={stats.mostFrequentColor} />}
-        tooltip={stats.mostFrequentColor.code}
-      />
-      {/* <IndividualStat
-        label="Place Frequency"
-        value={formatInterval(stats.placeFrequency)}
-      /> */}
-      <IndividualStat
-        label="Most Recent Pixel"
-        value={formatTimestampLocalTZ(stats.mostRecentTimestamp)}
-        tooltip={formatTimestamp(stats.mostRecentTimestamp)}
-      />
+      {stats.rank && (
+        <IndividualStat
+          label="Leaderboard Ranking"
+          value={`${stats.rank}${getOrdinalSuffix(stats.rank)}`}
+        />
+      )}
+      {stats.mostFrequentColor && (
+        <IndividualStat
+          label="Most Frequent Color ID"
+          value={<Color color={stats.mostFrequentColor} />}
+          tooltip={stats.mostFrequentColor.code}
+        />
+      )}
+      {/* {stats.placeFrequency && (
+        <IndividualStat
+          label="Place Frequency"
+          value={formatInterval(stats.placeFrequency)}
+        />
+      )} */}
+      {stats.mostRecentTimestamp && (
+        <IndividualStat
+          label="Most Recent Pixel"
+          value={formatTimestampLocalTZ(stats.mostRecentTimestamp)}
+          tooltip={formatTimestamp(stats.mostRecentTimestamp)}
+        />
+      )}
     </div>
   );
 }
