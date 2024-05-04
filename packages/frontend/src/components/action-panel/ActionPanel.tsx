@@ -1,6 +1,6 @@
 "use client";
 
-import { usePalette } from "@/api/queries";
+import { usePalette } from "@/hooks/queries";
 import { styled } from "@mui/material";
 
 const Container = styled("div")`
