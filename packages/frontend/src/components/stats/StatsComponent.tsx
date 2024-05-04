@@ -22,23 +22,25 @@ function getOrdinalSuffix(rank: number): string {
 
 function formatInterval(interval: string): string {
   const [days, time] = interval.split(" ");
-  const [hours, minutes, seconds] = time.split(":");
+  const [hours, minutes, seconds] = time
+    .split(":")
+    .map((num) => Number.parseInt(num));
   let formattedInterval = "";
   formattedInterval +=
     Number.parseInt(days) === 1 ? `${days} day `
     : Number.parseInt(days) > 1 ? `${days} days `
     : "";
   formattedInterval +=
-    Number.parseInt(hours) === 1 ? `${hours} hour `
-    : Number.parseInt(hours) > 1 ? `${hours} hours `
+    hours === 1 ? `${hours} hour `
+    : hours > 1 ? `${hours} hours `
     : "";
   formattedInterval +=
-    Number.parseInt(minutes) === 1 ? `${minutes} minute `
-    : Number.parseInt(minutes) > 1 ? `${minutes} minutes `
+    minutes === 1 ? `${minutes} minute `
+    : minutes > 1 ? `${minutes} minutes `
     : "";
   formattedInterval +=
-    Number.parseInt(seconds) === 1 ? `${seconds} second`
-    : Number.parseInt(seconds) > 1 ? `${seconds} seconds`
+    seconds === 1 ? `${seconds} second`
+    : seconds > 1 ? `${seconds} seconds`
     : "";
   return formattedInterval.trim();
 }
