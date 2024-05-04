@@ -1,12 +1,23 @@
 "use client";
 
-import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+
+import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
+import { clamp } from "@/util";
+import { ActionPanel } from "..";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
 const FullscreenContainer = styled("main")`
+  display: grid;
+  gap: 2rem;
   position: fixed;
+  width: 100%;
+  padding: 2rem;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    grid-template-columns: 1fr 22rem;
+  }
 
   > * {
     position: relative;
@@ -21,13 +32,12 @@ const FullscreenContainer = styled("main")`
 `;
 
 const CanvasContainer = styled("div")`
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  align-items: center;
+  border-radius: 1.5rem;
+  border: oklch(100% 0 0 / 15%) solid 3px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  overflow: hidden;
 
   canvas {
     image-rendering: pixelated;
@@ -38,13 +48,6 @@ const CanvasContainer = styled("div")`
 const HiddenImage = styled("img")`
   display: none;
 `;
-
-/**
- * Return the value clamped so that it is within the range [min, max].
- */
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
 
 /**
  * Calculate the default scale to use for the canvas. This is the required scaling to get the canvas
@@ -191,7 +194,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         </div>
       </CanvasContainer>
       {isLoading && <CircularProgress className="loader" />}
-      {children}
+      <ActionPanel />
     </FullscreenContainer>
   );
 }
