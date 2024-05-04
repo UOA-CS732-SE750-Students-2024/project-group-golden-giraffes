@@ -2,6 +2,7 @@
 
 import config from "@/config";
 import { PaletteColor, UserStats } from "@blurple-canvas-web/types";
+import { styled } from "@mui/material";
 import { DateTime } from "luxon";
 import React, { useState, useEffect, ReactNode } from "react";
 
@@ -141,20 +142,26 @@ const IndividualStat = ({
   );
 };
 
+const ColorContainer = styled("div")`
+  display: flex;
+  align-items: center;
+`;
+
+const ColorBox = styled("div")<{ rgba: number[] }>(
+  ({ rgba }) => `
+    background-color: rgba(${rgba.toString()});
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    border-radius: 15%;
+  `,
+);
+
 const Color = ({ color }: { color: PaletteColor }): ReactNode => {
-  // This could probably be refactored to be somewhere else, and called whenever a color is needed to be displayed
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      <div
-        style={{
-          backgroundColor: `rgba(${color.rgba.toString()})`,
-          width: "25px",
-          height: "25px",
-          marginRight: "5px",
-          borderRadius: "15%",
-        }}
-      />
+    <ColorContainer>
+      <ColorBox rgba={color.rgba} />
       {color.name}
-    </div>
+    </ColorContainer>
   );
 };
