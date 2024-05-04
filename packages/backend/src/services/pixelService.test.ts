@@ -15,11 +15,11 @@ describe("Pixel Validation Tests", () => {
   });
 
   it("Resolves valid canvas on top left pixel (0, 0)", async () => {
-    return expect(validatePixel(1, 0, 0, false)).resolves;
+    return expect(validatePixel(1, 0, 0, false)).resolves.not.toThrow();
   });
 
   it("Resolves valid canvas on bottom right pixel (1, 1)", async () => {
-    return expect(validatePixel(1, 1, 1, false)).resolves;
+    return expect(validatePixel(1, 1, 1, false)).resolves.not.toThrow();
   });
 
   it("Rejects with x too small", async () => {
@@ -57,7 +57,7 @@ describe("Pixel Validation Tests", () => {
   });
 
   it("Resolves locked canvas when respectLocked is false", async () => {
-    return expect(validatePixel(9, 0, 0, false)).resolves;
+    return expect(validatePixel(9, 0, 0, false)).resolves.not.toThrow();
   });
 });
 
@@ -67,7 +67,7 @@ describe("Color Validation Tests", () => {
   });
 
   it("Resolves valid color", async () => {
-    return expect(validateColor(1)).resolves;
+    return expect(validateColor(1)).resolves.not.toThrow();
   });
 
   it("Rejects color that is not global", async () => {
