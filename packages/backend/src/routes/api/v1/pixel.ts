@@ -1,4 +1,3 @@
-import { prisma } from "@/client";
 import { ApiError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
 import UnauthorisedError from "@/errors/UnauthorisedError";
@@ -10,10 +9,12 @@ import {
 } from "@/models/paramModels";
 import {
   getPixelHistory,
+  placePixel,
   validateColor,
   validatePixel,
   validateUser,
 } from "@/services/pixelService";
+import { PlacePixel } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
@@ -41,17 +42,17 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
   }
 });
 
-// Temporary post route until branch with ROUTE setup is merged
+/* Endpoint for placing a pixel on the canvas
+ * Requires the user to be authenticated and not blacklisted
+ * */
 pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
-  // TODO: check for authentication
-  // Somehow access to user ID after authentication
-  // const userID = "204778476102877187";
   try {
+    const coolDownTimeStamp = new Date();
     const result = await PlacePixelBodyModel.safeParseAsync(req.body);
     if (!result.success) {
       throw new BadRequestError("Body is not valid", result.error.issues);
     }
-    const data = result.data;
+    const data: PlacePixel = result.data;
 
     // grabbing the canvasId from the path
     const canvasId = await parseCanvasId(req.params);
@@ -67,20 +68,10 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     await validatePixel(canvasId, data.x, data.y, true);
     await validateColor(data.colorId);
     await validateUser(canvasId, BigInt(userId));
+    await placePixel(canvasId, BigInt(userId), data, coolDownTimeStamp);
 
-    return res.status(200).json({ message: "pixel endpoint1" });
+    return res.status(201).json({ coolDownTimeStamp: coolDownTimeStamp });
   } catch (error) {
     ApiError.sendError(res, error);
   }
-
-  //
-
-  // Do both of these within one transaction
-  // TODO: update users cooldown table
-  // TODO: update pixel
-  // TODO: create new history field
-
-  // TODO: return status 201 on success
-
-  // res.status(200).json({ message: new Date().valueOf(), other: Date.now() });
 });
