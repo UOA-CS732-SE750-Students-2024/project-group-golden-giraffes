@@ -5,9 +5,11 @@ import { prisma } from "@/client";
 import { ForbiddenError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
 import NotFoundError from "@/errors/NotFoundError";
+import initializeBlacklist from "@/test/initializeBlacklist";
 import initializeCanvases from "@/test/initializeCanvases";
 import initializeColors from "@/test/initializeColors";
-import { validateColor, validatePixel } from "./pixelService";
+import initializeUsers from "@/test/initializeUsers";
+import { validateColor, validatePixel, validateUser } from "./pixelService";
 
 describe("Pixel Validation Tests", () => {
   beforeEach(() => {
@@ -76,5 +78,59 @@ describe("Color Validation Tests", () => {
 
   it("Rejects invalid color", async () => {
     return expect(validateColor(99)).rejects.toThrow(NotFoundError);
+  });
+});
+
+describe("User Validation Tests", () => {
+  beforeEach(() => {
+    initializeUsers();
+    initializeBlacklist();
+    initializeCanvases();
+
+    // Create cooldown
+  });
+
+  it("Rejects blacklisted user", async () => {
+    return expect(validateUser(1, BigInt(9))).rejects.toThrow(ForbiddenError);
+  });
+
+  it("Resolves canvas with no cooldown_time", async () => {
+    // A user theoretically shouldn't have cooldown time if the canvas doesn't
+    prisma.cooldown.create({
+      data: { canvas_id: 9, user_id: BigInt(1), cooldown_time: new Date() },
+    });
+    return expect(validateUser(9, BigInt(1))).resolves.not.toThrow();
+  });
+
+  it("Resolves user with no cooldown", async () => {
+    // Don't create cooldown in the database.
+    return expect(validateUser(1, BigInt(1))).resolves.not.toThrow();
+  });
+
+  it("Resolves user with null cooldown", async () => {
+    // A user theoretically shouldn't have cooldown time if the canvas doesn't
+    prisma.cooldown.create({
+      data: { canvas_id: 1, user_id: BigInt(1), cooldown_time: null },
+    });
+    return expect(validateUser(1, BigInt(1))).resolves.not.toThrow();
+  });
+
+  it("Resolves user with cooldown greater than 30", async () => {
+    const dateTime = Date.now() - 1000 * 30;
+    prisma.cooldown.create({
+      data: {
+        canvas_id: 1,
+        user_id: BigInt(1),
+        cooldown_time: new Date(dateTime),
+      },
+    });
+    return expect(validateUser(1, BigInt(1))).resolves.not.toThrow();
+  });
+
+  it("Rejects user with cooldown less than 30", async () => {
+    prisma.cooldown.create({
+      data: { canvas_id: 1, user_id: BigInt(1), cooldown_time: new Date() },
+    });
+    return expect(validateUser(1, BigInt(1))).rejects.toThrow(ForbiddenError);
   });
 });
