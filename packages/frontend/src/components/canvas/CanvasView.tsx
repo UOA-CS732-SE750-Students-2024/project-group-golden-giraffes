@@ -22,6 +22,11 @@ const CanvasContainer = styled("div")`
     cursor: grabbing;
   }
 
+  &,
+  * & {
+    user-select: none;
+  }
+
   canvas {
     image-rendering: pixelated;
     max-width: inherit;
