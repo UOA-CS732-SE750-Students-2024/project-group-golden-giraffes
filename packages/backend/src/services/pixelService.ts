@@ -84,3 +84,46 @@ export async function validateColor(colorId: number) {
     );
   }
 }
+
+export async function validateUser(canvasId: number, userId: bigint) {
+  // Check against blacklist
+  const blacklist = await prisma.blacklist.findFirst({
+    where: {
+      user_id: BigInt(userId),
+    },
+  });
+
+  if (blacklist) {
+    throw new ForbiddenError("User is blacklisted");
+  }
+
+  // Get the canvas; no optimisations yet
+  const canvas = await prisma.canvas.findFirst({
+    where: {
+      id: canvasId,
+    },
+  });
+
+  // Check user cooldown
+  const cooldown = await prisma.cooldown.findFirst({
+    where: {
+      user_id: userId,
+      canvas_id: canvasId,
+    },
+  });
+
+  // Return early if no cooldown exists; canvas validation occurs in previous service
+  if (!canvas?.cooldown_length || !cooldown || !cooldown?.cooldown_time) {
+    return;
+  }
+
+  const cooldownTimeStamp = cooldown?.cooldown_time.valueOf();
+  const cooldownLength = canvas.cooldown_length;
+
+  // Deny if the cooldown time is in the future (alternative to cooldown table is to )
+  // Can't be sure if cooldown handling is being handled in the database side or the server side
+  // Using milliseconds from unix epoch for calculations
+  if (cooldownTimeStamp + cooldownLength * 1000 <= Date.now()) {
+    throw new ForbiddenError("Pixel placement is on cooldown");
+  }
+}

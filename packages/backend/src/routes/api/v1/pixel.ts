@@ -63,37 +63,6 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     ApiError.sendError(res, error);
   }
 
-  // // Check against blacklist
-  // const blacklist = await prisma.blacklist.findFirst({
-  //   where: {
-  //     user_id: BigInt(userID),
-  //   },
-  // });
-  //
-  // if (blacklist) {
-  //   return res.status(401).json({ message: "User is blacklisted" });
-  // }
-  //
-  // // Check user cooldown
-  //
-  // const cooldown = await prisma.cooldown.findFirst({
-  //   where: {
-  //     user_id: BigInt(userID),
-  //     canvas_id: canvasId,
-  //   },
-  // });
-  //
-  // // Deny if the cooldown time is in the future (alternative to cooldown table is to )
-  // // Can't be sure if cooldown handling is being handled in the database side or the server side
-  // if (cooldown?.cooldown_time && canvas.cooldown_length) {
-  //   const placedCooldown = cooldown.cooldown_time?.valueOf();
-  //   // Using milliseconds from unix epoch for calculations
-  //   if (placedCooldown + canvas.cooldown_length * 1000 <= Date.now()) {
-  //     return res
-  //       .status(403)
-  //       .json({ message: "Pixel placement is on cooldown" });
-  //   }
-  // }
   //
 
   // Do both of these within one transaction
