@@ -13,7 +13,7 @@ const Wrapper = styled("main")`
 
   display: grid;
   gap: 2rem;
-  padding: 2rem;
+  padding: 2rem 4rem;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
     grid-template-columns: 1fr 22rem;

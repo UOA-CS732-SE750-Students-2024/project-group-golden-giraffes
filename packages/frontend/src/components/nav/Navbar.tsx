@@ -11,7 +11,7 @@ const Nav = styled("nav")`
   gap: 1rem;
   grid-template-columns: auto 1fr;
   justify-content: flex-end;
-  padding: 0.5rem 3.5rem;
+  padding: 0.5rem 4rem;
   place-items: center flex-end;
 
   a {
