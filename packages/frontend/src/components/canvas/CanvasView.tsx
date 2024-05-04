@@ -18,31 +18,24 @@ const DaddyContainer = styled("main")`
   ${({ theme }) => theme.breakpoints.up("md")} {
     grid-template-columns: 1fr 22rem;
   }
-
-  > * {
-    position: relative;
-  }
-
-  .loader {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
 `;
 
 const CanvasContainer = styled("div")`
-  place-items: center;
   border-radius: 1.5rem;
   border: oklch(100% 0 0 / 15%) solid 3px;
   display: flex;
-  place-content: center;
   overflow: hidden;
+  place-content: center;
+  place-items: center;
 
   canvas {
     image-rendering: pixelated;
     max-width: inherit;
   }
+`;
+
+const Frame = styled("div")`
+  background-color: #1e1f22;
 `;
 
 /**
@@ -63,12 +56,7 @@ function getDefaultScale(image: HTMLImageElement): number {
   return scale;
 }
 
-export interface CanvasViewProps {
-  imageUrl: string;
-  children?: ReactNode;
-}
-
-export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
+export default function CanvasView({ imageUrl }: { imageUrl: string }) {
   const imageRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastMousePosRef = useRef(ORIGIN);
@@ -181,7 +169,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         src={imageUrl}
       />
       <CanvasContainer onMouseDown={handleStartPan}>
-        {isLoading && <CircularProgress className="loader" />}
+        {isLoading && <CircularProgress />}
         <canvas
           ref={canvasRef}
           id="canvas-pan-and-zoom"
