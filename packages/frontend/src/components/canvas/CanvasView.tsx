@@ -1,50 +1,37 @@
 "use client";
 
-import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
+import { clamp } from "@/util";
+import { CanvasPicker } from ".";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
-const FullscreenContainer = styled("main")`
-  position: fixed;
-
-  > * {
-    position: relative;
-  }
-
-  .loader {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-`;
-
 const CanvasContainer = styled("div")`
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  background-color: var(--discord-old-not-quite-black);
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
   display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden;
+  place-content: center;
+  place-items: center;
+
+  cursor: grab;
+  :active {
+    cursor: grabbing;
+  }
+
+  &,
+  * & {
+    user-select: none;
+  }
 
   canvas {
     image-rendering: pixelated;
     max-width: inherit;
   }
 `;
-
-const HiddenImage = styled("img")`
-  display: none;
-`;
-
-/**
- * Return the value clamped so that it is within the range [min, max].
- */
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
 
 /**
  * Calculate the default scale to use for the canvas. This is the required scaling to get the canvas
@@ -64,12 +51,7 @@ function getDefaultScale(image: HTMLImageElement): number {
   return scale;
 }
 
-export interface CanvasViewProps {
-  imageUrl: string;
-  children?: ReactNode;
-}
-
-export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
+export default function CanvasView({ imageUrl }: { imageUrl: string }) {
   const imageRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastMousePosRef = useRef(ORIGIN);
@@ -172,26 +154,26 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   );
 
   return (
-    <FullscreenContainer>
-      <HiddenImage
-        ref={imageRef}
-        src={imageUrl}
-        alt="Blurple Canvas 2023"
-        onLoad={(event) => handleLoadImage(event.currentTarget)}
-      />
+    <>
+      <CanvasPicker />
       <CanvasContainer onMouseDown={handleStartPan}>
-        <div
+        {isLoading && <CircularProgress />}
+        <canvas
+          ref={canvasRef}
           id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale,
           }}
-        >
-          <canvas ref={canvasRef} />
-        </div>
+        />
       </CanvasContainer>
-      {isLoading && <CircularProgress className="loader" />}
-      {children}
-    </FullscreenContainer>
+      <img
+        alt="Blurple Canvas 2023"
+        hidden
+        onLoad={(event) => handleLoadImage(event.currentTarget)}
+        ref={imageRef}
+        src={imageUrl}
+      />
+    </>
   );
 }

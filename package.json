@@ -20,6 +20,9 @@
     "url": "https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues"
   },
   "scripts": {
+    "build": "pnpm --recursive build",
+    "dev": "pnpm --recursive --parallel dev",
+    "test": "pnpm --recursive test",
     "lint": "pnpm --recursive lint",
     "lint:fix": "pnpm --recursive lint:fix",
     "format": "pnpm --recursive format",
@@ -27,9 +30,7 @@
     "check": "pnpm --recursive check",
     "check:fix": "pnpm --recursive check:fix",
     "prepare": "husky",
-    "build": "pnpm --recursive build",
-    "dev": "pnpm --recursive --parallel dev",
-    "test": "pnpm --recursive test"
+    "clean": "pnpm --recursive clean"
   },
   "lint-staged": {
     "*.{css,html,md,markdown,yaml,yml}": "prettier --write",
