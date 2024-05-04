@@ -8,7 +8,4 @@ export interface CanvasInfo {
   eventId: number | null;
 }
 
-export interface CanvasSummary {
-  id: number;
-  name: string;
-}
+export type CanvasSummary = Pick<CanvasInfo, "id" | "name">;

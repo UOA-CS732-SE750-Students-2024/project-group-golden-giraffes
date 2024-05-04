@@ -1,5 +1,6 @@
 "use client";
 
+import { usePalette } from "@/api/queries";
 import { styled } from "@mui/material";
 
 const Container = styled("div")`
@@ -20,7 +21,7 @@ const TabBar = styled("ul")`
    * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
    */
   li::before {
-    content: "\200B"; /* zero-width space */
+    content: "\\200B"; /* zero-width space */
   }
 `;
 
@@ -64,7 +65,8 @@ const Palette = styled("div")`
 `;
 
 export default function ActionPanel() {
-  // const { data: colours, isLoading: colorsAreLoading } = usePalette();
+  const { data: colours, isLoading: colorsAreLoading } = usePalette(2022);
+  console.log(colours);
   return (
     <>
       <TabBar>
