@@ -27,27 +27,34 @@
     --discord-old-not-quite-black-oklch: 26.99% 0.008 240.16;
     --discord-old-actually-black-oklch: 0% 0 0;
 
-    --discord-blurple: oklch(var(--discord-blurple));
-    --discord-green: oklch(var(--discord-green));
-    --discord-yellow: oklch(var(--discord-yellow));
-    --discord-fuchsia: oklch(var(--discord-fuchsia));
-    --discord-red: oklch(var(--discord-red));
-    --discord-white: oklch(var(--discord-white));
-    --discord-black: oklch(var(--discord-black));
-    --discord-old-blurple: oklch(var(--discord-old-blurple));
-    --discord-old-full-white: oklch(var(--discord-old-full-white));
-    --discord-old-greyple: oklch(var(--discord-old-greyple));
+    --discord-blurple: oklch(var(--discord-blurple-oklch));
+    --discord-green: oklch(var(--discord-green-oklch));
+    --discord-yellow: oklch(var(--discord-yellow-oklch));
+    --discord-fuchsia: oklch(var(--discord-fuchsia-oklch));
+    --discord-red: oklch(var(--discord-red-oklch));
+    --discord-white: oklch(var(--discord-white-oklch));
+    --discord-black: oklch(var(--discord-black-oklch));
+    --discord-old-blurple: oklch(var(--discord-old-blurple-oklch));
+    --discord-old-full-white: oklch(var(--discord-old-full-white-oklch));
+    --discord-old-greyple: oklch(var(--discord-old-greyple-oklch));
     --discord-old-dark-but-not-black: oklch(
       var(--discord-old-dark-but-not-black)
     );
-    --discord-old-not-quite-black: oklch(var(--discord-old-not-quite-black));
-    --discord-old-actually-black: oklch(var(--discord-old-actually-black));
+    --discord-old-not-quite-black: oklch(
+      var(--discord-old-not-quite-black-oklch)
+    );
+    --discord-old-actually-black: oklch(
+      var(--discord-old-actually-black-oklch)
+    );
 
     --font-body: "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont,
       "Inter", "Segoe UI", Roboto, Ubuntu, sans-serif;
+    --transition-duration-fast: 150ms;
+    --transition-duration-medium: 200ms;
+    --transition-duration-slow: 250ms;
 
-    background-color: oklch(var(--discord-old-not-quite-black-oklch));
-    color: oklch(var(--discord-white-oklch));
+    background-color: var(--discord-old-not-quite-black);
+    color: var(--discord-white);
     color-scheme: only dark;
     font-family: var(--font-body);
   }
