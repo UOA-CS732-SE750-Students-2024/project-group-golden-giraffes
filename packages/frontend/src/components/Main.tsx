@@ -13,11 +13,11 @@ const Wrapper = styled("main")`
 
   display: grid;
   gap: 0.5rem 2rem;
-  grid-auto-flow: column;
-  padding: 2rem 4rem;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
+    grid-auto-flow: column;
     grid-template: 3rem 1fr / 1fr 22rem;
+    padding: 2rem 4rem;
   }
 `;
 
