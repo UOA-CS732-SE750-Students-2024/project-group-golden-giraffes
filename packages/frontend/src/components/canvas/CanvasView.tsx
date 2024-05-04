@@ -42,10 +42,6 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const Frame = styled("div")`
-  background-color: #1e1f22;
-`;
-
 /**
  * Calculate the default scale to use for the canvas. This is the required scaling to get the canvas
  * to cover the entire screen.
