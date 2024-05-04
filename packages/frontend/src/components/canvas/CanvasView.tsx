@@ -9,10 +9,13 @@ import { ActionPanel } from "..";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
 const DaddyContainer = styled("main")`
+  body:has(&) {
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
   display: grid;
   gap: 2rem;
-  position: fixed;
-  width: 100%;
   padding: 2rem;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
