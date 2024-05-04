@@ -6,7 +6,7 @@ import { styled } from "@mui/material";
 import { DateTime } from "luxon";
 import React, { useState, useEffect, ReactNode } from "react";
 
-function getOrdinalSuffix(rank: number): string {
+function getOrdinalSuffix(rank: number) {
   const trailingDigits = rank % 100;
   if (11 <= trailingDigits && trailingDigits <= 13) {
     return "th";
@@ -39,17 +39,17 @@ function formatInterval(interval: string) {
   return components.join("");
 }
 
-function formatTimestamp(timestamp: string, utc = true): string {
+function formatTimestamp(timestamp: string, utc = true) {
   const date = new Date(timestamp);
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
   return dateToString(date, utc);
 }
 
-function formatTimestampLocalTZ(timestamp: string): string {
+function formatTimestampLocalTZ(timestamp: string) {
   return formatTimestamp(timestamp, false);
 }
 
-function dateToString(date: Date, utc?: boolean): string {
+function dateToString(date: Date, utc?: boolean) {
   let luxonDate = DateTime.fromJSDate(date);
   let format = DateTime.DATETIME_FULL;
   if (utc) {
