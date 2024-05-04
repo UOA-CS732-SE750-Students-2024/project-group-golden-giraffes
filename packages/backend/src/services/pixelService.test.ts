@@ -152,15 +152,20 @@ describe("Place Pixel Tests", () => {
     const userId = BigInt(1);
 
     await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, new Date(0));
-    const before = await fetchCooldownPixelHistory();
+    const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
     await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 2 }, new Date());
-    const after = await fetchCooldownPixelHistory();
+    const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 
     expect(before.pixel).not.toStrictEqual(after.pixel);
     expect(before.history).not.toStrictEqual(after.history);
     expect(before.cooldown).not.toStrictEqual(after.cooldown);
 
-    async function fetchCooldownPixelHistory() {
+    async function fetchCooldownPixelHistory(
+      canvasId: number,
+      userId: bigint,
+      x: number,
+      y: number,
+    ) {
       const cooldown = await prisma.cooldown.findFirst({
         where: {
           user_id: userId,
@@ -170,15 +175,15 @@ describe("Place Pixel Tests", () => {
       const pixel = await prisma.pixel.findFirst({
         where: {
           canvas_id: canvasId,
-          x: 1,
-          y: 1,
+          x: x,
+          y: x,
         },
       });
       const history = await prisma.history.findMany({
         where: {
           canvas_id: canvasId,
-          x: 1,
-          y: 1,
+          x: y,
+          y: y,
         },
       });
       return { cooldown, pixel, history };
