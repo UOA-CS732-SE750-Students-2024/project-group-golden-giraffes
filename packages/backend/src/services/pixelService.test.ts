@@ -1,6 +1,3 @@
-import express from "express";
-import request from "supertest";
-
 import { prisma } from "@/client";
 import { ForbiddenError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
@@ -86,8 +83,6 @@ describe("User Validation Tests", () => {
     initializeUsers();
     initializeBlacklist();
     initializeCanvases();
-
-    // Create cooldown
   });
 
   it("Rejects blacklisted user", async () => {
