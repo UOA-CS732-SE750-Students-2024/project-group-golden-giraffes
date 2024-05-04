@@ -51,6 +51,7 @@
       "Inter", "Segoe UI", Roboto, Ubuntu, sans-serif;
     --border-color: oklch(var(--discord-white-oklch) / 15%);
     --card-border: var(--border-color) solid 2px;
+    --card-border-radius: 0.1875rem;
     --focus-outline: var(--discord-blurple) solid 2px;
     --transition-duration-fast: 150ms;
     --transition-duration-medium: 200ms;
