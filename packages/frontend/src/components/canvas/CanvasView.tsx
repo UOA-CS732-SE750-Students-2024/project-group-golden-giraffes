@@ -8,8 +8,8 @@ import { clamp } from "@/util";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
 const CanvasContainer = styled("div")`
-  border-radius: 1.5rem;
   border: var(--card-border);
+  border-radius: 1.5rem;
   display: flex;
   overflow: hidden;
   place-content: center;
