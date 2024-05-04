@@ -7,7 +7,8 @@ import { DateTime } from "luxon";
 import React, { useState, useEffect, ReactNode } from "react";
 
 function getOrdinalSuffix(rank: number): string {
-  if (rank % 100 >= 11 && rank % 100 <= 13) {
+  const trailingDigits = rank % 100;
+  if (11 <= trailingDigits && trailingDigits <= 13) {
     return "th";
   }
   switch (rank % 10) {
@@ -22,29 +23,20 @@ function getOrdinalSuffix(rank: number): string {
   }
 }
 
-function formatInterval(interval: string): string {
-  const [days, time] = interval.split(" ");
+function formatInterval(interval: string) {
+  const [daysStr, time] = interval.split(" ");
+  const days = Number.parseInt(daysStr);
   const [hours, minutes, seconds] = time
     .split(":")
     .map((num) => Number.parseInt(num));
-  let formattedInterval = "";
-  formattedInterval +=
-    Number.parseInt(days) === 1 ? `${days} day `
-    : Number.parseInt(days) > 1 ? `${days} days `
-    : "";
-  formattedInterval +=
-    hours === 1 ? `${hours} hour `
-    : hours > 1 ? `${hours} hours `
-    : "";
-  formattedInterval +=
-    minutes === 1 ? `${minutes} minute `
-    : minutes > 1 ? `${minutes} minutes `
-    : "";
-  formattedInterval +=
-    seconds === 1 ? `${seconds} second`
-    : seconds > 1 ? `${seconds} seconds`
-    : "";
-  return formattedInterval.trim();
+  const components = [];
+  if (days > 0) components.push(`${days} ${days === 1 ? "day" : "days"}`);
+  if (hours > 0) components.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
+  if (minutes > 0)
+    components.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
+  if (seconds > 0)
+    components.push(`${seconds} ${seconds === 1 ? "second" : "seconds"}`);
+  return components.join("");
 }
 
 function formatTimestamp(timestamp: string, utc = true): string {
