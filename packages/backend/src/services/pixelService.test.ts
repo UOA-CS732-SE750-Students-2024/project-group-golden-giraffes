@@ -5,8 +5,16 @@ import NotFoundError from "@/errors/NotFoundError";
 import initializeBlacklist from "@/test/initializeBlacklist";
 import initializeCanvases from "@/test/initializeCanvases";
 import initializeColors from "@/test/initializeColors";
+import initializeHistory from "@/test/initializeHistory";
+import initializePixels from "@/test/initializePixels";
 import initializeUsers from "@/test/initializeUsers";
-import { validateColor, validatePixel, validateUser } from "./pixelService";
+import { PlacePixel } from "@blurple-canvas-web/types";
+import {
+  placePixel,
+  validateColor,
+  validatePixel,
+  validateUser,
+} from "./pixelService";
 
 describe("Pixel Validation Tests", () => {
   beforeEach(() => {
@@ -127,5 +135,57 @@ describe("User Validation Tests", () => {
       data: { canvas_id: 1, user_id: BigInt(1), cooldown_time: new Date() },
     });
     return expect(validateUser(1, BigInt(1))).rejects.toThrow(ForbiddenError);
+  });
+});
+
+describe("Place Pixel Tests", () => {
+  beforeEach(() => {
+    initializeUsers();
+    initializeCanvases();
+    initializeColors();
+    initializeHistory();
+    initializePixels();
+  });
+
+  it("Resolves places the pixel", async () => {
+    const canvasId = 1;
+    const userId = BigInt(1);
+    const placePixelModel: PlacePixel = {
+      x: 1,
+      y: 1,
+      colorId: 1,
+    };
+    await placePixel(canvasId, userId, placePixelModel, new Date());
+    const before = await fetchCooldownPixelHistory();
+    await placePixel(canvasId, userId, placePixelModel, new Date());
+    const after = await fetchCooldownPixelHistory();
+
+    expect(before.pixel).toStrictEqual(after.pixel);
+    expect(before.history).not.toStrictEqual(after.history);
+    expect(before.cooldown).not.toStrictEqual(after.cooldown);
+
+    async function fetchCooldownPixelHistory() {
+      const cooldown = await prisma.cooldown.findFirst({
+        where: {
+          user_id: userId,
+          canvas_id: canvasId,
+        },
+      });
+      const pixel = await prisma.pixel.findFirst({
+        where: {
+          canvas_id: canvasId,
+          x: placePixelModel.x,
+          y: placePixelModel.y,
+        },
+      });
+      const history = await prisma.history.findMany({
+        where: {
+          canvas_id: canvasId,
+          x: placePixelModel.x,
+          y: placePixelModel.y,
+        },
+      });
+      return { cooldown, pixel, history };
+    }
   });
 });
