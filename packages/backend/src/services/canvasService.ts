@@ -80,10 +80,7 @@ export async function getCanvases(): Promise<CanvasSummary[]> {
     },
   });
 
-  return canvases.map((canvas) => ({
-    id: canvas.id,
-    name: canvas.name,
-  }));
+  return canvases;
 }
 
 /**
