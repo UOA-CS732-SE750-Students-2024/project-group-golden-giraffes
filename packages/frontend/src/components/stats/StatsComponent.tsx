@@ -2,6 +2,7 @@
 
 import config from "@/config";
 import { PaletteColor, UserStats } from "@blurple-canvas-web/types";
+import { DateTime } from "luxon";
 import React, { useState, useEffect, ReactNode } from "react";
 
 function getOrdinalSuffix(rank: number): string {
@@ -55,17 +56,15 @@ function formatTimestampLocalTZ(timestamp: string): string {
   return formatTimestamp(timestamp, false);
 }
 
-function dateToString(date: Date, timezone?: boolean): string {
-  return date.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: timezone ? "UTC" : undefined,
-    timeZoneName: timezone ? "short" : undefined,
-  });
+function dateToString(date: Date, utc?: boolean): string {
+  let luxonDate = DateTime.fromJSDate(date);
+  let format = DateTime.DATETIME_FULL;
+  if (utc) {
+    luxonDate = luxonDate.toUTC();
+  } else {
+    format = { ...format, timeZoneName: undefined };
+  }
+  return luxonDate.toLocaleString(format);
 }
 
 interface UserStatsComponentProps {
