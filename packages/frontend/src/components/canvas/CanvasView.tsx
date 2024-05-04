@@ -28,7 +28,6 @@ const FullscreenContainer = styled("main")`
 `;
 
 const CanvasContainer = styled("div")`
-  overscroll-behavior: contain;
   position: fixed;
   height: 100svh;
   width: 100svw;
@@ -110,6 +109,20 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     };
   }, [imageUrl]);
 
+  useEffect(() => {
+    // Prevent the default touch move behaviour on the document to prevent pull to refresh.
+    const handleDocumentTouchMove = (event: TouchEvent): void => {
+      event.preventDefault();
+    };
+
+    document.addEventListener("touchmove", handleDocumentTouchMove, {
+      passive: false,
+    });
+
+    return () =>
+      document.removeEventListener("touchmove", handleDocumentTouchMove);
+  }, []);
+
   /********************************
    * PANNING FUNCTIONALITY.       *
    ********************************/
@@ -176,6 +189,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   const handleTouchMove = useCallback(
     (event: TouchEvent): void => {
       const touchCount = event.touches.length;
+      event.preventDefault();
 
       // TODO: Implement multi-touch zooming
       if (touchCount !== 1) return;
@@ -219,7 +233,9 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       // TODO: Implement multi-touch zooming
       if (touchCount !== 1) return;
 
-      containerRef.current.addEventListener("touchmove", handleTouchMove);
+      containerRef.current.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
       containerRef.current.addEventListener("touchend", handleTouchEnd);
       containerRef.current.addEventListener("touchcancel", handleTouchEnd);
       startTouchesRef.current = Array.from(event.touches);
