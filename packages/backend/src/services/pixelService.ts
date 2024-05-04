@@ -123,7 +123,7 @@ export async function validateUser(canvasId: number, userId: bigint) {
   // Deny if the cooldown time is in the future (alternative to cooldown table is to )
   // Can't be sure if cooldown handling is being handled in the database side or the server side
   // Using milliseconds from unix epoch for calculations
-  if (cooldownTimeStamp + cooldownLength * 1000 <= Date.now()) {
+  if (cooldownTimeStamp + cooldownLength * 1000 > Date.now()) {
     throw new ForbiddenError("Pixel placement is on cooldown");
   }
 }
