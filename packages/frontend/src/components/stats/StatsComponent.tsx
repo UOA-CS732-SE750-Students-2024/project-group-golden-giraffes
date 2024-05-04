@@ -92,7 +92,7 @@ const UserStatsComponent: React.FC<UserStatsComponentProps> = ({
   }, [userId, canvasId]);
 
   if (!stats) {
-    return <div>Loading...</div>;
+    return <div>Loading…</div>;
   }
 
   return (
