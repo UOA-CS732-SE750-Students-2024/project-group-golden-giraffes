@@ -4,6 +4,7 @@ import { styled } from "@mui/material";
 import Link from "next/link";
 
 const Nav = styled("nav")`
+  background-color: var(--discord-old-dark-but-not-black);
   border-block-end: var(--card-border);
   display: grid;
   font-size: 1.35rem;
