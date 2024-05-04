@@ -7,6 +7,7 @@
     "rootDir": "src",
     "outDir": "build",
     "noFallthroughCasesInSwitch": true,
+    "types": ["vitest/globals"],
     "paths": {
       "@/*": ["./src/*"]
     }

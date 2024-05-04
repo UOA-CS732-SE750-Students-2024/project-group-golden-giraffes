@@ -1,14 +1,15 @@
 import { prisma } from "@/client";
 import { PrismockClientType } from "prismock/build/main/lib/client";
 
-jest.mock("@prisma/client", () => {
+vi.mock("@prisma/client", async () => {
+  const prismock = await vi.importActual("prismock");
   return {
-    ...jest.requireActual("@prisma/client"),
-    PrismaClient: jest.requireActual("prismock").PrismockClient,
+    ...vi.importActual("@prisma/client"),
+    PrismaClient: prismock.PrismockClient,
   };
 });
 
-afterEach(() => {
+beforeEach(() => {
   const prismock = prisma as PrismockClientType;
   prismock.reset();
 });
