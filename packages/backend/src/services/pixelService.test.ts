@@ -151,11 +151,17 @@ describe("Place Pixel Tests", () => {
     const canvasId = 1;
     const userId = BigInt(1);
 
-    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, new Date(0));
+    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, new Date());
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
-    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 2 }, new Date());
+    await placePixel(
+      canvasId,
+      userId,
+      { x: 1, y: 1, colorId: 2 },
+      new Date(Date.now() + 1),
+    );
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 
+    console.log(after.history);
     expect(before.pixel).not.toStrictEqual(after.pixel);
     expect(before.history).not.toStrictEqual(after.history);
     expect(before.cooldown).not.toStrictEqual(after.cooldown);
