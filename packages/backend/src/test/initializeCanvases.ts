@@ -5,7 +5,6 @@ export const testCanvas = {
   width: 2,
   height: 2,
   start_coordinates: [1, 1],
-  cooldown_length: 30,
 };
 
 export default function intializeCanvases() {
@@ -16,6 +15,7 @@ export default function intializeCanvases() {
       name: "Unlocked Canvas",
       locked: false,
       event_id: 1,
+      cooldown_length: 30,
     },
   });
   prisma.canvas.create({
