@@ -14,6 +14,14 @@ const TabBar = styled("ul")`
   display: flex;
   gap: 0.25rem;
   list-style-type: none;
+
+  /*
+   * Workaround for accessibility issue with VoiceOver.
+   * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
+   */
+  li::before {
+    content: "\200B"; /* zero-width space */
+  }
 `;
 
 const Tab = styled("li")`
