@@ -129,11 +129,12 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
 
       // Offset to get to the mouse position
       const mouseOffsetDirection = diffPoints(
-        { x: image.width / 2, y: image.height / 2 },
+        {
+          x: image.width / 2,
+          y: image.height / 2,
+        },
         mousePositionOnCanvas,
       );
-
-      console.log(mouseOffsetDirection);
 
       const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
       const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
@@ -150,7 +151,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
         // The amount we move in the direction of the offset is based on how much we're zooming in
         const offsetDiff = multiplyPoint(
           offsetDiffDirection,
-          effectiveScale - 1,
+          1 - 1 / effectiveScale,
         );
 
         return clampOffset(addPoints(offsetDiff, prevOffset));
