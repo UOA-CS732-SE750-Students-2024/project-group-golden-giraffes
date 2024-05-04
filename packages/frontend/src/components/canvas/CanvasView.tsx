@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { clamp } from "@/util";
+import { CanvasPicker } from ".";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
 const CanvasContainer = styled("div")`
@@ -149,6 +150,7 @@ export default function CanvasView({ imageUrl }: { imageUrl: string }) {
 
   return (
     <>
+      <CanvasPicker />
       <CanvasContainer onMouseDown={handleStartPan}>
         {isLoading && <CircularProgress />}
         <canvas

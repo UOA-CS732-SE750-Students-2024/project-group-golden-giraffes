@@ -20,8 +20,8 @@ const Nav = styled("nav")`
     padding: 0.5rem 1rem;
     text-decoration: none;
     transition:
-      background-color,
-      opacity,
+      background-color var(--transition-duration-fast) ease,
+      opacity var(--transition-duration-fast) ease,
       outline-width var(--transition-duration-fast) ease;
 
     :hover {
