@@ -4,7 +4,7 @@ export interface UserStats {
   totalPixels: number;
   rank: number;
   mostFrequentColor: PaletteColor;
-  // placeFrequency: string;
+  // placeFrequency: string;  // Not currently supported by Prisma
   mostRecentTimestamp: string;
 }
 
