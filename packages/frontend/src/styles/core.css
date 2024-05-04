@@ -49,9 +49,13 @@
 
     --font-body: "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont,
       "Inter", "Segoe UI", Roboto, Ubuntu, sans-serif;
+    --border-color: oklch(var(--discord-white-oklch) / 15%);
+    --card-border: var(--border-color) solid 2px;
+    --focus-outline: var(--discord-blurple) solid 2px;
     --transition-duration-fast: 150ms;
     --transition-duration-medium: 200ms;
     --transition-duration-slow: 250ms;
+    --text-glow: 0 0 1rem var(--discord-blurple);
 
     background-color: var(--discord-old-not-quite-black);
     color: var(--discord-white);

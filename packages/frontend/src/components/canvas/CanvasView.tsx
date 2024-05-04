@@ -9,7 +9,7 @@ import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
 const CanvasContainer = styled("div")`
   border-radius: 1.5rem;
-  border: oklch(100% 0 0 / 15%) solid 3px;
+  border: var(--card-border);
   display: flex;
   overflow: hidden;
   place-content: center;

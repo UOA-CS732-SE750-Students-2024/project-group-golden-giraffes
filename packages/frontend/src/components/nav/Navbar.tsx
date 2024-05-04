@@ -4,14 +4,35 @@ import { styled } from "@mui/material";
 import Link from "next/link";
 
 const Nav = styled("nav")`
-  border-block-end: oklch(100% 0 0 / 15%) solid 3px;
+  border-block-end: var(--card-border);
   display: grid;
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   gap: 1rem;
   grid-template-columns: auto 1fr;
   justify-content: flex-end;
-  padding: 1rem 3.5rem;
+  padding: 0.5rem 3.5rem;
   place-items: center flex-end;
+
+  a {
+    border-radius: 0.125rem;
+    color: var(--discord-white);
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    transition:
+      background-color,
+      opacity,
+      outline-width var(--transition-duration-fast) ease;
+
+    :hover {
+      opacity: 55%;
+    }
+
+    :focus,
+    :focus-visible {
+      background-color: oklch(100% 0 0 / 6%);
+      outline: var(--focus-outline);
+    }
+  }
 `;
 
 const CompositeLogo = styled(Link)`
@@ -21,13 +42,6 @@ const CompositeLogo = styled(Link)`
   gap: 1.5rem;
   text-decoration: none;
   user-select: none;
-  transition:
-    opacity,
-    font-variation-settings var(--transition-duration-fast) ease;
-
-  :hover {
-    opacity: 55%;
-  }
 `;
 
 const Wordmark = styled("div")`
