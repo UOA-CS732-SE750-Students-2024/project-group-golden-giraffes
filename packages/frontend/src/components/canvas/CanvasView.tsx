@@ -1,27 +1,11 @@
 "use client";
 
 import { CircularProgress, styled } from "@mui/material";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { clamp } from "@/util";
-import { ActionPanel } from "..";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
-
-const DaddyContainer = styled("main")`
-  body:has(&) {
-    display: grid;
-    grid-template-rows: auto 1fr;
-  }
-
-  display: grid;
-  gap: 2rem;
-  padding: 2rem;
-
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    grid-template-columns: 1fr 22rem;
-  }
-`;
 
 const CanvasContainer = styled("div")`
   border-radius: 1.5rem;
@@ -163,15 +147,7 @@ export default function CanvasView({ imageUrl }: { imageUrl: string }) {
   );
 
   return (
-    <DaddyContainer>
-      {/* Some sort of wild performance optimisation */}
-      <img
-        alt="Blurple Canvas 2023"
-        hidden
-        onLoad={(event) => handleLoadImage(event.currentTarget)}
-        ref={imageRef}
-        src={imageUrl}
-      />
+    <>
       <CanvasContainer onMouseDown={handleStartPan}>
         {isLoading && <CircularProgress />}
         <canvas
@@ -183,7 +159,14 @@ export default function CanvasView({ imageUrl }: { imageUrl: string }) {
           }}
         />
       </CanvasContainer>
-      <ActionPanel />
-    </DaddyContainer>
+      {/* Some sort of wild performance optimisation */}
+      <img
+        alt="Blurple Canvas 2023"
+        hidden
+        onLoad={(event) => handleLoadImage(event.currentTarget)}
+        ref={imageRef}
+        src={imageUrl}
+      />
+    </>
   );
 }
