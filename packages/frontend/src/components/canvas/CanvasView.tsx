@@ -8,7 +8,7 @@ import { clamp } from "@/util";
 import { ActionPanel } from "..";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
-const FullscreenContainer = styled("main")`
+const DaddyContainer = styled("main")`
   display: grid;
   gap: 2rem;
   position: fixed;
@@ -32,21 +32,17 @@ const FullscreenContainer = styled("main")`
 `;
 
 const CanvasContainer = styled("div")`
-  align-items: center;
+  place-items: center;
   border-radius: 1.5rem;
   border: oklch(100% 0 0 / 15%) solid 3px;
   display: flex;
-  justify-content: center;
+  place-content: center;
   overflow: hidden;
 
   canvas {
     image-rendering: pixelated;
     max-width: inherit;
   }
-`;
-
-const HiddenImage = styled("img")`
-  display: none;
 `;
 
 /**
@@ -175,26 +171,27 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   );
 
   return (
-    <FullscreenContainer>
-      <HiddenImage
+    <DaddyContainer>
+      {/* Some sort of wild performance optimisation */}
+      <img
+        alt="Blurple Canvas 2023"
+        hidden
+        onLoad={(event) => handleLoadImage(event.currentTarget)}
         ref={imageRef}
         src={imageUrl}
-        alt="Blurple Canvas 2023"
-        onLoad={(event) => handleLoadImage(event.currentTarget)}
       />
       <CanvasContainer onMouseDown={handleStartPan}>
-        <div
+        {isLoading && <CircularProgress className="loader" />}
+        <canvas
+          ref={canvasRef}
           id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale,
           }}
-        >
-          <canvas ref={canvasRef} />
-        </div>
+        />
       </CanvasContainer>
-      {isLoading && <CircularProgress className="loader" />}
       <ActionPanel />
-    </FullscreenContainer>
+    </DaddyContainer>
   );
 }
