@@ -20,7 +20,7 @@ canvasRouter.use("/:canvasId/pixel", pixelRouter);
 canvasRouter.get("/", async (req, res) => {
   try {
     const canvases = await getCanvases();
-    return res.status(200).json(canvases);
+    res.status(200).json(canvases);
   } catch (error) {
     ApiError.sendError(res, error);
   }
@@ -29,7 +29,7 @@ canvasRouter.get("/", async (req, res) => {
 canvasRouter.get("/current/info", async (req, res) => {
   try {
     const canvasInfo = await getCurrentCanvasInfo();
-    return res.status(200).json(canvasInfo);
+    res.status(200).json(canvasInfo);
   } catch (error) {
     ApiError.sendError(res, error);
   }
@@ -40,7 +40,7 @@ canvasRouter.get("/:canvasId/info", async (req, res) => {
     const canvasId = await parseCanvasId(req.params);
     const canvasInfo = await getCanvasInfo(canvasId);
 
-    return res.status(200).json(canvasInfo);
+    res.status(200).json(canvasInfo);
   } catch (error) {
     ApiError.sendError(res, error);
   }
