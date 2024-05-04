@@ -2,6 +2,6 @@ import { prisma } from "@/client";
 
 export default function initialiseUsers() {
   prisma.user.createMany({
-    data: [{ id: 1 }, { id: 9 }],
+    data: [{ id: BigInt(1) }, { id: BigInt(9) }],
   });
 }
