@@ -1,7 +1,7 @@
 import { prisma } from "@/client";
 import { ForbiddenError, NotFoundError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
-import { PixelHistory } from "@blurple-canvas-web/types";
+import { PixelHistory, PlacePixel } from "@blurple-canvas-web/types";
 
 export async function getPixelHistory(
   canvasId: number,
@@ -126,4 +126,64 @@ export async function validateUser(canvasId: number, userId: bigint) {
   if (cooldownTimeStamp + cooldownLength * 1000 > Date.now()) {
     throw new ForbiddenError("Pixel placement is on cooldown");
   }
+}
+
+/* Places a pixel in the given canvas */
+export async function placePixel(
+  canvasId: number,
+  userID: bigint,
+  placePixel: PlacePixel,
+  placeTime: Date,
+) {
+  const cooldownTimeStamp = new Date();
+  const { x, y, colorId } = placePixel;
+
+  // Assumes that the user already exists in the DB
+  await prisma.$transaction([
+    prisma.cooldown.upsert({
+      where: {
+        user_id_canvas_id: {
+          user_id: userID,
+          canvas_id: canvasId,
+        },
+      },
+      create: {
+        user_id: userID,
+        canvas_id: canvasId,
+        cooldown_time: cooldownTimeStamp,
+      },
+      update: {
+        cooldown_time: cooldownTimeStamp,
+      },
+    }),
+    prisma.pixel.upsert({
+      where: {
+        canvas_id_x_y: {
+          canvas_id: canvasId,
+          x: x,
+          y: y,
+        },
+      },
+      create: {
+        canvas_id: canvasId,
+        x: x,
+        y: y,
+        color_id: colorId,
+      },
+      update: {
+        color_id: colorId,
+      },
+    }),
+
+    prisma.history.create({
+      data: {
+        user_id: userID,
+        canvas_id: canvasId,
+        x: x,
+        y: y,
+        color_id: colorId,
+        timestamp: cooldownTimeStamp,
+      },
+    }),
+  ]);
 }
