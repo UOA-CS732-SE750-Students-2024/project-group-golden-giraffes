@@ -38,7 +38,7 @@
     --discord-old-full-white: oklch(var(--discord-old-full-white-oklch));
     --discord-old-greyple: oklch(var(--discord-old-greyple-oklch));
     --discord-old-dark-but-not-black: oklch(
-      var(--discord-old-dark-but-not-black)
+      var(--discord-old-dark-but-not-black-oklch)
     );
     --discord-old-not-quite-black: oklch(
       var(--discord-old-not-quite-black-oklch)
@@ -57,7 +57,7 @@
     --transition-duration-slow: 250ms;
     --text-glow: 0 0 1rem var(--discord-blurple);
 
-    background-color: var(--discord-old-not-quite-black);
+    background-color: var(--discord-old-dark-but-not-black);
     color: var(--discord-white);
     color-scheme: only dark;
     font-family: var(--font-body);

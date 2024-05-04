@@ -8,6 +8,7 @@ import { clamp } from "@/util";
 import { ORIGIN, Point, addPoints, diffPoints, scalePoint } from "./point";
 
 const CanvasContainer = styled("div")`
+  background-color: var(--discord-old-not-quite-black);
   border: var(--card-border);
   border-radius: 1.5rem;
   display: flex;
