@@ -1,19 +1,40 @@
 "use client";
 
 import { NativeSelect, styled } from "@mui/material";
+import { ChevronsUpDown } from "lucide-react";
 
 import { useCanvasInfo, useCanvasList } from "@/hooks";
 
 const Select = styled(NativeSelect)`
   background-color: var(--discord-legacy-not-quite-black);
-  border-radius: var(--card-border-radius);
   border: 0;
+  border-radius: var(--card-border-radius);
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: inherit;
   font-weight: 500;
   justify-self: flex-start;
   min-inline-size: 16rem;
-  padding: 0.5rem 1.25rem;
+  padding: 0.25rem 1rem;
+
+  :hover,
+  ::before,
+  ::after {
+    content: unset;
+  }
+
+  .MuiNativeSelect-select {
+    padding: 0;
+  }
+
+  .MuiNativeSelect-icon {
+    color: oklch(var(--discord-white-oklch) / 45%);
+    margin-inline: 0.25rem;
+  }
+
+  &,
+  & * {
+    user-select: none;
+  }
 
   :hover {
     background-color: var(--discord-legacy-greyple);
@@ -32,7 +53,7 @@ export default function CanvasPicker() {
   const allButMain = canvases.filter(({ id }) => id !== mainCanvas?.id);
 
   return (
-    <Select>
+    <Select IconComponent={ChevronsUpDown}>
       {mainCanvas && (
         <>
           <option key={mainCanvas.id} value={mainCanvas.id}>
