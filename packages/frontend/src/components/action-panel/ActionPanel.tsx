@@ -117,9 +117,44 @@ const HistoryRecords = styled("div")`
 `;
 
 const Record = styled("div")`
-  display: grid;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  & > *:first-child {
+    width: 4em;
+  }
+`;
+
+const RecordInfo = styled("div")`
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  grid-template-columns: 1fr auto;
+  flex: 1;
+`;
+
+const RecordAuthor = styled("span")`
+  font-size: 1.3rem;
+`;
+
+const RecordColor = styled("div")`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  opacity: 0.6;
+`;
+
+const RecordColorName = styled("span")`
+  font-size: 1.2rem;
+`;
+
+const RecordColorCode = styled("span")`
+  font-size: 1rem;
+  font-family: var(--font-monospace);
+  background-color: rgba(255, 255, 255, 0.12);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 `;
 
 interface SwatchProps {
@@ -149,10 +184,16 @@ const HistoryRecord = ({
 }) => {
   if (color) {
     return (
-      <>
-        {history.userId}
-        <Record>{colorToSwatch(color, true)}</Record>
-      </>
+      <Record>
+        {colorToSwatch(color, true)}
+        <RecordInfo>
+          <RecordAuthor>{history.userId}</RecordAuthor>
+          <RecordColor>
+            <RecordColorName>{color.name}</RecordColorName>
+            <RecordColorCode>{color.code}</RecordColorCode>
+          </RecordColor>
+        </RecordInfo>
+      </Record>
     );
   }
 };
@@ -179,7 +220,6 @@ export default function ActionPanel() {
   const [mainColors, partnerColors] = partitionPalette(palette);
 
   const [coordinate, setCoordinate] = useState<[number, number] | null>(null);
-  const [pixel, setPixel] = useState<Pixel | null>(null);
   const [pixelHistory, setPixelHistory] = useState<PixelHistory[] | null>(null);
 
   const canvasId = 2023; // This is a placeholder value
@@ -220,7 +260,6 @@ export default function ActionPanel() {
                   <span>x: {coordinate[0]}</span>
                   <span>y: {coordinate[1]}</span>
                 </Coordinates>
-                <Color color={mainColors[0]} />
                 <Heading>Paint History</Heading>
                 <HistoryRecords>
                   {Array.isArray(pixelHistory) &&
