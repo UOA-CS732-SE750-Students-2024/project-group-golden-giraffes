@@ -4,11 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 import config from "@/config";
-import { SummaryOfCanvases } from "@blurple-canvas-web/types";
+import { CanvasListRequest } from "@blurple-canvas-web/types";
 
-export function useCanvases() {
+export function useCanvasList() {
   const getSummaryOfCanvases = async () => {
-    const response = await axios.get<SummaryOfCanvases.ResBody>(
+    const response = await axios.get<CanvasListRequest.ResBody>(
       `${config.apiUrl}/api/v1/canvas/`,
     );
     return response.data;
@@ -19,6 +19,6 @@ export function useCanvases() {
     queryFn: getSummaryOfCanvases,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-    placeholderData: [] as SummaryOfCanvases.ResBody,
+    placeholderData: [] as CanvasListRequest.ResBody,
   });
 }

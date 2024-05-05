@@ -1,2 +1,2 @@
+export * as CanvasListRequest from "./CanvasListRequest";
 export * as PaletteRequest from "./PaletteRequest";
-export * as SummaryOfCanvases from "./SummaryOfCanvases";
