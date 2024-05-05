@@ -1,7 +1,6 @@
 import { prisma } from "@/client";
 import config from "@/config";
-import { ForbiddenError, NotFoundError } from "@/errors";
-import BadRequestError from "@/errors/BadRequestError";
+import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
 import { PixelHistory, PlacePixel } from "@blurple-canvas-web/types";
 
 export async function getPixelHistory(

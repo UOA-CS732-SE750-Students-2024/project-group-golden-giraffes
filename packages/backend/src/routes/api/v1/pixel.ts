@@ -1,6 +1,5 @@
 import { ApiError } from "@/errors";
-import BadRequestError from "@/errors/BadRequestError";
-import UnauthorisedError from "@/errors/UnauthorisedError";
+import { BadRequestError, UnauthorizedError } from "@/errors";
 import { PlacePixelBodyModel } from "@/models/bodyModels";
 import {
   CanvasIdParam,
@@ -14,7 +13,6 @@ import {
   validatePixel,
   validateUser,
 } from "@/services/pixelService";
-
 import { DiscordUserLoginInfo, PlacePixel } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
@@ -61,7 +59,7 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
 
     const user = req.user as DiscordUserLoginInfo;
     if (!user) {
-      throw new UnauthorisedError("User is not authenticated");
+      throw new UnauthorizedError("User is not authenticated");
     }
     const userId = user.profile.id;
     if (!userId) {

@@ -1,7 +1,5 @@
 import { prisma } from "@/client";
-import { ForbiddenError } from "@/errors";
-import BadRequestError from "@/errors/BadRequestError";
-import NotFoundError from "@/errors/NotFoundError";
+import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
 import seedBlacklist from "@/test/seedBlacklist";
 import seedCanvases from "@/test/seedCanvases";
 import seedColors from "@/test/seedColors";
