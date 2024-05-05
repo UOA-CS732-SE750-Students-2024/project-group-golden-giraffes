@@ -16,7 +16,7 @@ const Wrapper = styled("main")`
 
   ${({ theme }) => theme.breakpoints.up("md")} {
     grid-auto-flow: column;
-    grid-template: 3rem 1fr / 1fr 22rem;
+    grid-template: 3rem 1fr / 1fr 23rem;
     padding: 2rem 4rem;
   }
 `;

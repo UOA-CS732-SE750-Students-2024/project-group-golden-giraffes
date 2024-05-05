@@ -6,3 +6,5 @@ export interface PaletteColor {
   global: boolean;
   invite: string | null;
 }
+
+export type Palette = PaletteColor[];
