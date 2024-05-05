@@ -63,6 +63,7 @@ model cooldown {
   cooldown_time DateTime? @db.Timestamptz(6)
 
   @@id([user_id, canvas_id])
+  @@unique([user_id, canvas_id])
 }
 
 model event {
@@ -148,6 +149,7 @@ model pixel {
   color     color  @relation(fields: [color_id], references: [id])
 
   @@id([canvas_id, x, y])
+  @@unique([canvas_id, x, y])
 }
 
 model user {
