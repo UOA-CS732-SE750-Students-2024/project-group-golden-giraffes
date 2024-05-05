@@ -65,8 +65,9 @@ const Palette = styled("div")`
 `;
 
 export default function ActionPanel() {
-  const { data: colours, isLoading: colorsAreLoading } = usePalette(2022);
-  console.log(colours);
+  const { data: palette, isLoading: colorsAreLoading } = usePalette();
+  console.log(palette);
+
   return (
     <>
       <TabBar>
