@@ -9,7 +9,7 @@ vi.mock("@prisma/client", async () => {
   };
 });
 
-beforeEach(() => {
+afterEach(() => {
   const prismock = prisma as PrismockClientType;
   prismock.reset();
 });
