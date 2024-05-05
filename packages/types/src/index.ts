@@ -4,5 +4,5 @@ export * from "./BlurpleEvent";
 export * from "./canvasInfo";
 export * from "./discordUserLoginInfo";
 export * from "./paletteColor";
-export * from "./pixelHistory";
+export * from "./pixel";
 export * from "./statistics";

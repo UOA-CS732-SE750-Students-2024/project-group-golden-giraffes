@@ -1,10 +1,16 @@
 "use client";
 
+import config from "@/config";
 import { usePalette } from "@/hooks/queries";
-import { Palette, PaletteColor } from "@blurple-canvas-web/types";
+import {
+  Palette,
+  PaletteColor,
+  Pixel,
+  PixelHistory,
+} from "@blurple-canvas-web/types";
 import { css, styled } from "@mui/material";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Color } from "../color/Color";
 
 const Container = styled("div")`
@@ -145,7 +151,31 @@ export default function ActionPanel() {
 
   const [mainColors, partnerColors] = partitionPalette(palette);
 
-  const pixel = [16, 3];
+  const [coordinate, setCoordinate] = useState<[number, number] | null>(null);
+  const [pixel, setPixel] = useState<Pixel | null>(null);
+  const [pixelHistory, setPixelHistory] = useState<PixelHistory[] | null>(null);
+
+  const canvasId = 2023; // This is a placeholder value
+
+  useEffect(() => {
+    const fetchUserStats = async () => {
+      if (coordinate) {
+        const response = await fetch(
+          `${config.apiUrl}/api/v1/canvas/${canvasId}/pixel/history?x=${coordinate[0]}&y=${coordinate[1]}`,
+        );
+        const data = await response.json();
+        setPixelHistory(data);
+      } else {
+        setPixelHistory(null);
+      }
+    };
+
+    fetchUserStats();
+  }, [coordinate]);
+
+  useEffect(() => {
+    setCoordinate([0, 0]); // This is a placeholder value
+  }, []); // Empty dependency array means this effect runs once when the component mounts
 
   return (
     <>
@@ -157,12 +187,24 @@ export default function ActionPanel() {
       <Container>
         {currentTab === "Look" && (
           <ActionMenu>
-            <Coordinates>
-              <span>x: {pixel[0]}</span>
-              <span>y: {pixel[1]}</span>
-            </Coordinates>
-            <Color color={mainColors[0]} />
-            <Heading>Paint History</Heading>
+            {coordinate && (
+              <>
+                <Coordinates>
+                  <span>x: {coordinate[0]}</span>
+                  <span>y: {coordinate[1]}</span>
+                </Coordinates>
+                <Color color={mainColors[0]} />
+                <Heading>Paint History</Heading>
+                {Array.isArray(pixelHistory) &&
+                  pixelHistory?.map((history, index) => (
+                    <div key={`${index}-${history.userId}`}>
+                      {history.userId} - {history.colorId}
+                      {new Date(history.timestamp).toISOString()}
+                    </div>
+                  ))}
+              </>
+            )}
+            {!coordinate && <p>Click on a pixel to see its history.</p>}
           </ActionMenu>
         )}
         {currentTab === "Place" && (
