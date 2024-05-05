@@ -66,9 +66,9 @@ const ZenTab = styled(Tab)`
 const ColorPicker = styled("div")`
   background-color: var(--discord-old-dark-but-not-black);
   display: grid;
+  gap: max(0.25rem, 2px);
   grid-template-columns: repeat(5, 1fr);
   padding: 1rem;
-  gap: max(0.25rem, 2px);
 `;
 
 const Heading = styled("h2")`
