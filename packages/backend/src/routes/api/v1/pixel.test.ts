@@ -2,21 +2,27 @@ import express from "express";
 import request from "supertest";
 
 import seedPrismock from "@/test";
+import { mockAuth } from "@/test/mockAuth";
 import { pixelRouter } from "./pixel";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
+app.use(express.json());
+app.use(mockAuth);
 app.use("/api/v1/canvas/:canvasId/pixel", pixelRouter);
 
 describe("Place Pixel Tests", () => {
   beforeEach(() => {
     seedPrismock();
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
-  it("Pixel is placed", async () => {
-    const token = "X7DfnSE5XYS8c1cCklKPKNVQbJBpUa";
+  it("Pixel is placed with valid user", async () => {
+    const dateTime = new Date(0);
+    vi.setSystemTime(dateTime);
     const response = await request(app)
       .post("/api/v1/canvas/1/pixel")
       .send({
@@ -25,7 +31,10 @@ describe("Place Pixel Tests", () => {
         colorId: 1,
       })
       .set("Content-Type", "application/json")
-      .auth(token, { type: "bearer" });
-    expect(response.body.message).toStrictEqual("pixel endpoint1");
+      .set("X-TestUserId", "1");
+    expect(response.body).toStrictEqual({
+      coolDownTimeStamp: dateTime.toISOString(),
+    });
+    expect(response.status).toBe(201);
   });
 });
