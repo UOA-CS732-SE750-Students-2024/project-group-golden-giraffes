@@ -112,6 +112,16 @@ const ColorfulDiv = styled("div", {
   `,
 );
 
+const HistoryRecords = styled("div")`
+  grid-column: 1 / -1;
+`;
+
+const Record = styled("div")`
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr auto;
+`;
+
 interface SwatchProps {
   rgba: PaletteColor["rgba"];
   selected?: boolean;
@@ -128,6 +138,23 @@ const Swatch = ({ rgba, selected = false }: SwatchProps) => {
       colorString={`rgb(${rgb} / ${alphaFloat})`}
     />
   );
+};
+
+const HistoryRecord = ({
+  history,
+  color,
+}: {
+  history: PixelHistory;
+  color?: PaletteColor;
+}) => {
+  if (color) {
+    return (
+      <>
+        {history.userId}
+        <Record>{colorToSwatch(color, true)}</Record>
+      </>
+    );
+  }
 };
 
 const partitionPalette = (palette: Palette) => {
@@ -195,13 +222,20 @@ export default function ActionPanel() {
                 </Coordinates>
                 <Color color={mainColors[0]} />
                 <Heading>Paint History</Heading>
-                {Array.isArray(pixelHistory) &&
-                  pixelHistory?.map((history, index) => (
-                    <div key={`${index}-${history.userId}`}>
-                      {history.userId} - {history.colorId}
-                      {new Date(history.timestamp).toISOString()}
-                    </div>
-                  ))}
+                <HistoryRecords>
+                  {Array.isArray(pixelHistory) &&
+                    pixelHistory?.map((history, index) => (
+                      <HistoryRecord
+                        key={`${index}-${history.userId}`}
+                        history={history}
+                        color={
+                          palette.find(
+                            (color) => color.id === history.colorId,
+                          ) || undefined
+                        }
+                      />
+                    ))}
+                </HistoryRecords>
               </>
             )}
             {!coordinate && <p>Click on a pixel to see its history.</p>}
