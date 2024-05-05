@@ -5,12 +5,7 @@ export async function getUserStats(
   userId: string,
   canvasId: number,
 ): Promise<UserStats | null> {
-  const {
-    total_pixels: totalPixels,
-    rank,
-    most_frequent_color: mostFrequentColor,
-    most_recent_timestamp: mostRecentTimestamp,
-  } = (await prisma.user_stats.findFirst({
+  const stats = await prisma.user_stats.findFirst({
     where: {
       user_id: BigInt(userId),
       canvas_id: canvasId,
@@ -30,20 +25,20 @@ export async function getUserStats(
         },
       },
     },
-  })) || {};
+  });
 
-  if (!totalPixels && !rank && !mostFrequentColor && !mostRecentTimestamp) {
+  if (!stats) {
     return null;
   }
 
   return {
     userId: userId.toString(),
     canvasId: canvasId,
-    totalPixels: totalPixels,
-    rank: rank,
-    mostFrequentColor: mostFrequentColor,
+    totalPixels: stats.total_pixels,
+    rank: stats.rank,
+    mostFrequentColor: stats.most_frequent_color,
     // placeFrequency: place_frequency,
-    mostRecentTimestamp: mostRecentTimestamp?.toISOString(),
+    mostRecentTimestamp: stats.most_recent_timestamp?.toISOString(),
   };
 }
 
