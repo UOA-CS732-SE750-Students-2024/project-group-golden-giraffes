@@ -1,23 +1,26 @@
-import initializeBlacklist from "./initializeBlacklist";
-import initializeCanvases from "./initializeCanvases";
-import initializeColors from "./initializeColors";
-import initializeEvents from "./initializeEvents";
-import initializeGuilds from "./initializeGuilds";
-import initializeHistory from "./initializeHistory";
-import initializePixels from "./initializePixels";
-import initializeUsers from "./initializeUsers";
+import seedBlacklist from "./seedBlacklist";
+import seedCanvases from "./seedCanvases";
+import seedColors from "./seedColors";
+import seedEvents from "./seedEvents";
+import seedGuilds from "./seedGuilds";
+import seedHistory from "./seedHistory";
+import seedPixels from "./seedPixels";
+import seedUsers from "./seedUsers";
+
+// reexport seed
+// export { default as seedBlacklist } from "./seedBlacklist";
 
 // This is a code felony. Thoughts on implementing a builder?
-export default function initializePrismock() {
+export default function seedPrismock() {
   // TODO: Josh
   // info
   // participation
-  initializeBlacklist();
-  initializeCanvases();
-  initializeColors();
-  initializeEvents();
-  initializeGuilds();
-  initializeHistory();
-  initializePixels();
-  initializeUsers();
+  seedBlacklist();
+  seedCanvases();
+  seedColors();
+  seedEvents();
+  seedGuilds();
+  seedHistory();
+  seedPixels();
+  seedUsers();
 }

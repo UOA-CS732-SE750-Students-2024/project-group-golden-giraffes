@@ -2,11 +2,11 @@ import { prisma } from "@/client";
 import { ForbiddenError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
 import NotFoundError from "@/errors/NotFoundError";
-import initializeBlacklist from "@/test/initializeBlacklist";
-import initializeCanvases from "@/test/initializeCanvases";
-import initializeColors from "@/test/initializeColors";
-import initializePixels from "@/test/initializePixels";
-import initializeUsers from "@/test/initializeUsers";
+import seedBlacklist from "@/test/seedBlacklist";
+import seedCanvases from "@/test/seedCanvases";
+import seedColors from "@/test/seedColors";
+import seedPixels from "@/test/seedPixels";
+import seedUsers from "@/test/seedUsers";
 import {
   placePixel,
   validateColor,
@@ -16,7 +16,7 @@ import {
 
 describe("Pixel Validation Tests", () => {
   beforeEach(() => {
-    initializeCanvases();
+    seedCanvases();
   });
 
   it("Resolves valid canvas on top left pixel (0, 0)", async () => {
@@ -68,7 +68,7 @@ describe("Pixel Validation Tests", () => {
 
 describe("Color Validation Tests", () => {
   beforeEach(() => {
-    initializeColors();
+    seedColors();
   });
 
   it("Resolves valid color", async () => {
@@ -86,9 +86,9 @@ describe("Color Validation Tests", () => {
 
 describe("User Validation Tests", () => {
   beforeEach(() => {
-    initializeUsers();
-    initializeBlacklist();
-    initializeCanvases();
+    seedUsers();
+    seedBlacklist();
+    seedCanvases();
   });
 
   it("Rejects blacklisted user", async () => {
@@ -138,10 +138,10 @@ describe("User Validation Tests", () => {
 
 describe("Place Pixel Tests", () => {
   beforeEach(() => {
-    initializeUsers();
-    initializeCanvases();
-    initializeColors();
-    initializePixels();
+    seedUsers();
+    seedCanvases();
+    seedColors();
+    seedPixels();
   });
 
   it("Resolves places the pixel", async () => {
