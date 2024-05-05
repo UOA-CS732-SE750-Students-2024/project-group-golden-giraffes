@@ -118,8 +118,6 @@ const partitionPalette = (palette: Palette) => {
     (color.global ? mainColors : partnerColors).push(color);
   }
 
-  // const mainColors = palette.filter((c) => c.global);
-  // const partnerColors = palette.filter((c) => !c.global);
   return [mainColors, partnerColors];
 };
 
