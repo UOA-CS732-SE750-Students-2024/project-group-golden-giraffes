@@ -113,14 +113,15 @@ const ColorfulDiv = styled("div", {
 );
 
 const HistoryRecords = styled("div")`
-  grid-column: 1 / -1;
+  & > *:not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const Record = styled("div")`
   display: flex;
   gap: 1rem;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
   align-items: center;
   & > *:first-child {
     width: 4em;
@@ -260,10 +261,20 @@ export default function ActionPanel() {
                   <span>x: {coordinate[0]}</span>
                   <span>y: {coordinate[1]}</span>
                 </Coordinates>
+                {Array.isArray(pixelHistory) && ( // To be redesigned later
+                  <HistoryRecord
+                    history={pixelHistory[0]}
+                    color={
+                      palette.find(
+                        (color) => color.id === pixelHistory[0].colorId,
+                      ) || undefined
+                    }
+                  />
+                )}
                 <Heading>Paint History</Heading>
-                <HistoryRecords>
-                  {Array.isArray(pixelHistory) &&
-                    pixelHistory?.map((history, index) => (
+                {Array.isArray(pixelHistory) && pixelHistory.length > 1 && (
+                  <HistoryRecords>
+                    {pixelHistory.slice(1).map((history, index) => (
                       <HistoryRecord
                         key={`${index}-${history.userId}`}
                         history={history}
@@ -274,7 +285,8 @@ export default function ActionPanel() {
                         }
                       />
                     ))}
-                </HistoryRecords>
+                  </HistoryRecords>
+                )}
               </>
             )}
             {!coordinate && <p>Click on a pixel to see its history.</p>}
