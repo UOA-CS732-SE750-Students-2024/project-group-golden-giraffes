@@ -1,6 +1,7 @@
 "use client";
 
 import { NativeSelect, styled } from "@mui/material";
+import { ChevronsUpDown } from "lucide-react";
 
 import { useCanvasInfo, useCanvasList } from "@/hooks";
 
