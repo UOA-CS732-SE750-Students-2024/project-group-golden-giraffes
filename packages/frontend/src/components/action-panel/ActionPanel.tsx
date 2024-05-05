@@ -3,6 +3,7 @@
 import { usePalette } from "@/hooks/queries";
 import { Palette, PaletteColor } from "@blurple-canvas-web/types";
 import { css, styled } from "@mui/material";
+import { useState } from "react";
 
 const Container = styled("div")`
   background-color: var(--discord-legacy-not-quite-black);
@@ -126,6 +127,8 @@ const colorToSwatch = (color: PaletteColor, selected = false) => {
 };
 
 export default function ActionPanel() {
+  const [currentTab, setCurrentTab] = useState<string>("Place");
+
   const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
 
   const [mainColors, partnerColors] = partitionPalette(palette);
@@ -133,17 +136,19 @@ export default function ActionPanel() {
   return (
     <>
       <TabBar>
-        <Tab>Look</Tab>
-        <Tab>Place</Tab>
-        <ZenTab>🧘</ZenTab>
+        <Tab onClick={() => setCurrentTab("Look")}>Look</Tab>
+        <Tab onClick={() => setCurrentTab("Place")}>Place</Tab>
+        <ZenTab onClick={() => setCurrentTab("Zen")}>🧘</ZenTab>
       </TabBar>
       <Container>
-        <ColorPicker>
-          <Heading>Main colours</Heading>
-          {mainColors.map((color) => colorToSwatch(color))}
-          <Heading>Partner colours</Heading>
-          {partnerColors.map((color) => colorToSwatch(color))}
-        </ColorPicker>
+        {currentTab === "Place" && (
+          <ColorPicker>
+            <Heading>Main colours</Heading>
+            {mainColors.map((color) => colorToSwatch(color))}
+            <Heading>Partner colours</Heading>
+            {partnerColors.map((color) => colorToSwatch(color))}
+          </ColorPicker>
+        )}
       </Container>
     </>
   );
