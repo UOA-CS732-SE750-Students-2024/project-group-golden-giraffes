@@ -58,10 +58,11 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     // grabbing the canvasId from the path
     const canvasId = await parseCanvasId(req.params);
 
-    if (!req.user) {
+    const user = req.user as DiscordUserLoginInfo;
+    if (!user) {
       throw new UnauthorisedError("User is not authenticated");
     }
-    const userId = req.user?.profile.id;
+    const userId = user.profile.id;
     if (!userId) {
       throw new BadRequestError("UserId does not exist");
     }
