@@ -116,7 +116,7 @@ describe("User Validation Tests", () => {
     return expect(validateUser(1, BigInt(1))).resolves.not.toThrow();
   });
 
-  it("Resolves user with cooldown greater than 30", async () => {
+  it("Resolves user with cooldown greater than 30 seconds", async () => {
     const dateTime = Date.now() - 1000 * 30;
     prisma.cooldown.create({
       data: {
@@ -128,7 +128,7 @@ describe("User Validation Tests", () => {
     return expect(validateUser(1, BigInt(1))).resolves.not.toThrow();
   });
 
-  it("Rejects user with cooldown less than 30", async () => {
+  it("Rejects user with cooldown less than 30 seconds", async () => {
     prisma.cooldown.create({
       data: { canvas_id: 1, user_id: BigInt(1), cooldown_time: new Date() },
     });
