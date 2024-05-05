@@ -16,7 +16,7 @@ import { clamp } from "@/util";
 import { CanvasPicker } from ".";
 
 const CanvasContainer = styled("div")`
-  background-color: var(--discord-old-not-quite-black);
+  background-color: var(--discord-legacy-not-quite-black);
   border: var(--card-border);
   border-radius: var(--card-border-radius);
   display: flex;
