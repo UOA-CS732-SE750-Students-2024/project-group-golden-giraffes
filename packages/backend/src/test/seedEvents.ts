@@ -1,6 +1,6 @@
 import { prisma } from "@/client";
 
-export default function initializeEvents() {
+export default function () {
   prisma.event.createMany({
     data: [
       { id: 1, name: "Current Event" },

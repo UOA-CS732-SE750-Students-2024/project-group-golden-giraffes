@@ -7,7 +7,7 @@ export const testCanvas = {
   start_coordinates: [1, 1],
 };
 
-export default function intializeCanvases() {
+export default function () {
   prisma.canvas.create({
     data: {
       ...testCanvas,

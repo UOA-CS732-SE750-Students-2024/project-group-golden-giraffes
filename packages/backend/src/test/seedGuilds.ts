@@ -1,6 +1,6 @@
 import { prisma } from "@/client";
 
-export default function initialiseGuilds() {
+export default function () {
   prisma.guild.createMany({
     data: [
       { id: 0, invite: "web" },
