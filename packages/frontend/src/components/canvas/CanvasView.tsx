@@ -11,15 +11,15 @@ import {
 } from "react";
 import { ORIGIN, Point, addPoints, scalePoint } from "./point";
 
-import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
+import { Dimensions } from "@/hooks/useScreenDimensions";
 import { clamp } from "@/util";
-import { CanvasPicker } from ".";
 
 const CanvasContainer = styled("div")`
   background-color: var(--discord-legacy-not-quite-black);
-  border: var(--card-border);
   border-radius: var(--card-border-radius);
+  border: var(--card-border);
   display: flex;
+  grid-row: 1 / -1;
   overflow: hidden;
   place-content: center;
   place-items: center;
@@ -236,7 +236,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
   return (
     <>
-      <CanvasPicker />
       <CanvasContainer
         ref={containerRef}
         onMouseDown={handleStartMousePan}
