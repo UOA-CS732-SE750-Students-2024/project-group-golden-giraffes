@@ -64,8 +64,8 @@ importers:
         specifier: workspace:*
         version: link:../types
       '@tsconfig/node20':
-        specifier: ^20.1.2
-        version: 20.1.2
+        specifier: ^20.1.4
+        version: 20.1.4
       '@types/cors':
         specifier: ^2.8.17
         version: 2.8.17
@@ -177,8 +177,8 @@ importers:
         version: 0.1.13
     devDependencies:
       '@tsconfig/node20':
-        specifier: ^20.1.2
-        version: 20.1.2
+        specifier: ^20.1.4
+        version: 20.1.4
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
@@ -843,8 +843,8 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
-  '@tsconfig/node20@20.1.2':
-    resolution: {integrity: sha512-madaWq2k+LYMEhmcp0fs+OGaLFk0OenpHa4gmI4VEmCKX4PJntQ6fnnGADVFrVkBj0wIdAlQnK/MrlYTHsa1gQ==}
+  '@tsconfig/node20@20.1.4':
+    resolution: {integrity: sha512-sqgsT69YFeLWf5NtJ4Xq/xAF8p4ZQHlmGW74Nu2tD4+g5fAsposc4ZfaaPixVu4y01BEiDCWLRDCvDM5JOsRxg==}
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -3398,7 +3398,7 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@tsconfig/node20@20.1.2': {}
+  '@tsconfig/node20@20.1.4': {}
 
   '@types/babel__core@7.20.5':
     dependencies:
