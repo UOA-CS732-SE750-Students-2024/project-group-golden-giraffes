@@ -2,7 +2,7 @@
 
 import { styled } from "@mui/material";
 
-import { useCanvases } from "@/hooks";
+import { useCanvasList, useMainCanvasInfo } from "@/hooks";
 
 const Select = styled("select")`
   background-color: var(--discord-legacy-not-quite-black);
@@ -26,7 +26,10 @@ const Select = styled("select")`
 `;
 
 export default function CanvasPicker() {
-  const { data: canvases = [] } = useCanvases();
+  const { data: canvases = [] } = useCanvasList();
+  const { data: mainCanvas } = useMainCanvasInfo();
+
+  const allButCurrent = canvases.filter(({ id }) => id !== mainCanvas?.id);
 
   return (
     <Select>
