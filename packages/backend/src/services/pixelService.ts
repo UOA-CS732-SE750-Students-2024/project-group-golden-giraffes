@@ -89,7 +89,7 @@ export async function validateUser(canvasId: number, userId: bigint) {
   // Check against blacklist
   const blacklist = await prisma.blacklist.findFirst({
     where: {
-      user_id: BigInt(userId),
+      user_id: userId,
     },
   });
 
