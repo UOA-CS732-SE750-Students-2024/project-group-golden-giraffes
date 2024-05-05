@@ -1,3 +1,3 @@
 export { useCanvasList } from "./useCanvasList";
-export { useMainCanvasInfo } from "./useMainCanvasInfo";
+export { useCanvasInfo } from "./useCanvasInfo";
 export { usePalette } from "./usePalette";

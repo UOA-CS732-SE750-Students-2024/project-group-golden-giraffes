@@ -6,7 +6,7 @@ import axios from "axios";
 import config from "@/config";
 import { CanvasInfo, CanvasInfoRequest } from "@blurple-canvas-web/types";
 
-export function useMainCanvasInfo(canvasId?: CanvasInfo["id"]) {
+export function useCanvasInfo(canvasId?: CanvasInfo["id"]) {
   const getMainCanvasInfo = async () => {
     const response = await axios.get<CanvasInfoRequest.ResBody>(
       `${config.apiUrl}/api/v1/canvas/${canvasId ?? "current"}/info`,
