@@ -113,6 +113,7 @@ const ColorfulDiv = styled("div", {
 );
 
 const HistoryRecords = styled("div")`
+  grid-column: 1 / -1;
   & > *:not(:last-child) {
     margin-bottom: 1.5rem;
   }
@@ -124,7 +125,7 @@ const Record = styled("div")`
   justify-content: space-between;
   align-items: center;
   & > *:first-child {
-    width: 4em;
+    width: 3em;
   }
 `;
 
@@ -151,7 +152,7 @@ const RecordColorName = styled("span")`
 `;
 
 const RecordColorCode = styled("span")`
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-family: var(--font-monospace);
   background-color: rgba(255, 255, 255, 0.12);
   padding: 0.25rem 0.5rem;
