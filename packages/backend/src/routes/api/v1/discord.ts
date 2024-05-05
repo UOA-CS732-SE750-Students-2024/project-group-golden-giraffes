@@ -8,46 +8,6 @@ import { Strategy as DiscordStrategy } from "passport-discord";
 
 export const discordRouter = Router();
 
-const randomSecret = crypto.randomBytes(64).toString("hex");
-
-const discordStrategy = new DiscordStrategy(
-  {
-    clientID: config.discord.clientId,
-    clientSecret: config.discord.clientSecret,
-    callbackURL: "/api/v1/discord/callback",
-    scope: ["identify"],
-  },
-  (accessToken, refreshToken, profile, done) => {
-    const user: DiscordUserLoginInfo = {
-      accessToken,
-      refreshToken,
-      profile,
-    };
-    done(null, user);
-  },
-);
-
-passport.use(discordStrategy);
-
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser<DiscordUserLoginInfo>((user, done) => {
-  done(null, user);
-});
-
-discordRouter.use(
-  session({
-    secret: randomSecret,
-    resave: false,
-    saveUninitialized: false,
-  }),
-);
-
-discordRouter.use(passport.initialize());
-discordRouter.use(passport.session());
-
 discordRouter.get("/", passport.authenticate("discord"));
 
 discordRouter.get(
@@ -67,3 +27,11 @@ discordRouter.get(
     res.json(req.user);
   },
 );
+
+discordRouter.get("/test", (req, res) => {
+  console.log("router");
+  if (!req.user) {
+    res.status(401).json({ message: "Not Authenticated" });
+  }
+  res.status(201).json({ user: req.user, message: "Authenication Success" });
+});
