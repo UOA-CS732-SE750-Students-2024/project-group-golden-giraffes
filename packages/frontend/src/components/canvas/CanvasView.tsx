@@ -16,9 +16,6 @@ import { clamp } from "@/util";
 import { CanvasPicker } from ".";
 
 const CanvasContainer = styled("div")`
-  position: fixed;
-  height: 100svh;
-  width: 100svw;
   overflow: hidden;
   background-color: var(--discord-old-not-quite-black);
   border: var(--card-border);
@@ -36,6 +33,10 @@ const CanvasContainer = styled("div")`
   &,
   * & {
     user-select: none;
+  }
+
+  .loader {
+    position: fixed;
   }
 
   canvas {
@@ -170,6 +171,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
     containerRef.current.removeEventListener("mousemove", handleMouseMove);
     containerRef.current.removeEventListener("mouseup", handleMouseUp);
+    containerRef.current.removeEventListener("mouseleave", handleMouseUp);
   }, [handleMouseMove]);
 
   /**
@@ -181,6 +183,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
     containerRef.current.addEventListener("mousemove", handleMouseMove);
     containerRef.current.addEventListener("mouseup", handleMouseUp);
+    containerRef.current.addEventListener("mouseleave", handleMouseUp);
   }, [handleMouseMove, handleMouseUp]);
 
   const handleTouchMove = useCallback(
@@ -248,7 +251,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
-        {isLoading && <CircularProgress />}
+        {isLoading && <CircularProgress className="loader" />}
         <canvas
           ref={canvasRef}
           id="canvas-pan-and-zoom"
