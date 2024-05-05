@@ -50,7 +50,6 @@
     "react-dom": "^18"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.6.1",
     "@blurple-canvas-web/types": "workspace:*",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20",
