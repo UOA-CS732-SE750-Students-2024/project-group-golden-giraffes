@@ -112,20 +112,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     }
   }, [handleLoadImage]);
 
-  useEffect(() => {
-    // Prevent the default touch move behaviour on the document to prevent pull to refresh.
-    const handleDocumentTouchMove = (event: TouchEvent): void => {
-      // event.preventDefault();
-    };
-
-    document.addEventListener("touchmove", handleDocumentTouchMove, {
-      passive: false,
-    });
-
-    return () =>
-      document.removeEventListener("touchmove", handleDocumentTouchMove);
-  }, []);
-
   /********************************
    * PANNING FUNCTIONALITY.       *
    ********************************/
