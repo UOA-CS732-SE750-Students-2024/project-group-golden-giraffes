@@ -7,7 +7,7 @@ import config from "@/config";
 import { CanvasListRequest } from "@blurple-canvas-web/types";
 
 export function useCanvasList() {
-  const getSummaryOfCanvases = async () => {
+  const getCanvasList = async () => {
     const response = await axios.get<CanvasListRequest.ResBody>(
       `${config.apiUrl}/api/v1/canvas/`,
     );
@@ -16,7 +16,7 @@ export function useCanvasList() {
 
   return useQuery({
     queryKey: ["canvas"],
-    queryFn: getSummaryOfCanvases,
+    queryFn: getCanvasList,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     placeholderData: [] as CanvasListRequest.ResBody,
