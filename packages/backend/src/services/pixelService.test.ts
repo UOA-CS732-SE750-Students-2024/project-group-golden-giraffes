@@ -1,10 +1,12 @@
 import { prisma } from "@/client";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
-import seedBlacklist from "@/test/seedBlacklist";
-import seedCanvases from "@/test/seedCanvases";
-import seedColors from "@/test/seedColors";
-import seedPixels from "@/test/seedPixels";
-import seedUsers from "@/test/seedUsers";
+import {
+  seedBlacklist,
+  seedCanvases,
+  seedColors,
+  seedPixels,
+  seedUsers,
+} from "@/test";
 import {
   placePixel,
   validateColor,
