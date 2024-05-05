@@ -33,7 +33,8 @@
     "lint": "biome check --formatter-enabled=false .",
     "lint:fix": "biome check --formatter-enabled=false --apply .",
     "check": "pnpm format && pnpm lint",
-    "check:fix": "pnpm format:fix && pnpm lint:fix"
+    "check:fix": "pnpm format:fix && pnpm lint:fix",
+    "clean": "rm -rf node_modules/ build/"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",

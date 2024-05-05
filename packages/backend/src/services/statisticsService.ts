@@ -1,5 +1,46 @@
 import { prisma } from "@/client";
-import { LeaderboardRow } from "@blurple-canvas-web/types";
+import { LeaderboardRow, UserStats } from "@blurple-canvas-web/types";
+
+export async function getUserStats(
+  userId: string,
+  canvasId: number,
+): Promise<UserStats | null> {
+  const stats = await prisma.user_stats.findFirst({
+    where: {
+      user_id: BigInt(userId),
+      canvas_id: canvasId,
+    },
+    select: {
+      user_id: true,
+      canvas_id: true,
+      total_pixels: true,
+      rank: true,
+      most_recent_timestamp: true,
+      most_frequent_color: {
+        select: {
+          id: true,
+          name: true,
+          code: true,
+          rgba: true,
+        },
+      },
+    },
+  });
+
+  if (!stats) {
+    return null;
+  }
+
+  return {
+    userId: userId.toString(),
+    canvasId: canvasId,
+    totalPixels: stats.total_pixels,
+    rank: stats.rank,
+    mostFrequentColor: stats.most_frequent_color,
+    // placeFrequency: place_frequency,
+    mostRecentTimestamp: stats.most_recent_timestamp?.toISOString(),
+  };
+}
 
 /**
  * Retrieves the top 20 users on the leaderboard for a canvas.

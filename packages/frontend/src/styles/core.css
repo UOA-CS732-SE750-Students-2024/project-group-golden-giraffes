@@ -20,19 +20,46 @@
     --discord-red-oklch: 63.18% 0.207 24.57;
     --discord-white-oklch: 100% 0 0;
     --discord-black-oklch: 0% 0 0;
+    --discord-legacy-blurple-oklch: 64.74% 0.124 270.62;
+    --discord-legacy-full-white-oklch: 100% 0 0;
+    --discord-legacy-greyple-oklch: 72.83% 0.025 236.13;
+    --discord-legacy-dark-but-not-black-oklch: 30.38% 0.008 255.56;
+    --discord-legacy-not-quite-black-oklch: 26.99% 0.008 240.16;
+    --discord-legacy-actually-black-oklch: 0% 0 0;
 
-    --discord-old-blurple-oklch: 64.74% 0.124 270.62;
-    --discord-old-full-white-oklch: 100% 0 0;
-    --discord-old-greyple-oklch: 72.83% 0.025 236.13;
-    --discord-old-dark-but-not-black-oklch: 30.38% 0.008 255.56;
-    --discord-old-not-quite-black-oklch: 26.99% 0.008 240.16;
-    --discord-old-actually-black-oklch: 0% 0 0;
+    --discord-blurple: oklch(var(--discord-blurple-oklch));
+    --discord-green: oklch(var(--discord-green-oklch));
+    --discord-yellow: oklch(var(--discord-yellow-oklch));
+    --discord-fuchsia: oklch(var(--discord-fuchsia-oklch));
+    --discord-red: oklch(var(--discord-red-oklch));
+    --discord-white: oklch(var(--discord-white-oklch));
+    --discord-black: oklch(var(--discord-black-oklch));
+    --discord-legacy-blurple: oklch(var(--discord-legacy-blurple-oklch));
+    --discord-legacy-full-white: oklch(var(--discord-legacy-full-white-oklch));
+    --discord-legacy-greyple: oklch(var(--discord-legacy-greyple-oklch));
+    --discord-legacy-dark-but-not-black: oklch(
+      var(--discord-legacy-dark-but-not-black-oklch)
+    );
+    --discord-legacy-not-quite-black: oklch(
+      var(--discord-legacy-not-quite-black-oklch)
+    );
+    --discord-legacy-actually-black: oklch(
+      var(--discord-legacy-actually-black-oklch)
+    );
 
     --font-body: "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont,
       "Inter", "Segoe UI", Roboto, Ubuntu, sans-serif;
+    --border-color: oklch(var(--discord-white-oklch) / 15%);
+    --card-border: var(--border-color) solid 2px;
+    --card-border-radius: 0.1875rem;
+    --focus-outline: var(--discord-blurple) solid 2px;
+    --transition-duration-fast: 150ms;
+    --transition-duration-medium: 200ms;
+    --transition-duration-slow: 250ms;
+    --text-glow: 0 0 1rem var(--discord-blurple);
 
-    background-color: oklch(var(--discord-old-not-quite-black-oklch));
-    color: oklch(var(--discord-white-oklch));
+    background-color: var(--discord-legacy-dark-but-not-black);
+    color: var(--discord-white);
     color-scheme: only dark;
     font-family: var(--font-body);
   }
