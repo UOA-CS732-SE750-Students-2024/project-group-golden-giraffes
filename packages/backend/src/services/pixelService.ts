@@ -1,4 +1,5 @@
 import { prisma } from "@/client";
+import config from "@/config";
 import { ForbiddenError, NotFoundError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
 import { PixelHistory, PlacePixel } from "@blurple-canvas-web/types";
@@ -179,6 +180,7 @@ export async function placePixel(
         y: y,
         color_id: colorId,
         timestamp: cooldownTimeStamp,
+        guild_id: config.webGuildId,
       },
     }),
   ]);

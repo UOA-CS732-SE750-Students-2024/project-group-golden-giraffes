@@ -25,6 +25,7 @@ const config = {
     clientId: requiredEnv("DISCORD_CLIENT_ID"),
     clientSecret: requiredEnv("DISCORD_CLIENT_SECRET"),
   },
+  webGuildId: 0,
 } as const;
 
 if (!fs.existsSync(config.paths.canvases)) {
