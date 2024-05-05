@@ -22,6 +22,20 @@ pnpm build
 pnpm start # This will run the built code
 ```
 
+### 🧪 Testing
+
+Run the unit tests with:
+
+```sh
+pnpm test
+```
+
+If you want the tests to be automatically rerun when uncommitted test files are changed, run:
+
+```sh
+pnpm test:watch
+```
+
 ### Generating types
 
 We use [Prisma](https://www.prisma.io) for connecting to our database. Running `pnpm install` also automatically generates type definitions for all the database tables used.

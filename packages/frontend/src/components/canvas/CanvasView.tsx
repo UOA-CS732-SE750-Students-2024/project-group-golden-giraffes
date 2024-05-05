@@ -1,6 +1,5 @@
 "use client";
 
-import { getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
 import {
   ReactNode,
@@ -12,42 +11,38 @@ import {
 } from "react";
 import { ORIGIN, Point, addPoints, scalePoint } from "./point";
 
-const FullscreenContainer = styled("main")`
-  position: fixed;
-
-  > * {
-    position: relative;
-  }
-
-  .loader {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-`;
+import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
+import { clamp } from "@/util";
+import { CanvasPicker } from ".";
 
 const CanvasContainer = styled("div")`
   position: fixed;
   height: 100svh;
   width: 100svw;
   overflow: hidden;
+  background-color: var(--discord-old-not-quite-black);
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
   display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden;
+  place-content: center;
+  place-items: center;
+
+  cursor: grab;
+  :active {
+    cursor: grabbing;
+  }
+
+  &,
+  * & {
+    user-select: none;
+  }
 
   canvas {
     image-rendering: pixelated;
     max-width: inherit;
   }
 `;
-
-/**
- * Return the value clamped so that it is within the range [min, max].
- */
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
 
 /**
  * Calculate the default scale to use for the canvas. This is the required scaling to get the canvas
@@ -69,45 +64,47 @@ function getDefaultScale(image: HTMLImageElement): number {
 
 export interface CanvasViewProps {
   imageUrl: string;
-  children?: ReactNode;
 }
 
-export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
+export default function CanvasView({ imageUrl }: CanvasViewProps) {
+  const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
+    null,
+  );
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
 
-  const isLoading = image === null;
+  const isLoading = imageDimensions === null;
+
+  const handleLoadImage = useCallback((image: HTMLImageElement): void => {
+    if (!canvasRef.current) return;
+
+    const context = canvasRef.current.getContext("2d");
+    if (!context) return;
+
+    // We need to set the width of the canvas first, otherwise if the image is bigger than
+    // the canvas it'll get cut off.
+    canvasRef.current.width = image.width;
+    canvasRef.current.height = image.height;
+
+    context.drawImage(image, 0, 0);
+
+    setScale(getDefaultScale(image));
+    setImageDimension({ width: image.width, height: image.height });
+  }, []);
 
   useEffect(() => {
-    const image = new Image();
-    image.onload = () => {
-      if (!canvasRef.current) return;
-
-      const context = canvasRef.current.getContext("2d");
-      if (!context) return;
-
-      // We need to set the width of the canvas first, otherwise if the image is bigger than
-      // the canvas it'll get cut off.
-      canvasRef.current.width = image.width;
-      canvasRef.current.height = image.height;
-
-      context.drawImage(image, 0, 0);
-
-      setImage(image);
-      setScale(getDefaultScale(image));
-    };
-    image.src = imageUrl;
-
-    return () => {
-      // Remove the onload handler to prevent a redundant GET request being made.
-      image.onload = null;
-    };
-  }, [imageUrl]);
+    // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
+    // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
+    // need to check it's working correctly when we start placing pixels.
+    if (imageRef.current?.complete) {
+      handleLoadImage(imageRef.current);
+    }
+  }, [handleLoadImage]);
 
   useEffect(() => {
     // Prevent the default touch move behaviour on the document to prevent pull to refresh.
@@ -133,17 +130,17 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    */
   const clampOffset = useCallback(
     (offset: Point): Point => {
-      if (image == null) return offset;
+      if (imageDimensions == null) return offset;
 
-      const widthLimit = image.width / 2;
-      const heightLimit = image.height / 2;
+      const widthLimit = imageDimensions.width / 2;
+      const heightLimit = imageDimensions.height / 2;
 
       return {
         x: clamp(offset.x, -widthLimit, widthLimit),
         y: clamp(offset.y, -heightLimit, heightLimit),
       };
     },
-    [image],
+    [imageDimensions],
   );
 
   const updateOffset = useCallback(
@@ -244,24 +241,30 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
   );
 
   return (
-    <FullscreenContainer>
+    <>
+      <CanvasPicker />
       <CanvasContainer
         ref={containerRef}
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
-        <div
+        {isLoading && <CircularProgress />}
+        <canvas
+          ref={canvasRef}
           id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale,
           }}
-        >
-          <canvas ref={canvasRef} />
-        </div>
+        />
       </CanvasContainer>
-      {isLoading && <CircularProgress className="loader" />}
-      {children}
-    </FullscreenContainer>
+      <img
+        alt="Blurple Canvas 2023"
+        hidden
+        onLoad={(event) => handleLoadImage(event.currentTarget)}
+        ref={imageRef}
+        src={imageUrl}
+      />
+    </>
   );
 }
