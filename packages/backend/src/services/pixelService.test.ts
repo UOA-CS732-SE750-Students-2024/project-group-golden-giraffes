@@ -57,11 +57,11 @@ describe("Pixel Validation Tests", () => {
     );
   });
 
-  it("Rejects locked canvas when respectLocked is true", async () => {
+  it("Rejects locked canvas when honorLocked is true", async () => {
     return expect(validatePixel(9, 0, 0, true)).rejects.toThrow(ForbiddenError);
   });
 
-  it("Resolves locked canvas when respectLocked is false", async () => {
+  it("Resolves locked canvas when honorLocked is false", async () => {
     return expect(validatePixel(9, 0, 0, false)).resolves.not.toThrow();
   });
 });

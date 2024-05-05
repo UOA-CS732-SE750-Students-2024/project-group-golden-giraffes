@@ -36,7 +36,7 @@ export async function validatePixel(
   canvasId: number,
   x: number,
   y: number,
-  respectLocked: boolean,
+  honorLocked: boolean,
 ) {
   const canvas = await prisma.canvas.findFirst({
     where: {
@@ -61,7 +61,7 @@ export async function validatePixel(
     );
   }
 
-  if (respectLocked && canvas.locked) {
+  if (honorLocked && canvas.locked) {
     throw new ForbiddenError(`Canvas with ID ${canvasId} is locked`);
   }
 }
