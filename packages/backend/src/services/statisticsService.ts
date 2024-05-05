@@ -32,6 +32,10 @@ export async function getUserStats(
     },
   })) || {};
 
+  if (!totalPixels && !rank && !mostFrequentColor && !mostRecentTimestamp) {
+    return null;
+  }
+
   return {
     userId: userId.toString(),
     canvasId: canvasId,
