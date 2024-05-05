@@ -33,7 +33,15 @@ export default function CanvasPicker() {
 
   return (
     <Select>
-      {canvases.map(({ id, name }) => (
+      {mainCanvas && (
+        <>
+          <option key={mainCanvas.id} value={mainCanvas.id}>
+            {mainCanvas.name}
+          </option>
+          <hr />
+        </>
+      )}
+      {allButCurrent.map(({ id, name }) => (
         <option key={id} value={id}>
           {name}
         </option>
