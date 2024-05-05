@@ -62,7 +62,7 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
       throw new UnauthorisedError("User is not authenticated");
     }
     const userId = req.user?.profile.id;
-    if (!req.user?.profile.id) {
+    if (!userId) {
       throw new BadRequestError("UserId does not exist");
     }
     // TODO: check for canvas discord_only status (not sure which table to look here)
