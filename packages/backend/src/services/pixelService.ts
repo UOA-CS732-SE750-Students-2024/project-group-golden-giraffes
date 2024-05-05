@@ -173,7 +173,6 @@ export async function placePixel(
         color_id: colorId,
       },
     }),
-
     prisma.history.create({
       data: {
         user_id: userID,
