@@ -27,7 +27,7 @@ export const Theme = createTheme({
       main: "#5865F2", // Blurple
     },
     background: {
-      paper: "oklch(var(--discord-old-not-quite-black-oklch))",
+      paper: "oklch(var(--discord-legacy-not-quite-black-oklch))",
     },
   },
   typography: {
@@ -42,7 +42,7 @@ export const Theme = createTheme({
         root: {
           borderRadius: "0.75rem",
           border:
-            "0.125rem solid oklch(var(--discord-old-dark-but-not-black-oklch))",
+            "0.125rem solid oklch(var(--discord-legacy-dark-but-not-black-oklch))",
         },
       },
     },

@@ -1,9 +1,11 @@
 import { Server } from "node:http";
+import cors from "cors";
+import express, { Express } from "express";
+
 import { prisma } from "@/client";
 import config from "@/config";
 import { apiRouter } from "@/routes";
 import "@/utils"; // Make BigInt JSON serializable
-import express, { Express } from "express";
 
 export interface ExpressServer {
   app: Express;
@@ -13,6 +15,7 @@ export interface ExpressServer {
 export function createApp(): ExpressServer {
   const app = express();
 
+  app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 

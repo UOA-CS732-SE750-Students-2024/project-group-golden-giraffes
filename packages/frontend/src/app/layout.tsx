@@ -1,8 +1,10 @@
-import "@/styles/core.css";
-import { Theme } from "@/theme";
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import type { Metadata, Viewport } from "next";
+
+import { QueryClientProvider } from "@/contexts";
+import "@/styles/core.css";
+import { Theme } from "@/theme";
 
 export const metadata: Metadata = {
   title: "Blurple Canvas",
@@ -22,7 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+          <QueryClientProvider>
+            <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+          </QueryClientProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
