@@ -86,31 +86,29 @@ export async function validateColor(colorId: number) {
 }
 
 export async function validateUser(canvasId: number, userId: bigint) {
-  // Check against blacklist
-  const blacklist = await prisma.blacklist.findFirst({
-    where: {
-      user_id: userId,
-    },
-  });
+  const [blacklist, canvas, cooldown] = await Promise.all([
+    prisma.blacklist.findFirst({
+      where: {
+        user_id: userId,
+      },
+    }),
+    prisma.canvas.findFirst({
+      where: {
+        id: canvasId,
+      },
+    }),
+    prisma.cooldown.findFirst({
+      where: {
+        user_id: userId,
+        canvas_id: canvasId,
+      },
+    }),
+  ]);
 
+  // Check against blacklist
   if (blacklist) {
     throw new ForbiddenError("User is blacklisted");
   }
-
-  // Get the canvas; no optimisations yet
-  const canvas = await prisma.canvas.findFirst({
-    where: {
-      id: canvasId,
-    },
-  });
-
-  // Check user cooldown
-  const cooldown = await prisma.cooldown.findFirst({
-    where: {
-      user_id: userId,
-      canvas_id: canvasId,
-    },
-  });
 
   // Return early if no cooldown exists; canvas validation occurs in previous service
   if (!canvas?.cooldown_length || !cooldown || !cooldown?.cooldown_time) {
