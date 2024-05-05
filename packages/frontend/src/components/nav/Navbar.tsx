@@ -78,6 +78,7 @@ export default function Navbar() {
       </CompositeLogo>
       <Links>
         <ul>
+          {/* <a href="/leaderboard">Leaderboard</a> */}
           <a href="/">Sign out</a>
         </ul>
       </Links>
