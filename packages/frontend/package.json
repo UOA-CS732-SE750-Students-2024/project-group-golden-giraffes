@@ -42,7 +42,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.16",
     "@mui/material-nextjs": "^5.15.11",
-    "@tanstack/react-query": "^5.34.1",
+    "@tanstack/react-query": "^5.34.2",
     "axios": "^1.6.8",
     "luxon": "^3.4.4",
     "next": "^14.2.3",
