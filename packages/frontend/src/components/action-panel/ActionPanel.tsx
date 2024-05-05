@@ -5,7 +5,7 @@ import { Palette, PaletteColor } from "@blurple-canvas-web/types";
 import { css, styled } from "@mui/material";
 
 const Container = styled("div")`
-  background-color: var(--discord-old-not-quite-black);
+  background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: var(--card-border);
   gap: 0.5rem;
@@ -29,7 +29,7 @@ const TabBar = styled("ul")`
 `;
 
 const Tab = styled("li")`
-  background-color: var(--discord-old-not-quite-black);
+  background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   cursor: pointer;
   display: block flex;
@@ -45,7 +45,7 @@ const Tab = styled("li")`
   user-select: none;
 
   :hover {
-    background-color: var(--discord-old-greyple);
+    background-color: var(--discord-legacy-greyple);
   }
 
   :focus,
@@ -64,7 +64,7 @@ const ZenTab = styled(Tab)`
 `;
 
 const ColorPicker = styled("div")`
-  background-color: var(--discord-old-dark-but-not-black);
+  background-color: var(--discord-legacy-dark-but-not-black);
   display: grid;
   gap: max(0.25rem, 2px);
   grid-template-columns: repeat(5, 1fr);
