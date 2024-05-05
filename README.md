@@ -62,6 +62,8 @@ pnpm build && pnpm start
 
 If you want to run the front- and back-ends in different terminals[^filter]:
 
+[^filter]: These are shorthand for `pnpm --filter @blurple-canvas-web/backend dev` and `pnpm --filter @blurple-canvas-web/frontend dev`.
+
 ```sh
 # Start the back-end
 pnpm -F backend dev
