@@ -51,6 +51,19 @@ const Wordmark = styled("div")`
   text-decoration: none;
 `;
 
+const Links = styled("ul")`
+  display: flex;
+  list-style-type: none;
+
+  /*
+   * Workaround for accessibility issue with VoiceOver.
+   * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
+   */
+  li::before {
+    content: "\\200B"; /* zero-width space */
+  }
+`;
+
 export default function Navbar() {
   return (
     <Nav>
@@ -63,7 +76,11 @@ export default function Navbar() {
         />
         <Wordmark>Blurple Canvas</Wordmark>
       </CompositeLogo>
-      <a href="/">Sign out</a>
+      <Links>
+        <ul>
+          <a href="/">Sign out</a>
+        </ul>
+      </Links>
     </Nav>
   );
 }
