@@ -52,7 +52,7 @@
     "passport-discord": "^0.1.4",
     "pngjs": "^7.0.0",
     "tsconfig-paths": "^4.2.0",
-    "zod": "^3.22.4"
+    "zod": "^3.23.6"
   },
   "devDependencies": {
     "@blurple-canvas-web/types": "workspace:*",
