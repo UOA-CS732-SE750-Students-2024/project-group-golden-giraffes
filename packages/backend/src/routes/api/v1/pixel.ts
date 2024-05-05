@@ -42,7 +42,7 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
   }
 });
 
-/* 
+/*
  * Endpoint for placing a pixel on the canvas
  * Requires the user to be authenticated and not blacklisted
  */
