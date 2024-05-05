@@ -15,6 +15,11 @@ const Select = styled(NativeSelect)`
   min-inline-size: 16rem;
   padding: 0.25rem 1rem;
 
+  &,
+  & * {
+    user-select: none;
+  }
+
   :hover,
   ::before,
   ::after {
@@ -28,11 +33,6 @@ const Select = styled(NativeSelect)`
   .MuiNativeSelect-icon {
     color: oklch(var(--discord-white-oklch) / 45%);
     margin-inline: 0.25rem;
-  }
-
-  &,
-  & * {
-    user-select: none;
   }
 
   :hover {
