@@ -1,0 +1,1 @@
+export { usePalette } from "./usePalette";

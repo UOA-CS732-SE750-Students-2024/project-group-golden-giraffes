@@ -3,7 +3,7 @@
 import { styled } from "@mui/material";
 
 const Select = styled("select")`
-  background-color: var(--discord-old-not-quite-black);
+  background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: 0;
   cursor: pointer;
@@ -14,7 +14,7 @@ const Select = styled("select")`
   padding: 0.5rem 1.25rem;
 
   :hover {
-    background-color: var(--discord-old-greyple);
+    background-color: var(--discord-legacy-greyple);
   }
 
   :focus,
