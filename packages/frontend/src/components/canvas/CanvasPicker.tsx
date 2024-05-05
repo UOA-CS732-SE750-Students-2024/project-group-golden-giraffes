@@ -2,6 +2,8 @@
 
 import { styled } from "@mui/material";
 
+import { useCanvases } from "@/hooks";
+
 const Select = styled("select")`
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
@@ -24,12 +26,13 @@ const Select = styled("select")`
 `;
 
 export default function CanvasPicker() {
-  const options = ["Foo", "Bar", "Baz"];
+  const { data: canvases } = useCanvases();
+
   return (
     <Select>
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
+      {canvases.map(({ id, name }) => (
+        <option key={id} value={id}>
+          {name}
         </option>
       ))}
     </Select>

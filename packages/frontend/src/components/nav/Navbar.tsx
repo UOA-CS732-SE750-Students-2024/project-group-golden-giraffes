@@ -2,6 +2,7 @@
 
 import { styled } from "@mui/material";
 import Link from "next/link";
+import { CanvasPicker } from "../canvas";
 
 const Nav = styled("nav")`
   background-color: var(--discord-legacy-dark-but-not-black);
@@ -9,10 +10,10 @@ const Nav = styled("nav")`
   display: grid;
   font-size: 1.35rem;
   gap: 1rem;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   justify-content: flex-end;
   padding: 0.5rem 4rem;
-  place-items: center flex-end;
+  place-items: center;
 
   a {
     border-radius: 0.125rem;
@@ -76,6 +77,7 @@ export default function Navbar() {
         />
         <Wordmark>Blurple Canvas</Wordmark>
       </CompositeLogo>
+      <CanvasPicker />
       <Links>
         <ul>
           {/* <a href="/leaderboard">Leaderboard</a> */}
