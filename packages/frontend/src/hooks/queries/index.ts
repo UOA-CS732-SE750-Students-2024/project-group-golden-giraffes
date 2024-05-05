@@ -1,2 +1,2 @@
-export { useCanvases } from "./useCanvases";
+export { useCanvasList } from "./useCanvasList";
 export { usePalette } from "./usePalette";
