@@ -26,7 +26,7 @@ const Select = styled("select")`
 `;
 
 export default function CanvasPicker() {
-  const { data: canvases } = useCanvases();
+  const { data: canvases = [] } = useCanvases();
 
   return (
     <Select>
