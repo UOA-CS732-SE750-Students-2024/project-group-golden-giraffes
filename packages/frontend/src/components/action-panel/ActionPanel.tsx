@@ -3,7 +3,9 @@
 import { usePalette } from "@/hooks/queries";
 import { Palette, PaletteColor } from "@blurple-canvas-web/types";
 import { css, styled } from "@mui/material";
+import Head from "next/head";
 import { useState } from "react";
+import { Color } from "../color/Color";
 
 const Container = styled("div")`
   background-color: var(--discord-legacy-not-quite-black);
@@ -64,7 +66,7 @@ const ZenTab = styled(Tab)`
   margin-inline-start: auto;
 `;
 
-const ColorPicker = styled("div")`
+const ActionMenu = styled("div")`
   background-color: var(--discord-legacy-dark-but-not-black);
   display: grid;
   gap: max(0.25rem, 2px);
@@ -80,6 +82,16 @@ const Heading = styled("h2")`
   letter-spacing: 0.08em;
   margin-block-start: 1rem;
   text-transform: uppercase;
+`;
+
+const Coordinates = styled("p")`
+  color: oklch(var(--discord-white-oklch) / 60%);
+  font-size: 1.8rem;
+  grid-column: 1 / -1;
+  text-align: center;
+  typeface: monospace;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 `;
 
 const ColorfulDiv = styled("div", {
@@ -133,6 +145,8 @@ export default function ActionPanel() {
 
   const [mainColors, partnerColors] = partitionPalette(palette);
 
+  const pixel = [16, 3];
+
   return (
     <>
       <TabBar>
@@ -141,13 +155,23 @@ export default function ActionPanel() {
         <ZenTab onClick={() => setCurrentTab("Zen")}>🧘</ZenTab>
       </TabBar>
       <Container>
+        {currentTab === "Look" && (
+          <ActionMenu>
+            <Coordinates>
+              <span>x: {pixel[0]}</span>
+              <span>y: {pixel[1]}</span>
+            </Coordinates>
+            <Color color={mainColors[0]} />
+            <Heading>Paint History</Heading>
+          </ActionMenu>
+        )}
         {currentTab === "Place" && (
-          <ColorPicker>
+          <ActionMenu>
             <Heading>Main colours</Heading>
             {mainColors.map((color) => colorToSwatch(color))}
             <Heading>Partner colours</Heading>
             {partnerColors.map((color) => colorToSwatch(color))}
-          </ColorPicker>
+          </ActionMenu>
         )}
       </Container>
     </>
