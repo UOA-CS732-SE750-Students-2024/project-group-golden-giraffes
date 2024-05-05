@@ -41,7 +41,7 @@ export const Theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "0.75rem",
-          border: "0.125rem solid var(--discord-legcy-dark-but-not-black)",
+          border: "0.125rem solid var(--discord-legacy-dark-but-not-black)",
         },
       },
     },
