@@ -44,6 +44,7 @@
     "@mui/material-nextjs": "^5.15.11",
     "@tanstack/react-query": "^5.34.2",
     "axios": "^1.6.8",
+    "color-convert": "^2.0.1",
     "luxon": "^3.4.4",
     "next": "^14.2.3",
     "react": "^18.3.1",
@@ -51,6 +52,7 @@
   },
   "devDependencies": {
     "@blurple-canvas-web/types": "workspace:*",
+    "@types/color-convert": "^2.0.3",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.12.8",
     "@types/react": "^18.3.1",
