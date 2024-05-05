@@ -9,6 +9,14 @@
     font-weight: 200 900;
     font-stretch: 75% 125%;
   }
+  @font-face {
+    font-family: "Monaspace Neon";
+    src:
+      url("../fonts/monaspace-neon.woff2") format("woff2 supports variations"),
+      url("../fonts/monaspace-neon.woff2") format("woff2-variations");
+    font-weight: 200 800;
+    font-stretch: 100% 125%;
+  }
 }
 
 @layer core {
@@ -49,6 +57,7 @@
 
     --font-body: "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont,
       "Inter", "Segoe UI", Roboto, Ubuntu, sans-serif;
+    --font-monospace: "Monaspace Neon", ui-monospace, Consolas, monospace;
     --border-color: oklch(var(--discord-white-oklch) / 15%);
     --card-border: var(--border-color) solid 2px;
     --card-border-radius: 0.1875rem;

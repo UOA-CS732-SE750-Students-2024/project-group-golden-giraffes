@@ -95,7 +95,7 @@ const Coordinates = styled("p")`
   font-size: 1.8rem;
   grid-column: 1 / -1;
   text-align: center;
-  typeface: monospace;
+  font-family: var(--font-monospace);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 `;
@@ -202,7 +202,7 @@ export default function ActionPanel() {
 
   useEffect(() => {
     setCoordinate([0, 0]); // This is a placeholder value
-  }, []); // Empty dependency array means this effect runs once when the component mounts
+  }, []);
 
   return (
     <>
