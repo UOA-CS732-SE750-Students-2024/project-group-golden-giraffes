@@ -46,18 +46,19 @@ const CanvasContainer = styled("div")`
 `;
 
 /**
- * Calculate the default scale to use for the canvas. This is the required scaling to get the canvas
- * to cover the entire screen.
+ * Calculate the default scale to use for the canvas. This tries to maximise the size of the canvas
+ * without it overflowing the screen.
  */
-function getDefaultScale(image: HTMLImageElement): number {
-  const screenDimensions = getScreenDimensions();
-
+function getDefaultScale(
+  container: HTMLDivElement,
+  image: HTMLImageElement,
+): number {
   // Don't add any padding on the initial scale for small devices
-  const padding = screenDimensions.width < 500 ? 0 : 50;
+  const padding = container.clientWidth < 500 ? 0 : 50;
 
   const scale = Math.min(
-    (screenDimensions.width - padding) / image.width,
-    (screenDimensions.height - padding) / image.height,
+    (container.clientWidth - padding) / image.width,
+    (container.clientHeight - padding) / image.height,
   );
 
   return scale;
@@ -94,7 +95,12 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
     context.drawImage(image, 0, 0);
 
-    setScale(getDefaultScale(image));
+    if (containerRef.current) {
+      setScale(getDefaultScale(containerRef.current, image));
+    } else {
+      setScale(1);
+    }
+
     setImageDimension({ width: image.width, height: image.height });
   }, []);
 
