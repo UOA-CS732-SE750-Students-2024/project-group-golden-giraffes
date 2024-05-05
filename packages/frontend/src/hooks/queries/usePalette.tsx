@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -17,7 +19,6 @@ export function usePalette(eventId?: BlurpleEvent["id"]) {
     queryFn: getPalette,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-    initialData: [] as PaletteRequest.ResBody,
     placeholderData: [] as PaletteRequest.ResBody,
   });
 }
