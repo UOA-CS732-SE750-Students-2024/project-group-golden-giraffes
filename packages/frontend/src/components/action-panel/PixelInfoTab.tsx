@@ -62,27 +62,27 @@ export const RecordColorCode = styled("span")`
   padding: 0.25rem 0.5rem;
 `;
 
-export const HistoryRecord = ({
+export const HistoryRecordComponent = ({
   history,
   color,
 }: {
   history: PixelHistoryRecord;
   color?: PaletteColor;
 }) => {
-  if (color) {
-    return (
-      <Record>
-        {colorToSwatch(color, true)}
-        <RecordInfo>
-          <RecordAuthor>{history.userId}</RecordAuthor>
+  return (
+    <Record>
+      {color && colorToSwatch(color, true)}
+      <RecordInfo>
+        <RecordAuthor>{history.userId}</RecordAuthor>
+        {color && (
           <RecordColor>
             <RecordColorName>{color.name}</RecordColorName>
             <RecordColorCode>{color.code}</RecordColorCode>
           </RecordColor>
-        </RecordInfo>
-      </Record>
-    );
-  }
+        )}
+      </RecordInfo>
+    </Record>
+  );
 };
 
 interface PixelInfoTabProps {
@@ -127,7 +127,7 @@ export default function PixelInfoTab({
               <span>y: {coordinates[1]}</span>
             </Coordinates>
             {currentPixelHistory && ( // To be redesigned later
-              <HistoryRecord
+              <HistoryRecordComponent
                 history={currentPixelHistory}
                 color={
                   palette.find(
@@ -140,7 +140,7 @@ export default function PixelInfoTab({
             {pastPixelHistory && (
               <HistoryRecords>
                 {pastPixelHistory.map((history) => (
-                  <HistoryRecord
+                  <HistoryRecordComponent
                     key={history.id}
                     history={history}
                     color={
