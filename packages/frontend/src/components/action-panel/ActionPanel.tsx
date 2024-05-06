@@ -271,7 +271,7 @@ export default function ActionPanel() {
                   <HistoryRecords>
                     {pixelHistory.slice(1).map((history, index) => (
                       <HistoryRecord
-                        key={`${index}-${history.userId}`}
+                        key={history.id}
                         history={history}
                         color={
                           palette.find(
