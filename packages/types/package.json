@@ -37,7 +37,7 @@
     "clean": "rm -rf node_modules/ build/"
   },
   "devDependencies": {
-    "@tsconfig/node20": "^20.1.2",
+    "@tsconfig/node20": "^20.1.4",
     "prettier": "^3.2.5",
     "typescript": "^5.4.2"
   },

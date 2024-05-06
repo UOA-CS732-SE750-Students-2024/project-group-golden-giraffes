@@ -25,6 +25,11 @@ const config = {
     clientId: requiredEnv("DISCORD_CLIENT_ID"),
     clientSecret: requiredEnv("DISCORD_CLIENT_SECRET"),
   },
+  /**
+   * Placed pixels are typically attributed to guilds they were place in.
+   * Identify pixels placed through the web with the ID of 0.
+   */
+  webGuildId: 0,
 } as const;
 
 if (!fs.existsSync(config.paths.canvases)) {

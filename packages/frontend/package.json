@@ -40,22 +40,22 @@
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@mui/material": "^5.15.15",
+    "@mui/material": "^5.15.16",
     "@mui/material-nextjs": "^5.15.11",
-    "@tanstack/react-query": "^5.34.1",
+    "@tanstack/react-query": "^5.34.2",
     "axios": "^1.6.8",
+    "colorjs.io": "^0.5.0",
     "luxon": "^3.4.4",
-    "next": "^14.1.3",
-    "react": "^18",
-    "react-dom": "^18"
+    "next": "^14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.6.1",
     "@blurple-canvas-web/types": "workspace:*",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/node": "^20.12.8",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.2"
   }

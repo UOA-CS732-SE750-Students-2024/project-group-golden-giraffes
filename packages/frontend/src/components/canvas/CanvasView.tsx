@@ -9,17 +9,25 @@ import {
   useRef,
   useState,
 } from "react";
-import { ORIGIN, Point, addPoints, scalePoint } from "./point";
+import {
+  ORIGIN,
+  Point,
+  addPoints,
+  diffPoints,
+  dividePoint,
+  multiplyPoint,
+} from "./point";
 
-import { Dimensions, getScreenDimensions } from "@/hooks/useScreenDimensions";
+import { Dimensions } from "@/hooks/useScreenDimensions";
 import { clamp } from "@/util";
-import { CanvasPicker } from ".";
 
 const CanvasContainer = styled("div")`
+  position: relative;
   background-color: var(--discord-legacy-not-quite-black);
-  border: var(--card-border);
   border-radius: var(--card-border-radius);
+  border: var(--card-border);
   display: flex;
+  grid-row: 1 / -1;
   overflow: hidden;
   place-content: center;
   place-items: center;
@@ -35,7 +43,7 @@ const CanvasContainer = styled("div")`
   }
 
   .loader {
-    position: fixed;
+    position: absolute;
   }
 
   canvas {
@@ -48,7 +56,7 @@ const CanvasContainer = styled("div")`
  * Calculate the default scale to use for the canvas. This tries to maximise the size of the canvas
  * without it overflowing the screen.
  */
-function getDefaultScale(
+function getDefaultZoom(
   container: HTMLDivElement,
   image: HTMLImageElement,
 ): number {
@@ -63,6 +71,10 @@ function getDefaultScale(
   return scale;
 }
 
+const SCALE_FACTOR = 0.2;
+const MAX_ZOOM = 10;
+const MIN_ZOOM = 0.5;
+
 export interface CanvasViewProps {
   imageUrl: string;
 }
@@ -73,10 +85,10 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
+  const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
     null,
   );
-  const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
 
   const isLoading = imageDimensions === null;
@@ -95,9 +107,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     context.drawImage(image, 0, 0);
 
     if (containerRef.current) {
-      setScale(getDefaultScale(containerRef.current, image));
+      setZoom(getDefaultZoom(containerRef.current, image));
     } else {
-      setScale(1);
+      setZoom(1);
     }
 
     setImageDimension({ width: image.width, height: image.height });
@@ -111,6 +123,70 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       handleLoadImage(imageRef.current);
     }
   }, [handleLoadImage]);
+
+  /********************************
+   * ZOOMING FUNCTIONALITY.       *
+   ********************************/
+
+  useEffect(() => {
+    if (!imageDimensions) return;
+
+    /**
+     * When we zoom, not only do we need to scale the image, but to give the appearing of zooming
+     * in on a specific pixel, we need to offset the image so that the pixel we're zooming in on
+     * stays in the same place on the screen after the zoom.
+     */
+    const handleWheel = (event: WheelEvent): void => {
+      event.preventDefault();
+
+      const mousePositionOnCanvas: Point = {
+        x: event.offsetX,
+        y: event.offsetY,
+      };
+
+      // The mouse position's origin is in the top left of the canvas. The offset's origin is the
+      // center of the canvas so we do this to convert between the two.
+      const mouseOffsetDirection = diffPoints(
+        {
+          x: imageDimensions.width / 2,
+          y: imageDimensions.height / 2,
+        },
+        mousePositionOnCanvas,
+      );
+
+      const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
+      const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
+
+      // Clamping the zoom means the actual scale may be different.
+      const effectiveScale = newZoom / zoom;
+
+      setOffset((prevOffset) => {
+        // The direction we need to shift the offset to keep the pixel in the same place
+        const offsetDif = diffPoints(mouseOffsetDirection, prevOffset);
+
+        // The amount we shift is scaled based on the amount we've zoomed in.
+        const scaledOffsetDiff = multiplyPoint(
+          offsetDif,
+          // If the scale is 1, we've not zoomed in at all and so this multiplier becomes 0
+          // (causing no offset). If the scale is greater than 1, we're zooming in. A larger scale
+          // corresponds to a larger step (as 1/effectiveScale approaches 0). If the scale is less
+          // than 1, we're zooming out. In this case, 1 / effective scale becomes greater than 1,
+          // causing a negative offset. Thanks Henry for figuring out this equation 🙏.
+          1 - 1 / effectiveScale,
+        );
+
+        return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
+      });
+      setZoom(newZoom);
+    };
+
+    containerRef.current?.addEventListener("wheel", handleWheel, {
+      passive: false,
+    });
+
+    return () =>
+      containerRef.current?.removeEventListener("wheel", handleWheel);
+  }, [imageDimensions, zoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -137,14 +213,15 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
   const updateOffset = useCallback(
     (diff: Point): void => {
-      const scaledDiff = scalePoint(diff, scale);
+      // The more we're zoomed in, the less we've actually moved on the canvas
+      const scaledDiff = dividePoint(diff, zoom);
 
       setOffset((prevOffset) => {
         const newOffset = addPoints(prevOffset, scaledDiff);
         return clampOffset(newOffset);
       });
     },
-    [scale, clampOffset],
+    [zoom, clampOffset],
   );
 
   const handleMouseMove = useCallback(
@@ -236,7 +313,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
   return (
     <>
-      <CanvasPicker />
       <CanvasContainer
         ref={containerRef}
         onMouseDown={handleStartMousePan}
@@ -248,7 +324,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
           id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
-            scale,
+            scale: zoom,
           }}
         />
       </CanvasContainer>
