@@ -3,6 +3,13 @@ import config from "@/config";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
 import { PixelHistory, PlacePixel } from "@blurple-canvas-web/types";
 
+/**
+ * Gets the pixel history for the given canvas and coordinates
+ *
+ * @param canvasId - The ID of the canvas
+ * @param x - The x coordinate of the pixel
+ * @param y - The y coordinate of the pixel
+ */
 export async function getPixelHistory(
   canvasId: number,
   x: number,
@@ -31,7 +38,13 @@ export async function getPixelHistory(
   }));
 }
 
-/* Ensures that the given pixel coordinates are within the bounds of the canvas, and the canvas exists*/
+/** Ensures that the given pixel coordinates are within the bounds of the canvas and the canvas exists
+ *
+ * @param canvasId - The ID of the canvas
+ * @param x - The x coordinate of the pixel
+ * @param y - The y coordinate of the pixel
+ * @param honorLocked - True will return an error if the canvas is locked
+ */
 export async function validatePixel(
   canvasId: number,
   x: number,
@@ -66,7 +79,11 @@ export async function validatePixel(
   }
 }
 
-/* Ensures that the given color exists in the DB and is allowed to be used in the given canvas*/
+/**
+ * Ensures that the given color exists in the DB and it is allowed to be used in the given canvas
+ *
+ * @param colorId - The ID of the color
+ */
 export async function validateColor(colorId: number) {
   const color = await prisma.color.findFirst({
     where: {
@@ -85,6 +102,10 @@ export async function validateColor(colorId: number) {
   }
 }
 
+/**
+ * Ensures that the given user is not blacklisted from using the canvas
+ * and their pixel placement is not on cooldown
+ */
 export async function validateUser(canvasId: number, userId: bigint) {
   const [blacklist, canvas, cooldown] = await Promise.all([
     prisma.blacklist.findFirst({
@@ -105,12 +126,11 @@ export async function validateUser(canvasId: number, userId: bigint) {
     }),
   ]);
 
-  // Check against blacklist
   if (blacklist) {
     throw new ForbiddenError("User is blacklisted");
   }
 
-  // Return early if no cooldown exists; canvas validation occurs in previous service
+  // Return early if no cooldown exists
   if (!canvas?.cooldown_length || !cooldown || !cooldown?.cooldown_time) {
     return;
   }
@@ -126,7 +146,19 @@ export async function validateUser(canvasId: number, userId: bigint) {
   }
 }
 
-/* Places a pixel in the given canvas */
+/**
+ * Places a pixel in the given canvas and updates the cooldown and history tables
+ *
+ * @remarks
+ *
+ * This function assumes that the user already exists in the DB,
+ * however the placement still works if the user doesn't exist.
+ *
+ * @param canvasId - The ID of the canvas
+ * @param userId - The ID of the user
+ * @param placePixel - The pixel to place with coordinates and color
+ * @param cooldownTimeStamp - The timestamp of when the user can place another pixel
+ */
 export async function placePixel(
   canvasId: number,
   userID: bigint,
@@ -134,8 +166,6 @@ export async function placePixel(
   cooldownTimeStamp: Date,
 ) {
   const { x, y, colorId } = placePixel;
-
-  // Assumes that the user already exists in the DB
   await prisma.$transaction([
     prisma.cooldown.upsert({
       where: {
