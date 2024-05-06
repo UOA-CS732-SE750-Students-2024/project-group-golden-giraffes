@@ -68,7 +68,7 @@ model cooldown {
 }
 
 model discord_user_profile {
-  user_id             BigInt  @id
+  user_id             BigInt @id
   username            String
   profile_picture_url String
 }
