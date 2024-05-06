@@ -183,6 +183,31 @@ export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
   return CANVAS_CACHE[canvasId];
 }
 
+/**
+ * Updates a pixel in the canvas cache. If the canvas is not in the cache, or the canvas is locked
+ * this will do nothing.
+ *
+ * @param canvasId The ID of the canvas to update
+ * @param x The x coordinate of the pixel
+ * @param y The y coordinate of the pixel
+ * @param color The color of the pixel
+ */
+export function updateCachedPixel(
+  canvasId: CanvasInfo["id"],
+  x: number,
+  y: number,
+  color: PixelColor,
+): void {
+  const cachedCanvas = CANVAS_CACHE[canvasId];
+
+  if (!cachedCanvas || cachedCanvas.isLocked) {
+    return;
+  }
+
+  const pixelIndex = y * cachedCanvas.width + x;
+  cachedCanvas.pixels[pixelIndex] = color;
+}
+
 async function getCanvasPixels(canvas: canvas): Promise<PixelColor[]> {
   const pixels = await prisma.pixel.findMany({
     select: {
