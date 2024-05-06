@@ -32,6 +32,14 @@ export const ColorCode = styled("span")`
   font-family: var(--font-monospace);
   font-size: 0.9rem;
   padding: 0.25rem 0.5rem;
+  transition: background-color 0.2s;
+  :hover {
+    background-color: rgba(255, 255, 255, 0.24);
+    cursor: pointer;
+  }
+  :active {
+    background-color: rgba(255, 255, 255, 0.36);
+  }
 `;
 
 interface SwatchProps {
@@ -92,7 +100,15 @@ export const ColorLabel = ({
     <ColorContainer>
       {displaySwatch && colorToSwatch({ color, size: 2 })}
       {displayName && <ColorName>{color.name}</ColorName>}
-      {displayCode && <ColorCode>{color.code}</ColorCode>}
+      {displayCode && (
+        <ColorCode
+          onClick={() => {
+            navigator.clipboard.writeText(color.code);
+          }}
+        >
+          {color.code}
+        </ColorCode>
+      )}
     </ColorContainer>
   );
 };
