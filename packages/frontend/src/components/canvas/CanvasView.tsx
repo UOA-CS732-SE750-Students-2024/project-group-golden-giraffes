@@ -1,8 +1,14 @@
 "use client";
 
-import { getScreenDimensions } from "@/hooks/useScreenDimensions";
 import { CircularProgress, styled } from "@mui/material";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import {
+  ReactNode,
+  Touch,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   ORIGIN,
   Point,
@@ -12,29 +18,32 @@ import {
   multiplyPoint,
 } from "./point";
 
-const FullscreenContainer = styled("main")`
-  position: fixed;
+import { Dimensions } from "@/hooks/useScreenDimensions";
+import { clamp } from "@/util";
 
-  > * {
-    position: relative;
+const CanvasContainer = styled("div")`
+  background-color: var(--discord-legacy-not-quite-black);
+  border-radius: var(--card-border-radius);
+  border: var(--card-border);
+  display: flex;
+  grid-row: 1 / -1;
+  overflow: hidden;
+  place-content: center;
+  place-items: center;
+
+  cursor: grab;
+  :active {
+    cursor: grabbing;
+  }
+
+  &,
+  * & {
+    user-select: none;
   }
 
   .loader {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
   }
-`;
-
-const CanvasContainer = styled("div")`
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
   canvas {
     image-rendering: pixelated;
@@ -43,25 +52,19 @@ const CanvasContainer = styled("div")`
 `;
 
 /**
- * Return the value clamped so that it is within the range [min, max].
+ * Calculate the default scale to use for the canvas. This tries to maximise the size of the canvas
+ * without it overflowing the screen.
  */
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
-
-/**
- * Calculate the default scale to use for the canvas. This is the required scaling to get the canvas
- * to cover the entire screen.
- */
-function getDefaultScale(image: HTMLImageElement): number {
-  const screenDimensions = getScreenDimensions();
-
+function getDefaultZoom(
+  container: HTMLDivElement,
+  image: HTMLImageElement,
+): number {
   // Don't add any padding on the initial scale for small devices
-  const padding = screenDimensions.width < 500 ? 0 : 50;
+  const padding = container.clientWidth < 500 ? 0 : 50;
 
   const scale = Math.min(
-    (screenDimensions.width - padding) / image.width,
-    (screenDimensions.height - padding) / image.height,
+    (container.clientWidth - padding) / image.width,
+    (container.clientHeight - padding) / image.height,
   );
 
   return scale;
@@ -73,51 +76,59 @@ const MIN_ZOOM = 0.5;
 
 export interface CanvasViewProps {
   imageUrl: string;
-  children?: ReactNode;
 }
 
-export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
+export default function CanvasView({ imageUrl }: CanvasViewProps) {
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const lastMousePosRef = useRef(ORIGIN);
+  const startTouchesRef = useRef<Touch[]>([]);
 
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [zoom, setZoom] = useState(1);
+  const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
+    null,
+  );
   const [offset, setOffset] = useState(ORIGIN);
 
-  const isLoading = image === null;
+  const isLoading = imageDimensions === null;
+
+  const handleLoadImage = useCallback((image: HTMLImageElement): void => {
+    if (!canvasRef.current) return;
+
+    const context = canvasRef.current.getContext("2d");
+    if (!context) return;
+
+    // We need to set the width of the canvas first, otherwise if the image is bigger than
+    // the canvas it'll get cut off.
+    canvasRef.current.width = image.width;
+    canvasRef.current.height = image.height;
+
+    context.drawImage(image, 0, 0);
+
+    if (containerRef.current) {
+      setZoom(getDefaultZoom(containerRef.current, image));
+    } else {
+      setZoom(1);
+    }
+
+    setImageDimension({ width: image.width, height: image.height });
+  }, []);
 
   useEffect(() => {
-    const image = new Image();
-    image.onload = () => {
-      if (!canvasRef.current) return;
-
-      const context = canvasRef.current.getContext("2d");
-      if (!context) return;
-
-      // We need to set the width of the canvas first, otherwise if the image is bigger than
-      // the canvas it'll get cut off.
-      canvasRef.current.width = image.width;
-      canvasRef.current.height = image.height;
-
-      context.drawImage(image, 0, 0);
-
-      setImage(image);
-      setZoom(getDefaultScale(image));
-    };
-    image.src = imageUrl;
-
-    return () => {
-      // Remove the onload handler to prevent a redundant GET request being made.
-      image.onload = null;
-    };
-  }, [imageUrl]);
+    // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
+    // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
+    // need to check it's working correctly when we start placing pixels.
+    if (imageRef.current?.complete) {
+      handleLoadImage(imageRef.current);
+    }
+  }, [handleLoadImage]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
    ********************************/
 
   useEffect(() => {
-    if (!image) return;
+    if (!imageDimensions) return;
 
     const handleWheel = (event: WheelEvent): void => {
       event.preventDefault();
@@ -130,8 +141,8 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
       // Offset to get to the mouse position
       const mouseOffsetDirection = diffPoints(
         {
-          x: image.width / 2,
-          y: image.height / 2,
+          x: imageDimensions.width / 2,
+          y: imageDimensions.height / 2,
         },
         mousePositionOnCanvas,
       );
@@ -162,7 +173,7 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
     canvasRef.current?.addEventListener("wheel", handleWheel);
 
     return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
-  }, [zoom, image]);
+  }, [imageDimensions, zoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -174,74 +185,143 @@ export default function CanvasView({ imageUrl, children }: CanvasViewProps) {
    */
   const clampOffset = useCallback(
     (offset: Point): Point => {
-      if (image == null) return offset;
+      if (imageDimensions == null) return offset;
 
-      const widthLimit = image.width / 2;
-      const heightLimit = image.height / 2;
+      const widthLimit = imageDimensions.width / 2;
+      const heightLimit = imageDimensions.height / 2;
 
       return {
         x: clamp(offset.x, -widthLimit, widthLimit),
         y: clamp(offset.y, -heightLimit, heightLimit),
       };
     },
-    [image],
+    [imageDimensions],
   );
 
-  const handleMouseMove = useCallback(
-    (event: MouseEvent): void => {
-      const lastMousePos = lastMousePosRef.current;
-      const currentMousePos: Point = { x: event.pageX, y: event.pageY }; // use document so can pan off element
-      lastMousePosRef.current = currentMousePos;
-
-      const mouseDiff = dividePoint(
-        diffPoints(currentMousePos, lastMousePos),
-        zoom,
-      );
+  const updateOffset = useCallback(
+    (diff: Point): void => {
+      // The more we're zoomed in, the less we've actually moved on the canvas
+      const scaledDiff = dividePoint(diff, zoom);
 
       setOffset((prevOffset) => {
-        const newOffset = addPoints(prevOffset, mouseDiff);
+        const newOffset = addPoints(prevOffset, scaledDiff);
         return clampOffset(newOffset);
       });
     },
     [zoom, clampOffset],
   );
 
+  const handleMouseMove = useCallback(
+    (event: MouseEvent): void => {
+      updateOffset({ x: event.movementX, y: event.movementY });
+    },
+    [updateOffset],
+  );
+
   /**
-   * Remove the mouse move listener when the mouse is released to stop panning.
+   * Remove the listeners when the mouse is released to stop panning.
    */
   const handleMouseUp = useCallback((): void => {
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
+    if (!containerRef.current) return;
+
+    containerRef.current.removeEventListener("mousemove", handleMouseMove);
+    containerRef.current.removeEventListener("mouseup", handleMouseUp);
+    containerRef.current.removeEventListener("mouseleave", handleMouseUp);
   }, [handleMouseMove]);
 
   /**
    * Only add the mouse move listener when you click down so that moving your mouse normally doesn't
    * cause the canvas to pan.
    */
-  const handleStartPan = useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      lastMousePosRef.current = { x: event.pageX, y: event.pageY };
+  const handleStartMousePan = useCallback((): void => {
+    if (!containerRef.current) return;
+
+    containerRef.current.addEventListener("mousemove", handleMouseMove);
+    containerRef.current.addEventListener("mouseup", handleMouseUp);
+    containerRef.current.addEventListener("mouseleave", handleMouseUp);
+  }, [handleMouseMove, handleMouseUp]);
+
+  const handleTouchMove = useCallback(
+    (event: TouchEvent): void => {
+      const touchCount = event.touches.length;
+      event.preventDefault();
+
+      // TODO: Implement multi-touch zooming
+      if (touchCount !== 1) return;
+
+      // Check that the touch event is the same as the one that started the pan
+      if (event.touches[0].identifier !== startTouchesRef.current[0].identifier)
+        return;
+
+      const startTouch = startTouchesRef.current[0];
+      const touch = event.touches[0];
+
+      const touchDiff: Point = {
+        x: touch.pageX - startTouch.pageX,
+        y: touch.pageY - startTouch.pageY,
+      };
+
+      updateOffset({ x: touchDiff.x, y: touchDiff.y });
+      startTouchesRef.current = [touch];
     },
-    [handleMouseMove, handleMouseUp],
+    [updateOffset],
+  );
+
+  const handleTouchEnd = useCallback((): void => {
+    if (!canvasRef.current) return;
+
+    canvasRef.current.removeEventListener("touchmove", handleTouchMove);
+    canvasRef.current.removeEventListener("touchend", handleTouchEnd);
+    canvasRef.current.removeEventListener("touchcancel", handleTouchEnd);
+  }, [handleTouchMove]);
+
+  /**
+   * Note: The `React` prefix to `TouchEvent` is necessary to distinguish it from the non-react
+   * version used by handleTouchMove.
+   */
+  const handleStartTouchPan = useCallback(
+    (event: React.TouchEvent<HTMLDivElement>): void => {
+      if (!canvasRef.current) return;
+
+      const touchCount = event.touches.length;
+
+      // TODO: Implement multi-touch zooming
+      if (touchCount !== 1) return;
+
+      canvasRef.current.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+      canvasRef.current.addEventListener("touchend", handleTouchEnd);
+      canvasRef.current.addEventListener("touchcancel", handleTouchEnd);
+      startTouchesRef.current = Array.from(event.touches);
+    },
+    [handleTouchMove, handleTouchEnd],
   );
 
   return (
-    <FullscreenContainer>
-      <CanvasContainer onMouseDown={handleStartPan}>
-        <div
+    <>
+      <CanvasContainer
+        ref={containerRef}
+        onMouseDown={handleStartMousePan}
+        onTouchStart={handleStartTouchPan}
+      >
+        {isLoading && <CircularProgress className="loader" />}
+        <canvas
+          ref={canvasRef}
           id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale: zoom,
           }}
-        >
-          <canvas ref={canvasRef} />
-        </div>
+        />
       </CanvasContainer>
-      {isLoading && <CircularProgress className="loader" />}
-      {children}
-    </FullscreenContainer>
+      <img
+        alt="Blurple Canvas 2023"
+        hidden
+        onLoad={(event) => handleLoadImage(event.currentTarget)}
+        ref={imageRef}
+        src={imageUrl}
+      />
+    </>
   );
 }
