@@ -1,14 +1,25 @@
 import { Router } from "express";
 
-import { ApiError } from "@/errors";
+import { ApiError, BadRequestError } from "@/errors";
+import { EventIdParamModel } from "@/models/paramModels";
 import { getCurrentEvent, getEventById } from "@/services/eventService";
 
 export const eventRouter = Router();
 
 eventRouter.get("/:eventId", async (req, res) => {
-  const { eventId } = req.params;
   try {
-    const event = await getEventById(Number.parseInt(eventId));
+    const pathParams = await EventIdParamModel.safeParseAsync(req.params);
+
+    if (!pathParams.success) {
+      throw new BadRequestError(
+        "Malformed path parameters",
+        pathParams.error.issues,
+      );
+    }
+
+    const { eventId } = pathParams.data;
+    const event = await getEventById(eventId);
+
     res.status(200).json(event);
   } catch (error) {
     ApiError.sendError(res, error);
