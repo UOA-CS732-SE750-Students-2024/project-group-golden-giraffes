@@ -242,6 +242,15 @@ export default function ActionPanel() {
     fetchUserStats();
   }, [coordinate]);
 
+  const [currentPixelHistory, setCurrentPixelHistory] =
+    useState<PixelHistory | null>(null);
+  const [pastPixelHistory, setPastPixelHistory] = useState<PixelHistory[]>([]);
+  useEffect(() => {
+    console.log(pixelHistory);
+    setCurrentPixelHistory(pixelHistory?.[0] || null);
+    setPastPixelHistory(pixelHistory?.slice(1) || []);
+  }, [pixelHistory]);
+
   useEffect(() => {
     setCoordinate([0, 0]); // This is a placeholder value
   }, []);
@@ -262,20 +271,20 @@ export default function ActionPanel() {
                   <span>x: {coordinate[0]}</span>
                   <span>y: {coordinate[1]}</span>
                 </Coordinates>
-                {Array.isArray(pixelHistory) && ( // To be redesigned later
+                {currentPixelHistory && ( // To be redesigned later
                   <HistoryRecord
-                    history={pixelHistory[0]}
+                    history={currentPixelHistory}
                     color={
                       palette.find(
-                        (color) => color.id === pixelHistory[0].colorId,
-                      ) || undefined
+                        (color) => color.id === currentPixelHistory.colorId,
+                      ) ?? undefined
                     }
                   />
                 )}
                 <Heading>Paint History</Heading>
-                {Array.isArray(pixelHistory) && pixelHistory.length > 1 && (
+                {pastPixelHistory && (
                   <HistoryRecords>
-                    {pixelHistory.slice(1).map((history, index) => (
+                    {pastPixelHistory.map((history) => (
                       <HistoryRecord
                         key={history.id}
                         history={history}
