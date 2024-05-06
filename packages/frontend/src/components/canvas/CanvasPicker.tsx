@@ -53,26 +53,31 @@ const Select = styled(NativeSelect)`
 `;
 
 export default function CanvasPicker() {
-  const { data: canvases = [] } = useCanvasList();
-  const { data: mainCanvas } = useCanvasInfo();
+  const { data: canvases = [], isLoading: canvasListIsLoading } =
+    useCanvasList();
+  const { data: mainCanvasInfo, isLoading: mainCanvasInfoIsLoading } =
+    useCanvasInfo();
+  const isLoading = canvasListIsLoading || mainCanvasInfoIsLoading;
 
-  const allButMain = canvases.filter(({ id }) => id !== mainCanvas?.id);
+  const allButMain = canvases.filter(({ id }) => id !== mainCanvasInfo?.id);
 
   return (
-    <Select IconComponent={ChevronsUpDown}>
-      {mainCanvas && (
-        <>
-          <option key={mainCanvas.id} value={mainCanvas.id}>
-            {mainCanvas.name}
+    <Select disabled={isLoading} IconComponent={ChevronsUpDown}>
+      {mainCanvasInfo && (
+        <optgroup label="Main canvas">
+          <option key={mainCanvasInfo.id} value={mainCanvasInfo.id}>
+            {mainCanvasInfo.name}
           </option>
           <hr />
-        </>
+        </optgroup>
       )}
-      {allButMain.map(({ id, name }) => (
-        <option key={id} value={id}>
-          {name}
-        </option>
-      ))}
+      <optgroup label="Other canvases">
+        {allButMain.map(({ id, name }) => (
+          <option key={id} value={id}>
+            {name}
+          </option>
+        ))}
+      </optgroup>
     </Select>
   );
 }
