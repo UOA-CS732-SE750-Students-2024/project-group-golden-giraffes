@@ -4,19 +4,22 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 import config from "@/config";
-import {
-  BlurpleEvent,
-  Palette,
-  PaletteRequest,
-} from "@blurple-canvas-web/types";
+import { BlurpleEvent, PaletteRequest } from "@blurple-canvas-web/types";
 import Color, { Coords } from "colorjs.io";
+import { OKLCH } from "colorjs.io/fn";
 
 export function usePalette(eventId?: BlurpleEvent["id"]) {
   const getPalette = async () => {
     const response = await axios.get<PaletteRequest.ResBody>(
       `${config.apiUrl}/api/v1/palette/${eventId ?? "current"}`,
     );
-    return sortPalette(response.data);
+    return response.data.sort((a, b) => {
+      const rgbA = a.rgba.slice(0, 3) as Coords;
+      const rgbB = b.rgba.slice(0, 3) as Coords;
+      const hueA = new Color("srgb", rgbA).to("oklch").coords[2];
+      const hueB = new Color("srgb", rgbB).to("oklch").coords[2];
+      return hueA - hueB;
+    });
   };
 
   return useQuery({
@@ -27,10 +30,3 @@ export function usePalette(eventId?: BlurpleEvent["id"]) {
     placeholderData: [] as PaletteRequest.ResBody,
   });
 }
-
-const sortPalette = (palette: Palette) =>
-  [...palette].sort(
-    (a, b) =>
-      new Color(`rgba(${a.rgba.join(",")})`).hsl[0] -
-      new Color(`rgba(${b.rgba.join(",")})`).hsl[0],
-  );
