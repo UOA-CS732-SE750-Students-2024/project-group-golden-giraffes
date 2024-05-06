@@ -21,9 +21,6 @@ export async function getDiscordProfile(
 export async function createOrUpdateDiscordProfile(
   profile: discord_user_profile,
 ): Promise<void> {
-  if (!profile) {
-    throw new Error("Profile is required");
-  }
   await prisma.discord_user_profile.upsert({
     where: {
       user_id: profile.user_id,
