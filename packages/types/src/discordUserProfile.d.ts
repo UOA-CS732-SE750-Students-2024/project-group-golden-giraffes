@@ -1,5 +1,5 @@
 export interface DiscordUserProfile {
-  user_id: bigint;
+  userId: bigint;
   username: string;
-  profile_picture_url: string;
+  profilePictureUrl: string;
 }
