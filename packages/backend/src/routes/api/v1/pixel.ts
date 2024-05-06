@@ -65,6 +65,8 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
       throw new BadRequestError("UserId does not exist");
     }
     // TODO: check for canvas discord_only status (not sure which table to look here)
+
+    // TODO: see if Promise.all() can work here
     await validatePixel(canvasId, data.x, data.y, true);
     await validateColor(data.colorId);
     await validateUser(canvasId, BigInt(userId));
