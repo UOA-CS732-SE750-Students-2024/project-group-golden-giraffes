@@ -26,8 +26,10 @@ statisticsRouter.get("/user/:userId/:canvasId", async (req, res) => {
 
 statisticsRouter.get("/leaderboard/:canvasId", async (req, res) => {
   try {
+    const sizeString = req.query.size as string;
+    const size = sizeString ? Number.parseInt(sizeString) : undefined;
     const canvasId = await parseCanvasId(req.params);
-    const leaderboard = await getLeaderboard(canvasId);
+    const leaderboard = await getLeaderboard(canvasId, size);
     res.status(200).json(leaderboard);
   } catch (error) {
     ApiError.sendError(res, error);

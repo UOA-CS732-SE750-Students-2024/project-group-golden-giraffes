@@ -44,6 +44,10 @@ Content-Type: application/json
 
 ### Statistics
 
-### Get user leaderboard for a canvas
+### Get leaderboard for a canvas
 GET {{basePath}}/statistics/leaderboard/2022 HTTP/1.1
+Content-Type: application/json
+
+### Get leaderboard of a certain size for a canvas
+GET {{basePath}}/statistics/leaderboard/2022?size=3 HTTP/1.1
 Content-Type: application/json
