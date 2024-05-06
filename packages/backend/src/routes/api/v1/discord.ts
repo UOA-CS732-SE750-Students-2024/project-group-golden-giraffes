@@ -1,4 +1,4 @@
-import { createOrUpdateDiscordProfile } from "@/services/discordProfileService";
+import { createDefaultAvatarUrl, createOrUpdateDiscordProfile } from "@/services/discordProfileService";
 import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
 import passport from "passport";
@@ -26,8 +26,7 @@ discordRouter.get(
     const userId = BigInt(id);
     let profilePictureUrl = "";
     if (!avatar) {
-      // TODO add a default profile picture
-      profilePictureUrl = "https://cdn.discordapp.com/embed/avatars/0.png";
+      profilePictureUrl = createDefaultAvatarUrl(userId);
     } else {
       profilePictureUrl = avatar;
     }
