@@ -154,12 +154,27 @@ describe("Place Pixel Tests", () => {
       canvasId,
       userId,
       { x: 1, y: 1, colorId: 2 },
-      new Date(Date.now() + 1),
+      new Date(Date.now() + 31),
     );
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 
     expect(before.pixel).not.toStrictEqual(after.pixel);
     expect(before.cooldown).not.toStrictEqual(after.cooldown);
+    expect(before.history.length + 1).toEqual(after.history.length);
+  });
+
+  it("Resolves it only places once within 30 seconds", async () => {
+    const canvasId = 1;
+    const userId = BigInt(1);
+
+    const date = new Date();
+
+    const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
+    for (let i = 0; i < 3; i++) {
+      await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, date);
+    }
+    const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
+
     expect(before.history.length + 1).toEqual(after.history.length);
   });
 
