@@ -41,3 +41,18 @@ export function createDefaultAvatarUrl(userId: bigint): string {
 
   return `https://cdn.discordapp.com/embed/avatars/${avatarId}.png`;
 }
+
+export async function saveDiscordProfile(
+  userId: bigint,
+  username: string,
+  profilePictureUrl: string | null,
+): Promise<void> {
+  const newProfilePictureUrl: string =
+    profilePictureUrl || createDefaultAvatarUrl(userId);
+
+  await createOrUpdateDiscordProfile({
+    user_id: userId,
+    username,
+    profile_picture_url: newProfilePictureUrl,
+  });
+}

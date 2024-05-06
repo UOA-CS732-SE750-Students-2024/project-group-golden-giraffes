@@ -1,6 +1,7 @@
 import {
   createDefaultAvatarUrl,
   createOrUpdateDiscordProfile,
+  saveDiscordProfile,
 } from "@/services/discordProfileService";
 import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
@@ -25,21 +26,8 @@ discordRouter.get(
     });
 
     // saving a user's id, name, and profile picture to our database to avoid rate limiting
-    const { id, username, avatar } = profile;
-    const userId = BigInt(id);
-    let profilePictureUrl = "";
-    if (!avatar) {
-      profilePictureUrl = createDefaultAvatarUrl(userId);
-    } else {
-      profilePictureUrl = avatar;
-    }
-
-    const discordProfile = {
-      user_id: userId,
-      username,
-      profile_picture_url: profilePictureUrl,
-    };
-    createOrUpdateDiscordProfile(discordProfile);
+    const { id: userId, username, avatar: profilePictureUrl } = profile;
+    saveDiscordProfile(BigInt(userId), username, profilePictureUrl);
 
     res.json(req.user);
   },
