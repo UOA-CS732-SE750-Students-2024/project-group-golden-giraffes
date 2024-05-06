@@ -21,12 +21,6 @@ const Select = styled(NativeSelect)`
     user-select: none;
   }
 
-  :hover,
-  ::before,
-  ::after {
-    content: unset;
-  }
-
   .MuiNativeSelect-select {
     padding: 0;
 
@@ -42,8 +36,18 @@ const Select = styled(NativeSelect)`
     margin-inline: 0.25rem;
   }
 
-  :hover {
+  .Mui-disabled {
+    cursor: wait;
+  }
+
+  :hover:not(.Mui-disabled) {
     background-color: var(--discord-legacy-greyple);
+  }
+
+  :hover,
+  ::before,
+  ::after {
+    content: unset;
   }
 
   :has(:focus),
