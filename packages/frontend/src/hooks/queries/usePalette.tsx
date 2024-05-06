@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import convert from "color-convert";
 
 import config from "@/config";
 import {
@@ -10,7 +9,7 @@ import {
   Palette,
   PaletteRequest,
 } from "@blurple-canvas-web/types";
-import { RGB } from "color-convert/conversions";
+import Color, { Coords } from "colorjs.io";
 
 export function usePalette(eventId?: BlurpleEvent["id"]) {
   const getPalette = async () => {
@@ -29,10 +28,9 @@ export function usePalette(eventId?: BlurpleEvent["id"]) {
   });
 }
 
-function sortPalette(palette: Palette) {
-  return [...palette].sort((a, b) => {
-    const aHue = convert.rgb.hsl(a.rgba.slice(0, 3) as RGB)[0];
-    const bHue = convert.rgb.hsl(b.rgba.slice(0, 3) as RGB)[0];
-    return aHue - bHue;
-  });
-}
+const sortPalette = (palette: Palette) =>
+  [...palette].sort(
+    (a, b) =>
+      new Color(`rgba(${a.rgba.join(",")})`).hsl[0] -
+      new Color(`rgba(${b.rgba.join(",")})`).hsl[0],
+  );
