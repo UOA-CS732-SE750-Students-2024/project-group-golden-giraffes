@@ -47,17 +47,15 @@ export async function getUserStats(
 }
 
 /**
- * Retrieves the top 10 users on the leaderboard for a canvas.
- *
- * @returns The top 10 users on the leaderboard for a canvas.
+ * Retrieves the top n users on the leaderboard for a canvas, up to a maximum
+ * of 40.
  */
 export async function getLeaderboard(
   canvasId: CanvasInfo["id"],
   size = 10,
 ): Promise<LeaderboardEntry[]> {
   const leaderboard = await prisma.leaderboard.findMany({
-    take: size,
-    // prisma doesn't seem to be preserving the order of the leaderboard view
+    take: Math.min(size, 40), // Arbitrary maximum
     orderBy: {
       rank: "asc",
     },
