@@ -1,5 +1,9 @@
-import { ApiError } from "@/errors";
-import { parseCanvasId } from "@/models/paramModels";
+import { ApiError, BadRequestError } from "@/errors";
+import {
+  LeaderboardParamModel,
+  LeaderboardQueryModel,
+  parseCanvasId,
+} from "@/models/paramModels";
 import { getLeaderboard, getUserStats } from "@/services/statisticsService";
 import { Router } from "express";
 
@@ -18,10 +22,28 @@ statisticsRouter.get("/user/:userId/:canvasId", async (req, res) => {
 
 statisticsRouter.get("/leaderboard/:canvasId", async (req, res) => {
   try {
-    const sizeString = req.query.size as string;
-    const size = sizeString ? Number.parseInt(sizeString) : undefined;
-    const canvasId = await parseCanvasId(req.params);
+    const [pathParams, queryParams] = await Promise.all([
+      LeaderboardParamModel.safeParseAsync(req.params),
+      LeaderboardQueryModel.safeParseAsync(req.query),
+    ]);
+
+    if (!pathParams.success) {
+      throw new BadRequestError(
+        "Malformed path parameters",
+        pathParams.error.issues,
+      );
+    }
+    if (!queryParams.success) {
+      throw new BadRequestError(
+        "Malformed query parameters",
+        queryParams.error.issues,
+      );
+    }
+
+    const { canvasId } = pathParams.data;
+    const { size } = queryParams.data;
     const leaderboard = await getLeaderboard(canvasId, size);
+
     res.status(200).json(leaderboard);
   } catch (error) {
     ApiError.sendError(res, error);
