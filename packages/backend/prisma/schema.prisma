@@ -67,6 +67,12 @@ model cooldown {
   @@unique([user_id, canvas_id])
 }
 
+model discord_user_profile {
+  user_id             BigInt @id
+  username            String
+  profile_picture_url String
+}
+
 model event {
   id           Int             @id
   name         String
