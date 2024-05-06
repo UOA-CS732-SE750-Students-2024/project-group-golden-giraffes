@@ -78,6 +78,7 @@ model event {
   name         String
   canvases     canvas[]
   participants participation[]
+  info         info[]
 }
 
 model frame {
@@ -125,6 +126,7 @@ model info {
   title                   String   @id
   canvas_admin            BigInt[]
   current_event_id        Int
+  current_event           event    @relation(fields: [current_event_id], references: [id])
   cached_canvas_ids       Int[]
   highlight_color         Int?
   admin_server_id         BigInt
