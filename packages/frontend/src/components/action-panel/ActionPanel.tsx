@@ -2,6 +2,7 @@
 
 import { styled } from "@mui/material";
 import { useEffect, useState } from "react";
+import { ORIGIN, Point } from "../canvas/point";
 import PixelInfoTab from "./PixelInfoTab";
 import PlacePixelTab from "./PlacePixelTab";
 
@@ -99,13 +100,9 @@ enum TabTypes {
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TabTypes.Place);
 
-  const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
+  const [coordinates, setCoordinates] = useState<Point>(ORIGIN);
 
   const canvasId = 2023; // This is a placeholder value
-
-  useEffect(() => {
-    setCoordinates([0, 0]); // This is a placeholder value
-  }, []);
 
   return (
     <>

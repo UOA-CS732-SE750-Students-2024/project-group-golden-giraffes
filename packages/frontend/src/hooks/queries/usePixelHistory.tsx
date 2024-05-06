@@ -3,18 +3,18 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+import { Point } from "@/components/canvas/point";
 import config from "@/config";
 import { CanvasInfo, HistoryRequest } from "@blurple-canvas-web/types";
 
 export function usePixelHistory(
   canvasId: CanvasInfo["id"],
-  coordinates: [number, number] | null,
+  coordinates: Point,
 ) {
   const fetchHistory = async ({ signal }: { signal: AbortSignal }) => {
     if (coordinates !== null) {
-      const [x, y] = coordinates;
       const response = await axios.get<HistoryRequest.ResBody>(
-        `${config.apiUrl}/api/v1/canvas/${canvasId}/pixel/history?x=${x}&y=${y}`,
+        `${config.apiUrl}/api/v1/canvas/${canvasId}/pixel/history?x=${coordinates.x}&y=${coordinates.y}`,
         { signal },
       );
       return response.data;

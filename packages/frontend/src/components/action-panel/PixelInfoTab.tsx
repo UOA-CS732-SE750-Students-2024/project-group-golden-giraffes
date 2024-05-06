@@ -3,6 +3,7 @@ import { PaletteColor, PixelHistoryRecord } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Point } from "../canvas/point";
 import { colorToSwatch } from "../color/Color";
 import { ActionMenu, Heading } from "./ActionPanel";
 
@@ -86,7 +87,7 @@ export const HistoryRecordComponent = ({
 };
 
 interface PixelInfoTabProps {
-  coordinates: [number, number] | null;
+  coordinates: Point;
   canvasId: number;
 }
 
@@ -120,40 +121,35 @@ export default function PixelInfoTab({
   return (
     <>
       <ActionMenu>
-        {coordinates && (
-          <>
-            <Coordinates>
-              <span>x: {coordinates[0]}</span>
-              <span>y: {coordinates[1]}</span>
-            </Coordinates>
-            {currentPixelHistory && ( // To be redesigned later
+        <Coordinates>
+          <span>x: {coordinates.x}</span>
+          <span>y: {coordinates.y}</span>
+        </Coordinates>
+        {currentPixelHistory && ( // To be redesigned later
+          <HistoryRecordComponent
+            history={currentPixelHistory}
+            color={
+              palette.find(
+                (color) => color.id === currentPixelHistory.colorId,
+              ) ?? undefined
+            }
+          />
+        )}
+        <Heading>Paint history</Heading>
+        {pastPixelHistory && (
+          <HistoryRecords>
+            {pastPixelHistory.map((history) => (
               <HistoryRecordComponent
-                history={currentPixelHistory}
+                key={history.id}
+                history={history}
                 color={
-                  palette.find(
-                    (color) => color.id === currentPixelHistory.colorId,
-                  ) ?? undefined
+                  palette.find((color) => color.id === history.colorId) ||
+                  undefined
                 }
               />
-            )}
-            <Heading>Paint history</Heading>
-            {pastPixelHistory && (
-              <HistoryRecords>
-                {pastPixelHistory.map((history) => (
-                  <HistoryRecordComponent
-                    key={history.id}
-                    history={history}
-                    color={
-                      palette.find((color) => color.id === history.colorId) ||
-                      undefined
-                    }
-                  />
-                ))}
-              </HistoryRecords>
-            )}
-          </>
+            ))}
+          </HistoryRecords>
         )}
-        {!coordinates && <p>Click on a pixel to see its history</p>}
       </ActionMenu>
     </>
   );
