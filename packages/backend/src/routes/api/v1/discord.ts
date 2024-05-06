@@ -27,11 +27,3 @@ discordRouter.get(
     res.json(req.user);
   },
 );
-
-discordRouter.get("/test", (req, res) => {
-  console.log("router");
-  if (!req.user) {
-    res.status(401).json({ message: "Not Authenticated" });
-  }
-  res.status(201).json({ user: req.user, message: "Authenication Success" });
-});
