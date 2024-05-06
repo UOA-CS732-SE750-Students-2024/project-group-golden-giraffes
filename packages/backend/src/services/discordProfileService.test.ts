@@ -14,7 +14,7 @@ describe("discordProfileService", () => {
   });
 
   describe("getDiscordProfile", () => {
-    it("should return the discord profile for a given user ID", async () => {
+    it("should return the Discord profile for a given user ID", async () => {
       const userId = 204778476102877187n;
       const expectedProfile = {
         user_id: BigInt(204778476102877187n),
