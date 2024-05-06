@@ -148,12 +148,21 @@ describe("Place Pixel Tests", () => {
     const canvasId = 1;
     const userId = BigInt(1);
 
-    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, new Date());
+    await placePixel(
+      canvasId,
+      userId,
+      1,
+      1,
+      { id: 1, rgba: [88, 101, 242, 127] },
+      new Date(),
+    );
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
     await placePixel(
       canvasId,
       userId,
-      { x: 1, y: 1, colorId: 2 },
+      1,
+      1,
+      { id: 2, rgba: [88, 101, 242, 255] },
       // create a user that is technically 31 seconds from the previous user.
       new Date(Date.now() + 31),
     );
@@ -172,7 +181,14 @@ describe("Place Pixel Tests", () => {
 
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
     for (let i = 0; i < 3; i++) {
-      await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, date);
+      await placePixel(
+        canvasId,
+        userId,
+        1,
+        1,
+        { id: 1, rgba: [88, 101, 242, 127] },
+        date,
+      );
     }
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 

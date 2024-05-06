@@ -1,7 +1,13 @@
 import { prisma } from "@/client";
 import config from "@/config";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
-import { PixelHistoryRecord, PixelInfo } from "@blurple-canvas-web/types";
+import {
+  PaletteColor,
+  PixelHistoryRecord,
+  PixelInfo,
+} from "@blurple-canvas-web/types";
+import { color } from "@prisma/client";
+import { updateCachedCanvasPixel } from "./canvasService";
 
 /**
  * Gets the pixel history for the given canvas and coordinates
@@ -90,8 +96,9 @@ export async function validatePixel(
  * Ensures that the given color exists in the DB and it is allowed to be used in the given canvas
  *
  * @param colorId - The ID of the color
+ * @returns The corresponding color object
  */
-export async function validateColor(colorId: number) {
+export async function validateColor(colorId: number): Promise<color> {
   const color = await prisma.color.findFirst({
     where: {
       id: colorId,
@@ -107,6 +114,8 @@ export async function validateColor(colorId: number) {
       `Partnered color with ID ${colorId} is not allowed from web client`,
     );
   }
+
+  return color;
 }
 
 /**
@@ -163,13 +172,17 @@ export async function validateUser(canvasId: number, userId: bigint) {
  *
  * @param canvasId - The ID of the canvas
  * @param userId - The ID of the user
- * @param placePixel - The pixel to place with coordinates and color
+ * @param x - The x coordinate of the pixel
+ * @param y - The y coordinate of the pixel
+ * @param color - The color of the pixel
  * @param cooldownTimeStamp - The timestamp of when the user can place another pixel
  */
 export async function placePixel(
   canvasId: number,
   userId: bigint,
-  { x, y, colorId }: PixelInfo,
+  x: number,
+  y: number,
+  color: Pick<PaletteColor, "id" | "rgba">,
   cooldownTimeStamp: Date,
 ) {
   await prisma.$transaction([
@@ -201,10 +214,10 @@ export async function placePixel(
         canvas_id: canvasId,
         x: x,
         y: y,
-        color_id: colorId,
+        color_id: color.id,
       },
       update: {
-        color_id: colorId,
+        color_id: color.id,
       },
     }),
     prisma.history.create({
@@ -213,10 +226,12 @@ export async function placePixel(
         canvas_id: canvasId,
         x: x,
         y: y,
-        color_id: colorId,
+        color_id: color.id,
         timestamp: cooldownTimeStamp,
         guild_id: config.webGuildId,
       },
     }),
   ]);
+
+  updateCachedCanvasPixel(canvasId, x, y, color.rgba);
 }

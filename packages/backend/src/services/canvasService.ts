@@ -192,7 +192,7 @@ export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
  * @param y The y coordinate of the pixel
  * @param color The color of the pixel
  */
-export function updateCachedPixel(
+export function updateCachedCanvasPixel(
   canvasId: CanvasInfo["id"],
   x: number,
   y: number,
