@@ -30,7 +30,7 @@ describe("discordProfileService", () => {
   });
 
   describe("createOrUpdateDiscordProfile", () => {
-    it("should create or update a discord profile", async () => {
+    it("should create a discord profile", async () => {
       const profile = {
         user_id: 111111111111111111n,
         username: "test_user",
@@ -45,6 +45,23 @@ describe("discordProfileService", () => {
       });
 
       expect(createdProfile).toEqual(profile);
+    });
+
+    it("should update a discord profile", async () => {
+      const profile = {
+        user_id: 204778476102877187n,
+        username: "rocked314",
+        profile_picture_url:
+          "https://cdn.discordapp.com/avatars/204778476102877187/f4468ea05fa0dada4e3a3fbe18b748fe.png",
+      };
+
+      await createOrUpdateDiscordProfile(profile);
+
+      const updatedProfile = await prisma.discord_user_profile.findUnique({
+        where: { user_id: 204778476102877187n },
+      });
+
+      expect(updatedProfile).toEqual(profile);
     });
   });
 
