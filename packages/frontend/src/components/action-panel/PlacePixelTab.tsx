@@ -13,7 +13,7 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-export default function PlacePaletteTab() {
+export default function PlacePixelTab() {
   const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
   const [mainColors, partnerColors] = partitionPalette(palette);
 

@@ -3,7 +3,7 @@
 import { styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import PixelInfoTab from "./PixelInfoTab";
-import PlacePaletteTab from "./PlacePaletteTab";
+import PlacePixelTab from "./PlacePixelTab";
 
 const Container = styled("div")`
   background-color: var(--discord-legacy-not-quite-black);
@@ -90,14 +90,14 @@ export const Heading = styled("h2")`
   text-transform: uppercase;
 `;
 
-export default function ActionPanel() {
-  enum TabTypes {
-    Look = "Look",
-    Place = "Place",
-    Zen = "Zen",
-  }
+enum TabTypes {
+  Look = "Look",
+  Place = "Place",
+  Zen = "Zen",
+}
 
-  const [currentTab, setCurrentTab] = useState<TabTypes>(TabTypes.Place);
+export default function ActionPanel() {
+  const [currentTab, setCurrentTab] = useState(TabTypes.Place);
 
   const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
 
@@ -119,7 +119,7 @@ export default function ActionPanel() {
           <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
         </TabContainer>
         <TabContainer active={currentTab === TabTypes.Place}>
-          <PlacePaletteTab />
+          <PlacePixelTab />
         </TabContainer>
         <TabContainer active={currentTab === TabTypes.Zen}>🧘</TabContainer>
       </Container>

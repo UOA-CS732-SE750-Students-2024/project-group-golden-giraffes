@@ -1,5 +1,5 @@
 import { usePalette, usePixelHistory } from "@/hooks";
-import { PaletteColor, PixelHistory } from "@blurple-canvas-web/types";
+import { PaletteColor, PixelHistoryRecord } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -15,11 +15,13 @@ export const Coordinates = styled("p")`
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   text-align: center;
 `;
+
 export const HistoryRecords = styled("div")`
   display: grid;
   grid-column: 1 / -1;
   row-gap: 1.5rem;
 `;
+
 export const Record = styled("div")`
   align-items: center;
   display: flex;
@@ -29,24 +31,29 @@ export const Record = styled("div")`
     inline-size: 3em;
   }
 `;
+
 export const RecordInfo = styled("div")`
   display: flex;
   flex-direction: column;
   flex: 1;
   gap: 0.5rem;
 `;
+
 export const RecordAuthor = styled("span")`
   font-size: 1.3rem;
 `;
+
 export const RecordColor = styled("div")`
   align-items: center;
   display: flex;
   gap: 0.5rem;
   opacity: 0.6;
 `;
+
 export const RecordColorName = styled("span")`
   font-size: 1.2rem;
 `;
+
 export const RecordColorCode = styled("span")`
   background-color: rgba(255, 255, 255, 0.12);
   border-radius: 0.25rem;
@@ -54,11 +61,12 @@ export const RecordColorCode = styled("span")`
   font-size: 0.9rem;
   padding: 0.25rem 0.5rem;
 `;
+
 export const HistoryRecord = ({
   history,
   color,
 }: {
-  history: PixelHistory;
+  history: PixelHistoryRecord;
   color?: PaletteColor;
 }) => {
   if (color) {
@@ -94,12 +102,14 @@ export default function PixelInfoTab({
   const queryClient = useQueryClient();
 
   const [currentPixelHistory, setCurrentPixelHistory] =
-    useState<PixelHistory | null>(null);
-  const [pastPixelHistory, setPastPixelHistory] = useState<PixelHistory[]>([]);
+    useState<PixelHistoryRecord | null>(null);
+  const [pastPixelHistory, setPastPixelHistory] = useState<
+    PixelHistoryRecord[]
+  >([]);
 
   useEffect(() => {
-    setCurrentPixelHistory(pixelHistory?.[0] || null);
-    setPastPixelHistory(pixelHistory?.slice(1) || []);
+    setCurrentPixelHistory(pixelHistory[0] || null);
+    setPastPixelHistory(pixelHistory.slice(1) || []);
   }, [pixelHistory]);
 
   // Do this ⬇️ to cancel history query
@@ -126,7 +136,7 @@ export default function PixelInfoTab({
                 }
               />
             )}
-            <Heading>Paint History</Heading>
+            <Heading>Paint history</Heading>
             {pastPixelHistory && (
               <HistoryRecords>
                 {pastPixelHistory.map((history) => (
@@ -143,7 +153,7 @@ export default function PixelInfoTab({
             )}
           </>
         )}
-        {!coordinates && <p>Click on a pixel to see its history.</p>}
+        {!coordinates && <p>Click on a pixel to see its history</p>}
       </ActionMenu>
     </>
   );

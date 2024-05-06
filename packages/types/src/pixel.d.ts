@@ -1,4 +1,4 @@
-export interface PixelHistory {
+export interface PixelHistoryRecord {
   id: string;
   userId: string;
   colorId: number;

@@ -1,13 +1,13 @@
 import { prisma } from "@/client";
 import { NotFoundError } from "@/errors";
 import BadRequestError from "@/errors/BadRequestError";
-import { PixelHistory } from "@blurple-canvas-web/types";
+import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 
 export async function getPixelHistory(
   canvasId: number,
   x: number,
   y: number,
-): Promise<PixelHistory[]> {
+): Promise<PixelHistoryRecord[]> {
   // check if canvas exists
   const canvas = await prisma.canvas.findFirst({
     where: {
