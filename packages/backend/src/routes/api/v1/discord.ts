@@ -3,7 +3,11 @@ import passport from "passport";
 
 import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 
-import { saveDiscordProfile } from "@/services/discordProfileService";
+import { NotFoundError } from "@/errors";
+import {
+  getDiscordProfile,
+  saveDiscordProfile,
+} from "@/services/discordProfileService";
 
 export const discordRouter = Router();
 
@@ -30,3 +34,17 @@ discordRouter.get(
     res.json(req.user);
   },
 );
+
+discordRouter.get("/cache/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const profile = await getDiscordProfile(BigInt(userId));
+    res.json(profile);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+});
