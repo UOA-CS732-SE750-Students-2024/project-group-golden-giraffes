@@ -4,7 +4,7 @@ import { styled } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Point } from "../canvas/point";
-import { ColorLabel, colorToSwatch } from "../color/Color";
+import { PaletteColorRecord, colorToSwatch } from "../color/Color";
 import { ActionMenu, Heading } from "./ActionPanel";
 
 export const Coordinates = styled("p")`
@@ -61,7 +61,7 @@ export const HistoryRecordComponent = ({
         <RecordAuthor>{history.userId}</RecordAuthor>
         {color && (
           <RecordColor>
-            <ColorLabel color={color} displaySwatch={false} />
+            <PaletteColorRecord color={color} displaySwatch={false} />
           </RecordColor>
         )}
       </RecordInfo>

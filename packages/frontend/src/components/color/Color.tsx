@@ -90,7 +90,7 @@ interface ColorProps {
   displayCode?: boolean;
 }
 
-export const ColorLabel = ({
+export const PaletteColorRecord = ({
   color,
   displaySwatch = true,
   displayName = true,
