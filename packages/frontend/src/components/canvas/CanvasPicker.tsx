@@ -29,6 +29,12 @@ const Select = styled(NativeSelect)`
 
   .MuiNativeSelect-select {
     padding: 0;
+
+    :focus,
+    :focus-visible {
+      background-color: unset;
+      outline: 0;
+    }
   }
 
   .MuiNativeSelect-icon {
@@ -40,8 +46,8 @@ const Select = styled(NativeSelect)`
     background-color: var(--discord-legacy-greyple);
   }
 
-  :focus,
-  :focus-visible {
+  has(:focus),
+  has(:focus-visible) {
     outline: var(--focus-outline);
   }
 `;
