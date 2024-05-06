@@ -162,10 +162,9 @@ export async function validateUser(canvasId: number, userId: bigint) {
 export async function placePixel(
   canvasId: number,
   userId: bigint,
-  placePixel: PlacePixel,
+  { x, y, colorId }: PlacePixel,
   cooldownTimeStamp: Date,
 ) {
-  const { x, y, colorId } = placePixel;
   await prisma.$transaction([
     prisma.cooldown.upsert({
       where: {
