@@ -1,8 +1,7 @@
-import { styled } from "@mui/material";
 import type { Metadata } from "next";
 
-import Main from "@/components/Main";
 import { Navbar } from "@/components/nav";
+import Main from "./Main";
 
 export const metadata: Metadata = {
   title: "Blurple Canvas",

@@ -8,9 +8,8 @@ export interface UserStats {
   mostRecentTimestamp?: string;
 }
 
-export interface LeaderboardRow {
+export interface LeaderboardEntry {
   rank: number;
   userId: string;
-  canvasId: number;
   totalPixels: number;
 }
