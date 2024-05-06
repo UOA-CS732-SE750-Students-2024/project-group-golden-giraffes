@@ -63,6 +63,7 @@ model cooldown {
   cooldown_time DateTime? @db.Timestamptz(6)
 
   @@id([user_id, canvas_id])
+  // Necessary to get update and upsert working with prismock
   @@unique([user_id, canvas_id])
 }
 
@@ -149,6 +150,7 @@ model pixel {
   color     color  @relation(fields: [color_id], references: [id])
 
   @@id([canvas_id, x, y])
+  // Necessary to get update and upsert working with prismock
   @@unique([canvas_id, x, y])
 }
 
