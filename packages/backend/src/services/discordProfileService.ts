@@ -35,8 +35,8 @@ export async function createOrUpdateDiscordProfile(
 }
 
 export function createDefaultAvatarUrl(userId: bigint): string {
-  const BIT_SHIFT_VALUE: bigint = 22n;
-  const NUMBER_OF_AVATARS: bigint = 6n;
+  const BIT_SHIFT_VALUE = 22n;
+  const NUMBER_OF_AVATARS = 6n;
   const avatarId = (userId >> BIT_SHIFT_VALUE) % NUMBER_OF_AVATARS;
 
   return `https://cdn.discordapp.com/embed/avatars/${avatarId}.png`;
