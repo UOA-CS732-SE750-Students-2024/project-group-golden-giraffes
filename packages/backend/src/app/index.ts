@@ -6,6 +6,7 @@ import { prisma } from "@/client";
 import config from "@/config";
 import { apiRouter } from "@/routes";
 import "@/utils"; // Make BigInt JSON serializable
+import { initializeAuth } from "@/middleware/auth";
 
 export interface ExpressServer {
   app: Express;
@@ -19,6 +20,7 @@ export function createApp(): ExpressServer {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
+  initializeAuth(app);
   app.use(apiRouter);
 
   app.get("/", (req, res) => {
