@@ -209,7 +209,13 @@ const colorToSwatch = (color: PaletteColor, selected = false) => {
 };
 
 export default function ActionPanel() {
-  const [currentTab, setCurrentTab] = useState<string>("Place");
+  enum TabTypes {
+    Look = "Look",
+    Place = "Place",
+    Zen = "Zen",
+  }
+
+  const [currentTab, setCurrentTab] = useState<TabTypes>(TabTypes.Place);
 
   const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
 
@@ -243,9 +249,9 @@ export default function ActionPanel() {
   return (
     <>
       <TabBar>
-        <Tab onClick={() => setCurrentTab("Look")}>Look</Tab>
-        <Tab onClick={() => setCurrentTab("Place")}>Place</Tab>
-        <ZenTab onClick={() => setCurrentTab("Zen")}>🧘</ZenTab>
+        <Tab onClick={() => setCurrentTab(TabTypes.Look)}>Look</Tab>
+        <Tab onClick={() => setCurrentTab(TabTypes.Place)}>Place</Tab>
+        <ZenTab onClick={() => setCurrentTab(TabTypes.Zen)}>🧘</ZenTab>
       </TabBar>
       <Container>
         {currentTab === "Look" && (
