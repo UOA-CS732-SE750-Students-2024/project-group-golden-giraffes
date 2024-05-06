@@ -1,8 +1,9 @@
 import { prisma } from "@/client";
+import { NotFoundError } from "@/errors";
 import { discord_user_profile } from "@prisma/client";
 
 export async function getDiscordProfile(
-  userId: discord_user_profile['user_id'],
+  userId: discord_user_profile["user_id"],
 ): Promise<discord_user_profile> {
   const discordUserProfile = await prisma.discord_user_profile.findFirst({
     where: {
@@ -11,7 +12,7 @@ export async function getDiscordProfile(
   });
 
   if (!discordUserProfile) {
-    throw new Error(`Discord profile not found for user ID ${userId}`);
+    throw new NotFoundError(`Discord profile not found for user ID ${userId}`);
   }
 
   return discordUserProfile;
