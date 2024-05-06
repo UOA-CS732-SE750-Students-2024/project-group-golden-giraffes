@@ -22,8 +22,8 @@ statisticsRouter.get("/user/:userId/:canvasId", async (req, res) => {
 
 statisticsRouter.get("/leaderboard/:canvasId", async (req, res) => {
   try {
-    const [pathParams, queryParams] = await Promise.all([
-      LeaderboardParamModel.safeParseAsync(req.params),
+    const [canvasId, queryParams] = await Promise.all([
+      parseCanvasId(req.params),
       LeaderboardQueryModel.safeParseAsync(req.query),
     ]);
 
