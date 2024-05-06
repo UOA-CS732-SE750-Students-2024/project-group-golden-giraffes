@@ -1,5 +1,4 @@
-import config from "@/config";
-import { usePalette } from "@/hooks";
+import { usePalette, usePixelHistory } from "@/hooks";
 import { PaletteColor, PixelHistory } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -8,12 +7,12 @@ import { ActionMenu, Heading } from "./ActionPanel";
 
 export const Coordinates = styled("p")`
   color: oklch(var(--discord-white-oklch) / 60%);
+  display: grid;
+  font-family: var(--font-monospace);
   font-size: 1.8rem;
   grid-column: 1 / -1;
-  text-align: center;
-  font-family: var(--font-monospace);
-  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  text-align: center;
 `;
 export const HistoryRecords = styled("div")`
   display: grid;
@@ -21,38 +20,38 @@ export const HistoryRecords = styled("div")`
   row-gap: 1.5rem;
 `;
 export const Record = styled("div")`
+  align-items: center;
   display: flex;
   gap: 1rem;
   justify-content: space-between;
-  align-items: center;
-  & > *:first-child {
-    width: 3em;
+  & > :first-child {
+    inline-size: 3em;
   }
 `;
 export const RecordInfo = styled("div")`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   flex: 1;
+  gap: 0.5rem;
 `;
 export const RecordAuthor = styled("span")`
   font-size: 1.3rem;
 `;
 export const RecordColor = styled("div")`
+  align-items: center;
   display: flex;
   gap: 0.5rem;
-  align-items: center;
   opacity: 0.6;
 `;
 export const RecordColorName = styled("span")`
   font-size: 1.2rem;
 `;
 export const RecordColorCode = styled("span")`
-  font-size: 0.9rem;
-  font-family: var(--font-monospace);
   background-color: rgba(255, 255, 255, 0.12);
-  padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
+  font-family: var(--font-monospace);
+  font-size: 0.9rem;
+  padding: 0.25rem 0.5rem;
 `;
 export const HistoryRecord = ({
   history,
@@ -77,38 +76,25 @@ export const HistoryRecord = ({
   }
 };
 
+interface PixelInfoTabProps {
+  coordinates: [number, number] | null;
+  canvasId: number;
+}
+
 export default function PixelInfoTab({
   coordinates,
   canvasId,
-}: {
-  coordinates: [number, number] | null;
-  canvasId: number;
-}) {
+}: PixelInfoTabProps) {
   const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
 
-  const [pixelHistory, setPixelHistory] = useState<PixelHistory[] | null>(null);
-
-  useEffect(() => {
-    const fetchUserStats = async () => {
-      if (coordinates) {
-        const response = await fetch(
-          `${config.apiUrl}/api/v1/canvas/${canvasId}/pixel/history?x=${coordinates[0]}&y=${coordinates[1]}`,
-        );
-        const data = await response.json();
-        setPixelHistory(data);
-      } else {
-        setPixelHistory(null);
-      }
-    };
-
-    fetchUserStats();
-  }, [coordinates, canvasId]);
+  const { data: pixelHistory = [], isLoading: historyIsLoading } =
+    usePixelHistory(canvasId, coordinates);
 
   const [currentPixelHistory, setCurrentPixelHistory] =
     useState<PixelHistory | null>(null);
   const [pastPixelHistory, setPastPixelHistory] = useState<PixelHistory[]>([]);
+
   useEffect(() => {
-    console.log(pixelHistory);
     setCurrentPixelHistory(pixelHistory?.[0] || null);
     setPastPixelHistory(pixelHistory?.slice(1) || []);
   }, [pixelHistory]);
