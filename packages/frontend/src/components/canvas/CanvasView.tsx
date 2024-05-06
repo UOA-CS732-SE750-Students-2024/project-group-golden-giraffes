@@ -131,6 +131,11 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   useEffect(() => {
     if (!imageDimensions) return;
 
+    /**
+     * When we zoom, not only do we need to scale the image, but to give the appearing of zooming
+     * in on a specific pixel, we need to offset the image so that the pixel we're zooming in on
+     * stays in the same place on the screen after the zoom.
+     */
     const handleWheel = (event: WheelEvent): void => {
       event.preventDefault();
 
@@ -139,7 +144,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         y: event.offsetY,
       };
 
-      // Offset to get to the mouse position
+      // The mouse position's origin is in the top left of the canvas. The offset's origin is the
+      // center of the canvas so we do this to convert between the two.
       const mouseOffsetDirection = diffPoints(
         {
           x: imageDimensions.width / 2,
@@ -155,18 +161,21 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const effectiveScale = newZoom / zoom;
 
       setOffset((prevOffset) => {
-        const offsetDiffDirection = diffPoints(
-          mouseOffsetDirection,
-          prevOffset,
-        );
+        // The direction we need to shift the offset to keep the pixel in the same place
+        const offsetDif = diffPoints(mouseOffsetDirection, prevOffset);
 
-        // The amount we move in the direction of the offset is based on how much we're zooming in
-        const offsetDiff = multiplyPoint(
-          offsetDiffDirection,
+        // The amount we shift is scaled based on the amount we've zoomed in.
+        const scaledOffsetDiff = multiplyPoint(
+          offsetDif,
+          // If the scale is 1, we've not zoomed in at all and so this multiplier becomes 0
+          // (causing no offset). If the scale is greater than 1, we're zooming in. A larger scale
+          // corresponds to a larger step (as 1/effectiveScale approaches 0). If the scale is less
+          // than 1, we're zooming out. In this case, 1 / effective scale becomes greater than 1,
+          // causing a negative offset. Thanks Henry for figuring out this equation 🙏.
           1 - 1 / effectiveScale,
         );
 
-        return clampOffset(addPoints(offsetDiff, prevOffset));
+        return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
       });
       setZoom(newZoom);
     };
