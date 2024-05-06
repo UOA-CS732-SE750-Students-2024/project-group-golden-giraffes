@@ -13,6 +13,11 @@ export const ColorfulDiv = styled("div", {
     border: oklch(var(--discord-white-oklch) / 30%) 3px solid;
     gap: 0.25rem;
     ${size && `inline-size: ${size}em;`}
+
+    &.selected,
+    &.active {
+      border-color: var(--discord-white-oklch);
+    }
   `,
 );
 
@@ -44,18 +49,29 @@ export const ColorCode = styled("span")`
 
 interface SwatchProps {
   rgba: PaletteColor["rgba"];
+  active?: boolean;
   selected?: boolean;
   size?: number;
 }
 
-export const Swatch = ({ rgba, selected = false, size }: SwatchProps) => {
+export const Swatch = ({
+  rgba,
+  active = false,
+  selected = false,
+  size,
+}: SwatchProps) => {
   // Convert [255, 255, 255, 255] to rgb(255 255 255 / 1.0)
   const rgb = rgba.slice(0, 3).join(" ");
   const alphaFloat = rgba[3] / 255;
 
   return (
     <ColorfulDiv
-      className={selected ? "selected" : undefined}
+      className={
+        selected ? "selected"
+        : active ?
+          "active"
+        : undefined
+      }
       colorString={`rgb(${rgb} / ${alphaFloat})`}
       size={size}
     />
@@ -64,12 +80,14 @@ export const Swatch = ({ rgba, selected = false, size }: SwatchProps) => {
 
 interface ColorToSwatchProps {
   color: PaletteColor;
+  active?: boolean;
   selected?: boolean;
   size?: number;
 }
 
 export const colorToSwatch = ({
   color,
+  active = false,
   selected = false,
   size,
 }: ColorToSwatchProps) => {
@@ -77,6 +95,7 @@ export const colorToSwatch = ({
     <Swatch
       key={color.code}
       rgba={color.rgba}
+      active={active}
       selected={selected}
       size={size}
     />

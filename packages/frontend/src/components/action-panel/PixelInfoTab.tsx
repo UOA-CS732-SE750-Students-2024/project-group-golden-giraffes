@@ -28,9 +28,6 @@ export const Record = styled("div")`
   display: flex;
   gap: 1rem;
   justify-content: space-between;
-  & > :first-child {
-    inline-size: 3em;
-  }
 `;
 
 export const RecordInfo = styled("div")`
@@ -56,7 +53,7 @@ export const HistoryRecordComponent = ({
 }) => {
   return (
     <Record>
-      {color && colorToSwatch({ color, selected: true })}
+      {color && colorToSwatch({ color, size: 3 })}
       <RecordInfo>
         <RecordAuthor>{history.userId}</RecordAuthor>
         {color && (
