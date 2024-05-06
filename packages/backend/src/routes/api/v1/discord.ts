@@ -1,7 +1,9 @@
-import { saveDiscordProfile } from "@/services/discordProfileService";
-import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
 import passport from "passport";
+
+import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
+
+import { saveDiscordProfile } from "@/services/discordProfileService";
 
 export const discordRouter = Router();
 
