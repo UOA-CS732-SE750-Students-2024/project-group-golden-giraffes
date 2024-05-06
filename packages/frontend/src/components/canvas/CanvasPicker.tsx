@@ -84,7 +84,7 @@ export default function CanvasPicker() {
         <optgroup label="Main">{canvasToSelectOption(mainCanvas)}</optgroup>
       )}
       {currentCanvases.length > 0 && (
-        <optgroup label="Past">
+        <optgroup label="Current">
           {currentCanvases.map(canvasToSelectOption)}
         </optgroup>
       )}
