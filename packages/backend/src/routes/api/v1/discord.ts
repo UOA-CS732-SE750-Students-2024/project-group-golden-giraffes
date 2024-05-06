@@ -1,3 +1,4 @@
+import { createOrUpdateDiscordProfile } from "@/services/discordProfileService";
 import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
 import passport from "passport";
@@ -19,6 +20,24 @@ discordRouter.get(
       httpOnly: true,
       secure: true,
     });
+
+    // saving a user's id, name, and profile picture to our database to avoid rate limiting
+    const { id, username, avatar } = profile;
+    const userId = BigInt(id);
+    let profilePictureUrl = "";
+    if (!avatar) {
+      // TODO add a default profile picture
+      profilePictureUrl = "https://cdn.discordapp.com/embed/avatars/0.png";
+    } else {
+      profilePictureUrl = avatar;
+    }
+
+    const discordProfile = {
+      user_id: userId,
+      username,
+      profile_picture_url: profilePictureUrl,
+    };
+    createOrUpdateDiscordProfile(discordProfile);
 
     res.json(req.user);
   },

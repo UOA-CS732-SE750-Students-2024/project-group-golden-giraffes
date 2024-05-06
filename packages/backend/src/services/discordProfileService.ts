@@ -18,18 +18,18 @@ export async function getDiscordProfile(
 }
 
 export async function createOrUpdateDiscordProfile(
-  userId: bigint,
   profile: discord_user_profile,
 ): Promise<void> {
+  if (!profile) {
+    throw new Error("Profile is required");
+  }
   await prisma.discord_user_profile.upsert({
     where: {
-      user_id: userId,
+      user_id: profile.user_id,
     },
     update: profile,
     create: {
-      user_id: userId,
-      username: profile.username,
-      profile_picture_url: profile.profile_picture_url,
+      ...profile,
     },
   });
 }
