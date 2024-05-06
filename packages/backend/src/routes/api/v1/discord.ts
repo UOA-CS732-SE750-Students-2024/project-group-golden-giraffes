@@ -1,4 +1,7 @@
-import { createDefaultAvatarUrl, createOrUpdateDiscordProfile } from "@/services/discordProfileService";
+import {
+  createDefaultAvatarUrl,
+  createOrUpdateDiscordProfile,
+} from "@/services/discordProfileService";
 import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
 import passport from "passport";
