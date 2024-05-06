@@ -17,30 +17,19 @@ export async function getDiscordProfile(
   return discordUserProfile;
 }
 
-export async function createDiscordProfile(
-  discordUserProfile: discord_user_profile,
-) {
-  // TODO: Unsure if I should check for existing profile here or at the endpoint
-  await prisma.discord_user_profile.create({
-    data: {
-      user_id: discordUserProfile.user_id,
-      username: discordUserProfile.username,
-      profile_picture_url: discordUserProfile.profile_picture_url,
-    },
-  });
-}
-
-export async function updateDiscordProfile(
-  discordUserProfile: discord_user_profile,
-) {
-  // TODO: Unsure if I should check for existing profile here or at the endpoint
-  await prisma.discord_user_profile.update({
+export async function createOrUpdateDiscordProfile(
+  userId: bigint,
+  profile: discord_user_profile,
+): Promise<void> {
+  await prisma.discord_user_profile.upsert({
     where: {
-      user_id: discordUserProfile.user_id,
+      user_id: userId,
     },
-    data: {
-      username: discordUserProfile.username,
-      profile_picture_url: discordUserProfile.profile_picture_url,
+    update: profile,
+    create: {
+      user_id: userId,
+      username: profile.username,
+      profile_picture_url: profile.profile_picture_url,
     },
   });
 }
