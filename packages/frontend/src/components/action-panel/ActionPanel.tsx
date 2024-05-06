@@ -2,12 +2,7 @@
 
 import config from "@/config";
 import { usePalette } from "@/hooks/queries";
-import {
-  Palette,
-  PaletteColor,
-  Pixel,
-  PixelHistory,
-} from "@blurple-canvas-web/types";
+import { Palette, PaletteColor, PixelHistory } from "@blurple-canvas-web/types";
 import { css, styled } from "@mui/material";
 import Head from "next/head";
 import { useEffect, useState } from "react";
