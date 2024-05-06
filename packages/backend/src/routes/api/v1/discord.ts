@@ -1,10 +1,6 @@
-import crypto from "node:crypto";
-import config from "@/config";
 import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
-import session from "express-session";
 import passport from "passport";
-import { Strategy as DiscordStrategy } from "passport-discord";
 
 export const discordRouter = Router();
 
