@@ -1,8 +1,10 @@
 "use client";
 
-import { styled } from "@mui/material";
+import { NativeSelect, styled } from "@mui/material";
 
-const Select = styled("select")`
+import { useCanvasInfo, useCanvasList } from "@/hooks";
+
+const Select = styled(NativeSelect)`
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: 0;
@@ -24,12 +26,24 @@ const Select = styled("select")`
 `;
 
 export default function CanvasPicker() {
-  const options = ["Foo", "Bar", "Baz"];
+  const { data: canvases = [] } = useCanvasList();
+  const { data: mainCanvas } = useCanvasInfo();
+
+  const allButMain = canvases.filter(({ id }) => id !== mainCanvas?.id);
+
   return (
     <Select>
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
+      {mainCanvas && (
+        <>
+          <option key={mainCanvas.id} value={mainCanvas.id}>
+            {mainCanvas.name}
+          </option>
+          <hr />
+        </>
+      )}
+      {allButMain.map(({ id, name }) => (
+        <option key={id} value={id}>
+          {name}
         </option>
       ))}
     </Select>
