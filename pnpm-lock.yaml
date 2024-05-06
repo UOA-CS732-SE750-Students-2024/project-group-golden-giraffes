@@ -154,9 +154,6 @@ importers:
       '@blurple-canvas-web/types':
         specifier: workspace:*
         version: link:../types
-      '@types/color-convert':
-        specifier: ^2.0.3
-        version: 2.0.3
       '@types/luxon':
         specifier: ^3.4.2
         version: 3.4.2
@@ -866,12 +863,6 @@ packages:
 
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
-
-  '@types/color-convert@2.0.3':
-    resolution: {integrity: sha512-2Q6wzrNiuEvYxVQqhh7sXM2mhIhvZR/Paq4FdsQkOMgWsCIkKvSGj8Le1/XalulrmgOzPMqNa0ix+ePY4hTrfg==}
-
-  '@types/color-name@1.1.4':
-    resolution: {integrity: sha512-hulKeREDdLFesGQjl96+4aoJSHY5b2GRjagzzcqCfIrWhe5vkCqIvrLbqzBaI1q94Vg8DNJZZqTR5ocdWmWclg==}
 
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
@@ -3440,12 +3431,6 @@ snapshots:
     dependencies:
       '@types/connect': 3.4.38
       '@types/node': 20.12.8
-
-  '@types/color-convert@2.0.3':
-    dependencies:
-      '@types/color-name': 1.1.4
-
-  '@types/color-name@1.1.4': {}
 
   '@types/connect@3.4.38':
     dependencies:
