@@ -3,10 +3,11 @@
 import config from "@/config";
 import { usePalette } from "@/hooks/queries";
 import { Palette, PaletteColor, PixelHistory } from "@blurple-canvas-web/types";
-import { css, styled } from "@mui/material";
+import { styled } from "@mui/material";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Color } from "../color/Color";
+import { colorToSwatch } from "../color/Color";
 
 const Container = styled("div")`
   background-color: var(--discord-legacy-not-quite-black);
@@ -95,18 +96,6 @@ const Coordinates = styled("p")`
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 `;
 
-const ColorfulDiv = styled("div", {
-  shouldForwardProp: (prop) => prop !== "colorString",
-})<{ colorString: string }>(
-  ({ colorString }) => css`
-    aspect-ratio: 1;
-    background-color: ${colorString};
-    border-radius: var(--card-border-radius);
-    border: oklch(var(--discord-white-oklch) / 30%) 3px solid;
-    gap: 0.25rem;
-  `,
-);
-
 const HistoryRecords = styled("div")`
   display: grid;
   grid-column: 1 / -1;
@@ -153,24 +142,6 @@ const RecordColorCode = styled("span")`
   border-radius: 0.25rem;
 `;
 
-interface SwatchProps {
-  rgba: PaletteColor["rgba"];
-  selected?: boolean;
-}
-
-const Swatch = ({ rgba, selected = false }: SwatchProps) => {
-  // Convert [255, 255, 255, 255] to rgb(255 255 255 / 1.0)
-  const rgb = rgba.slice(0, 3).join(" ");
-  const alphaFloat = rgba[3] / 255;
-
-  return (
-    <ColorfulDiv
-      className={selected ? "selected" : undefined}
-      colorString={`rgb(${rgb} / ${alphaFloat})`}
-    />
-  );
-};
-
 const HistoryRecord = ({
   history,
   color,
@@ -202,10 +173,6 @@ const partitionPalette = (palette: Palette) => {
   }
 
   return [mainColors, partnerColors];
-};
-
-const colorToSwatch = (color: PaletteColor, selected = false) => {
-  return <Swatch key={color.code} rgba={color.rgba} selected={selected} />;
 };
 
 export default function ActionPanel() {
