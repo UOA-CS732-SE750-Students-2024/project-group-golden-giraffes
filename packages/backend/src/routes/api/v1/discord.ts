@@ -22,8 +22,8 @@ discordRouter.get(
     });
 
     // saving a user's id, name, and profile picture to our database to avoid rate limiting
-    const { id: userId, username, avatar: profilePictureUrl } = profile;
-    saveDiscordProfile(BigInt(userId), username, profilePictureUrl);
+    const { id: userId, username, avatar: profilePictureHash } = profile;
+    saveDiscordProfile(BigInt(userId), username, profilePictureHash);
 
     res.json(req.user);
   },

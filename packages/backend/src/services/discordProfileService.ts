@@ -42,17 +42,26 @@ export function createDefaultAvatarUrl(userId: bigint): string {
   return `https://cdn.discordapp.com/embed/avatars/${avatarId}.png`;
 }
 
+export function createCustomAvatarUrl(
+  userId: bigint,
+  profilePictureHash: string,
+): string {
+  return `https://cdn.discordapp.com/avatars/${userId}/${profilePictureHash}.png`;
+}
+
 export async function saveDiscordProfile(
   userId: bigint,
   username: string,
-  profilePictureUrl: string | null,
+  profilePictureHash: string | null,
 ): Promise<void> {
-  const newProfilePictureUrl: string =
-    profilePictureUrl || createDefaultAvatarUrl(userId);
+  const profilePictureUrl =
+    profilePictureHash ?
+      createCustomAvatarUrl(userId, profilePictureHash)
+    : createDefaultAvatarUrl(userId);
 
   await createOrUpdateDiscordProfile({
     user_id: userId,
     username,
-    profile_picture_url: newProfilePictureUrl,
+    profile_picture_url: profilePictureUrl,
   });
 }
