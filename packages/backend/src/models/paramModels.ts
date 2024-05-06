@@ -20,8 +20,8 @@ export const LeaderboardQueryModel = z.object({
 });
 
 export const PixelHistoryParamModel = z.object({
-  x: z.coerce.number().int().min(0),
-  y: z.coerce.number().int().min(0),
+  x: z.coerce.number().int().nonnegative(),
+  y: z.coerce.number().int().nonnegative(),
 });
 
 export interface CanvasIdParam {
