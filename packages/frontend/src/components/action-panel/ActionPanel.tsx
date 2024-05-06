@@ -139,9 +139,9 @@ export default function ActionPanel() {
       </TabBar>
       <Container>
         <ColorPicker>
-          <Heading>Main colours</Heading>
+          <Heading>Main colors</Heading>
           {mainColors.map((color) => colorToSwatch(color))}
-          <Heading>Partner colours</Heading>
+          <Heading>Partner colors</Heading>
           {partnerColors.map((color) => colorToSwatch(color))}
         </ColorPicker>
       </Container>
