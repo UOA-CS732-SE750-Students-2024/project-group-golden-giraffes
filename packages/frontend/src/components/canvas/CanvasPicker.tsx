@@ -72,7 +72,6 @@ export default function CanvasPicker() {
           <option key={mainCanvasInfo.id} value={mainCanvasInfo.id}>
             {mainCanvasInfo.name}
           </option>
-          <hr />
         </optgroup>
       )}
       <optgroup label="Other canvases">
