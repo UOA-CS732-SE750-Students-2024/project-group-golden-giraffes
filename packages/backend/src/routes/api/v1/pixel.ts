@@ -53,7 +53,7 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
       throw new BadRequestError("Body is not valid", result.error.issues);
     }
 
-    const data: PlacePixel = result.data;
+    const data = result.data;
     const canvasId = await parseCanvasId(req.params);
     const user = req.user as DiscordUserLoginInfo;
 
