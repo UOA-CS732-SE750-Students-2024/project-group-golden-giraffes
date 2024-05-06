@@ -46,8 +46,8 @@ const Select = styled(NativeSelect)`
     background-color: var(--discord-legacy-greyple);
   }
 
-  has(:focus),
-  has(:focus-visible) {
+  :has(:focus),
+  :has(:focus-visible) {
     outline: var(--focus-outline);
   }
 `;
