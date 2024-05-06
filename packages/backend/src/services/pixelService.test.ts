@@ -154,6 +154,7 @@ describe("Place Pixel Tests", () => {
       canvasId,
       userId,
       { x: 1, y: 1, colorId: 2 },
+      // create a user that is technically 31 seconds from the previous user.
       new Date(Date.now() + 31),
     );
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
