@@ -1,6 +1,7 @@
 import { usePalette, usePixelHistory } from "@/hooks";
 import { PaletteColor, PixelHistory } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { colorToSwatch } from "../color/Color";
 import { ActionMenu, Heading } from "./ActionPanel";
@@ -90,6 +91,8 @@ export default function PixelInfoTab({
   const { data: pixelHistory = [], isLoading: historyIsLoading } =
     usePixelHistory(canvasId, coordinates);
 
+  const queryClient = useQueryClient();
+
   const [currentPixelHistory, setCurrentPixelHistory] =
     useState<PixelHistory | null>(null);
   const [pastPixelHistory, setPastPixelHistory] = useState<PixelHistory[]>([]);
@@ -98,6 +101,11 @@ export default function PixelInfoTab({
     setCurrentPixelHistory(pixelHistory?.[0] || null);
     setPastPixelHistory(pixelHistory?.slice(1) || []);
   }, [pixelHistory]);
+
+  // Do this ⬇️ to cancel history query
+  // queryClient.cancelQueries({
+  //   queryKey: ["pixelHistory", canvasId, coordinates],
+  // });
 
   return (
     <>
