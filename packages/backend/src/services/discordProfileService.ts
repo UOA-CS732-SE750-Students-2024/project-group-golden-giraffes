@@ -2,7 +2,7 @@ import { prisma } from "@/client";
 import { discord_user_profile } from "@prisma/client";
 
 export async function getDiscordProfile(
-  userId: bigint,
+  userId: discord_user_profile['user_id'],
 ): Promise<discord_user_profile> {
   const discordUserProfile = await prisma.discord_user_profile.findFirst({
     where: {
