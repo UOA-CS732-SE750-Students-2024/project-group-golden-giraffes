@@ -5,8 +5,11 @@
 ### Event
 
 ### Get current event
-
 GET {{basePath}}/event/current
+Content-Type: application/json
+
+### Get event by ID
+GET {{basePath}}/event/2023
 Content-Type: application/json
 
 ### Canvas
