@@ -161,7 +161,7 @@ export async function validateUser(canvasId: number, userId: bigint) {
  */
 export async function placePixel(
   canvasId: number,
-  userID: bigint,
+  userId: bigint,
   placePixel: PlacePixel,
   cooldownTimeStamp: Date,
 ) {
@@ -170,12 +170,12 @@ export async function placePixel(
     prisma.cooldown.upsert({
       where: {
         user_id_canvas_id: {
-          user_id: userID,
+          user_id: userId,
           canvas_id: canvasId,
         },
       },
       create: {
-        user_id: userID,
+        user_id: userId,
         canvas_id: canvasId,
         cooldown_time: cooldownTimeStamp,
       },
@@ -203,7 +203,7 @@ export async function placePixel(
     }),
     prisma.history.create({
       data: {
-        user_id: userID,
+        user_id: userId,
         canvas_id: canvasId,
         x: x,
         y: y,
