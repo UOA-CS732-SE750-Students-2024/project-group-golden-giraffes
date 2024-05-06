@@ -13,7 +13,7 @@ import {
   validatePixel,
   validateUser,
 } from "@/services/pixelService";
-import { DiscordUserLoginInfo, PlacePixel } from "@blurple-canvas-web/types";
+import { DiscordUserLoginInfo, PixelInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });

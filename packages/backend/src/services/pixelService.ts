@@ -1,7 +1,7 @@
 import { prisma } from "@/client";
 import config from "@/config";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
-import { PixelHistory, PlacePixel } from "@blurple-canvas-web/types";
+import { PixelHistory, PixelInfo } from "@blurple-canvas-web/types";
 
 /**
  * Gets the pixel history for the given canvas and coordinates
@@ -162,7 +162,7 @@ export async function validateUser(canvasId: number, userId: bigint) {
 export async function placePixel(
   canvasId: number,
   userId: bigint,
-  { x, y, colorId }: PlacePixel,
+  { x, y, colorId }: PixelInfo,
   cooldownTimeStamp: Date,
 ) {
   await prisma.$transaction([

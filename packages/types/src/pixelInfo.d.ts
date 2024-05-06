@@ -1,4 +1,4 @@
-export type PlacePixel = {
+export type PixelInfo = {
   x: number;
   y: number;
   colorId: number;
