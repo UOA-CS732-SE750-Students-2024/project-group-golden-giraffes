@@ -22,6 +22,13 @@ export function addPoints(p1: Point, p2: Point): Point {
 /**
  * Divide the components of the point by the scale.
  */
-export function scalePoint(p1: Point, scale: number): Point {
+export function dividePoint(p1: Point, scale: number): Point {
   return { x: p1.x / scale, y: p1.y / scale };
+}
+
+/**
+ * Multiply the components of the point by the scale.
+ */
+export function multiplyPoint(p1: Point, scale: number): Point {
+  return { x: p1.x * scale, y: p1.y * scale };
 }
