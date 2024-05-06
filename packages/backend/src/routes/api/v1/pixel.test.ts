@@ -30,7 +30,7 @@ describe("Place Pixel Tests", () => {
         y: 1,
         colorId: 1,
       })
-      .set("Content-Type", "application/json")
+      .type("json")
       .set("X-TestUserId", "1");
     expect(response.body).toStrictEqual({
       coolDownTimeStamp: dateTime.toISOString(),
