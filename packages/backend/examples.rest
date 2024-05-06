@@ -2,6 +2,13 @@
 # Amend and uncomment next line to use a remote deployment
 # @basePath = https://example.projectblurple.com/api/v1
 
+### Event
+
+### Get current event
+
+GET {{basePath}}/event/current
+Content-Type: application/json
+
 ### Canvas
 
 ### Get summary info of all canvases
