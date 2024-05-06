@@ -80,7 +80,9 @@ export default function Navbar() {
       <CanvasPicker />
       <Links>
         <ul>
-          {/* <li><a href="/leaderboard">Leaderboard</a></li> */}
+          <li>
+            <a href="/leaderboard">Leaderboard</a>
+          </li>
           <li>
             <a href="/">Sign out</a>
           </li>
