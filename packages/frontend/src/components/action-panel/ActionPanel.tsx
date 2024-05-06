@@ -1,16 +1,9 @@
 "use client";
 
-import config from "@/config";
-import { usePalette } from "@/hooks/queries";
-import { PixelHistory } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
-import Head from "next/head";
 import { useEffect, useState } from "react";
-import { Color } from "../color/Color";
-import { colorToSwatch } from "../color/Color";
-import PixelInfoTab, { Coordinates, HistoryRecords } from "./PixelInfoTab";
-import { HistoryRecord } from "./PixelInfoTab";
-import PlacePaletteTab, { partitionPalette } from "./PlacePaletteTab";
+import PixelInfoTab from "./PixelInfoTab";
+import PlacePaletteTab from "./PlacePaletteTab";
 
 const Container = styled("div")`
   background-color: var(--discord-legacy-not-quite-black);
@@ -20,6 +13,14 @@ const Container = styled("div")`
   height: 100%;
   padding: 1rem;
   width: 100%;
+`;
+
+interface TabContainerProps {
+  active: boolean;
+}
+
+const TabContainer = styled("div")<TabContainerProps>`
+  display: ${({ active }) => (active ? "block" : "none")};
 `;
 
 const TabBar = styled("ul")`
@@ -114,10 +115,13 @@ export default function ActionPanel() {
         <ZenTab onClick={() => setCurrentTab(TabTypes.Zen)}>🧘</ZenTab>
       </TabBar>
       <Container>
-        {currentTab === TabTypes.Look && (
+        <TabContainer active={currentTab === TabTypes.Look}>
           <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
-        )}
-        {currentTab === TabTypes.Place && <PlacePaletteTab />}
+        </TabContainer>
+        <TabContainer active={currentTab === TabTypes.Place}>
+          <PlacePaletteTab />
+        </TabContainer>
+        <TabContainer active={currentTab === TabTypes.Zen}>🧘</TabContainer>
       </Container>
     </>
   );
