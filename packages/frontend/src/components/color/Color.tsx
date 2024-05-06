@@ -77,9 +77,9 @@ export const colorToSwatch = ({
 
 interface ColorProps {
   color: PaletteColor;
-  displaySwatch: boolean;
-  displayName: boolean;
-  displayCode: boolean;
+  displaySwatch?: boolean;
+  displayName?: boolean;
+  displayCode?: boolean;
 }
 
 export const ColorLabel = ({

@@ -4,7 +4,7 @@ import { styled } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Point } from "../canvas/point";
-import { colorToSwatch } from "../color/Color";
+import { ColorLabel, colorToSwatch } from "../color/Color";
 import { ActionMenu, Heading } from "./ActionPanel";
 
 export const Coordinates = styled("p")`
@@ -45,24 +45,8 @@ export const RecordAuthor = styled("span")`
 `;
 
 export const RecordColor = styled("div")`
-  align-items: center;
-  display: flex;
-  gap: 0.5rem;
   opacity: 0.6;
 `;
-
-export const RecordColorName = styled("span")`
-  font-size: 1.2rem;
-`;
-
-export const RecordColorCode = styled("span")`
-  background-color: rgba(255, 255, 255, 0.12);
-  border-radius: 0.25rem;
-  font-family: var(--font-monospace);
-  font-size: 0.9rem;
-  padding: 0.25rem 0.5rem;
-`;
-
 export const HistoryRecordComponent = ({
   history,
   color,
@@ -77,8 +61,7 @@ export const HistoryRecordComponent = ({
         <RecordAuthor>{history.userId}</RecordAuthor>
         {color && (
           <RecordColor>
-            <RecordColorName>{color.name}</RecordColorName>
-            <RecordColorCode>{color.code}</RecordColorCode>
+            <ColorLabel color={color} displaySwatch={false} />
           </RecordColor>
         )}
       </RecordInfo>
