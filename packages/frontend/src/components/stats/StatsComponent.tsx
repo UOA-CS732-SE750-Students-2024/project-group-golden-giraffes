@@ -1,10 +1,10 @@
 "use client";
 
 import config from "@/config";
-import { PaletteColor, UserStats } from "@blurple-canvas-web/types";
-import { styled } from "@mui/material";
+import { UserStats } from "@blurple-canvas-web/types";
 import { DateTime } from "luxon";
 import React, { useState, useEffect, ReactNode } from "react";
+import { Color } from "../color/Color";
 
 function getOrdinalSuffix(rank: number) {
   const trailingDigits = rank % 100;
@@ -137,29 +137,5 @@ const IndividualStat = ({
       <h3>{label}</h3>
       <span title={tooltip}>{value}</span>
     </div>
-  );
-};
-
-const ColorContainer = styled("div")`
-  display: flex;
-  align-items: center;
-`;
-
-const ColorBox = styled("div")<{ rgba: number[] }>(
-  ({ rgba }) => `
-    background-color: rgba(${rgba.toString()});
-    width: 25px;
-    height: 25px;
-    margin-right: 5px;
-    border-radius: 15%;
-  `,
-);
-
-const Color = ({ color }: { color: PaletteColor }): ReactNode => {
-  return (
-    <ColorContainer>
-      <ColorBox rgba={color.rgba} />
-      {color.name}
-    </ColorContainer>
   );
 };
