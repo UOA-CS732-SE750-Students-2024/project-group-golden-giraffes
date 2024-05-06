@@ -27,12 +27,6 @@ statisticsRouter.get("/leaderboard/:canvasId", async (req, res) => {
       LeaderboardQueryModel.safeParseAsync(req.query),
     ]);
 
-    if (!pathParams.success) {
-      throw new BadRequestError(
-        "Malformed path parameters",
-        pathParams.error.issues,
-      );
-    }
     if (!queryParams.success) {
       throw new BadRequestError(
         "Malformed query parameters",
@@ -40,7 +34,6 @@ statisticsRouter.get("/leaderboard/:canvasId", async (req, res) => {
       );
     }
 
-    const { canvasId } = pathParams.data;
     const { size } = queryParams.data;
     const leaderboard = await getLeaderboard(canvasId, size);
 
