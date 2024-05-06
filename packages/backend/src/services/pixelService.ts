@@ -1,7 +1,7 @@
 import { prisma } from "@/client";
 import config from "@/config";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
-import { PixelHistory, PixelInfo } from "@blurple-canvas-web/types";
+import { PixelHistoryRecord, PixelInfo } from "@blurple-canvas-web/types";
 
 /**
  * Gets the pixel history for the given canvas and coordinates
@@ -14,12 +14,18 @@ export async function getPixelHistory(
   canvasId: number,
   x: number,
   y: number,
-): Promise<PixelHistory[]> {
+): Promise<PixelHistoryRecord[]> {
   // check if canvas exists
   await validatePixel(canvasId, x, y, false);
 
   const pixelHistory = await prisma.history.findMany({
-    select: { user_id: true, color_id: true, timestamp: true, guild_id: true },
+    select: {
+      id: true,
+      user_id: true,
+      color_id: true,
+      timestamp: true,
+      guild_id: true,
+    },
     where: {
       canvas_id: canvasId,
       x: x,
@@ -31,6 +37,7 @@ export async function getPixelHistory(
   });
 
   return pixelHistory.map((history) => ({
+    id: history.id.toString(),
     userId: history.user_id.toString(),
     colorId: history.color_id,
     timestamp: history.timestamp,

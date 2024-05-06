@@ -1,17 +1,13 @@
-import { ApiError } from "@/errors";
-import { parseCanvasId } from "@/models/paramModels";
+import { ApiError, BadRequestError } from "@/errors";
+import {
+  LeaderboardParamModel,
+  LeaderboardQueryModel,
+  parseCanvasId,
+} from "@/models/paramModels";
 import { getLeaderboard, getUserStats } from "@/services/statisticsService";
 import { Router } from "express";
 
 export const statisticsRouter = Router();
-
-// Enable CORS headers
-statisticsRouter.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
 
 statisticsRouter.get("/user/:userId/:canvasId", async (req, res) => {
   try {
@@ -26,8 +22,21 @@ statisticsRouter.get("/user/:userId/:canvasId", async (req, res) => {
 
 statisticsRouter.get("/leaderboard/:canvasId", async (req, res) => {
   try {
-    const canvasId = await parseCanvasId(req.params);
-    const leaderboard = await getLeaderboard(canvasId);
+    const [canvasId, queryParams] = await Promise.all([
+      parseCanvasId(req.params),
+      LeaderboardQueryModel.safeParseAsync(req.query),
+    ]);
+
+    if (!queryParams.success) {
+      throw new BadRequestError(
+        "Malformed query parameters",
+        queryParams.error.issues,
+      );
+    }
+
+    const { size } = queryParams.data;
+    const leaderboard = await getLeaderboard(canvasId, size);
+
     res.status(200).json(leaderboard);
   } catch (error) {
     ApiError.sendError(res, error);
