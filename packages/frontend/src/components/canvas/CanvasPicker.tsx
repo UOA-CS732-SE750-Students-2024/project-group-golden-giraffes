@@ -3,7 +3,7 @@
 import { NativeSelect, styled } from "@mui/material";
 import { ChevronsUpDown } from "lucide-react";
 
-import { useCanvasInfo, useCanvasList } from "@/hooks";
+import { useCanvasInfo, useCanvasList, useEventInfo } from "@/hooks";
 
 const Select = styled(NativeSelect)`
   background-color: var(--discord-legacy-not-quite-black);
@@ -56,31 +56,43 @@ const Select = styled(NativeSelect)`
   }
 `;
 
+const canvasToSelectOption = ({ id, name }) => (
+  <option key={id} value={id}>
+    {name}
+  </option>
+);
+
 export default function CanvasPicker() {
   const { data: canvases = [], isLoading: canvasListIsLoading } =
     useCanvasList();
-  const { data: mainCanvasInfo, isLoading: mainCanvasInfoIsLoading } =
-    useCanvasInfo();
-  const isLoading = canvasListIsLoading || mainCanvasInfoIsLoading;
+  const { data: mainCanvas, isLoading: mainCanvasIsLoading } = useCanvasInfo();
+  const { data: currentEvent, isLoading: currentEventIsLoading } =
+    useEventInfo();
 
-  const allButMain = canvases.filter(({ id }) => id !== mainCanvasInfo?.id);
+  const isLoading =
+    canvasListIsLoading || mainCanvasIsLoading || currentEventIsLoading;
+
+  const currentCanvases = canvases.filter(
+    ({ id }) => id !== mainCanvas?.id && id === currentEvent?.id,
+    //          ^~~~~~~~~~~~~~~~~~~~~ main canvas gets its own <optgroup>
+  );
+  const pastCanvases = canvases.filter(({ id }) => id !== currentEvent?.id);
 
   return (
     <Select disabled={isLoading} IconComponent={ChevronsUpDown}>
-      {mainCanvasInfo && (
-        <optgroup label="Main canvas">
-          <option key={mainCanvasInfo.id} value={mainCanvasInfo.id}>
-            {mainCanvasInfo.name}
-          </option>
+      {mainCanvas && (
+        <optgroup label="Main">{canvasToSelectOption(mainCanvas)}</optgroup>
+      )}
+      {currentCanvases.length > 0 && (
+        <optgroup label="Past">
+          {currentCanvases.map(canvasToSelectOption)}
         </optgroup>
       )}
-      <optgroup label="Other canvases">
-        {allButMain.map(({ id, name }) => (
-          <option key={id} value={id}>
-            {name}
-          </option>
-        ))}
-      </optgroup>
+      {pastCanvases.length > 0 && (
+        <optgroup label="Past">
+          {pastCanvases.map(canvasToSelectOption)}
+        </optgroup>
+      )}
     </Select>
   );
 }
