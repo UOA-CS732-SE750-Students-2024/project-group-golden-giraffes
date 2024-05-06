@@ -113,10 +113,9 @@ const ColorfulDiv = styled("div", {
 );
 
 const HistoryRecords = styled("div")`
+  display: grid;
   grid-column: 1 / -1;
-  & > *:not(:last-child) {
-    margin-bottom: 1.5rem;
-  }
+  row-gap: 1.5rem;
 `;
 
 const Record = styled("div")`
