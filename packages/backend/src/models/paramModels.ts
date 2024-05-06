@@ -10,10 +10,7 @@ export const EventIdParamModel = z.object({
   eventId: z.coerce.number().int().positive(),
 });
 
-export const LeaderboardParamModel = z.object({
-  // TODO: Derive this from one source of truth
-  canvasId: z.coerce.number().int().positive(),
-});
+export type LeaderboardParamModel = typeof CanvasIdParamModel;
 
 export const LeaderboardQueryModel = z.object({
   size: z.coerce.number().int().positive().optional(),
