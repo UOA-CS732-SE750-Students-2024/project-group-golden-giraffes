@@ -64,9 +64,7 @@ export default function SignInPage() {
         <a href="http://localhost:8000/api/v1/discord/">
           <Button variant="contained">Sign in with Discord</Button>
         </a>
-        <p>
-          <em>That it. There are no other options.</em>
-        </p>
+        <p>That’s it. There are no other options.</p>
       </SignInForm>
       <Disclaimer />
     </Background>
