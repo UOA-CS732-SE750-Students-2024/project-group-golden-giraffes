@@ -20,9 +20,9 @@ export default function PlacePixelTab() {
   return (
     <ActionMenu>
       <Heading>Main colors</Heading>
-      {mainColors.map((color) => colorToSwatch(color))}
+      {mainColors.map((color) => colorToSwatch({ color }))}
       <Heading>Partner colors</Heading>
-      {partnerColors.map((color) => colorToSwatch(color))}
+      {partnerColors.map((color) => colorToSwatch({ color }))}
     </ActionMenu>
   );
 }

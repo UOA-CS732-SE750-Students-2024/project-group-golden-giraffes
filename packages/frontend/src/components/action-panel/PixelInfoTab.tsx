@@ -72,7 +72,7 @@ export const HistoryRecordComponent = ({
 }) => {
   return (
     <Record>
-      {color && colorToSwatch(color, true)}
+      {color && colorToSwatch({ color, selected: true })}
       <RecordInfo>
         <RecordAuthor>{history.userId}</RecordAuthor>
         {color && (
