@@ -170,9 +170,12 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       setZoom(newZoom);
     };
 
-    canvasRef.current?.addEventListener("wheel", handleWheel);
+    containerRef.current?.addEventListener("wheel", handleWheel, {
+      passive: false,
+    });
 
-    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
+    return () =>
+      containerRef.current?.removeEventListener("wheel", handleWheel);
   }, [imageDimensions, zoom]);
 
   /********************************
