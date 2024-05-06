@@ -7,7 +7,9 @@ const ColorContainer = styled("div")`
   display: flex;
   align-items: center;
 `;
-const ColorBox = styled("div")<{ rgba: number[] }>(
+const ColorBox = styled("div", {
+  shouldForwardProp: (prop) => prop !== "rgba",
+})<{ rgba: number[] }>(
   ({ rgba }) => `
     background-color: rgba(${rgba.toString()});
     width: 25px;
