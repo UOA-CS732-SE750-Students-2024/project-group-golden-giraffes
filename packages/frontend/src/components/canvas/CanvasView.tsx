@@ -22,6 +22,7 @@ import { Dimensions } from "@/hooks/useScreenDimensions";
 import { clamp } from "@/util";
 
 const CanvasContainer = styled("div")`
+  position: relative;
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: var(--card-border);
@@ -42,7 +43,7 @@ const CanvasContainer = styled("div")`
   }
 
   .loader {
-    position: fixed;
+    position: absolute;
   }
 
   canvas {
