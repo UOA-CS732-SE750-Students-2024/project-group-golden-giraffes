@@ -15,7 +15,7 @@ eventRouter.get("/:eventId", async (req, res) => {
   }
 });
 
-eventRouter.get("/current", async (req, res) => {
+eventRouter.get("/current", async (_req, res) => {
   try {
     const event = await getCurrentEvent();
     res.status(200).json(event);
