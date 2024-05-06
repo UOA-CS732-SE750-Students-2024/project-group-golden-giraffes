@@ -2,7 +2,7 @@
 
 import config from "@/config";
 import { usePalette } from "@/hooks/queries";
-import { Palette, PixelHistory } from "@blurple-canvas-web/types";
+import { PixelHistory } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import { Color } from "../color/Color";
 import { colorToSwatch } from "../color/Color";
 import PixelInfoTab, { Coordinates, HistoryRecords } from "./PixelInfoTab";
 import { HistoryRecord } from "./PixelInfoTab";
+import PlacePaletteTab, { partitionPalette } from "./PlacePaletteTab";
 
 const Container = styled("div")`
   background-color: var(--discord-legacy-not-quite-black);
@@ -88,16 +89,6 @@ export const Heading = styled("h2")`
   text-transform: uppercase;
 `;
 
-const partitionPalette = (palette: Palette) => {
-  const mainColors: Palette = [];
-  const partnerColors: Palette = [];
-  for (const color of palette) {
-    (color.global ? mainColors : partnerColors).push(color);
-  }
-
-  return [mainColors, partnerColors];
-};
-
 export default function ActionPanel() {
   enum TabTypes {
     Look = "Look",
@@ -106,10 +97,6 @@ export default function ActionPanel() {
   }
 
   const [currentTab, setCurrentTab] = useState<TabTypes>(TabTypes.Place);
-
-  const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
-
-  const [mainColors, partnerColors] = partitionPalette(palette);
 
   const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
 
@@ -130,14 +117,7 @@ export default function ActionPanel() {
         {currentTab === TabTypes.Look && (
           <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
         )}
-        {currentTab === TabTypes.Place && (
-          <ActionMenu>
-            <Heading>Main colours</Heading>
-            {mainColors.map((color) => colorToSwatch(color))}
-            <Heading>Partner colours</Heading>
-            {partnerColors.map((color) => colorToSwatch(color))}
-          </ActionMenu>
-        )}
+        {currentTab === TabTypes.Place && <PlacePaletteTab />}
       </Container>
     </>
   );
