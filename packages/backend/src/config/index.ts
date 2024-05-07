@@ -26,6 +26,9 @@ const config = {
     clientSecret: requiredEnv("DISCORD_CLIENT_SECRET"),
     loginRedirectUrl: requiredEnv("DISCORD_LOGIN_REDIRECT_URL"),
   },
+  session: {
+    cookie: "connect.sid", // The name of the cookie used to store the session ID
+  },
   /**
    * Placed pixels are typically attributed to guilds they were place in.
    * Identify pixels placed through the web with the ID of 0.
