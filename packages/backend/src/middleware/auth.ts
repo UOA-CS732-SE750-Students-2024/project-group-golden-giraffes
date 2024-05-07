@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import config from "@/config";
-import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
+import { getProfilePictureUrlFromHash } from "@/services/discordProfileService";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { Express } from "express";
 import session from "express-session";
 import passport from "passport";
@@ -15,12 +16,16 @@ const discordStrategy = new DiscordStrategy(
     callbackURL: "/api/v1/discord/callback",
     scope: ["identify"],
   },
-  (accessToken, refreshToken, profile, done) => {
-    const user: DiscordUserLoginInfo = {
-      accessToken,
-      refreshToken,
-      profile,
+  (_accessToken, _refreshToken, profile, done) => {
+    const user: DiscordUserProfile = {
+      id: profile.id,
+      username: profile.username,
+      profilePictureUrl: getProfilePictureUrlFromHash(
+        BigInt(profile.id),
+        profile.avatar,
+      ),
     };
+
     done(null, user);
   },
 );
@@ -32,7 +37,7 @@ export function initializeAuth(app: Express) {
     done(null, user);
   });
 
-  passport.deserializeUser<DiscordUserLoginInfo>((user, done) => {
+  passport.deserializeUser<DiscordUserProfile>((user, done) => {
     done(null, user);
   });
 

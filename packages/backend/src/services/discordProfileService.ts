@@ -1,5 +1,6 @@
 import { prisma } from "@/client";
 import { NotFoundError } from "@/errors";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { discord_user_profile } from "@prisma/client";
 
 export async function getDiscordProfile(
@@ -26,9 +27,7 @@ export async function createOrUpdateDiscordProfile(
       user_id: profile.user_id,
     },
     update: profile,
-    create: {
-      ...profile,
-    },
+    create: profile,
   });
 }
 
@@ -40,26 +39,30 @@ export function createDefaultAvatarUrl(userId: bigint): string {
   return `https://cdn.discordapp.com/embed/avatars/${avatarId}.png`;
 }
 
+export function getProfilePictureUrlFromHash(
+  userId: discord_user_profile["user_id"],
+  profilePictureHash: string | null,
+): string {
+  if (!profilePictureHash) {
+    return createDefaultAvatarUrl(userId);
+  }
+
+  return createCustomAvatarUrl(userId, profilePictureHash);
+}
+
 export function createCustomAvatarUrl(
-  userId: bigint,
+  userId: discord_user_profile["user_id"],
   profilePictureHash: string,
 ): string {
   return `https://cdn.discordapp.com/avatars/${userId}/${profilePictureHash}.png`;
 }
 
 export async function saveDiscordProfile(
-  userId: bigint,
-  username: string,
-  profilePictureHash: string | null,
+  profile: DiscordUserProfile,
 ): Promise<void> {
-  const profilePictureUrl =
-    profilePictureHash ?
-      createCustomAvatarUrl(userId, profilePictureHash)
-    : createDefaultAvatarUrl(userId);
-
   await createOrUpdateDiscordProfile({
-    user_id: userId,
-    username,
-    profile_picture_url: profilePictureUrl,
+    user_id: BigInt(profile.id),
+    username: profile.username,
+    profile_picture_url: profile.profilePictureUrl,
   });
 }

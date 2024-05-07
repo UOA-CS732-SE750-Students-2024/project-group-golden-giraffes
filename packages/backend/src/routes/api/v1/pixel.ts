@@ -13,7 +13,7 @@ import {
   validatePixel,
   validateUser,
 } from "@/services/pixelService";
-import { DiscordUserLoginInfo, Point } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Point } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
@@ -55,14 +55,10 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
 
     const { x, y, colorId } = result.data;
     const canvasId = await parseCanvasId(req.params);
-    const user = req.user as DiscordUserLoginInfo;
+    const profile = req.user as DiscordUserProfile;
 
-    if (!user) {
+    if (!profile || !profile.id) {
       throw new UnauthorizedError("User is not authenticated");
-    }
-    const userId = user.profile.id;
-    if (!userId) {
-      throw new BadRequestError("UserId does not exist");
     }
     // TODO: check for canvas discord_only status (not sure which table to look here)
 
@@ -71,12 +67,12 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     const coordinates: Point = { x, y };
 
     await validatePixel(canvasId, coordinates, true);
-    await validateUser(canvasId, BigInt(userId));
+    await validateUser(canvasId, BigInt(profile.id));
     const color = await validateColor(colorId);
 
     await placePixel(
       canvasId,
-      BigInt(userId),
+      BigInt(profile.id),
       coordinates,
       color,
       coolDownTimeStamp,

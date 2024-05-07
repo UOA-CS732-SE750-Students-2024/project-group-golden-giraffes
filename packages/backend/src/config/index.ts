@@ -24,6 +24,7 @@ const config = {
   discord: {
     clientId: requiredEnv("DISCORD_CLIENT_ID"),
     clientSecret: requiredEnv("DISCORD_CLIENT_SECRET"),
+    loginRedirectUrl: requiredEnv("DISCORD_LOGIN_REDIRECT_URL"),
   },
   /**
    * Placed pixels are typically attributed to guilds they were place in.
