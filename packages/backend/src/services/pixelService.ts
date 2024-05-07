@@ -177,16 +177,22 @@ export async function getCooldown(
  * @param canvasId - The ID of the canvas
  * @param userId - The ID of the user
  * @param placePixel - The pixel to place with coordinates and color
- * @param cooldownTimeStamp - The timestamp of when the user can place another pixel
+ * @param placementTime - The time that the pixel will be placed
  */
 export async function placePixel(
   canvasId: number,
   userId: bigint,
   { x, y, colorId }: PixelInfo,
-  cooldownTimeStamp: Date,
 ) {
-  await prisma.$transaction([
-    prisma.cooldown.upsert({
+  const placementTime = new Date();
+  const { currentCooldown, futureCooldown } = await getCooldown(
+    canvasId,
+    userId,
+    placementTime,
+  );
+
+  await prisma.$transaction(async (tx) => {
+    tx.cooldown.upsert({
       where: {
         user_id_canvas_id: {
           user_id: userId,
@@ -196,13 +202,13 @@ export async function placePixel(
       create: {
         user_id: userId,
         canvas_id: canvasId,
-        cooldown_time: cooldownTimeStamp,
+        cooldown_time: placementTime,
       },
       update: {
-        cooldown_time: cooldownTimeStamp,
+        cooldown_time: placementTime,
       },
-    }),
-    prisma.pixel.upsert({
+    });
+    tx.pixel.upsert({
       where: {
         canvas_id_x_y: {
           canvas_id: canvasId,
@@ -219,17 +225,18 @@ export async function placePixel(
       update: {
         color_id: colorId,
       },
-    }),
-    prisma.history.create({
+    });
+
+    tx.history.create({
       data: {
         user_id: userId,
         canvas_id: canvasId,
         x: x,
         y: y,
         color_id: colorId,
-        timestamp: cooldownTimeStamp,
+        timestamp: placementTime,
         guild_id: config.webGuildId,
       },
-    }),
-  ]);
+    });
+  });
 }
