@@ -4,7 +4,7 @@ import { css, styled } from "@mui/material";
 import React from "react";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
-import { StaticSwatch } from "../action-panel/swatch/StaticSwatch";
+import { StaticSwatch } from "../swatch/StaticSwatch";
 
 export const ColorfulDiv = styled("div", {
   shouldForwardProp: (prop) => prop !== "colorString",

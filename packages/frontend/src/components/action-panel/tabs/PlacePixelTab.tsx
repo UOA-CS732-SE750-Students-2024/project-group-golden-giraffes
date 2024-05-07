@@ -3,8 +3,8 @@ import { Palette, PaletteColor } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useState } from "react";
 
+import { InteractiveSwatch } from "../../swatch";
 import { ActionMenu, Heading } from "../ActionPanel";
-import { InteractiveSwatch } from "../swatch";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
 const ColorPicker = styled("div")`
