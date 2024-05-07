@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Navbar } from "@/components/nav";
+import { LayoutWithNavbar } from "../components/";
 import Main from "./Main";
 
 export const metadata: Metadata = {
@@ -9,10 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  return (
-    <>
-      <Navbar />
-      <Main />
-    </>
-  );
+  return <LayoutWithNavbar content={<Main />} />;
 }
