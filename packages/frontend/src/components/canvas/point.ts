@@ -1,7 +1,4 @@
-export interface Point {
-  x: number;
-  y: number;
-}
+import { Point } from "@blurple-canvas-web/types";
 
 export const ORIGIN: Point = { x: 0, y: 0 };
 
