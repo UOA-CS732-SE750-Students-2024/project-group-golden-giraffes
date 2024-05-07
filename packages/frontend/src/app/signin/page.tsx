@@ -1,10 +1,8 @@
 "use client";
 
-import { useAuthContext } from "@/contexts/AuthProvider";
+import { useAuthContext } from "@/contexts";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const Background = styled("div")`
   align-items: center;
@@ -52,17 +50,7 @@ const Disclaimer = () => (
 );
 
 export default function SignInPage() {
-  const router = useRouter();
   const { user } = useAuthContext();
-
-  useEffect(() => {
-    if (user) {
-      console.log(
-        "[User Session]: User authenticated. Redirecting to home page",
-      );
-      router.replace("/");
-    }
-  }, [user, router]);
 
   return (
     <Background>
@@ -81,6 +69,7 @@ export default function SignInPage() {
         </a>
         <p>That’s it. There are no other options.</p>
       </SignInForm>
+      {user?.username}
       <Disclaimer />
     </Background>
   );
