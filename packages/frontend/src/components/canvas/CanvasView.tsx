@@ -1,17 +1,9 @@
 "use client";
 
 import { CircularProgress, styled } from "@mui/material";
-import {
-  ReactNode,
-  Touch,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { Touch, useCallback, useEffect, useRef, useState } from "react";
 import {
   ORIGIN,
-  Point,
   addPoints,
   diffPoints,
   dividePoint,
@@ -20,6 +12,7 @@ import {
 
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { clamp } from "@/util";
+import { Point } from "@blurple-canvas-web/types";
 
 const CanvasContainer = styled("div")`
   position: relative;
@@ -180,12 +173,11 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       setZoom(newZoom);
     };
 
-    containerRef.current?.addEventListener("wheel", handleWheel, {
+    canvasRef.current?.addEventListener("wheel", handleWheel, {
       passive: false,
     });
 
-    return () =>
-      containerRef.current?.removeEventListener("wheel", handleWheel);
+    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
   }, [imageDimensions, zoom]);
 
   /********************************
