@@ -98,7 +98,7 @@ export default function ActionPanel() {
         <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
       </TabContainer>
       <TabContainer active={currentTab === TABS.PLACE}>
-        <PlacePixelTab />
+        <PlacePixelTab coordinates={coordinates} canvasId={canvasId} />
       </TabContainer>
     </>
   );
