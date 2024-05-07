@@ -4,20 +4,20 @@ import { StaticSwatchProps } from "./StaticSwatch";
 import { SwatchBase } from "./SwatchBase";
 
 const StyledSwatchBase = styled(SwatchBase)`
-  --width: 0.25rem;
-
   cursor: pointer;
-  border: var(--width) solid oklch(var(--discord-white-oklch) / 15%);
-  transition: opacity var(--transition-duration-fast) ease;
+  border: 0.25rem solid oklch(var(--discord-white-oklch) / 15%);
+  transition:
+    opacity var(--transition-duration-fast) ease,
+    border-color var(--transition-duration-fast) ease;
 
   :hover:not(.disabled, .selected) {
     opacity: 85%;
   }
 
   &.selected {
-    border: calc(1.5 * var(--width)) solid var(--discord-legacy-not-quite-black);
-    outline: var(--width) solid var(--discord-white);
-    outline-offset: calc(-1 * var(--width));
+    border: 0.25rem solid var(--discord-white);
+    background-clip: content-box;
+    padding: 0.25rem;
   }
 `;
 
