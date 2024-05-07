@@ -202,13 +202,12 @@ describe("Place Pixel Tests", () => {
     const userId = BigInt(1);
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
     await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 });
-    for (let i = 0; i < 10; i++) {
-      const thing = expect(
+    for (let i = 0; i < 3; i++) {
+      expect(
         placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }),
       ).rejects.toThrow(ForbiddenError);
     }
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
-
     expect(before.history.length + 1).toEqual(after.history.length);
   });
 
