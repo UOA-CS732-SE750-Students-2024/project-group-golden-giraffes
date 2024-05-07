@@ -90,12 +90,13 @@ describe("discordProfileService", () => {
   });
 
   describe("saveDiscordProfile", () => {
-    it("should save the discord profile for a given user ID, username, and profile picture hash", async () => {
-      const userId = 228441721246056449n;
+    it("should save the discord profile for a given user ID, username, and profile picture URL", async () => {
+      const id = "228441721246056449";
       const username = "jasperlai";
-      const profilePictureHash = "67384b584aa7b9145ebb4028ff697931";
+      const profilePictureUrl =
+        "https://cdn.discordapp.com/avatars/228441721246056449/67384b584aa7b9145ebb4028ff697931.png";
 
-      await saveDiscordProfile(userId, username, profilePictureHash);
+      await saveDiscordProfile({ id, username, profilePictureUrl });
 
       const savedProfile = await prisma.discord_user_profile.findUnique({
         where: { user_id: 228441721246056449n },

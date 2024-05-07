@@ -8,4 +8,3 @@ export * from "./pixelHistory";
 export * from "./pixelInfo";
 export * from "./point";
 export * from "./statistics";
-export * from "./user";
