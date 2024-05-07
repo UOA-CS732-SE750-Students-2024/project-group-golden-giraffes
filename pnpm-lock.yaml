@@ -132,6 +132,9 @@ importers:
       colorjs.io:
         specifier: ^0.5.0
         version: 0.5.0
+      js-cookie:
+        specifier: ^3.0.5
+        version: 3.0.5
       luxon:
         specifier: ^3.4.4
         version: 3.4.4
@@ -148,6 +151,9 @@ importers:
       '@blurple-canvas-web/types':
         specifier: workspace:*
         version: link:../types
+      '@types/js-cookie':
+        specifier: ^3.0.6
+        version: 3.0.6
       '@types/luxon':
         specifier: ^3.4.2
         version: 3.4.2
@@ -896,6 +902,9 @@ packages:
 
   '@types/http-errors@2.0.4':
     resolution: {integrity: sha512-D0CFMMtydbJAegzOyHjtiKPLlvnm3iTZyZRSZoLq2mRhDdmLfIWOCYPfQJ4cu2erKghU++QvjcUjp/5h7hESpA==}
+
+  '@types/js-cookie@3.0.6':
+    resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
 
   '@types/luxon@3.4.2':
     resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
@@ -1888,6 +1897,10 @@ packages:
 
   jackspeak@2.3.6:
     resolution: {integrity: sha512-N3yCS/NegsOBokc8GAdM8UcmfsKiSS8cipheD/nivzr700H+nsMOxJjQnvwOcRYVuFkdH0wGUvW2WbXGmrZGbQ==}
+    engines: {node: '>=14'}
+
+  js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
     engines: {node: '>=14'}
 
   js-tokens@4.0.0:
@@ -3640,6 +3653,8 @@ snapshots:
 
   '@types/http-errors@2.0.4': {}
 
+  '@types/js-cookie@3.0.6': {}
+
   '@types/luxon@3.4.2': {}
 
   '@types/methods@1.1.4': {}
@@ -4841,6 +4856,8 @@ snapshots:
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
     optional: true
+
+  js-cookie@3.0.5: {}
 
   js-tokens@4.0.0: {}
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthContext } from "@/contexts/AuthProvider";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
 
@@ -49,6 +50,9 @@ const Disclaimer = () => (
 );
 
 export default function SignInPage() {
+  const { user } = useAuthContext();
+  console.log(user);
+
   return (
     <Background>
       <SignInForm>

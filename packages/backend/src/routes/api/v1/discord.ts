@@ -19,7 +19,7 @@ discordRouter.get(
     const discordProfile = req.user as DiscordProfile;
 
     res.cookie("profile", JSON.stringify(discordProfile), {
-      httpOnly: true,
+      httpOnly: false, // Allow the frontend to read the cookie
       secure: true,
     });
 
