@@ -4,7 +4,14 @@ import { styled } from "@mui/material";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
 
-const Container = styled("code")`
+interface ColorCodeChipProps {
+  backgroundColor: PaletteColor;
+  onClick?: () => void;
+}
+
+const Container = styled("code", {
+  shouldForwardProp: (prop) => prop !== "backgroundColor",
+})<ColorCodeChipProps>`
   background-color: oklch(var(--discord-white-oklch) / 12%);
   border-radius: 0.25rem;
   cursor: pointer;
@@ -14,19 +21,31 @@ const Container = styled("code")`
   transition: background-color var(--transition-duration-fast) ease;
 
   :hover {
-    background-color: oklch(var(--discord-white-oklch) / 20%);
+    background-color: rgba(
+      ${({ backgroundColor }) => backgroundColor.rgba.slice(0, 3).join(", ")},
+      36%
+    );
   }
 
   :active {
-    background-color: oklch(var(--discord-white-oklch) / 6%);
+    background-color: rgba(
+      ${({ backgroundColor }) => backgroundColor.rgba.slice(0, 3).join(", ")},
+      6%
+    );
   }
 `;
 
 export default function ColorCodeChip({
-  colorCode,
+  color,
+  onClick = () => {},
   ...props
 }: {
-  colorCode: PaletteColor["code"];
+  color: PaletteColor;
+  onClick?: () => void;
 }) {
-  return <Container {...props}>{colorCode}</Container>;
+  return (
+    <Container backgroundColor={color} onClick={onClick} {...props}>
+      {color.code}
+    </Container>
+  );
 }

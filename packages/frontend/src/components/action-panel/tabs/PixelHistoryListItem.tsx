@@ -44,7 +44,13 @@ export default function PixelHistoryListItem({
       <div>
         <Username title={userProfile.id}>{userProfile.username}</Username>
         <ColorName>
-          {color.name} <ColorCodeChip colorCode={color.code} />
+          {color.name}{" "}
+          <ColorCodeChip
+            color={color}
+            onClick={() => {
+              navigator.clipboard.writeText(color.code);
+            }}
+          />
         </ColorName>
       </div>
     </Wrapper>
