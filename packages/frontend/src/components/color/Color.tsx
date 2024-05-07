@@ -87,69 +87,50 @@ export const ColorCode = styled("span")`
 `;
 
 interface SwatchProps {
-  rgba: PaletteColor["rgba"];
   active?: boolean;
+  onClick?: () => void;
+  rgba: PaletteColor["rgba"];
   selected?: boolean;
   size?: number;
 }
 
 export const Swatch = ({
-  rgba,
   active = false,
+  onClick,
+  rgba,
   selected = false,
   size,
-  onClick,
-}: SwatchProps & { onClick?: () => void }) => {
+}: SwatchProps) => {
   // Convert [255, 255, 255, 255] to rgb(255 255 255 / 1.0)
   const rgb = rgba.slice(0, 3).join(" ");
   const alphaFloat = rgba[3] / 255;
 
   return (
-    <>
-      <ColorfulDiv
-        className={
-          selected ? "selected"
-          : active ?
-            "active"
-          : undefined
-        }
-        colorString={`rgb(${rgb} / ${alphaFloat})`}
-        size={size}
-        onClick={onClick}
-      >
-        <Check
-          style={{ strokeWidth: "3px" }}
-          className={selected ? "selected" : undefined}
-        />
-      </ColorfulDiv>
-    </>
+    <ColorfulDiv
+      className={
+        selected ? "selected"
+        : active ?
+          "active"
+        : undefined
+      }
+      colorString={`rgb(${rgb} / ${alphaFloat})`}
+      size={size}
+      onClick={onClick}
+    >
+      <Check
+        style={{ strokeWidth: "3px" }}
+        className={selected ? "selected" : undefined}
+      />
+    </ColorfulDiv>
   );
 };
 
-interface ColorToSwatchProps {
+interface ColorToSwatchProps extends Omit<SwatchProps, "rgba"> {
   color: PaletteColor;
-  active?: boolean;
-  selected?: boolean;
-  size?: number;
 }
 
-export const colorToSwatch = ({
-  color,
-  active = false,
-  selected = false,
-  size,
-  onClick,
-}: ColorToSwatchProps & { onClick?: () => void }) => {
-  return (
-    <Swatch
-      key={color.code}
-      rgba={color.rgba}
-      active={active}
-      selected={selected}
-      size={size}
-      onClick={onClick}
-    />
-  );
+export const colorToSwatch = ({ color, ...props }: ColorToSwatchProps) => {
+  return <Swatch key={color.code} rgba={color.rgba} {...props} />;
 };
 
 interface ColorProps {

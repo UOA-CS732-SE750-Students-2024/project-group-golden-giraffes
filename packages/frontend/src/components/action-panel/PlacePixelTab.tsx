@@ -24,7 +24,7 @@ const ColorDescription = styled("div")`
   }
 `;
 
-const NoColorSelected = styled("p")`
+const NoColorSelectedMessage = styled("p")`
   color: var(--discord-white);
   font-size: 1.5rem;
   font-weight: 900;
@@ -79,7 +79,7 @@ export default function PlacePixelTab() {
             <PaletteColorRecord color={selectedColor} displaySwatch={false} />
           )}
           {!selectedColor && (
-            <NoColorSelected>No color selected</NoColorSelected>
+            <NoColorSelectedMessage>No color selected</NoColorSelectedMessage>
           )}
         </ColorDescription>
       </ActionMenuBlock>

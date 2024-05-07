@@ -110,8 +110,8 @@ export default function PixelInfoTab({
       <ActionMenu>
         <ActionMenuBlock>
           <Coordinates>
-            <span>x: {coordinates.x}</span>
-            <span>y: {coordinates.y}</span>
+            <span>x:&nbsp;{coordinates.x}</span>
+            <span>y:&nbsp;{coordinates.y}</span>
           </Coordinates>
           {currentPixelHistory && ( // To be redesigned later
             <HistoryRecords>
@@ -130,10 +130,7 @@ export default function PixelInfoTab({
                 <HistoryRecordComponent
                   key={history.id}
                   history={history}
-                  color={
-                    palette.find((color) => color.id === history.colorId) ||
-                    undefined
-                  }
+                  color={palette.find((color) => color.id === history.colorId)}
                 />
               ))}
             </HistoryRecords>
