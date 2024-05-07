@@ -17,7 +17,8 @@ export const ColorfulDiv = styled("div", {
     ${clickable && "cursor: pointer;"}
     position: relative;
     ${size && `inline-size: ${size}rem;`}
-    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    transition: background-color var(--transition-duration-medium) ease, border-color var(--transition-duration-medium) ease, opacity var(--transition-duration-medium) ease;
+    ${clickable && "user-select: none;"}
 
     &.selected,
     &.active {
@@ -39,7 +40,7 @@ export const ColorfulDiv = styled("div", {
       opacity: 0;
       position: absolute;
       right: 0;
-      transition: opacity 0.2s ease;
+      transition: opacity var(--transition-duration-medium) ease;
       width: calc(33.33%);
     }
 
@@ -51,7 +52,7 @@ export const ColorfulDiv = styled("div", {
       right: 0;
       transform: translate(0%, 15%);
       // ^^ couldn't figure out how to do this without hardcoding, help?
-      transition: opacity 0.2s;
+      transition: opacity var(--transition-duration-medium);
       width: calc(33.33%);
       z-index: 10;
 
@@ -77,8 +78,8 @@ export const ColorCode = styled("span")`
   border-radius: 0.25rem;
   font-family: var(--font-monospace);
   font-size: 0.9rem;
-  padding: 0.25rem 0.5rem;
-  transition: background-color 0.2s;
+  padding: 0.2rem 0.5rem;
+  transition: background-color var(--transition-duration-medium);
   :hover {
     background-color: rgba(255, 255, 255, 0.24);
     cursor: pointer;

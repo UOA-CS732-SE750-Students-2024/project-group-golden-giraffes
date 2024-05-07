@@ -31,6 +31,53 @@ const NoColorSelectedMessage = styled("p")`
   margin: 0;
 `;
 
+export const ButtonSeries = styled("div")`
+  display: flex;
+  gap: max(0.25rem, 2px);
+
+  > * {
+    flex: 1;
+  }
+`;
+
+interface ButtonProps {
+  onClick: () => void;
+  backgroundColor?: string;
+}
+
+export const Button = styled("div")<ButtonProps>`
+  align-items: center;
+  background-color: ${({ backgroundColor }) =>
+    backgroundColor ? backgroundColor : "var(--discord-blurple)"};
+  border: oklch(var(--discord-white-oklch) / 12%) 3px solid;
+  border-radius: var(--card-border-radius);
+  color: ${({ backgroundColor }) =>
+    backgroundColor?.includes("255") ?
+      "var(--discord-legacy-actually-black)"
+    : "var(--discord-white)"};
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  grid-template-columns: auto 1fr;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  transition: border-color var(--transition-duration-medium) ease;
+
+  &:hover {
+    border-color: oklch(var(--discord-white-oklch) / 36%);
+  }
+
+  :active {
+    border-color: oklch(var(--discord-white-oklch) / 72%);
+  }
+`;
+
+export const TranslucentText = styled("span")<{ opacity: number }>`
+  opacity: ${({ opacity }) => opacity};
+  margin: 0;
+`;
+
 export const partitionPalette = (palette: Palette) => {
   const mainColors: Palette = [];
   const partnerColors: Palette = [];
@@ -46,6 +93,10 @@ export default function PlacePixelTab() {
   const [mainColors, partnerColors] = partitionPalette(palette);
 
   const [selectedColor, setSelectedColor] = useState<PaletteColor | null>(null);
+
+  const rgba = selectedColor?.rgba;
+  const rgb = rgba?.slice(0, 3).join(" ");
+  const alphaFloat = rgba ? rgba[3] / 255 : undefined;
 
   return (
     <ActionMenu>
@@ -83,6 +134,16 @@ export default function PlacePixelTab() {
           )}
         </ColorDescription>
       </ActionMenuBlock>
+      <ButtonSeries>
+        <Button
+          backgroundColor={
+            selectedColor ? `rgb(${rgb} / ${alphaFloat})` : undefined
+          }
+          onClick={() => console.log("Place pixel")}
+        >
+          Paint it! <TranslucentText opacity={0.6}>(77, 122)</TranslucentText>
+        </Button>
+      </ButtonSeries>
     </ActionMenu>
   );
 }
