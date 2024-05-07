@@ -54,21 +54,21 @@ interface ColorProps {
 const copyColorCode = (color: PaletteColor) =>
   navigator.clipboard.writeText(color.code);
 
-// export const PaletteColorRecord = ({
-//   color,
-//   displaySwatch = true,
-//   displayName = true,
-//   displayCode = true,
-// }: ColorProps) => {
-//   return (
-//     <ColorContainer className="colorRecord">
-//       {displaySwatch && colorToSwatch(color)}
-//       {displayName && <p className="colorName">{color.name}</p>}
-//       {displayCode && (
-//         <span onClick={copyColorCode} onKeyUp={copyColorCode}>
-//           {color.code}
-//         </span>
-//       )}
-//     </ColorContainer>
-//   );
-// };
+export const PaletteColorRecord = ({
+  color,
+  displaySwatch = true,
+  displayName = true,
+  displayCode = true,
+}: ColorProps) => {
+  return (
+    <ColorContainer className="colorRecord">
+      {displaySwatch && colorToSwatch(color)}
+      {displayName && <p className="colorName">{color.name}</p>}
+      {/* {displayCode && (
+        <span onClick={copyColorCode} onKeyUp={copyColorCode}>
+          {color.code}
+        </span>
+      )} */}
+    </ColorContainer>
+  );
+};
