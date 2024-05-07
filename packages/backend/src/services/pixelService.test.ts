@@ -170,28 +170,29 @@ describe("Get Cooldown Tests", () => {
 
 describe("Place Pixel Tests", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
     seedUsers();
     seedCanvases();
     seedColors();
     seedPixels();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("Resolves places the pixel", async () => {
     const canvasId = 1;
     const userId = BigInt(1);
 
-    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, new Date());
+    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 });
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
-    await placePixel(
-      canvasId,
-      userId,
-      { x: 1, y: 1, colorId: 2 },
-      // create a user that is technically 31 seconds from the previous user.
-      new Date(Date.now() + 31),
-    );
+    vi.advanceTimersByTime(30 * 1000);
+    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 2 });
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 
-    expect(before.pixel).not.toStrictEqual(after.pixel);
+    expect(before.pixel?.color_id).toBe(1);
+    expect(after.pixel?.color_id).toBe(2);
     expect(before.cooldown).not.toStrictEqual(after.cooldown);
     expect(before.history.length + 1).toEqual(after.history.length);
   });
@@ -199,12 +200,12 @@ describe("Place Pixel Tests", () => {
   it("Resolves it only places once within 30 seconds", async () => {
     const canvasId = 1;
     const userId = BigInt(1);
-
-    const date = new Date();
-
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
-    for (let i = 0; i < 3; i++) {
-      await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }, date);
+    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 });
+    for (let i = 0; i < 10; i++) {
+      const thing = expect(
+        placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }),
+      ).rejects.toThrow(ForbiddenError);
     }
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 

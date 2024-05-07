@@ -160,7 +160,7 @@ export async function getCooldown(
 
   const currentCooldown = cooldown.cooldown_time;
 
-  if (placementTime <= currentCooldown) {
+  if (placementTime < currentCooldown) {
     throw new ForbiddenError("Pixel placement is on cooldown");
   }
   return { currentCooldown, futureCooldown };
@@ -185,29 +185,43 @@ export async function placePixel(
   { x, y, colorId }: PixelInfo,
 ) {
   const placementTime = new Date();
-  const { currentCooldown, futureCooldown } = await getCooldown(
+  let { currentCooldown, futureCooldown } = await getCooldown(
     canvasId,
     userId,
     placementTime,
   );
 
   await prisma.$transaction(async (tx) => {
-    tx.cooldown.upsert({
-      where: {
-        user_id_canvas_id: {
-          user_id: userId,
-          canvas_id: canvasId,
+    // only place a pixel if the canvas has a cooldown
+    if (futureCooldown) {
+      // create the cooldown if it doesn't exist already
+      if (!currentCooldown) {
+        const cooldown = await tx.cooldown.create({
+          data: {
+            user_id: userId,
+            canvas_id: canvasId,
+            cooldown_time: futureCooldown,
+          },
+        });
+        currentCooldown = cooldown.cooldown_time;
+      }
+      // Perform an update with an attempt at an optimistic query
+      const updateCooldown = await tx.cooldown.update({
+        where: {
+          user_id_canvas_id: {
+            user_id: userId,
+            canvas_id: canvasId,
+          },
+          cooldown_time: currentCooldown,
         },
-      },
-      create: {
-        user_id: userId,
-        canvas_id: canvasId,
-        cooldown_time: placementTime,
-      },
-      update: {
-        cooldown_time: placementTime,
-      },
-    });
+        data: {
+          cooldown_time: futureCooldown,
+        },
+      });
+      if (!updateCooldown) {
+        throw new ForbiddenError("Pixel placement is on cooldown");
+      }
+    }
     tx.pixel.upsert({
       where: {
         canvas_id_x_y: {
@@ -239,4 +253,5 @@ export async function placePixel(
       },
     });
   });
+  return { futureCooldown };
 }
