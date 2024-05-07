@@ -1,6 +1,6 @@
 "use client";
 
-import { NativeSelect, styled } from "@mui/material";
+import { NativeSelect, nativeSelectClasses, styled } from "@mui/material";
 import { ChevronsUpDown } from "lucide-react";
 
 import { useCanvasInfo, useCanvasList, useEventInfo } from "@/hooks";
@@ -21,7 +21,7 @@ const Select = styled(NativeSelect)`
     user-select: none;
   }
 
-  .MuiNativeSelect-select {
+  .${nativeSelectClasses.select} {
     padding: 0.25rem 1rem;
 
     :focus,
@@ -31,16 +31,16 @@ const Select = styled(NativeSelect)`
     }
   }
 
-  .MuiNativeSelect-icon {
+  .${nativeSelectClasses.icon} {
     color: oklch(var(--discord-white-oklch) / 45%);
     margin-inline: 0.25rem;
   }
 
-  .Mui-disabled {
+  .${nativeSelectClasses.disabled} {
     cursor: wait;
   }
 
-  :hover:not(.Mui-disabled) {
+  :hover:not(.${nativeSelectClasses.disabled}) {
     background-color: var(--discord-legacy-greyple);
   }
 
