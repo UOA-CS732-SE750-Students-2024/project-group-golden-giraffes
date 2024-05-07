@@ -2,33 +2,12 @@ import { usePalette } from "@/hooks";
 import { Palette, PaletteColor } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useState } from "react";
-import { PaletteColorRecord, colorToSwatch } from "../color/Color";
-import { ActionMenu, ActionMenuBlock, Heading } from "./ActionPanel";
+import { colorToSwatch } from "../color/Color";
+import { ActionMenu, Heading } from "./ActionPanel";
+import ColorInfoCard from "./SelectedColorInfoCard";
 
-const ColorDescription = styled("div")`
+const SelectedColorInfo = styled("div")`
   grid-column: 1 / -1;
-  padding: 1rem 0;
-
-  > .colorRecord {
-    justify-content: space-between;
-  }
-
-  * > .colorName {
-    font-weight: 900;
-    font-size: 1.5rem;
-  }
-
-  * > .colorCode {
-    font-size: 1.2rem;
-    justify-self: flex-end;
-  }
-`;
-
-const NoColorSelectedMessage = styled("p")`
-  color: var(--discord-white);
-  font-size: 1.5rem;
-  font-weight: 900;
-  margin: 0;
 `;
 
 export const partitionPalette = (palette: Palette) => {
@@ -49,9 +28,9 @@ export default function PlacePixelTab() {
 
   return (
     <ActionMenu>
-      <ActionMenuBlock>
+      <div>
         <Heading>Main colors</Heading>
-        {mainColors.map((color) =>
+        {/* {mainColors.map((color) =>
           colorToSwatch({
             color,
             selected: color === selectedColor,
@@ -60,7 +39,7 @@ export default function PlacePixelTab() {
                 setSelectedColor(color)
               : setSelectedColor(null),
           }),
-        )}
+        )} */}
         <Heading>Partner colors</Heading>
         {partnerColors.map((color) =>
           colorToSwatch({
@@ -72,17 +51,9 @@ export default function PlacePixelTab() {
               : setSelectedColor(null),
           }),
         )}
-      </ActionMenuBlock>
-      <ActionMenuBlock>
-        <ColorDescription>
-          {selectedColor && (
-            <PaletteColorRecord color={selectedColor} displaySwatch={false} />
-          )}
-          {!selectedColor && (
-            <NoColorSelectedMessage>No color selected</NoColorSelectedMessage>
-          )}
-        </ColorDescription>
-      </ActionMenuBlock>
+      </div>
+
+      <ColorInfoCard color={selectedColor} />
     </ActionMenu>
   );
 }
