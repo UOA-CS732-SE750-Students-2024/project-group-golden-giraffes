@@ -3,6 +3,7 @@
 import { useAuthContext } from "@/contexts/AuthProvider";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
+import { useEffect } from "react";
 
 const Background = styled("div")`
   align-items: center;
@@ -50,8 +51,7 @@ const Disclaimer = () => (
 );
 
 export default function SignInPage() {
-  const { user } = useAuthContext();
-  console.log(user);
+  const { user, logout } = useAuthContext();
 
   return (
     <Background>
