@@ -312,8 +312,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const mouseY = event.clientY - canvasRect.top;
 
       // Convert mouse coordinates to coordinates relative to the image
-      const imageX = mouseX / zoom - offset.x;
-      const imageY = mouseY / zoom - offset.y;
+      const imageX = mouseX / zoom;
+      const imageY = mouseY / zoom;
 
       // Ensure the clicked coordinates are within the image bounds
       if (
@@ -334,7 +334,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         imageY.toFixed(0),
       );
     },
-    [offset, zoom, imageDimensions],
+    [zoom, imageDimensions],
   );
 
   useEffect(() => {
