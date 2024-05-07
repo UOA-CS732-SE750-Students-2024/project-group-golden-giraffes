@@ -7,8 +7,8 @@ import {
 import { styled } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { colorToSwatch } from "../color/Color";
-import { ActionMenu, Heading } from "./ActionPanel";
+import { PaletteColorRecord, colorToSwatch } from "../color/Color";
+import { ActionMenu, ActionMenuBlock, Heading } from "./ActionPanel";
 
 export const Coordinates = styled("p")`
   color: oklch(var(--discord-white-oklch) / 60%);
@@ -31,9 +31,6 @@ export const Record = styled("div")`
   display: flex;
   gap: 1rem;
   justify-content: space-between;
-  & > :first-child {
-    inline-size: 3em;
-  }
 `;
 
 export const RecordInfo = styled("div")`
@@ -48,24 +45,8 @@ export const RecordAuthor = styled("span")`
 `;
 
 export const RecordColor = styled("div")`
-  align-items: center;
-  display: flex;
-  gap: 0.5rem;
   opacity: 0.6;
 `;
-
-export const RecordColorName = styled("span")`
-  font-size: 1.2rem;
-`;
-
-export const RecordColorCode = styled("span")`
-  background-color: rgba(255, 255, 255, 0.12);
-  border-radius: 0.25rem;
-  font-family: var(--font-monospace);
-  font-size: 0.9rem;
-  padding: 0.25rem 0.5rem;
-`;
-
 export const HistoryRecordComponent = ({
   history,
   color,
@@ -75,7 +56,7 @@ export const HistoryRecordComponent = ({
 }) => {
   return (
     <Record>
-      {color && colorToSwatch(color, true)}
+      {color && colorToSwatch({ color, size: 3 })}
       <RecordInfo>
         <RecordAuthor
           title={history.userProfile?.username ? history.userId : ""}
@@ -84,8 +65,7 @@ export const HistoryRecordComponent = ({
         </RecordAuthor>
         {color && (
           <RecordColor>
-            <RecordColorName>{color.name}</RecordColorName>
-            <RecordColorCode>{color.code}</RecordColorCode>
+            <PaletteColorRecord color={color} displaySwatch={false} />
           </RecordColor>
         )}
       </RecordInfo>
@@ -128,35 +108,34 @@ export default function PixelInfoTab({
   return (
     <>
       <ActionMenu>
-        <Coordinates>
-          <span>x: {coordinates.x}</span>
-          <span>y: {coordinates.y}</span>
-        </Coordinates>
-        {currentPixelHistory && ( // To be redesigned later
-          <HistoryRecords>
-            <HistoryRecordComponent
-              history={currentPixelHistory}
-              color={palette.find(
-                (color) => color.id === currentPixelHistory.colorId,
-              )}
-            />
-          </HistoryRecords>
-        )}
-        <Heading>Paint history</Heading>
-        {pastPixelHistory && (
-          <HistoryRecords>
-            {pastPixelHistory.map((history) => (
+        <ActionMenuBlock>
+          <Coordinates>
+            <span>x:&nbsp;{coordinates.x}</span>
+            <span>y:&nbsp;{coordinates.y}</span>
+          </Coordinates>
+          {currentPixelHistory && ( // To be redesigned later
+            <HistoryRecords>
               <HistoryRecordComponent
-                key={history.id}
-                history={history}
-                color={
-                  palette.find((color) => color.id === history.colorId) ||
-                  undefined
-                }
+                history={currentPixelHistory}
+                color={palette.find(
+                  (color) => color.id === currentPixelHistory.colorId,
+                )}
               />
-            ))}
-          </HistoryRecords>
-        )}
+            </HistoryRecords>
+          )}
+          <Heading>Paint history</Heading>
+          {pastPixelHistory && (
+            <HistoryRecords>
+              {pastPixelHistory.map((history) => (
+                <HistoryRecordComponent
+                  key={history.id}
+                  history={history}
+                  color={palette.find((color) => color.id === history.colorId)}
+                />
+              ))}
+            </HistoryRecords>
+          )}
+        </ActionMenuBlock>
       </ActionMenu>
     </>
   );

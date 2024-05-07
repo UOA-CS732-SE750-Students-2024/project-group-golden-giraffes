@@ -4,7 +4,7 @@ import config from "@/config";
 import { UserStats } from "@blurple-canvas-web/types";
 import { DateTime } from "luxon";
 import React, { useState, useEffect, ReactNode } from "react";
-import { Color } from "../color/Color";
+import { PaletteColorRecord } from "../color/Color";
 
 function getOrdinalSuffix(rank: number) {
   const trailingDigits = rank % 100;
@@ -102,7 +102,7 @@ export default function UserStatsComponent({
       {stats.mostFrequentColor && (
         <IndividualStat
           label="Most Frequent Color ID"
-          value={<Color color={stats.mostFrequentColor} />}
+          value={<PaletteColorRecord color={stats.mostFrequentColor} />}
           tooltip={stats.mostFrequentColor.code}
         />
       )}

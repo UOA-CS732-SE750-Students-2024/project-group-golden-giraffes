@@ -1,8 +1,8 @@
 "use client";
 
+import { Point } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import { ORIGIN } from "../canvas/point";
 import PixelInfoTab from "./PixelInfoTab";
 import PlacePixelTab from "./PlacePixelTab";
@@ -68,11 +68,16 @@ const Tab = styled("li")`
 `;
 
 export const ActionMenu = styled("div")`
+  display: grid;
+  gap: max(1rem, 8px);
+`;
+
+export const ActionMenuBlock = styled("div")`
   background-color: var(--discord-legacy-dark-but-not-black);
   display: grid;
   gap: max(0.25rem, 2px);
   grid-template-columns: repeat(5, 1fr);
-  padding: 1rem;
+  padding: 0 1rem;
 `;
 
 export const Heading = styled("h2")`
