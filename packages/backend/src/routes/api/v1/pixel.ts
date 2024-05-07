@@ -13,7 +13,7 @@ import {
   validatePixel,
   validateUser,
 } from "@/services/pixelService";
-import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Point } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
@@ -32,8 +32,8 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
       );
     }
 
-    const { x, y } = queryResult.data;
-    const pixelHistory = await getPixelHistory(canvasId, x, y);
+    const coordinates = queryResult.data;
+    const pixelHistory = await getPixelHistory(canvasId, coordinates);
 
     res.status(200).json(pixelHistory);
   } catch (error) {
@@ -52,24 +52,26 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
       throw new BadRequestError("Body is not valid", result.error.issues);
     }
 
-    const data = result.data;
+    const { x, y, colorId } = result.data;
     const canvasId = await parseCanvasId(req.params);
-    const user = req.user as DiscordUserLoginInfo;
+    const profile = req.user as DiscordUserProfile;
 
-    if (!user) {
+    if (!profile || !profile.id) {
       throw new UnauthorizedError("User is not authenticated");
-    }
-    const userId = user.profile.id;
-    if (!userId) {
-      throw new BadRequestError("UserId does not exist");
     }
     // TODO: check for canvas discord_only status (not sure which table to look here)
 
     // TODO: see if Promise.all() can work here
-    await validatePixel(canvasId, data.x, data.y, true);
-    await validateColor(data.colorId);
-    await validateUser(BigInt(userId));
-    const { futureCooldown } = await placePixel(canvasId, BigInt(userId), data);
+    const coordinates: Point = { x, y };
+    await validatePixel(canvasId, coordinates, true);
+    await validateUser(BigInt(profile.id));
+    const color = await validateColor(colorId);
+    const { futureCooldown } = await placePixel(
+      canvasId,
+      BigInt(profile.id),
+      coordinates,
+      color,
+    );
 
     return res.status(201).json({ cooldownEndTime: futureCooldown });
   } catch (error) {

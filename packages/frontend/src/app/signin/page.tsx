@@ -1,7 +1,10 @@
 "use client";
 
+import { useAuthContext } from "@/contexts/AuthProvider";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const Background = styled("div")`
   align-items: center;
@@ -49,6 +52,18 @@ const Disclaimer = () => (
 );
 
 export default function SignInPage() {
+  const router = useRouter();
+  const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (user) {
+      console.log(
+        "[User Session]: User authenticated. Redirecting to home page",
+      );
+      router.replace("/");
+    }
+  }, [user, router]);
+
   return (
     <Background>
       <SignInForm>
@@ -64,9 +79,7 @@ export default function SignInPage() {
         <a href="http://localhost:8000/api/v1/discord/">
           <Button variant="contained">Sign in with Discord</Button>
         </a>
-        <p>
-          <em>That it. There are no other options.</em>
-        </p>
+        <p>That’s it. There are no other options.</p>
       </SignInForm>
       <Disclaimer />
     </Background>

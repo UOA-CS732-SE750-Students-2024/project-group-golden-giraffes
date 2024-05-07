@@ -1,5 +1,9 @@
 import { prisma } from "@/client";
-import { LeaderboardRow, UserStats } from "@blurple-canvas-web/types";
+import {
+  CanvasInfo,
+  LeaderboardEntry,
+  UserStats,
+} from "@blurple-canvas-web/types";
 
 export async function getUserStats(
   userId: string,
@@ -43,16 +47,15 @@ export async function getUserStats(
 }
 
 /**
- * Retrieves the top 20 users on the leaderboard for a canvas.
- *
- * @returns The top 20 users on the leaderboard for a canvas.
+ * Retrieves the top n users on the leaderboard for a canvas, up to a maximum
+ * of 40.
  */
 export async function getLeaderboard(
-  canvasId: number,
-): Promise<LeaderboardRow[]> {
+  canvasId: CanvasInfo["id"],
+  size = 10,
+): Promise<LeaderboardEntry[]> {
   const leaderboard = await prisma.leaderboard.findMany({
-    take: 20,
-    // prisma doesn't seem to be preserving the order of the leaderboard view
+    take: Math.min(size, 40), // Arbitrary maximum
     orderBy: {
       rank: "asc",
     },
@@ -62,7 +65,6 @@ export async function getLeaderboard(
     select: {
       rank: true,
       user_id: true,
-      canvas_id: true,
       total_pixels: true,
     },
   });
@@ -70,7 +72,6 @@ export async function getLeaderboard(
   return leaderboard.map((row) => ({
     rank: row.rank,
     userId: row.user_id.toString(),
-    canvasId: row.canvas_id,
     totalPixels: row.total_pixels,
   }));
 }

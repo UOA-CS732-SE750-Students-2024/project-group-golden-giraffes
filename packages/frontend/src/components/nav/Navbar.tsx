@@ -79,12 +79,12 @@ export default function Navbar() {
       </CompositeLogo>
       <CanvasPicker />
       <Links>
-        <ul>
-          {/* <li><a href="/leaderboard">Leaderboard</a></li> */}
-          <li>
-            <a href="/">Sign out</a>
-          </li>
-        </ul>
+        <li>
+          <a href="/leaderboard">Leaderboard</a>
+        </li>
+        <li>
+          <a href="/">Sign out</a>
+        </li>
       </Links>
     </Nav>
   );

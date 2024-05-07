@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from "next";
 import config from "@/config";
 import { QueryClientProvider } from "@/contexts";
 import "@/styles/core.css";
+import AuthProvider from "@/contexts/AuthProvider";
 import { Theme } from "@/theme";
 
 export const metadata: Metadata = {
@@ -26,9 +27,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <QueryClientProvider>
-            <ThemeProvider theme={Theme}>{children}</ThemeProvider>
-          </QueryClientProvider>
+          <AuthProvider>
+            <QueryClientProvider>
+              <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+            </QueryClientProvider>
+          </AuthProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

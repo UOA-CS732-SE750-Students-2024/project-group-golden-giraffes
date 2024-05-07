@@ -1,9 +1,10 @@
 export * from "./api";
-
-export * from "./BlurpleEvent";
 export * from "./canvasInfo";
-export * from "./discordUserLoginInfo";
-export * from "./paletteColor";
+export * from "./discordUserProfile";
 export * from "./pixelInfo";
+export * from "./event";
+export * from "./palette";
 export * from "./pixelHistory";
+export * from "./pixelInfo";
+export * from "./point";
 export * from "./statistics";

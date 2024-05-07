@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { prisma } from "@/client";
 import config from "@/config";
 import { NotFoundError } from "@/errors";
-import { CanvasInfo, CanvasSummary } from "@blurple-canvas-web/types";
+import { CanvasInfo, CanvasSummary, Point } from "@blurple-canvas-web/types";
 import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 
@@ -77,10 +77,15 @@ export async function getCanvases(): Promise<CanvasSummary[]> {
     select: {
       id: true,
       name: true,
+      event_id: true,
     },
   });
 
-  return canvases;
+  return canvases.map((canvas) => ({
+    id: canvas.id,
+    name: canvas.name,
+    eventId: canvas.event_id,
+  }));
 }
 
 /**
@@ -108,10 +113,6 @@ export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
  * @returns The canvas info
  */
 export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
-  const info = await prisma.info.findFirst({
-    select: { default_canvas_id: true },
-  });
-
   const canvas = await prisma.canvas.findFirst({
     select: {
       id: true,
@@ -183,14 +184,37 @@ export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
   return CANVAS_CACHE[canvasId];
 }
 
-async function getCanvasPixels(canvas: canvas): Promise<PixelColor[]> {
+/**
+ * Updates a pixel in the canvas cache. If the canvas is not in the cache, or the canvas is locked
+ * this will do nothing.
+ *
+ * @param canvasId The ID of the canvas to update
+ * @param coordinates The coordinates of the pixel
+ * @param color The color of the pixel
+ */
+export function updateCachedCanvasPixel(
+  canvasId: CanvasInfo["id"],
+  coordinates: Point,
+  color: PixelColor,
+) {
+  const cachedCanvas = CANVAS_CACHE[canvasId];
+
+  if (!cachedCanvas || cachedCanvas.isLocked) {
+    return;
+  }
+
+  const pixelIndex = coordinates.y * cachedCanvas.width + coordinates.x;
+  cachedCanvas.pixels[pixelIndex] = color;
+}
+
+export async function getCanvasPixels(canvasId: number): Promise<PixelColor[]> {
   const pixels = await prisma.pixel.findMany({
     select: {
       color: {
         select: { rgba: true },
       },
     },
-    where: { canvas_id: canvas.id },
+    where: { canvas_id: canvasId },
     orderBy: [{ y: "asc" }, { x: "asc" }],
   });
 
@@ -231,7 +255,7 @@ async function getAndCacheCanvas(canvasId: number): Promise<CachedCanvas> {
     throw new NotFoundError(`There is no canvas with ID ${canvasId}`);
   }
 
-  const pixels = await getCanvasPixels(canvas);
+  const pixels = await getCanvasPixels(canvasId);
   const unlockedCanvas: UnlockedCanvas = {
     isLocked: false,
     width: canvas.width,

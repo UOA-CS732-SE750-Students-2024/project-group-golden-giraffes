@@ -1,3 +1,4 @@
+import { fail } from "node:assert";
 import { prisma } from "@/client";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
 import {
@@ -7,6 +8,7 @@ import {
   seedPixels,
   seedUsers,
 } from "@/test";
+import { getCanvasPng } from "./canvasService";
 import {
   getCooldown,
   placePixel,
@@ -21,49 +23,57 @@ describe("Pixel Validation Tests", () => {
   });
 
   it("Resolves valid canvas on top left pixel (0, 0)", async () => {
-    return expect(validatePixel(1, 0, 0, false)).resolves.not.toThrow();
+    return expect(
+      validatePixel(1, { x: 0, y: 0 }, false),
+    ).resolves.not.toThrow();
   });
 
   it("Resolves valid canvas on bottom right pixel (1, 1)", async () => {
-    return expect(validatePixel(1, 1, 1, false)).resolves.not.toThrow();
+    return expect(
+      validatePixel(1, { x: 1, y: 1 }, false),
+    ).resolves.not.toThrow();
   });
 
   it("Rejects with x too small", async () => {
-    return expect(validatePixel(1, -1, 0, false)).rejects.toThrow(
+    return expect(validatePixel(1, { x: -1, y: 0 }, false)).rejects.toThrow(
       BadRequestError,
     );
   });
 
   it("Rejects with x too large", async () => {
-    return expect(validatePixel(1, 99, 0, false)).rejects.toThrow(
+    return expect(validatePixel(1, { x: 99, y: 0 }, false)).rejects.toThrow(
       BadRequestError,
     );
   });
 
   it("Rejects valid canvas with y too small", async () => {
-    return expect(validatePixel(1, 0, -1, false)).rejects.toThrow(
+    return expect(validatePixel(1, { x: 0, y: -1 }, false)).rejects.toThrow(
       BadRequestError,
     );
   });
 
   it("Rejects valid canvas with y too large", async () => {
-    return expect(validatePixel(1, 0, 99, false)).rejects.toThrow(
+    return expect(validatePixel(1, { x: 0, y: 99 }, false)).rejects.toThrow(
       BadRequestError,
     );
   });
 
   it("Rejects nonexistent canvas", async () => {
-    return expect(validatePixel(9999, 0, 0, false)).rejects.toThrow(
+    return expect(validatePixel(9999, { x: 0, y: 0 }, false)).rejects.toThrow(
       NotFoundError,
     );
   });
 
   it("Rejects locked canvas when honorLocked is true", async () => {
-    return expect(validatePixel(9, 0, 0, true)).rejects.toThrow(ForbiddenError);
+    return expect(validatePixel(9, { x: 0, y: 0 }, true)).rejects.toThrow(
+      ForbiddenError,
+    );
   });
 
   it("Resolves locked canvas when honorLocked is false", async () => {
-    return expect(validatePixel(9, 0, 0, false)).resolves.not.toThrow();
+    return expect(
+      validatePixel(9, { x: 0, y: 0 }, false),
+    ).resolves.not.toThrow();
   });
 });
 
@@ -189,11 +199,21 @@ describe("Place Pixel Tests", () => {
     const canvasId = 1;
     const userId = BigInt(1);
 
-    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 });
+    await placePixel(
+      canvasId,
+      userId,
+      { x: 1, y: 1 },
+      { id: 1, rgba: [88, 101, 242, 127] },
+    );
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
     // Current implementation will reject if currentCooldown and futureCooldown are equal
     vi.advanceTimersByTime(30 * 1000 + 1);
-    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 2 });
+    await placePixel(
+      canvasId,
+      userId,
+      { x: 1, y: 1 },
+      { id: 2, rgba: [88, 101, 242, 255] },
+    );
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 
     expect(before.pixel?.color_id).toBe(1);
@@ -206,14 +226,64 @@ describe("Place Pixel Tests", () => {
     const canvasId = 1;
     const userId = BigInt(1);
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
-    await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 });
+    await placePixel(
+      canvasId,
+      userId,
+      { x: 1, y: 1 },
+      { id: 1, rgba: [88, 101, 242, 127] },
+    );
     for (let i = 0; i < 3; i++) {
       expect(
-        placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 }),
+        placePixel(
+          canvasId,
+          userId,
+          { x: 1, y: 1 },
+          { id: 1, rgba: [88, 101, 242, 127] },
+        ),
       ).rejects.toThrow(ForbiddenError);
     }
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
     expect(before.history.length + 1).toEqual(after.history.length);
+  });
+
+  it("Resolves updating cached canvas pixel", async () => {
+    const canvasId = 1;
+    const userId = BigInt(1);
+
+    // Causes canvas to get loaded into cache
+    const canvas = await getCanvasPng(canvasId);
+
+    // Necessary for Typescript to correctly identify which of the union types are applicable.
+    if (canvas.isLocked) {
+      fail("Canvas should not be locked");
+    }
+
+    expect(canvas.pixels).toStrictEqual([
+      [88, 101, 242, 127],
+      [88, 101, 242, 255],
+      [234, 35, 40, 255],
+      [88, 101, 242, 127],
+    ]);
+
+    await placePixel(
+      canvasId,
+      userId,
+      { x: 1, y: 1 },
+      { id: 2, rgba: [88, 101, 242, 255] },
+    );
+
+    const updatedCanvas = await getCanvasPng(canvasId);
+
+    if (updatedCanvas.isLocked) {
+      fail("Canvas should not be locked");
+    }
+
+    expect(updatedCanvas.pixels).toStrictEqual([
+      [88, 101, 242, 127],
+      [88, 101, 242, 255],
+      [234, 35, 40, 255],
+      [88, 101, 242, 255], // <- This pixel should have updated
+    ]);
   });
 
   async function fetchCooldownPixelHistory(
