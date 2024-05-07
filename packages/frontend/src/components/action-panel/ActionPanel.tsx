@@ -1,27 +1,25 @@
 "use client";
 
 import { styled } from "@mui/material";
-import { useEffect, useState } from "react";
-import { ORIGIN, Point } from "../canvas/point";
+import { useState } from "react";
+
+import { ORIGIN } from "../canvas/point";
 import PixelInfoTab from "./PixelInfoTab";
 import PlacePixelTab from "./PlacePixelTab";
-
-const Container = styled("div")`
-  background-color: var(--discord-legacy-not-quite-black);
-  border-radius: var(--card-border-radius);
-  border: var(--card-border);
-  gap: 0.5rem;
-  height: 100%;
-  padding: 1rem;
-  width: 100%;
-`;
 
 interface TabContainerProps {
   active: boolean;
 }
 
 const TabContainer = styled("div")<TabContainerProps>`
+  background-color: var(--discord-legacy-not-quite-black);
+  border-radius: var(--card-border-radius);
+  border: var(--card-border);
   display: ${({ active }) => (active ? "block" : "none")};
+  gap: 0.5rem;
+  height: 100%;
+  padding: 1rem;
+  width: 100%;
 `;
 
 const TabBar = styled("ul")`
@@ -69,10 +67,6 @@ const Tab = styled("li")`
   }
 `;
 
-const ZenTab = styled(Tab)`
-  margin-inline-start: auto;
-`;
-
 export const ActionMenu = styled("div")`
   background-color: var(--discord-legacy-dark-but-not-black);
   display: grid;
@@ -100,7 +94,7 @@ enum TabTypes {
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TabTypes.Place);
 
-  const [coordinates, setCoordinates] = useState<Point>(ORIGIN);
+  const [coordinates, setCoordinates] = useState(ORIGIN);
 
   const canvasId = 2023; // This is a placeholder value
 
@@ -109,17 +103,14 @@ export default function ActionPanel() {
       <TabBar>
         <Tab onClick={() => setCurrentTab(TabTypes.Look)}>Look</Tab>
         <Tab onClick={() => setCurrentTab(TabTypes.Place)}>Place</Tab>
-        <ZenTab onClick={() => setCurrentTab(TabTypes.Zen)}>🧘</ZenTab>
       </TabBar>
-      <Container>
-        <TabContainer active={currentTab === TabTypes.Look}>
-          <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
-        </TabContainer>
-        <TabContainer active={currentTab === TabTypes.Place}>
-          <PlacePixelTab />
-        </TabContainer>
-        <TabContainer active={currentTab === TabTypes.Zen}>🧘</TabContainer>
-      </Container>
+
+      <TabContainer active={currentTab === TabTypes.Look}>
+        <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
+      </TabContainer>
+      <TabContainer active={currentTab === TabTypes.Place}>
+        <PlacePixelTab />
+      </TabContainer>
     </>
   );
 }
