@@ -1,51 +1,98 @@
 "use client";
 
-import { NativeSelect, styled } from "@mui/material";
+import { NativeSelect, nativeSelectClasses, styled } from "@mui/material";
+import { ChevronsUpDown } from "lucide-react";
 
-import { useCanvasInfo, useCanvasList } from "@/hooks";
+import { useCanvasInfo, useCanvasList, useEventInfo } from "@/hooks";
+import { CanvasSummary } from "@blurple-canvas-web/types";
 
 const Select = styled(NativeSelect)`
   background-color: var(--discord-legacy-not-quite-black);
-  border-radius: var(--card-border-radius);
   border: 0;
+  border-radius: var(--card-border-radius);
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: inherit;
   font-weight: 500;
   justify-self: flex-start;
   min-inline-size: 16rem;
-  padding: 0.5rem 1.25rem;
 
-  :hover {
+  &,
+  & * {
+    user-select: none;
+  }
+
+  .${nativeSelectClasses.select} {
+    padding: 0.25rem 1rem;
+
+    :focus,
+    :focus-visible {
+      background-color: unset;
+      outline: 0;
+    }
+  }
+
+  .${nativeSelectClasses.icon} {
+    color: oklch(var(--discord-white-oklch) / 45%);
+    margin-inline: 0.25rem;
+  }
+
+  .${nativeSelectClasses.disabled} {
+    cursor: wait;
+  }
+
+  :hover:not(.${nativeSelectClasses.disabled}) {
     background-color: var(--discord-legacy-greyple);
   }
 
-  :focus,
-  :focus-visible {
+  :hover,
+  ::before,
+  ::after {
+    content: unset;
+  }
+
+  :has(:focus),
+  :has(:focus-visible) {
     outline: var(--focus-outline);
   }
 `;
 
-export default function CanvasPicker() {
-  const { data: canvases = [] } = useCanvasList();
-  const { data: mainCanvas } = useCanvasInfo();
+const canvasToSelectOption = ({ id, name }: CanvasSummary) => (
+  <option key={id} value={id}>
+    {name}
+  </option>
+);
 
-  const allButMain = canvases.filter(({ id }) => id !== mainCanvas?.id);
+export default function CanvasPicker() {
+  const { data: canvases = [], isLoading: canvasListIsLoading } =
+    useCanvasList();
+  const { data: mainCanvas, isLoading: mainCanvasIsLoading } = useCanvasInfo();
+  const { data: currentEvent, isLoading: currentEventIsLoading } =
+    useEventInfo();
+
+  const isLoading =
+    canvasListIsLoading || mainCanvasIsLoading || currentEventIsLoading;
+
+  const currentCanvases = canvases.filter(
+    ({ id, eventId }) => id !== mainCanvas?.id && eventId === currentEvent?.id,
+    //                   ^~~~~~~~~~~~~~~~~~~~~ main canvas gets its own <optgroup>
+  );
+  const pastCanvases = canvases.filter(({ id }) => id !== currentEvent?.id);
 
   return (
-    <Select>
+    <Select disabled={isLoading} IconComponent={ChevronsUpDown}>
       {mainCanvas && (
-        <>
-          <option key={mainCanvas.id} value={mainCanvas.id}>
-            {mainCanvas.name}
-          </option>
-          <hr />
-        </>
+        <optgroup label="Main">{canvasToSelectOption(mainCanvas)}</optgroup>
       )}
-      {allButMain.map(({ id, name }) => (
-        <option key={id} value={id}>
-          {name}
-        </option>
-      ))}
+      {currentCanvases.length > 0 && (
+        <optgroup label="Current">
+          {currentCanvases.map(canvasToSelectOption)}
+        </optgroup>
+      )}
+      {pastCanvases.length > 0 && (
+        <optgroup label="Past">
+          {pastCanvases.map(canvasToSelectOption)}
+        </optgroup>
+      )}
     </Select>
   );
 }
