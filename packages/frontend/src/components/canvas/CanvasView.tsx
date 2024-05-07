@@ -303,6 +303,62 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     [handleTouchMove, handleTouchEnd],
   );
 
+  const handleCanvasClick = useCallback(
+    (event: MouseEvent): void => {
+      if (!canvasRef.current || !imageDimensions) return;
+
+      const canvasRect = canvasRef.current.getBoundingClientRect();
+      const mouseX = event.clientX - canvasRect.left;
+      const mouseY = event.clientY - canvasRect.top;
+
+      // Convert mouse coordinates to coordinates relative to the image
+      const imageX = mouseX / zoom - offset.x;
+      const imageY = mouseY / zoom - offset.y;
+
+      // Ensure the clicked coordinates are within the image bounds
+      if (
+        imageX < 0 ||
+        imageX >= imageDimensions.width ||
+        imageY < 0 ||
+        imageY >= imageDimensions.height
+      ) {
+        return;
+      }
+
+      // Get the color information of the clicked pixel from the image data
+      const context = canvasRef.current.getContext("2d", {
+        willReadFrequently: true,
+      });
+      if (!context) return;
+
+      const imageData = context.getImageData(
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height,
+      );
+      const pixelIndex =
+        (Math.floor(imageY) * imageData.width + Math.floor(imageX)) * 4;
+      const pixelColor = {
+        r: imageData.data[pixelIndex],
+        g: imageData.data[pixelIndex + 1],
+        b: imageData.data[pixelIndex + 2],
+        a: imageData.data[pixelIndex + 3],
+      };
+
+      // Do something with the selected pixel color
+      console.log("Selected pixel color:", pixelColor);
+    },
+    [offset, zoom, imageDimensions],
+  );
+
+  useEffect(() => {
+    canvasRef.current?.addEventListener("mousedown", handleCanvasClick);
+
+    return () =>
+      canvasRef.current?.removeEventListener("mousedown", handleCanvasClick);
+  }, [handleCanvasClick]);
+
   return (
     <>
       <CanvasContainer
@@ -326,6 +382,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onLoad={(event) => handleLoadImage(event.currentTarget)}
         ref={imageRef}
         src={imageUrl}
+        crossOrigin="anonymous"
       />
     </>
   );
