@@ -1,9 +1,12 @@
 import { usePalette, usePixelHistory } from "@/hooks";
-import { PaletteColor, PixelHistoryRecord } from "@blurple-canvas-web/types";
+import {
+  PaletteColor,
+  PixelHistoryRecord,
+  Point,
+} from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Point } from "../canvas/point";
 import { PaletteColorRecord, colorToSwatch } from "../color/Color";
 import { ActionMenu, ActionMenuBlock, Heading } from "./ActionPanel";
 
@@ -55,7 +58,11 @@ export const HistoryRecordComponent = ({
     <Record>
       {color && colorToSwatch({ color, size: 3 })}
       <RecordInfo>
-        <RecordAuthor>{history.userId}</RecordAuthor>
+        <RecordAuthor
+          title={history.userProfile?.username ? history.userId : ""}
+        >
+          {history.userProfile?.username || history.userId}
+        </RecordAuthor>
         {color && (
           <RecordColor>
             <PaletteColorRecord color={color} displaySwatch={false} />
@@ -107,14 +114,14 @@ export default function PixelInfoTab({
             <span>y: {coordinates.y}</span>
           </Coordinates>
           {currentPixelHistory && ( // To be redesigned later
-            <HistoryRecordComponent
-              history={currentPixelHistory}
-              color={
-                palette.find(
+            <HistoryRecords>
+              <HistoryRecordComponent
+                history={currentPixelHistory}
+                color={palette.find(
                   (color) => color.id === currentPixelHistory.colorId,
-                ) ?? undefined
-              }
-            />
+                )}
+              />
+            </HistoryRecords>
           )}
           <Heading>Paint history</Heading>
           {pastPixelHistory && (

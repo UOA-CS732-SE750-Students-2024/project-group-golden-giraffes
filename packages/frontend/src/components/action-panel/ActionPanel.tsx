@@ -1,8 +1,9 @@
 "use client";
 
+import { Point } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useEffect, useState } from "react";
-import { ORIGIN, Point } from "../canvas/point";
+import { ORIGIN } from "../canvas/point";
 import PixelInfoTab from "./PixelInfoTab";
 import PlacePixelTab from "./PlacePixelTab";
 

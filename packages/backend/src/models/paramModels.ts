@@ -1,4 +1,5 @@
 import BadRequestError from "@/errors/BadRequestError";
+import { CanvasInfo } from "@blurple-canvas-web/types";
 import z from "zod";
 
 const CanvasIdParamModel = z.object({
@@ -9,16 +10,24 @@ export const EventIdParamModel = z.object({
   eventId: z.coerce.number().int().positive(),
 });
 
+export type LeaderboardParamModel = typeof CanvasIdParamModel;
+
+export const LeaderboardQueryModel = z.object({
+  size: z.coerce.number().int().positive().optional(),
+});
+
 export const PixelHistoryParamModel = z.object({
-  x: z.coerce.number().int().min(0),
-  y: z.coerce.number().int().min(0),
+  x: z.coerce.number().int().nonnegative(),
+  y: z.coerce.number().int().nonnegative(),
 });
 
 export interface CanvasIdParam {
   canvasId: string;
 }
 
-export async function parseCanvasId(params: CanvasIdParam): Promise<number> {
+export async function parseCanvasId(
+  params: CanvasIdParam,
+): Promise<CanvasInfo["id"]> {
   const result = await CanvasIdParamModel.safeParseAsync(params);
   if (!result.success) {
     throw new BadRequestError(

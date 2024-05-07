@@ -68,9 +68,10 @@ model cooldown {
 }
 
 model discord_user_profile {
-  user_id             BigInt @id
+  user_id             BigInt    @id
   username            String
   profile_picture_url String
+  history             history[]
 }
 
 model event {
@@ -78,6 +79,7 @@ model event {
   name         String
   canvases     canvas[]
   participants participation[]
+  info         info[]
 }
 
 model frame {
@@ -105,18 +107,19 @@ model guild {
 }
 
 model history {
-  id        BigInt   @id @default(autoincrement())
-  canvas_id Int
-  canvas    canvas   @relation(fields: [canvas_id], references: [id])
-  user_id   BigInt
-  user      user     @relation(fields: [user_id], references: [id])
-  x         Int
-  y         Int
-  color_id  Int
-  color     color    @relation(fields: [color_id], references: [id])
-  timestamp DateTime @db.Timestamptz(6)
-  guild_id  BigInt?
-  guild     guild?   @relation(fields: [guild_id], references: [id])
+  id                   BigInt               @id @default(autoincrement())
+  canvas_id            Int
+  canvas               canvas               @relation(fields: [canvas_id], references: [id])
+  user_id              BigInt
+  user                 user                 @relation(fields: [user_id], references: [id])
+  x                    Int
+  y                    Int
+  color_id             Int
+  color                color                @relation(fields: [color_id], references: [id])
+  timestamp            DateTime             @db.Timestamptz(6)
+  guild_id             BigInt?
+  guild                guild?               @relation(fields: [guild_id], references: [id])
+  discord_user_profile discord_user_profile @relation(fields: [user_id], references: [user_id], map: "discord_user_profile_user_id_fkey")
 }
 
 /// This is a special table that will only ever have one row. The title being the primary key
@@ -125,6 +128,7 @@ model info {
   title                   String   @id
   canvas_admin            BigInt[]
   current_event_id        Int
+  current_event           event    @relation(fields: [current_event_id], references: [id])
   cached_canvas_ids       Int[]
   highlight_color         Int?
   admin_server_id         BigInt
