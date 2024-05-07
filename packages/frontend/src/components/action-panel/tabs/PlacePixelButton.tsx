@@ -64,7 +64,6 @@ export default function PlacePixelButton({
   color,
   coordinates,
   disabled = false,
-
   ...props
 }: PlacePixelButtonProps) {
   const rgba = color?.rgba;
