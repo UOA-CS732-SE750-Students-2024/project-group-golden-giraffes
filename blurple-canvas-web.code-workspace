@@ -33,7 +33,7 @@
     "cSpell.language": "en-US",
     "cSpell.overrides": [
       {
-        "filename": "**/*.{md,tex}",
+        "filename": "**/*.{markdown,md,tex,txt}",
         "caseSensitive": true,
         "language": "en-GB",
       },
