@@ -1,14 +1,5 @@
 import { styled } from "@mui/material";
 
-export const ButtonSeries = styled("div")`
-  display: flex;
-  gap: max(0.25rem, 2px);
-
-  > button {
-    flex: 1;
-  }
-`;
-
 interface ButtonProps {
   backgroundColor?: string;
   onClick: () => void;
