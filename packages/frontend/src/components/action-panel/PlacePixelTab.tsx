@@ -41,8 +41,9 @@ export const ButtonSeries = styled("div")`
 `;
 
 interface ButtonProps {
-  onClick: () => void;
   backgroundColor?: string;
+  disabled?: boolean;
+  onClick: () => void;
 }
 
 export const Button = styled("div")<ButtonProps>`
@@ -68,13 +69,21 @@ export const Button = styled("div")<ButtonProps>`
     color var(--transition-duration-medium) ease;
   user-select: none;
 
-  &:hover {
-    border-color: oklch(var(--discord-white-oklch) / 36%);
-  }
+  ${({ disabled }) =>
+    disabled &&
+    `opacity: 0.6;
+  cursor: not-allowed;
+  `}
 
-  :active {
-    border-color: oklch(var(--discord-white-oklch) / 72%);
-  }
+  ${({ disabled }) =>
+    !disabled &&
+    `&:hover {
+      border-color: oklch(var(--discord-white-oklch) / 36%);
+    }
+
+    :active {
+      border-color: oklch(var(--discord-white-oklch) / 72%);
+    }`}
 `;
 
 export const TranslucentText = styled("span")<{ opacity: number }>`
@@ -151,6 +160,7 @@ export default function PlacePixelTab({
           backgroundColor={
             selectedColor ? `rgb(${rgb} / ${alphaFloat})` : undefined
           }
+          // disabled={true}  << how to disable the button
           onClick={() => console.log("Place pixel")}
         >
           Paint it!{" "}
