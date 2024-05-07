@@ -185,8 +185,8 @@ export async function placePixel(
   color: Pick<PaletteColor, "id" | "rgba">,
   cooldownTimeStamp: Date,
 ) {
-  await prisma.$transaction([
-    prisma.cooldown.upsert({
+  await prisma.$transaction(async (tx) => {
+    await tx.cooldown.upsert({
       where: {
         user_id_canvas_id: {
           user_id: userId,
@@ -201,8 +201,9 @@ export async function placePixel(
       update: {
         cooldown_time: cooldownTimeStamp,
       },
-    }),
-    prisma.pixel.upsert({
+    });
+
+    await tx.pixel.upsert({
       where: {
         canvas_id_x_y: {
           canvas_id: canvasId,
@@ -219,8 +220,9 @@ export async function placePixel(
       update: {
         color_id: color.id,
       },
-    }),
-    prisma.history.create({
+    });
+
+    await tx.history.create({
       data: {
         user_id: userId,
         canvas_id: canvasId,
@@ -230,8 +232,9 @@ export async function placePixel(
         timestamp: cooldownTimeStamp,
         guild_id: config.webGuildId,
       },
-    }),
-  ]);
+    });
 
-  updateCachedCanvasPixel(canvasId, x, y, color.rgba);
+    // Only update the cache if the transaction is successful
+    updateCachedCanvasPixel(canvasId, x, y, color.rgba);
+  });
 }
