@@ -325,29 +325,14 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         return;
       }
 
-      // Get the color information of the clicked pixel from the image data
-      const context = canvasRef.current.getContext("2d", {
-        willReadFrequently: true,
-      });
-      if (!context) return;
-
-      const imageData = context.getImageData(
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height,
-      );
-      const pixelIndex =
-        (Math.floor(imageY) * imageData.width + Math.floor(imageX)) * 4;
-      const pixelColor = {
-        r: imageData.data[pixelIndex],
-        g: imageData.data[pixelIndex + 1],
-        b: imageData.data[pixelIndex + 2],
-        a: imageData.data[pixelIndex + 3],
-      };
-
       // Do something with the selected pixel color
-      console.log("Selected pixel color:", pixelColor);
+      console.log(
+        "Clicked on pixel: ",
+        "x = ",
+        imageX.toFixed(0),
+        "y = ",
+        imageY.toFixed(0),
+      );
     },
     [offset, zoom, imageDimensions],
   );
