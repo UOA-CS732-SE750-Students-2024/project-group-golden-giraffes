@@ -11,12 +11,16 @@ export const discordRouter = Router();
 discordRouter.get("/", passport.authenticate("discord"));
 
 /**
- * Deletes the session cookie, effectively logging the user out. This must be done server-side as
- * the cookie is marked as `httpOnly` and cannot be accessed by the frontend.
+ * Delete the active session associated with the user. This will invalidate the existing session
+ * cookie.
  */
-discordRouter.get("/logout", (_req, res) => {
-  res.clearCookie(config.session.cookie);
-  res.status(204).end();
+discordRouter.post("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.status(204).end();
+  });
 });
 
 discordRouter.get(

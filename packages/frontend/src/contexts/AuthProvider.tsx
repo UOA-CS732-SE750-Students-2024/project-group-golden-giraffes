@@ -1,6 +1,8 @@
 "use client";
 
+import config from "@/config";
 import { DiscordProfile } from "@blurple-canvas-web/types";
+import axios from "axios";
 import Cookies from "js-cookie";
 import {
   ReactNode,
@@ -33,6 +35,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   });
 
   const logout = useCallback(() => {
+    // Delete the session cookie
+    axios.post(`${config.apiUrl}/api/v1/discord/logout`).catch(console.error);
+
     Cookies.remove("profile");
     setUser(null);
   }, []);

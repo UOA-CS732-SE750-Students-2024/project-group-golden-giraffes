@@ -52,6 +52,11 @@ const Disclaimer = () => (
 
 export default function SignInPage() {
   const { user, logout } = useAuthContext();
+  // logout();
+
+  useEffect(() => {
+    logout();
+  }, [logout]);
 
   return (
     <Background>
