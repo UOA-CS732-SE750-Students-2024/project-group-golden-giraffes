@@ -6,6 +6,7 @@ import { useState } from "react";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTab } from "./ActionPanelTab";
+import BotCommandCard from "./BotCommandCard";
 import PlacePixelButton from "./PlacePixelButton";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
@@ -63,6 +64,7 @@ export default function PlacePixelTab({
       </ColorPicker>
       <ColorInfoCard color={selectedColor} />
       <PlacePixelButton color={selectedColor} coordinates={coordinates} />
+      <BotCommandCard color={selectedColor} coordinates={coordinates} />
     </ActionPanelTab>
   );
 }
