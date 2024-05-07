@@ -1,4 +1,4 @@
-import { styled } from "@mui/material";
+import { buttonClasses, css, styled } from "@mui/material";
 
 import { PaletteColor, Point } from "@blurple-canvas-web/types";
 
@@ -7,26 +7,37 @@ import { Button as ButtonBase } from "@/components";
 const DynamicButton = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== "backgroundColorStr",
 })<{ backgroundColorStr?: string }>`
-  --dynamic-bg-color: ${({ backgroundColorStr = "var(--discord-blurple)" }) =>
-    backgroundColorStr};
+  && {
+    --dynamic-bg-color: var(--discord-blurple);
+    background-color: var(--dynamic-bg-color);
+  }
 
-  &:not(:disabled) {
-    &:hover {
-      background-color: var(--dynamic-bg-color);
-      border-color: oklch(var(--discord-white-oklch) / 36%);
-    }
-    &:active {
-      border-color: oklch(var(--discord-white-oklch) / 72%);
-      font-weight: bolder;
-    }
+  &:hover,
+  &:focus,
+  &:focus-visible {
+    ${({ backgroundColorStr }) =>
+      backgroundColorStr &&
+      css`
+        --dynamic-bg-color: ${backgroundColorStr};
+      `}
+    border-color: oklch(var(--discord-white-oklch) / 36%);
+    font-weight: 600;
+  }
+
+  &:active {
+    border-color: oklch(var(--discord-white-oklch) / 72%);
+    font-weight: 450;
   }
 `;
 
 const DynamicButtonContent = styled("span")`
   display: block flex;
-  gap: 0.2rem;
+  gap: 0.25rem;
   opacity: 95%;
-  transition: font-weight var(--transition-duration-fast) ease;
+  transition:
+    color var(--transition-duration-fast) ease,
+    filter var(--transition-duration-fast) ease,
+    font-weight var(--transition-duration-fast) ease;
 
   /*
    * Ensure contrast of button label against background. The color property
@@ -58,9 +69,9 @@ export default function PlacePixelButton({
 }: PlacePixelButtonProps) {
   const rgba = color?.rgba;
   const rgb = rgba?.slice(0, 3).join(" ");
-  const alphaFloat = rgba ? rgba[3] / 255 : undefined;
 
-  const backgroundColorStr = color ? `rgb(${rgb} / ${alphaFloat})` : undefined;
+  const backgroundColorStr = color ? `rgb(${rgb})` : undefined;
+  console.log("backgroundColorStr", backgroundColorStr);
   const { x, y } = coordinates; // TODO: Adjust coordinates by visual start coordinate offset (defined in canvas info)
 
   return (
