@@ -1,9 +1,12 @@
 import { usePalette, usePixelHistory } from "@/hooks";
-import { PaletteColor, PixelHistoryRecord } from "@blurple-canvas-web/types";
+import {
+  PaletteColor,
+  PixelHistoryRecord,
+  Point,
+} from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Point } from "../canvas/point";
 import { colorToSwatch } from "../color/Color";
 import { ActionMenu, Heading } from "./ActionPanel";
 

@@ -1,22 +1,26 @@
 import { prisma } from "@/client";
 import config from "@/config";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
-import { PixelHistoryRecord, PixelInfo } from "@blurple-canvas-web/types";
+import {
+  PaletteColor,
+  PixelHistoryRecord,
+  Point,
+} from "@blurple-canvas-web/types";
+import { color } from "@prisma/client";
+import { updateCachedCanvasPixel } from "./canvasService";
 
 /**
  * Gets the pixel history for the given canvas and coordinates
  *
  * @param canvasId - The ID of the canvas
- * @param x - The x coordinate of the pixel
- * @param y - The y coordinate of the pixel
+ * @param coordinates - The coordinates of the pixel
  */
 export async function getPixelHistory(
   canvasId: number,
-  x: number,
-  y: number,
+  coordinates: Point,
 ): Promise<PixelHistoryRecord[]> {
   // check if canvas exists
-  await validatePixel(canvasId, x, y, false);
+  await validatePixel(canvasId, coordinates, false);
 
   const pixelHistory = await prisma.history.findMany({
     select: {
@@ -29,8 +33,7 @@ export async function getPixelHistory(
     },
     where: {
       canvas_id: canvasId,
-      x: x,
-      y: y,
+      ...coordinates,
     },
     orderBy: {
       timestamp: "desc",
@@ -53,14 +56,12 @@ export async function getPixelHistory(
 /** Ensures that the given pixel coordinates are within the bounds of the canvas and the canvas exists
  *
  * @param canvasId - The ID of the canvas
- * @param x - The x coordinate of the pixel
- * @param y - The y coordinate of the pixel
+ * @param coordinates - The coordinates of the pixel
  * @param honorLocked - True will return an error if the canvas is locked
  */
 export async function validatePixel(
   canvasId: number,
-  x: number,
-  y: number,
+  coordinates: Point,
   honorLocked: boolean,
 ) {
   const canvas = await prisma.canvas.findFirst({
@@ -74,15 +75,15 @@ export async function validatePixel(
   }
 
   // check if pixel is within bounds
-  if (x < 0 || x >= canvas.width) {
+  if (coordinates.x < 0 || coordinates.x >= canvas.width) {
     throw new BadRequestError(
-      `X coordinate ${x} is out of bounds for canvas ${canvasId}`,
+      `X coordinate ${coordinates.x} is out of bounds for canvas ${canvasId}`,
     );
   }
 
-  if (y < 0 || y >= canvas.height) {
+  if (coordinates.y < 0 || coordinates.y >= canvas.height) {
     throw new BadRequestError(
-      `Y coordinate ${y} is out of bounds for canvas ${canvasId}`,
+      `Y coordinate ${coordinates.y} is out of bounds for canvas ${canvasId}`,
     );
   }
 
@@ -95,8 +96,9 @@ export async function validatePixel(
  * Ensures that the given color exists in the DB and it is allowed to be used in the given canvas
  *
  * @param colorId - The ID of the color
+ * @returns The corresponding color object
  */
-export async function validateColor(colorId: number) {
+export async function validateColor(colorId: number): Promise<color> {
   const color = await prisma.color.findFirst({
     where: {
       id: colorId,
@@ -112,6 +114,8 @@ export async function validateColor(colorId: number) {
       `Partnered color with ID ${colorId} is not allowed from web client`,
     );
   }
+
+  return color;
 }
 
 /**
@@ -168,17 +172,19 @@ export async function validateUser(canvasId: number, userId: bigint) {
  *
  * @param canvasId - The ID of the canvas
  * @param userId - The ID of the user
- * @param placePixel - The pixel to place with coordinates and color
+ * @param coordinates - The coordinates of the pixel
+ * @param color - The color of the pixel
  * @param cooldownTimeStamp - The timestamp of when the user can place another pixel
  */
 export async function placePixel(
   canvasId: number,
   userId: bigint,
-  { x, y, colorId }: PixelInfo,
+  coordinates: Point,
+  color: Pick<PaletteColor, "id" | "rgba">,
   cooldownTimeStamp: Date,
 ) {
-  await prisma.$transaction([
-    prisma.cooldown.upsert({
+  await prisma.$transaction(async (tx) => {
+    await tx.cooldown.upsert({
       where: {
         user_id_canvas_id: {
           user_id: userId,
@@ -193,35 +199,37 @@ export async function placePixel(
       update: {
         cooldown_time: cooldownTimeStamp,
       },
-    }),
-    prisma.pixel.upsert({
+    });
+
+    await tx.pixel.upsert({
       where: {
         canvas_id_x_y: {
           canvas_id: canvasId,
-          x: x,
-          y: y,
+          ...coordinates,
         },
       },
       create: {
         canvas_id: canvasId,
-        x: x,
-        y: y,
-        color_id: colorId,
+        ...coordinates,
+        color_id: color.id,
       },
       update: {
-        color_id: colorId,
+        color_id: color.id,
       },
-    }),
-    prisma.history.create({
+    });
+
+    await tx.history.create({
       data: {
         user_id: userId,
         canvas_id: canvasId,
-        x: x,
-        y: y,
-        color_id: colorId,
+        ...coordinates,
+        color_id: color.id,
         timestamp: cooldownTimeStamp,
         guild_id: config.webGuildId,
       },
-    }),
-  ]);
+    });
+
+    // Only update the cache if the transaction is successful
+    updateCachedCanvasPixel(canvasId, coordinates, color.rgba);
+  });
 }

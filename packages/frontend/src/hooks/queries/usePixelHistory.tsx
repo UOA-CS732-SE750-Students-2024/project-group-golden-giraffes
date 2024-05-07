@@ -3,9 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-import { Point } from "@/components/canvas/point";
 import config from "@/config";
-import { CanvasInfo, HistoryRequest } from "@blurple-canvas-web/types";
+import { CanvasInfo, HistoryRequest, Point } from "@blurple-canvas-web/types";
 
 export function usePixelHistory(
   canvasId: CanvasInfo["id"],
