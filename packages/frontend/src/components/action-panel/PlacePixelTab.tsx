@@ -1,5 +1,5 @@
 import { usePalette } from "@/hooks";
-import { Palette, PaletteColor } from "@blurple-canvas-web/types";
+import { Palette, PaletteColor, Point } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useState } from "react";
 import { PaletteColorRecord, colorToSwatch } from "../color/Color";
@@ -92,7 +92,15 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-export default function PlacePixelTab() {
+interface PlacePixelTabProps {
+  coordinates: Point;
+  canvasId: number;
+}
+
+export default function PlacePixelTab({
+  coordinates,
+  canvasId,
+}: PlacePixelTabProps) {
   const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
   const [mainColors, partnerColors] = partitionPalette(palette);
 
@@ -145,7 +153,10 @@ export default function PlacePixelTab() {
           }
           onClick={() => console.log("Place pixel")}
         >
-          Paint it! <TranslucentText opacity={0.6}>(77, 122)</TranslucentText>
+          Paint it!{" "}
+          <TranslucentText opacity={0.6}>
+            ({coordinates.x}, {coordinates.y})
+          </TranslucentText>
         </Button>
       </ButtonSeries>
     </ActionMenu>
