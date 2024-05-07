@@ -46,11 +46,8 @@ const CanvasContainer = styled("div")`
 `;
 
 const PreviewCanvas = styled("canvas")`
-  width: 100%;
-  height: 100%;
   position: absolute;
   pointer-events: none;
-  outline: 1px solid pink;
 `;
 
 /**
@@ -394,7 +391,11 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
             scale: zoom,
           }}
         >
-          <PreviewCanvas ref={previewCanvasRef} />
+          <PreviewCanvas
+            ref={previewCanvasRef}
+            width={imageDimensions?.width}
+            height={imageDimensions?.height}
+          />
           <canvas ref={canvasRef} />
         </div>
       </CanvasContainer>

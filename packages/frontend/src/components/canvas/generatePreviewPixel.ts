@@ -23,8 +23,27 @@ export default function generatePixelPng(
   tempCanvas.width = width;
   tempCanvas.height = height;
 
+  const x = pixelInfo.x;
+  const y = pixelInfo.y;
+
+  // draw a 5x5 white square around the pixel
   tempCtx.fillStyle = "white";
-  tempCtx.fillRect(pixelInfo.x, pixelInfo.y, 1, 1);
+  tempCtx.fillRect(x - 6, y - 6, 13, 13);
+
+  // draw a 3x3 black square around the pixel
+  tempCtx.fillStyle = "black";
+  tempCtx.fillRect(x - 3, y - 3, 7, 7);
+
+  // clear quadrants to make a cross
+  tempCtx.clearRect(x - 6, y - 6, 6, 6);
+  tempCtx.clearRect(x + 1, y - 6, 6, 6);
+  tempCtx.clearRect(x - 6, y + 1, 6, 6);
+  tempCtx.clearRect(x + 1, y + 1, 6, 6);
+
+  tempCtx.clearRect(x - 2, y - 2, 5, 5);
+
+  tempCtx.fillStyle = "white";
+  tempCtx.fillRect(x, y, 1, 1);
 
   const imageData = tempCtx.getImageData(0, 0, width, height);
 
