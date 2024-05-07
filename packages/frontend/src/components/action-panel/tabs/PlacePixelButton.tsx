@@ -37,7 +37,7 @@ export default function PlacePixelButton({
   const rgb = rgba?.slice(0, 3).join(" ");
   const alphaFloat = rgba ? rgba[3] / 255 : undefined;
 
-  const { x, y } = coordinates;
+  const { x, y } = coordinates; // TODO: Adjust coordinates by visual start coordinate offset (defined in canvas info)
 
   return (
     <Container
@@ -49,7 +49,7 @@ export default function PlacePixelButton({
       <span>
         Paint it!{" "}
         <CoordinateLabel>
-          ({x}, {y})
+          ({x},&nbsp;{y})
         </CoordinateLabel>
       </span>
     </Container>
