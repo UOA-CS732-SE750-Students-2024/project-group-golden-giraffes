@@ -377,7 +377,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     if (!context) return;
 
     context.putImageData(imageData, 0, 0);
-    console.log("Drawing pixel at: ", pixelInfoLocation);
+    console.debug(
+      `Drawing pixel at (${pixelInfoLocation.x}, ${pixelInfoLocation.y})`,
+    );
   }, [imageDimensions, pixelInfoLocation, color]);
 
   useEffect(() => {
