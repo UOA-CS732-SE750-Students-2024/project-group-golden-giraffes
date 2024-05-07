@@ -8,10 +8,16 @@ const StyledSwatchBase = styled(SwatchBase)`
   border: 0.25rem solid oklch(var(--discord-white-oklch) / 15%);
   transition:
     opacity var(--transition-duration-fast) ease,
+    outline-width var(--transition-duration-fast) ease,
     border-color var(--transition-duration-fast) ease;
 
   :hover:not(.disabled, .selected) {
     opacity: 85%;
+  }
+
+  :focus,
+  :focus-visible {
+    outline: var(--focus-outline);
   }
 
   &.selected {
@@ -22,7 +28,7 @@ const StyledSwatchBase = styled(SwatchBase)`
 `;
 
 type InteractiveSwatchProps = StaticSwatchProps & {
-  onAction?: () => void;
+  onAction: () => void;
   selected?: boolean;
   disabled?: boolean;
 };
@@ -37,13 +43,19 @@ export function InteractiveSwatch({
   const rgb = rgba.slice(0, 3).join(" ");
   const alphaFloat = rgba[3] / 255;
 
+  const clickHandler = onAction;
+  const keyUpHandler = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") onAction();
+  };
+
   return (
     <StyledSwatchBase
       aria-disabled={disabled}
       className={selected ? "selected" : undefined}
       colorString={`rgb(${rgb} / ${alphaFloat})`}
-      onClick={onAction}
-      onKeyUp={onAction}
+      onClick={clickHandler}
+      onKeyUp={keyUpHandler}
+      tabIndex={0}
     />
   );
 }
