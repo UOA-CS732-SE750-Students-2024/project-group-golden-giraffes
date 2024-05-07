@@ -24,6 +24,13 @@ const ColorDescription = styled("div")`
   }
 `;
 
+const NoColorSelected = styled("p")`
+  color: var(--discord-white);
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 0;
+`;
+
 export const partitionPalette = (palette: Palette) => {
   const mainColors: Palette = [];
   const partnerColors: Palette = [];
@@ -48,7 +55,10 @@ export default function PlacePixelTab() {
           colorToSwatch({
             color,
             selected: color === selectedColor,
-            onClick: () => setSelectedColor(color),
+            onClick: () =>
+              color !== selectedColor ?
+                setSelectedColor(color)
+              : setSelectedColor(null),
           }),
         )}
         <Heading>Partner colors</Heading>
@@ -56,7 +66,10 @@ export default function PlacePixelTab() {
           colorToSwatch({
             color,
             selected: color === selectedColor,
-            onClick: () => setSelectedColor(color),
+            onClick: () =>
+              color !== selectedColor ?
+                setSelectedColor(color)
+              : setSelectedColor(null),
           }),
         )}
       </ActionMenuBlock>
@@ -64,6 +77,9 @@ export default function PlacePixelTab() {
         <ColorDescription>
           {selectedColor && (
             <PaletteColorRecord color={selectedColor} displaySwatch={false} />
+          )}
+          {!selectedColor && (
+            <NoColorSelected>No color selected</NoColorSelected>
           )}
         </ColorDescription>
       </ActionMenuBlock>
