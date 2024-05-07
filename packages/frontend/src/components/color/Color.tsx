@@ -1,6 +1,7 @@
 "use client";
 import { PaletteColor } from "@blurple-canvas-web/types";
 import { css, styled } from "@mui/material";
+import { Check } from "lucide-react";
 import React from "react";
 
 export const ColorfulDiv = styled("div", {
@@ -17,6 +18,31 @@ export const ColorfulDiv = styled("div", {
     &.selected,
     &.active {
       border-color: var(--discord-white-oklch);
+    }
+
+    &.selected {
+      position: relative;
+
+      &::after {
+        background-color: white;
+        border-radius: var(--card-border-radius) 0 0 0;
+        bottom: 0;
+        content: "";
+        height: calc(33.33%);
+        position: absolute;
+        right: 0;
+        width: calc(33.33%);
+      }
+
+      > svg {
+        bottom: 0;
+        color: ${colorString};
+        position: absolute;
+        right: 0;
+        transform: translate(5%, 20%);
+        width: calc(33.33%);
+        z-index: 10;
+      }
     }
   `,
 );
@@ -65,16 +91,20 @@ export const Swatch = ({
   const alphaFloat = rgba[3] / 255;
 
   return (
-    <ColorfulDiv
-      className={
-        selected ? "selected"
-        : active ?
-          "active"
-        : undefined
-      }
-      colorString={`rgb(${rgb} / ${alphaFloat})`}
-      size={size}
-    />
+    <>
+      <ColorfulDiv
+        className={
+          selected ? "selected"
+          : active ?
+            "active"
+          : undefined
+        }
+        colorString={`rgb(${rgb} / ${alphaFloat})`}
+        size={size}
+      >
+        {selected && <Check style={{ strokeWidth: "3px" }} />}
+      </ColorfulDiv>
+    </>
   );
 };
 
