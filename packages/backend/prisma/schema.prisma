@@ -68,10 +68,12 @@ model cooldown {
 }
 
 model discord_user_profile {
-  user_id             BigInt    @id
+  user_id             BigInt              @id
   username            String
   profile_picture_url String
   history             history[]
+  leaderboard_guild   leaderboard_guild[]
+  leaderboard         leaderboard[]
 }
 
 model event {
@@ -209,25 +211,27 @@ view guild_stats {
 }
 
 view leaderboard {
-  user_id      BigInt
-  user         user   @relation(fields: [user_id], references: [id])
-  canvas_id    Int
-  canvas       canvas @relation(fields: [canvas_id], references: [id])
-  total_pixels Int
-  rank         Int
+  user_id              BigInt
+  user                 user                 @relation(fields: [user_id], references: [id])
+  canvas_id            Int
+  canvas               canvas               @relation(fields: [canvas_id], references: [id])
+  discord_user_profile discord_user_profile @relation(fields: [user_id], references: [user_id])
+  total_pixels         Int
+  rank                 Int
 
   @@id([user_id, canvas_id])
 }
 
 view leaderboard_guild {
-  user_id      BigInt
-  user         user   @relation(fields: [user_id], references: [id])
-  canvas_id    Int
-  canvas       canvas @relation(fields: [canvas_id], references: [id])
-  guild_id     BigInt
-  guild        guild  @relation(fields: [guild_id], references: [id])
-  total_pixels Int
-  rank         Int
+  user_id              BigInt
+  user                 user                 @relation(fields: [user_id], references: [id])
+  canvas_id            Int
+  canvas               canvas               @relation(fields: [canvas_id], references: [id])
+  guild_id             BigInt
+  guild                guild                @relation(fields: [guild_id], references: [id])
+  discord_user_profile discord_user_profile @relation(fields: [user_id], references: [user_id])
+  total_pixels         Int
+  rank                 Int
 
   @@id([user_id, guild_id, canvas_id])
 }
