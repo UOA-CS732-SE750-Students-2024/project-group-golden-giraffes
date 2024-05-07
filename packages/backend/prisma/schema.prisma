@@ -177,7 +177,7 @@ model user {
   leaderboard_guild leaderboard_guild[]
 }
 
-model Session {
+model session {
   id        String   @id
   sid       String   @unique
   data      Json
