@@ -77,10 +77,15 @@ export async function getCanvases(): Promise<CanvasSummary[]> {
     select: {
       id: true,
       name: true,
+      event_id: true,
     },
   });
 
-  return canvases;
+  return canvases.map((canvas) => ({
+    id: canvas.id,
+    name: canvas.name,
+    eventId: canvas.event_id,
+  }));
 }
 
 /**
@@ -108,10 +113,6 @@ export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
  * @returns The canvas info
  */
 export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
-  const info = await prisma.info.findFirst({
-    select: { default_canvas_id: true },
-  });
-
   const canvas = await prisma.canvas.findFirst({
     select: {
       id: true,
