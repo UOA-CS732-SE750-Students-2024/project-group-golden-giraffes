@@ -1,5 +1,10 @@
 import { usePalette } from "@/hooks";
-import { Palette, PaletteColor, Point } from "@blurple-canvas-web/types";
+import {
+  CanvasInfo,
+  Palette,
+  PaletteColor,
+  Point,
+} from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useState } from "react";
 import { PaletteColorRecord, colorToSwatch } from "../color/Color";
@@ -42,20 +47,15 @@ export const ButtonSeries = styled("div")`
 
 interface ButtonProps {
   backgroundColor?: string;
-  disabled?: boolean;
   onClick: () => void;
 }
 
-export const Button = styled("div")<ButtonProps>`
+export const PlacePixelButton = styled("button")<ButtonProps>`
   align-items: center;
   background-color: ${({ backgroundColor }) =>
     backgroundColor ? backgroundColor : "var(--discord-blurple)"};
   border: oklch(var(--discord-white-oklch) / 12%) 3px solid;
   border-radius: var(--card-border-radius);
-  color: ${({ backgroundColor }) =>
-    backgroundColor?.includes("255") ?
-      "var(--discord-legacy-actually-black)"
-    : "var(--discord-white)"};
   cursor: pointer;
   font-size: 1.3rem;
   font-weight: 600;
@@ -69,25 +69,33 @@ export const Button = styled("div")<ButtonProps>`
     color var(--transition-duration-medium) ease;
   user-select: none;
 
-  ${({ disabled }) =>
-    disabled &&
-    `opacity: 0.6;
-  cursor: not-allowed;
-  `}
+  > span {
+    color: ${({ backgroundColor }) =>
+      backgroundColor ? backgroundColor : "var(--discord-blurple)"};
+    filter: invert(1) grayscale(1) brightness(1.3) contrast(9000);
+    mix-blend-mode: luminosity;
+    opacity: 0.95;
+    // From https://robinrendle.com/the-cascade/015-context-aware-colors/
+  }
 
-  ${({ disabled }) =>
-    !disabled &&
-    `&:hover {
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled) {
+    &:hover {
       border-color: oklch(var(--discord-white-oklch) / 36%);
     }
 
-    :active {
+    &:active {
       border-color: oklch(var(--discord-white-oklch) / 72%);
-    }`}
+    }
+  }
 `;
 
-export const TranslucentText = styled("span")<{ opacity: number }>`
-  opacity: ${({ opacity }) => opacity};
+export const CoordinateLabel = styled("span")`
+  opacity: 0.6;
   margin: 0;
 `;
 
@@ -103,7 +111,7 @@ export const partitionPalette = (palette: Palette) => {
 
 interface PlacePixelTabProps {
   coordinates: Point;
-  canvasId: number;
+  canvasId: CanvasInfo["id"];
 }
 
 export default function PlacePixelTab({
@@ -156,18 +164,20 @@ export default function PlacePixelTab({
         </ColorDescription>
       </ActionMenuBlock>
       <ButtonSeries>
-        <Button
+        <PlacePixelButton
           backgroundColor={
             selectedColor ? `rgb(${rgb} / ${alphaFloat})` : undefined
           }
-          // disabled={true} // << how to disable the button
+          // disabled // << how to disable the button
           onClick={() => console.log("Place pixel")}
         >
-          Paint it!{" "}
-          <TranslucentText opacity={0.6}>
-            ({coordinates.x}, {coordinates.y})
-          </TranslucentText>
-        </Button>
+          <span>
+            Paint it!{" "}
+            <CoordinateLabel>
+              ({coordinates.x}, {coordinates.y})
+            </CoordinateLabel>
+          </span>
+        </PlacePixelButton>
       </ButtonSeries>
     </ActionMenu>
   );
