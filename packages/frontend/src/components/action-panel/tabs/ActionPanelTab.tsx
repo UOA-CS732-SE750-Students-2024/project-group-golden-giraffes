@@ -7,6 +7,16 @@ export const ActionPanelTab = styled("div")`
 
   > * {
     background-color: var(--discord-legacy-dark-but-not-black);
+    margin-trim: block;
     padding: 1rem;
+
+    @supports not (margin-trim: block) {
+      > :first-child {
+        margin-block-start: 0;
+      }
+      > :last-child {
+        margin-block-end: 0;
+      }
+    }
   }
 `;
