@@ -76,7 +76,7 @@ export default function SignInPage() {
         <p>That’s it. There are no other options.</p>
         {user && (
           <AlreadySignedIn>
-            Already signed in as <b>{user.username}</b>.{" "}
+            Already signed in as <strong>{user.username}</strong>.{" "}
             <Link href="/">Go to the canvas</Link>
           </AlreadySignedIn>
         )}
