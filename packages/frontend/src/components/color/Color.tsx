@@ -13,7 +13,9 @@ export const ColorfulDiv = styled("div", {
     border-radius: var(--card-border-radius);
     border: oklch(var(--discord-white-oklch) / 30%) 3px solid;
     gap: 0.25rem;
+    position: relative;
     ${size && `inline-size: ${size}em;`}
+    transition: border-color 0.2s, background-color 0.2s, opacity 0.2s;
 
     &.selected,
     &.active {
@@ -21,27 +23,40 @@ export const ColorfulDiv = styled("div", {
     }
 
     &.selected {
-      position: relative;
-
-      &::after {
-        background-color: white;
-        border-radius: var(--card-border-radius) 0 0 0;
-        bottom: 0;
-        content: "";
-        height: calc(33.33%);
-        position: absolute;
-        right: 0;
-        width: calc(33.33%);
+      ::after {
+        opacity: 1;
       }
+    }
 
-      > svg {
-        bottom: 0;
-        color: ${colorString};
-        position: absolute;
-        right: 0;
-        transform: translate(5%, 20%);
-        width: calc(33.33%);
-        z-index: 10;
+    &::after {
+      background-color: white;
+      border-radius: var(--card-border-radius) 0 0 0;
+      bottom: 0;
+      content: "";
+      height: calc(33.33%);
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      transition: opacity 0.2s;
+      width: calc(33.33%);
+    }
+
+    > svg {
+      bottom: 0;
+      color: ${colorString};
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      transform: translate(
+        0%,
+        15%
+      ); // couldn't figure out how to do this without hardcoding, help?
+      transition: opacity 0.2s;
+      width: calc(33.33%);
+      z-index: 10;
+
+      &.selected {
+        opacity: 1;
       }
     }
   `,
@@ -85,7 +100,8 @@ export const Swatch = ({
   active = false,
   selected = false,
   size,
-}: SwatchProps) => {
+  onClick,
+}: SwatchProps & { onClick?: () => void }) => {
   // Convert [255, 255, 255, 255] to rgb(255 255 255 / 1.0)
   const rgb = rgba.slice(0, 3).join(" ");
   const alphaFloat = rgba[3] / 255;
@@ -101,8 +117,12 @@ export const Swatch = ({
         }
         colorString={`rgb(${rgb} / ${alphaFloat})`}
         size={size}
+        onClick={onClick}
       >
-        {selected && <Check style={{ strokeWidth: "3px" }} />}
+        <Check
+          style={{ strokeWidth: "3px" }}
+          className={selected ? "selected" : undefined}
+        />
       </ColorfulDiv>
     </>
   );
@@ -120,7 +140,8 @@ export const colorToSwatch = ({
   active = false,
   selected = false,
   size,
-}: ColorToSwatchProps) => {
+  onClick,
+}: ColorToSwatchProps & { onClick?: () => void }) => {
   return (
     <Swatch
       key={color.code}
@@ -128,6 +149,7 @@ export const colorToSwatch = ({
       active={active}
       selected={selected}
       size={size}
+      onClick={onClick}
     />
   );
 };
