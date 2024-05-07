@@ -333,10 +333,10 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   );
 
   useEffect(() => {
-    canvasRef.current?.addEventListener("mousedown", handleCanvasClick);
+    canvasRef.current?.addEventListener("click", handleCanvasClick);
 
     return () =>
-      canvasRef.current?.removeEventListener("mousedown", handleCanvasClick);
+      canvasRef.current?.removeEventListener("click", handleCanvasClick);
   }, [handleCanvasClick]);
 
   return (
