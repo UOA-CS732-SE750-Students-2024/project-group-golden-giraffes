@@ -168,11 +168,12 @@ export const PaletteColorRecord = ({
   displayCode = true,
 }: ColorProps) => {
   return (
-    <ColorContainer>
+    <ColorContainer className="colorRecord">
       {displaySwatch && colorToSwatch({ color, size: 2 })}
-      {displayName && <ColorName>{color.name}</ColorName>}
+      {displayName && <ColorName className="colorName">{color.name}</ColorName>}
       {displayCode && (
         <ColorCode
+          className="colorCode"
           onClick={() => {
             navigator.clipboard.writeText(color.code);
           }}

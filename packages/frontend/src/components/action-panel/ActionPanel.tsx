@@ -74,11 +74,16 @@ const ZenTab = styled(Tab)`
 `;
 
 export const ActionMenu = styled("div")`
+  display: grid;
+  gap: max(1rem, 8px);
+`;
+
+export const ActionMenuBlock = styled("div")`
   background-color: var(--discord-legacy-dark-but-not-black);
   display: grid;
   gap: max(0.25rem, 2px);
   grid-template-columns: repeat(5, 1fr);
-  padding: 1rem;
+  padding: 0 1rem;
 `;
 
 export const Heading = styled("h2")`

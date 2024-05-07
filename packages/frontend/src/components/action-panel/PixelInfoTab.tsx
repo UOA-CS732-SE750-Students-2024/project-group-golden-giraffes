@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Point } from "../canvas/point";
 import { PaletteColorRecord, colorToSwatch } from "../color/Color";
-import { ActionMenu, Heading } from "./ActionPanel";
+import { ActionMenu, ActionMenuBlock, Heading } from "./ActionPanel";
 
 export const Coordinates = styled("p")`
   color: oklch(var(--discord-white-oklch) / 60%);
@@ -101,35 +101,37 @@ export default function PixelInfoTab({
   return (
     <>
       <ActionMenu>
-        <Coordinates>
-          <span>x: {coordinates.x}</span>
-          <span>y: {coordinates.y}</span>
-        </Coordinates>
-        {currentPixelHistory && ( // To be redesigned later
-          <HistoryRecordComponent
-            history={currentPixelHistory}
-            color={
-              palette.find(
-                (color) => color.id === currentPixelHistory.colorId,
-              ) ?? undefined
-            }
-          />
-        )}
-        <Heading>Paint history</Heading>
-        {pastPixelHistory && (
-          <HistoryRecords>
-            {pastPixelHistory.map((history) => (
-              <HistoryRecordComponent
-                key={history.id}
-                history={history}
-                color={
-                  palette.find((color) => color.id === history.colorId) ||
-                  undefined
-                }
-              />
-            ))}
-          </HistoryRecords>
-        )}
+        <ActionMenuBlock>
+          <Coordinates>
+            <span>x: {coordinates.x}</span>
+            <span>y: {coordinates.y}</span>
+          </Coordinates>
+          {currentPixelHistory && ( // To be redesigned later
+            <HistoryRecordComponent
+              history={currentPixelHistory}
+              color={
+                palette.find(
+                  (color) => color.id === currentPixelHistory.colorId,
+                ) ?? undefined
+              }
+            />
+          )}
+          <Heading>Paint history</Heading>
+          {pastPixelHistory && (
+            <HistoryRecords>
+              {pastPixelHistory.map((history) => (
+                <HistoryRecordComponent
+                  key={history.id}
+                  history={history}
+                  color={
+                    palette.find((color) => color.id === history.colorId) ||
+                    undefined
+                  }
+                />
+              ))}
+            </HistoryRecords>
+          )}
+        </ActionMenuBlock>
       </ActionMenu>
     </>
   );
