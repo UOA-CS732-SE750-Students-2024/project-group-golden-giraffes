@@ -1,7 +1,8 @@
 "use client";
 
 import { LayoutWithNavbar } from "@/components";
+import Leaderboard from "@/components/stats/Leaderboard";
 
 export default function LeaderboardPage() {
-  return <LayoutWithNavbar content={<div />} />;
+  return <LayoutWithNavbar content={<Leaderboard canvasId={2023} />} />;
 }
