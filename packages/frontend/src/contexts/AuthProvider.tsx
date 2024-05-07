@@ -1,7 +1,7 @@
 "use client";
 
 import config from "@/config";
-import { DiscordProfile } from "@blurple-canvas-web/types";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import axios from "axios";
 import Cookies from "js-cookie";
 import {
@@ -13,7 +13,7 @@ import {
 } from "react";
 
 interface AuthContextType {
-  user: DiscordProfile | null;
+  user: DiscordUserProfile | null;
   logout: () => void;
 }
 
@@ -29,7 +29,7 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuthContext = () => useContext(AuthContext);
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<DiscordProfile | null>(() => {
+  const [user, setUser] = useState<DiscordUserProfile | null>(() => {
     const profile = Cookies.get("profile");
     return profile ? JSON.parse(profile) : null;
   });

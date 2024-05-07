@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import config from "@/config";
 import { getProfilePictureUrlFromHash } from "@/services/discordProfileService";
-import { DiscordProfile } from "@blurple-canvas-web/types";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { Express } from "express";
 import session from "express-session";
 import passport from "passport";
@@ -17,8 +17,8 @@ const discordStrategy = new DiscordStrategy(
     scope: ["identify"],
   },
   (_accessToken, _refreshToken, profile, done) => {
-    const user: DiscordProfile = {
-      userId: profile.id,
+    const user: DiscordUserProfile = {
+      id: profile.id,
       username: profile.username,
       profilePictureUrl: getProfilePictureUrlFromHash(
         BigInt(profile.id),
@@ -37,7 +37,7 @@ export function initializeAuth(app: Express) {
     done(null, user);
   });
 
-  passport.deserializeUser<DiscordProfile>((user, done) => {
+  passport.deserializeUser<DiscordUserProfile>((user, done) => {
     done(null, user);
   });
 

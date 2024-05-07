@@ -1,6 +1,6 @@
 import { prisma } from "@/client";
 import { NotFoundError } from "@/errors";
-import { DiscordProfile } from "@blurple-canvas-web/types";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { discord_user_profile } from "@prisma/client";
 
 export async function getDiscordProfile(
@@ -58,10 +58,10 @@ export function createCustomAvatarUrl(
 }
 
 export async function saveDiscordProfile(
-  profile: DiscordProfile,
+  profile: DiscordUserProfile,
 ): Promise<void> {
   await createOrUpdateDiscordProfile({
-    user_id: BigInt(profile.userId),
+    user_id: BigInt(profile.id),
     username: profile.username,
     profile_picture_url: profile.profilePictureUrl,
   });

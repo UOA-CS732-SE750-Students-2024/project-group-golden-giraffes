@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 
-import { DiscordProfile } from "@blurple-canvas-web/types";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 
 import config from "@/config";
 import { saveDiscordProfile } from "@/services/discordProfileService";
@@ -29,7 +29,7 @@ discordRouter.get(
     failureRedirect: config.discord.loginRedirectUrl,
   }),
   (req, res) => {
-    const discordProfile = req.user as DiscordProfile;
+    const discordProfile = req.user as DiscordUserProfile;
 
     res.cookie("profile", JSON.stringify(discordProfile), {
       httpOnly: false, // Allow the frontend to read the cookie
