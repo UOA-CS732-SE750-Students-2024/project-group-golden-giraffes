@@ -3,6 +3,7 @@ import passport from "passport";
 
 import { DiscordProfile } from "@blurple-canvas-web/types";
 
+import config from "@/config";
 import { saveDiscordProfile } from "@/services/discordProfileService";
 
 export const discordRouter = Router();
@@ -11,7 +12,9 @@ discordRouter.get("/", passport.authenticate("discord"));
 
 discordRouter.get(
   "/callback",
-  passport.authenticate("discord", { failureRedirect: "/" }),
+  passport.authenticate("discord", {
+    failureRedirect: config.discord.loginRedirectUrl,
+  }),
   (req, res) => {
     const discordProfile = req.user as DiscordProfile;
 
@@ -21,6 +24,6 @@ discordRouter.get(
     });
 
     saveDiscordProfile(discordProfile);
-    res.json(req.user);
+    res.redirect(config.discord.loginRedirectUrl);
   },
 );
