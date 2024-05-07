@@ -55,7 +55,6 @@ export default function PlacePixelTab() {
         ))}
       </ColorPicker>
       <ColorInfoCard color={selectedColor} />
-
       <PlacePixelButton
         color={selectedColor}
         coordinates={{ x: 1, y: 1 } as Point}
