@@ -1,11 +1,7 @@
 "use client";
 
-import { Navbar } from "@/components";
+import { LayoutWithNavbar } from "@/components";
 
 export default function LeaderboardPage() {
-  return (
-    <>
-      <Navbar />
-    </>
-  );
+  return <LayoutWithNavbar content={<div />} />;
 }
