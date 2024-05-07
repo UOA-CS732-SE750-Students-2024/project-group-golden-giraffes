@@ -29,6 +29,7 @@ export async function getPixelHistory(
       color_id: true,
       timestamp: true,
       guild_id: true,
+      discord_user_profile: true,
     },
     where: {
       canvas_id: canvasId,
@@ -45,6 +46,10 @@ export async function getPixelHistory(
     colorId: history.color_id,
     timestamp: history.timestamp,
     guildId: history.guild_id?.toString(),
+    userProfile: {
+      username: history.discord_user_profile.username,
+      profilePictureUrl: history.discord_user_profile.profile_picture_url,
+    },
   }));
 }
 
