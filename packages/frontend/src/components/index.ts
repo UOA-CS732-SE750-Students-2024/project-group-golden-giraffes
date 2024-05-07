@@ -1,4 +1,5 @@
 export { ActionPanel } from "./action-panel";
+export { Button } from "./Button";
 export { CanvasView } from "./canvas";
 export { Navbar } from "./nav";
 

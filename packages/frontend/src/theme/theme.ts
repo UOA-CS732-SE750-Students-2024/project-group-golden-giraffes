@@ -1,4 +1,5 @@
 "use client";
+
 import { createTheme } from "@mui/material";
 
 /*
@@ -51,11 +52,19 @@ export const Theme = createTheme({
       },
       styleOverrides: {
         root: {
+          backgroundColor: "var(--discord-blurple)",
           borderRadius: ".5rem",
           fontSize: "1rem",
           fontWeight: 500,
           letterSpacing: "0.005em",
           textTransform: "none",
+          touchAction: "manipulation",
+          userSelect: "none",
+
+          "&.Mui-disabled": {
+            backgroundColor: "var(--discord-legacy-greyple)",
+            opacity: 0.55,
+          },
         },
       },
     },
