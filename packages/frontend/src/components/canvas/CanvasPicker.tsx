@@ -15,7 +15,6 @@ const Select = styled(NativeSelect)`
   font-weight: 500;
   justify-self: flex-start;
   min-inline-size: 16rem;
-  padding: 0.25rem 1rem;
 
   &,
   & * {
@@ -23,7 +22,7 @@ const Select = styled(NativeSelect)`
   }
 
   .MuiNativeSelect-select {
-    padding: 0;
+    padding: 0.25rem 1rem;
 
     :focus,
     :focus-visible {
