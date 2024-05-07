@@ -4,5 +4,5 @@ import { LayoutWithNavbar } from "@/components";
 import Leaderboard from "@/components/stats/Leaderboard";
 
 export default function LeaderboardPage() {
-  return <LayoutWithNavbar content={<Leaderboard canvasId={2023} />} />;
+  return <LayoutWithNavbar content={<Leaderboard />} />;
 }

@@ -7,7 +7,8 @@ export interface LeaderboardProps {
   canvasId: CanvasInfo["id"];
 }
 
-export default function Leaderboard({ canvasId }: LeaderboardProps) {
+export default function Leaderboard() {
+  const canvasId = 2023; // change later
   const { data: leaderboard = [] } = useLeaderboard(canvasId);
 
   return (
