@@ -27,7 +27,7 @@ export const partitionPalette = (palette: Palette) => {
 };
 
 export default function PlacePixelTab() {
-  const { data: palette = [] } = usePalette();
+  const { data: palette = [], isLoading: paletteIsLoading } = usePalette();
   const [mainColors, partnerColors] = partitionPalette(palette);
 
   const [selectedColor, setSelectedColor] = useState<PaletteColor | null>(null);
@@ -58,6 +58,7 @@ export default function PlacePixelTab() {
       <PlacePixelButton
         color={selectedColor}
         coordinates={{ x: 1, y: 1 } as Point}
+        disabled={paletteIsLoading || !selectedColor}
       />
     </ActionPanelTab>
   );

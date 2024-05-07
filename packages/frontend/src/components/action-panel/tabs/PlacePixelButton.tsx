@@ -7,21 +7,21 @@ import { Button as ButtonBase } from "@/components";
 const DynamicButton = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== "backgroundColorStr",
 })<{ backgroundColorStr?: string }>`
-  && {
+  :not(.${buttonClasses.disabled}) {
     --dynamic-bg-color: var(--discord-blurple);
     background-color: var(--dynamic-bg-color);
-  }
 
-  &:hover,
-  &:focus,
-  &:focus-visible {
-    ${({ backgroundColorStr }) =>
-      backgroundColorStr &&
-      css`
-        --dynamic-bg-color: ${backgroundColorStr};
-      `}
-    border-color: oklch(var(--discord-white-oklch) / 36%);
-    font-weight: 600;
+    :hover,
+    :focus,
+    :focus-visible {
+      ${({ backgroundColorStr }) =>
+        backgroundColorStr &&
+        css`
+          --dynamic-bg-color: ${backgroundColorStr};
+        `}
+      border-color: oklch(var(--discord-white-oklch) / 36%);
+      font-weight: 600;
+    }
   }
 
   &:active {
@@ -63,7 +63,6 @@ type PlacePixelButtonProps = {
 export default function PlacePixelButton({
   color,
   coordinates,
-  disabled = false,
   ...props
 }: PlacePixelButtonProps) {
   const rgba = color?.rgba;
@@ -74,11 +73,7 @@ export default function PlacePixelButton({
   const { x, y } = coordinates; // TODO: Adjust coordinates by visual start coordinate offset (defined in canvas info)
 
   return (
-    <DynamicButton
-      backgroundColorStr={backgroundColorStr}
-      disabled={disabled}
-      {...props}
-    >
+    <DynamicButton backgroundColorStr={backgroundColorStr} {...props}>
       <DynamicButtonContent>
         Place pixel
         <CoordinateLabel>
