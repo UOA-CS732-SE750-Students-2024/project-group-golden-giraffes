@@ -14,8 +14,8 @@ export const ColorfulDiv = styled("div", {
     border: oklch(var(--discord-white-oklch) / 30%) 3px solid;
     gap: 0.25rem;
     position: relative;
-    ${size && `inline-size: ${size}em;`}
-    transition: border-color 0.2s, background-color 0.2s, opacity 0.2s;
+    ${size && `inline-size: ${size}rem;`}
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 
     &.selected,
     &.active {
@@ -37,7 +37,7 @@ export const ColorfulDiv = styled("div", {
       opacity: 0;
       position: absolute;
       right: 0;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s ease;
       width: calc(33.33%);
     }
 
@@ -47,10 +47,8 @@ export const ColorfulDiv = styled("div", {
       opacity: 0;
       position: absolute;
       right: 0;
-      transform: translate(
-        0%,
-        15%
-      ); // couldn't figure out how to do this without hardcoding, help?
+      transform: translate(0%, 15%);
+      // ^^ couldn't figure out how to do this without hardcoding, help?
       transition: opacity 0.2s;
       width: calc(33.33%);
       z-index: 10;
@@ -73,18 +71,18 @@ export const ColorName = styled("span")`
 `;
 
 export const ColorCode = styled("span")`
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgb(255, 255, 255 / 12%);
   border-radius: 0.25rem;
   font-family: var(--font-monospace);
   font-size: 0.9rem;
   padding: 0.25rem 0.5rem;
   transition: background-color 0.2s;
   :hover {
-    background-color: rgba(255, 255, 255, 0.24);
+    background-color: rgb(255, 255, 255 / 24%);
     cursor: pointer;
   }
   :active {
-    background-color: rgba(255, 255, 255, 0.36);
+    background-color: rgb(255, 255, 255 / 36%);
   }
 `;
 
