@@ -1,9 +1,7 @@
 "use client";
 
-import { useAuthContext } from "@/contexts/AuthProvider";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
 
 const Background = styled("div")`
   align-items: center;
