@@ -38,11 +38,13 @@ interface ColorCodeChipProps {
 const copyToClipBoard = (str: string) => navigator.clipboard.writeText(str);
 
 export default function ColorCodeChip({
-  colorCode,
+  color,
   ...props
 }: {
-  colorCode: PaletteColor["code"];
+  color: PaletteColor;
 }) {
+  const { code: colorCode } = color;
+
   const clickHandler = () => copyToClipBoard(colorCode);
   const keyUpHandler = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" || event.key === " ") copyToClipBoard(colorCode);
