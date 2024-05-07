@@ -14,7 +14,7 @@ import {
 
 interface AuthContextType {
   user: DiscordUserProfile | null;
-  logout: () => void;
+  signOut: () => void;
 }
 
 interface AuthProviderProps {
@@ -23,7 +23,7 @@ interface AuthProviderProps {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  logout: () => {},
+  signOut: () => {},
 });
 
 export const useAuthContext = () => useContext(AuthContext);
@@ -34,7 +34,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     return profile ? JSON.parse(profile) : null;
   });
 
-  const logout = useCallback(() => {
+  const signOut = useCallback<AuthContextType["signOut"]>(() => {
     // Delete the session cookie
     axios.post(`${config.apiUrl}/api/v1/discord/logout`).catch(console.error);
 
@@ -43,7 +43,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, logout }}>
+    <AuthContext.Provider value={{ user, signOut }}>
       {children}
     </AuthContext.Provider>
   );
