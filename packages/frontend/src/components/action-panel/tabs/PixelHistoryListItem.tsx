@@ -30,7 +30,7 @@ const StyledPaletteColorRecord = styled(PaletteColorRecord)`
   letter-spacing: 0.005em;
 `;
 
-export default function HistoryRecordComponent({
+export default function PixelHistoryListItem({
   record,
 }: {
   record: PixelHistoryRecord;

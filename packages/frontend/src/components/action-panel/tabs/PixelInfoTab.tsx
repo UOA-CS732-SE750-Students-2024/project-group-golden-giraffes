@@ -1,15 +1,10 @@
-import { styled } from "@mui/material";
-
 import { PixelHistoryRecord, Point } from "@blurple-canvas-web/types";
 
 import { usePixelHistory } from "@/hooks";
-import { ActionMenu, Heading } from "../ActionPanel";
+import { Heading } from "../ActionPanel";
+import ActionPanelTab from "./ActionPanelTab";
 import CoordinatesCard from "./CoordinatesCard";
-import HistoryRecordComponent from "./PixelHistoryListItem";
-
-const StyledCoordinatesCard = styled(CoordinatesCard)`
-  grid-column: 1 / -1;
-`;
+import PixelHistoryListItem from "./PixelHistoryListItem";
 
 interface PixelInfoTabProps {
   coordinates: Point;
@@ -31,15 +26,15 @@ export default function PixelInfoTab({
   // });
 
   return (
-    <ActionMenu>
-      <StyledCoordinatesCard coordinates={coordinates} />
+    <ActionPanelTab>
+      <CoordinatesCard coordinates={coordinates} />
       <div>
-        <HistoryRecordComponent record={currentPixelInfo} />
+        <PixelHistoryListItem record={currentPixelInfo} />
         <Heading>Paint history</Heading>
         {pastPixelHistory.map((history: PixelHistoryRecord) => (
-          <HistoryRecordComponent key={history.id} record={history} />
+          <PixelHistoryListItem key={history.id} record={history} />
         ))}
       </div>
-    </ActionMenu>
+    </ActionPanelTab>
   );
 }

@@ -66,16 +66,6 @@ const Tab = styled("li")`
   }
 `;
 
-export const ActionMenu = styled("div")`
-  display: grid;
-  gap: max(1rem, 8px);
-
-  & > * {
-    background-color: var(--discord-legacy-dark-but-not-black);
-    padding: 1rem;
-  }
-`;
-
 export const Heading = styled("h2")`
   color: oklch(var(--discord-white-oklch) / 60%);
   font-weight: 600;

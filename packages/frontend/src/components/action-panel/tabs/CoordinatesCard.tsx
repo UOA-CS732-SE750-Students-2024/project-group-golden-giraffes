@@ -3,10 +3,12 @@ import { styled } from "@mui/material";
 import { Point } from "@blurple-canvas-web/types";
 
 export const Wrapper = styled("div")`
-  color: oklch(var(--discord-white-oklch) / 60%);
+  color: var(--discord-white);
   display: block flex;
   font-family: var(--font-monospace);
-  text-align: center;
+  gap: 2rem;
+  justify-content: center;
+  padding: 0.5rem;
 `;
 
 export default function CoordinatesCard({
