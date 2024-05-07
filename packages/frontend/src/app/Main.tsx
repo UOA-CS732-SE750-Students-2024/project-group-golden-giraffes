@@ -3,6 +3,7 @@
 import { styled } from "@mui/material";
 
 import config from "@/config";
+import { useAuthContext } from "@/contexts/AuthProvider";
 import { ActionPanel, CanvasView } from "../components";
 
 const Wrapper = styled("main")`
@@ -22,6 +23,10 @@ const Wrapper = styled("main")`
 `;
 
 export default function Main() {
+  const { user } = useAuthContext();
+
+  console.log(user);
+
   return (
     <Wrapper>
       <CanvasView imageUrl={`${config.apiUrl}/api/v1/canvas/current`} />
