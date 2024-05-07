@@ -1,4 +1,4 @@
-import { PixelInfo } from "@blurple-canvas-web/types";
+import { PaletteColor, PixelInfo } from "@blurple-canvas-web/types";
 
 /**
  * Generate a PNG image with a pixel at a specific location.
@@ -9,13 +9,11 @@ import { PixelInfo } from "@blurple-canvas-web/types";
  * @returns Image data of the generated PNG image.
  */
 export default function generatePixelPng(
-  width: number | undefined,
-  height: number | undefined,
+  width: number,
+  height: number,
   pixelInfo: PixelInfo,
+  color: PaletteColor,
 ): ImageData {
-  if (!width || !height) {
-    throw new Error("Width and height must be provided.");
-  }
   const tempCanvas = document.createElement("canvas");
   const tempCtx = tempCanvas.getContext("2d");
   if (!tempCtx) throw new Error("Canvas context is not available.");
@@ -23,8 +21,7 @@ export default function generatePixelPng(
   tempCanvas.width = width;
   tempCanvas.height = height;
 
-  const x = pixelInfo.x;
-  const y = pixelInfo.y;
+  const { x, y } = pixelInfo;
 
   // draw a 5x5 white square around the pixel
   tempCtx.fillStyle = "white";
@@ -42,7 +39,7 @@ export default function generatePixelPng(
 
   tempCtx.clearRect(x - 2, y - 2, 5, 5);
 
-  tempCtx.fillStyle = "white";
+  tempCtx.fillStyle = `rgb(${color.rgba.join()})`;
   tempCtx.fillRect(x, y, 1, 1);
 
   const imageData = tempCtx.getImageData(0, 0, width, height);
