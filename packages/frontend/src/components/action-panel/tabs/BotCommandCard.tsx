@@ -3,13 +3,15 @@ import { styled } from "@mui/material";
 
 const Wrapper = styled("div")`
   align-items: baseline;
-  color: oklch(var(--discord-white-oklch) / 60%);
+  color: var(--discord-white-oklch);
   display: grid;
-  font-size: 1.375rem;
+  font-size: 1.2rem;
   grid-template-columns: 1fr auto;
 `;
+
 const Code = styled("code")`
   color: var(--discord-white-oklch);
+  letter-spacing: 0.05em;
   line-height: 1.1;
 `;
 
