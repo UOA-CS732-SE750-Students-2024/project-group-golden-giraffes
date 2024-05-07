@@ -33,7 +33,7 @@ discordRouter.get(
 
     res.cookie("profile", JSON.stringify(discordProfile), {
       httpOnly: false, // Allow the frontend to read the cookie
-      secure: true,
+      secure: config.environment !== "development",
     });
 
     saveDiscordProfile(discordProfile);
