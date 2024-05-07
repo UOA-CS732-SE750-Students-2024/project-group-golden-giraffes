@@ -18,6 +18,8 @@ const Heading = styled("h3")`
 
 const Subtitle = styled("p")`
   font-size: 1rem;
+  letter-spacing: 0.005em;
+  margin-block: 0.25rem 0;
 
   &,
   a {
@@ -39,7 +41,7 @@ export default function ColorInfoCard({
 
   const { name: colorName, code: colorCode, invite: inviteSlug } = color;
   const hasInvite = !!inviteSlug;
-  const serverInvite = hasInvite ? `https://discord.gg/${inviteSlug}` : null;
+  const serverInvite = hasInvite ? `discord.gg/${inviteSlug}` : null;
 
   return (
     <Wrapper>
@@ -47,7 +49,7 @@ export default function ColorInfoCard({
         <Heading>{colorName}</Heading>
         {serverInvite && (
           <Subtitle>
-            <a href={serverInvite}>{serverInvite}</a>
+            <a href={`https://${serverInvite}`}>{serverInvite}</a>
           </Subtitle>
         )}
       </div>
