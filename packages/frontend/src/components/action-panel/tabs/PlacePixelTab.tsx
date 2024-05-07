@@ -2,12 +2,15 @@ import { usePalette } from "@/hooks";
 import { Palette, PaletteColor } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useState } from "react";
-import { colorToSwatch } from "../color/Color";
-import { ActionMenu, Heading } from "./ActionPanel";
+
+import { ActionMenu, Heading } from "../ActionPanel";
+import { InteractiveSwatch } from "../swatch";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
-const SelectedColorInfo = styled("div")`
-  grid-column: 1 / -1;
+const ColorPicker = styled("div")`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.25rem;
 `;
 
 export const partitionPalette = (palette: Palette) => {
@@ -28,30 +31,26 @@ export default function PlacePixelTab() {
 
   return (
     <ActionMenu>
-      <div>
+      <ColorPicker>
         <Heading>Main colors</Heading>
-        {/* {mainColors.map((color) =>
-          colorToSwatch({
-            color,
-            selected: color === selectedColor,
-            onClick: () =>
-              color !== selectedColor ?
-                setSelectedColor(color)
-              : setSelectedColor(null),
-          }),
-        )} */}
+        {mainColors.map((color) => (
+          <InteractiveSwatch
+            key={color.code}
+            rgba={color.rgba}
+            onAction={() => setSelectedColor(color)}
+            selected={color === selectedColor}
+          />
+        ))}
         <Heading>Partner colors</Heading>
-        {partnerColors.map((color) =>
-          colorToSwatch({
-            color,
-            selected: color === selectedColor,
-            onClick: () =>
-              color !== selectedColor ?
-                setSelectedColor(color)
-              : setSelectedColor(null),
-          }),
-        )}
-      </div>
+        {partnerColors.map((color) => (
+          <InteractiveSwatch
+            key={color.code}
+            onAction={() => setSelectedColor(color)}
+            rgba={color.rgba}
+            selected={color === selectedColor}
+          />
+        ))}
+      </ColorPicker>
 
       <ColorInfoCard color={selectedColor} />
     </ActionMenu>
