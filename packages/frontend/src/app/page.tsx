@@ -1,8 +1,7 @@
-import { styled } from "@mui/material";
 import type { Metadata } from "next";
 
-import Main from "@/components/Main";
-import { Navbar } from "@/components/nav";
+import { LayoutWithNavbar } from "../components/";
+import Main from "./Main";
 
 export const metadata: Metadata = {
   title: "Blurple Canvas",
@@ -10,10 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  return (
-    <>
-      <Navbar />
-      <Main />
-    </>
-  );
+  return <LayoutWithNavbar content={<Main />} />;
 }

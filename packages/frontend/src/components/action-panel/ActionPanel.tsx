@@ -1,13 +1,21 @@
 "use client";
 
-import { usePalette } from "@/hooks/queries";
-import { Palette, PaletteColor } from "@blurple-canvas-web/types";
-import { css, styled } from "@mui/material";
+import { Point } from "@blurple-canvas-web/types";
+import { styled } from "@mui/material";
+import { useEffect, useState } from "react";
+import { ORIGIN } from "../canvas/point";
+import PixelInfoTab from "./PixelInfoTab";
+import PlacePixelTab from "./PlacePixelTab";
 
-const Container = styled("div")`
+interface TabContainerProps {
+  active: boolean;
+}
+
+const TabContainer = styled("div")<TabContainerProps>`
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: var(--card-border);
+  display: ${({ active }) => (active ? "block" : "none")};
   gap: 0.5rem;
   height: 100%;
   padding: 1rem;
@@ -59,19 +67,20 @@ const Tab = styled("li")`
   }
 `;
 
-const ZenTab = styled(Tab)`
-  margin-inline-start: auto;
+export const ActionMenu = styled("div")`
+  display: grid;
+  gap: max(1rem, 8px);
 `;
 
-const ColorPicker = styled("div")`
+export const ActionMenuBlock = styled("div")`
   background-color: var(--discord-legacy-dark-but-not-black);
   display: grid;
   gap: max(0.25rem, 2px);
   grid-template-columns: repeat(5, 1fr);
-  padding: 1rem;
+  padding: 0 1rem;
 `;
 
-const Heading = styled("h2")`
+export const Heading = styled("h2")`
   color: oklch(var(--discord-white-oklch) / 60%);
   font-weight: 600;
   font-size: 1rem;
@@ -81,70 +90,32 @@ const Heading = styled("h2")`
   text-transform: uppercase;
 `;
 
-const ColorfulDiv = styled("div", {
-  shouldForwardProp: (prop) => prop !== "colorString",
-})<{ colorString: string }>(
-  ({ colorString }) => css`
-    aspect-ratio: 1;
-    background-color: ${colorString};
-    border-radius: var(--card-border-radius);
-    border: oklch(var(--discord-white-oklch) / 30%) 3px solid;
-    gap: 0.25rem;
-  `,
-);
-
-interface SwatchProps {
-  rgba: PaletteColor["rgba"];
-  selected?: boolean;
+enum TabTypes {
+  Look = "Look",
+  Place = "Place",
+  Zen = "Zen",
 }
 
-const Swatch = ({ rgba, selected = false }: SwatchProps) => {
-  // Convert [255, 255, 255, 255] to rgb(255 255 255 / 1.0)
-  const rgb = rgba.slice(0, 3).join(" ");
-  const alphaFloat = rgba[3] / 255;
-
-  return (
-    <ColorfulDiv
-      className={selected ? "selected" : undefined}
-      colorString={`rgb(${rgb} / ${alphaFloat})`}
-    />
-  );
-};
-
-const partitionPalette = (palette: Palette) => {
-  const mainColors: Palette = [];
-  const partnerColors: Palette = [];
-  for (const color of palette) {
-    (color.global ? mainColors : partnerColors).push(color);
-  }
-
-  return [mainColors, partnerColors];
-};
-
-const colorToSwatch = (color: PaletteColor, selected = false) => {
-  return <Swatch key={color.code} rgba={color.rgba} selected={selected} />;
-};
-
 export default function ActionPanel() {
-  const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
+  const [currentTab, setCurrentTab] = useState(TabTypes.Place);
 
-  const [mainColors, partnerColors] = partitionPalette(palette);
+  const [coordinates, setCoordinates] = useState(ORIGIN);
+
+  const canvasId = 2023; // This is a placeholder value
 
   return (
     <>
       <TabBar>
-        <Tab>Look</Tab>
-        <Tab>Place</Tab>
-        <ZenTab>🧘</ZenTab>
+        <Tab onClick={() => setCurrentTab(TabTypes.Look)}>Look</Tab>
+        <Tab onClick={() => setCurrentTab(TabTypes.Place)}>Place</Tab>
       </TabBar>
-      <Container>
-        <ColorPicker>
-          <Heading>Main colors</Heading>
-          {mainColors.map((color) => colorToSwatch(color))}
-          <Heading>Partner colors</Heading>
-          {partnerColors.map((color) => colorToSwatch(color))}
-        </ColorPicker>
-      </Container>
+
+      <TabContainer active={currentTab === TabTypes.Look}>
+        <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
+      </TabContainer>
+      <TabContainer active={currentTab === TabTypes.Place}>
+        <PlacePixelTab />
+      </TabContainer>
     </>
   );
 }

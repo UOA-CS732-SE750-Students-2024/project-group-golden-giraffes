@@ -1,6 +1,9 @@
-import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
 import passport from "passport";
+
+import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
+
+import { saveDiscordProfile } from "@/services/discordProfileService";
 
 export const discordRouter = Router();
 
@@ -19,6 +22,10 @@ discordRouter.get(
       httpOnly: true,
       secure: true,
     });
+
+    // saving a user's id, name, and profile picture to our database to avoid rate limiting
+    const { id: userId, username, avatar: profilePictureHash } = profile;
+    saveDiscordProfile(BigInt(userId), username, profilePictureHash);
 
     res.json(req.user);
   },

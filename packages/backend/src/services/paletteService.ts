@@ -1,5 +1,7 @@
-import { prisma } from "@/client";
 import { PaletteColor } from "@blurple-canvas-web/types";
+
+import { prisma } from "@/client";
+import { getCurrentEvent } from "./eventService";
 
 /**
  * Retrieves the palette for the current event defined in the database.
@@ -7,17 +9,8 @@ import { PaletteColor } from "@blurple-canvas-web/types";
  * @returns The palette for the current event
  */
 export async function getCurrentEventPalette(): Promise<PaletteColor[]> {
-  const info = await prisma.info.findFirst({
-    select: { current_event_id: true },
-  });
-
-  // To get rid of the nullable type from info. This should never happen
-  if (!info) {
-    throw new Error("The info table is empty! 😱");
-  }
-
-  const currentEventId = info.current_event_id;
-  return await getEventPalette(currentEventId);
+  const currentEvent = await getCurrentEvent();
+  return await getEventPalette(currentEvent.id);
 }
 
 /**
