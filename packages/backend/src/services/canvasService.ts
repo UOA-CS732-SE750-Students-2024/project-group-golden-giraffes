@@ -195,7 +195,7 @@ export function updateCachedCanvasPixel(
   canvasId: CanvasInfo["id"],
   coordinates: Point,
   color: PixelColor,
-): void {
+) {
   const cachedCanvas = CANVAS_CACHE[canvasId];
 
   if (!cachedCanvas || cachedCanvas.isLocked) {
