@@ -32,7 +32,6 @@ const Container = styled("code", {
 `;
 
 interface ColorCodeChipProps {
-  backgroundColor: PaletteColor;
   onClick?: () => void;
 }
 
