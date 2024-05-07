@@ -11,23 +11,21 @@ export function usePixelHistory(
   coordinates: Point,
 ) {
   const fetchHistory = async ({ signal }: { signal: AbortSignal }) => {
-    if (coordinates !== null) {
-      const response = await axios.get<HistoryRequest.ResBody>(
-        `${config.apiUrl}/api/v1/canvas/${canvasId}/pixel/history?x=${coordinates.x}&y=${coordinates.y}`,
-        { signal },
-      );
-      return response.data;
-    }
-    return [];
+    if (!coordinates) return [] as HistoryRequest.ResBody;
+
+    const { x, y } = coordinates;
+    const response = await axios.get<HistoryRequest.ResBody>(
+      `${config.apiUrl}/api/v1/canvas/${canvasId}/pixel/history?x=${x}&y=${y}`,
+      { signal },
+    );
+    return response.data;
   };
 
-  const queryResponse = useQuery({
+  return useQuery({
     queryKey: ["pixelHistory", canvasId, coordinates],
     queryFn: fetchHistory,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     placeholderData: [] as HistoryRequest.ResBody,
   });
-
-  return queryResponse;
 }
