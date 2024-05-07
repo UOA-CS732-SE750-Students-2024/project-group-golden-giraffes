@@ -191,7 +191,8 @@ describe("Place Pixel Tests", () => {
 
     await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 1 });
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
-    vi.advanceTimersByTime(30 * 1000);
+    // Current implementation will reject if currentCooldown and futureCooldown are equal
+    vi.advanceTimersByTime(30 * 1000 + 1);
     await placePixel(canvasId, userId, { x: 1, y: 1, colorId: 2 });
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 

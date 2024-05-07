@@ -160,7 +160,7 @@ export async function getCooldown(
 
   const currentCooldown = cooldown.cooldown_time;
 
-  if (placementTime < currentCooldown) {
+  if (placementTime <= currentCooldown) {
     throw new ForbiddenError("Pixel placement is on cooldown");
   }
   return { currentCooldown, futureCooldown };
