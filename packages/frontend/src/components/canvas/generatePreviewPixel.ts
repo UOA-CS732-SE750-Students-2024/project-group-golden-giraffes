@@ -9,14 +9,11 @@ import { PaletteColor, PixelInfo } from "@blurple-canvas-web/types";
  * @returns Image data of the generated PNG image.
  */
 export default function generatePixelPng(
-  width: number | undefined,
-  height: number | undefined,
+  width: number,
+  height: number,
   pixelInfo: PixelInfo,
   color: PaletteColor,
 ): ImageData {
-  if (!width || !height) {
-    throw new Error("Width and height must be provided.");
-  }
   const tempCanvas = document.createElement("canvas");
   const tempCtx = tempCanvas.getContext("2d");
   if (!tempCtx) throw new Error("Canvas context is not available.");
