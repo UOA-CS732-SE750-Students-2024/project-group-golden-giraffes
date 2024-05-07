@@ -30,7 +30,7 @@
       "typescriptreact",
       "yaml",
     ],
-    "cSpell.language": "en-GB",
+    "cSpell.language": "en-US",
     "cSpell.overrides": [
       {
         "filename": "**/*.{md,tex}",
