@@ -25,7 +25,6 @@ const CanvasContainer = styled("div")`
   place-content: center;
   place-items: center;
 
-  cursor: grab;
   :active {
     cursor: grabbing;
   }
@@ -65,7 +64,7 @@ function getDefaultZoom(
 }
 
 const SCALE_FACTOR = 0.2;
-const MAX_ZOOM = 10;
+const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
 export interface CanvasViewProps {
