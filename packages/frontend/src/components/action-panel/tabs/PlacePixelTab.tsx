@@ -1,8 +1,9 @@
-import { usePalette } from "@/hooks";
-import { Palette, PaletteColor, Point } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { useState } from "react";
 
+import { Palette, PaletteColor, Point } from "@blurple-canvas-web/types";
+
+import { usePalette } from "@/hooks";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTab } from "./ActionPanelTab";
@@ -11,8 +12,8 @@ import ColorInfoCard from "./SelectedColorInfoCard";
 
 const ColorPicker = styled("div")`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
   gap: 0.25rem;
+  grid-template-columns: repeat(5, 1fr);
 `;
 
 export const partitionPalette = (palette: Palette) => {
@@ -25,15 +26,7 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-interface PlacePixelTabProps {
-  coordinates: Point;
-  canvasId: number;
-}
-
-export default function PlacePixelTab({
-  coordinates,
-  canvasId,
-}: PlacePixelTabProps) {
+export default function PlacePixelTab() {
   const { data: palette = [] } = usePalette();
   const [mainColors, partnerColors] = partitionPalette(palette);
 
@@ -62,7 +55,11 @@ export default function PlacePixelTab({
         ))}
       </ColorPicker>
       <ColorInfoCard color={selectedColor} />
-      <PlacePixelButton color={selectedColor} coordinates={coordinates} />
+
+      <PlacePixelButton
+        color={selectedColor}
+        coordinates={{ x: 1, y: 1 } as Point}
+      />
     </ActionPanelTab>
   );
 }

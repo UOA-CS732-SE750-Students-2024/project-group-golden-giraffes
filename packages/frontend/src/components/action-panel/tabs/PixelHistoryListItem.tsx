@@ -27,9 +27,6 @@ const ColorName = styled("p")`
   letter-spacing: 0.005em;
 `;
 
-const copyColorCode = (color: PaletteColor) =>
-  navigator.clipboard.writeText(color.code);
-
 export default function PixelHistoryListItem({
   record,
 }: {
@@ -44,13 +41,7 @@ export default function PixelHistoryListItem({
       <div>
         <Username title={userProfile.id}>{userProfile.username}</Username>
         <ColorName>
-          {color.name}{" "}
-          <ColorCodeChip
-            color={color}
-            onClick={() => {
-              navigator.clipboard.writeText(color.code);
-            }}
-          />
+          {color.name} <ColorCodeChip colorCode={color.code} />
         </ColorName>
       </div>
     </Wrapper>

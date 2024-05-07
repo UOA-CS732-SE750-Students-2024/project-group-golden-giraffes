@@ -4,11 +4,6 @@ import { styled } from "@mui/material";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
 
-interface ColorCodeChipProps {
-  backgroundColor: PaletteColor;
-  onClick?: () => void;
-}
-
 const Container = styled("code", {
   shouldForwardProp: (prop) => prop !== "backgroundColor",
 })<ColorCodeChipProps>`
@@ -20,32 +15,48 @@ const Container = styled("code", {
   padding: 0.25rem 0.5rem;
   transition: background-color var(--transition-duration-fast) ease;
 
+  :focus,
+  :focus-visible,
   :hover {
-    background-color: rgba(
-      ${({ backgroundColor }) => backgroundColor.rgba.slice(0, 3).join(", ")},
-      36%
-    );
+    background-color: oklch(var(--discord-white-oklch) / 20%);
+  }
+
+  :focus,
+  :focus-visible {
+    outline: var(--focus-outline);
   }
 
   :active {
-    background-color: rgba(
-      ${({ backgroundColor }) => backgroundColor.rgba.slice(0, 3).join(", ")},
-      6%
-    );
+    background-color: oklch(var(--discord-white-oklch) / 6%);
   }
 `;
 
+interface ColorCodeChipProps {
+  backgroundColor: PaletteColor;
+  onClick?: () => void;
+}
+
+const copyToClipBoard = (str: string) => navigator.clipboard.writeText(str);
+
 export default function ColorCodeChip({
-  color,
-  onClick = () => {},
+  colorCode,
   ...props
 }: {
-  color: PaletteColor;
-  onClick?: () => void;
+  colorCode: PaletteColor["code"];
 }) {
+  const clickHandler = () => copyToClipBoard(colorCode);
+  const keyUpHandler = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") copyToClipBoard(colorCode);
+  };
+
   return (
-    <Container backgroundColor={color} onClick={onClick} {...props}>
-      {color.code}
+    <Container
+      onClick={clickHandler}
+      onKeyUp={keyUpHandler}
+      tabIndex={0}
+      {...props}
+    >
+      {colorCode}
     </Container>
   );
 }
