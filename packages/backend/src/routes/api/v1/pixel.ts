@@ -47,7 +47,6 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
  */
 pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
   try {
-    const coolDownTimeStamp = new Date();
     const result = await PlacePixelBodyModel.safeParseAsync(req.body);
     if (!result.success) {
       throw new BadRequestError("Body is not valid", result.error.issues);
@@ -69,10 +68,10 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     // TODO: see if Promise.all() can work here
     await validatePixel(canvasId, data.x, data.y, true);
     await validateColor(data.colorId);
-    await validateUser(canvasId, BigInt(userId));
-    await placePixel(canvasId, BigInt(userId), data, coolDownTimeStamp);
+    await validateUser(BigInt(userId));
+    const futureCooldown = await placePixel(canvasId, BigInt(userId), data);
 
-    return res.status(201).json({ coolDownTimeStamp: coolDownTimeStamp });
+    return res.status(201).json({ futureCooldown });
   } catch (error) {
     ApiError.sendError(res, error);
   }
