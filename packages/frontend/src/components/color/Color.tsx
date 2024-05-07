@@ -71,18 +71,18 @@ export const ColorName = styled("span")`
 `;
 
 export const ColorCode = styled("span")`
-  background-color: rgb(255, 255, 255 / 12%);
+  background-color: rgba(255, 255, 255, 0.12);
   border-radius: 0.25rem;
   font-family: var(--font-monospace);
   font-size: 0.9rem;
   padding: 0.25rem 0.5rem;
   transition: background-color 0.2s;
   :hover {
-    background-color: rgb(255, 255, 255 / 24%);
+    background-color: rgba(255, 255, 255, 0.24);
     cursor: pointer;
   }
   :active {
-    background-color: rgb(255, 255, 255 / 36%);
+    background-color: rgba(255, 255, 255, 0.36);
   }
 `;
 
