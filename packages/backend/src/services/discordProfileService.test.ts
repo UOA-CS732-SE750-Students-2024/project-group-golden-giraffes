@@ -89,7 +89,7 @@ describe("discordProfileService", () => {
     });
   });
 
-  describe("", () => {
+  describe("saveDiscordProfile", () => {
     it("should save the discord profile for a given user ID, username, and profile picture URL", async () => {
       const id = "228441721246056449";
       const username = "jasperlai";
