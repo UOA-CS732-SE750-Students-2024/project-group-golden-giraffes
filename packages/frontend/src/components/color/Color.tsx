@@ -73,7 +73,7 @@ export const ColorName = styled("span")`
   font-size: 1.2rem;
 `;
 
-export const ColorCode = styled("span")`
+export const ColorCode = styled("span")<{ backgroundColor: PaletteColor }>`
   background-color: rgba(255, 255, 255, 0.12);
   border-radius: 0.25rem;
   font-family: var(--font-monospace);
@@ -81,11 +81,17 @@ export const ColorCode = styled("span")`
   padding: 0.2rem 0.5rem;
   transition: background-color var(--transition-duration-medium);
   :hover {
-    background-color: rgba(255, 255, 255, 0.24);
+    background-color: rgba(
+      ${({ backgroundColor }) => backgroundColor.rgba.slice(0, 3).join(", ")},
+      0.36
+    );
     cursor: pointer;
   }
   :active {
-    background-color: rgba(255, 255, 255, 0.36);
+    background-color: rgba(
+      ${({ backgroundColor }) => backgroundColor.rgba.slice(0, 3).join(", ")},
+      0.72
+    );
   }
 `;
 
@@ -157,6 +163,7 @@ export const PaletteColorRecord = ({
       {displayCode && (
         <ColorCode
           className="colorCode"
+          backgroundColor={color}
           onClick={() => {
             navigator.clipboard.writeText(color.code);
           }}

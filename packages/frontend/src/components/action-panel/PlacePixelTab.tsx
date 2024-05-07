@@ -62,7 +62,11 @@ export const Button = styled("div")<ButtonProps>`
   grid-template-columns: auto 1fr;
   padding: 0.5rem 1rem;
   text-align: center;
-  transition: border-color var(--transition-duration-medium) ease;
+  transition:
+    background-color var(--transition-duration-medium) ease,
+    border-color var(--transition-duration-medium) ease,
+    color var(--transition-duration-medium) ease;
+  user-select: none;
 
   &:hover {
     border-color: oklch(var(--discord-white-oklch) / 36%);
