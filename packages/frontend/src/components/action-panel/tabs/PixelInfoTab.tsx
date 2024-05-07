@@ -53,10 +53,8 @@
 //     <Record>
 //       {color && colorToSwatch(color)}
 //       <RecordInfo>
-//         <RecordAuthor
-//           title={history.userProfile?.username ? history.userId : ""}
-//         >
-//           {history.userProfile?.username || history.userId}
+//         <RecordAuthor title={history.userProfile.id}>
+//           {history.userProfile.username}
 //         </RecordAuthor>
 //         {color && (
 //           <RecordColor>
