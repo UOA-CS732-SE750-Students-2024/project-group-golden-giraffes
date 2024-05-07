@@ -21,15 +21,11 @@ export const SelectedColorProvider = ({
   const [selectedColor, setSelectedColor] =
     useState<SelectedColorContextType["color"]>(null);
 
-  const setColor = (color: PaletteColor) => {
-    setSelectedColor(color);
-  };
-
   return (
     <SelectedColorContext.Provider
       value={{
         color: selectedColor,
-        setColor,
+        setColor: setSelectedColor,
       }}
     >
       {children}
