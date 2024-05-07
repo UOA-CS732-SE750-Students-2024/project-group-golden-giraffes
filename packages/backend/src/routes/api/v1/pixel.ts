@@ -32,8 +32,8 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
       );
     }
 
-    const point = queryResult.data;
-    const pixelHistory = await getPixelHistory(canvasId, point);
+    const coordinates = queryResult.data;
+    const pixelHistory = await getPixelHistory(canvasId, coordinates);
 
     res.status(200).json(pixelHistory);
   } catch (error) {
@@ -68,13 +68,19 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
 
     // TODO: see if Promise.all() can work here
 
-    const point: Point = { x, y };
+    const coordinates: Point = { x, y };
 
-    await validatePixel(canvasId, point, true);
+    await validatePixel(canvasId, coordinates, true);
     await validateUser(canvasId, BigInt(userId));
     const color = await validateColor(colorId);
 
-    await placePixel(canvasId, BigInt(userId), point, color, coolDownTimeStamp);
+    await placePixel(
+      canvasId,
+      BigInt(userId),
+      coordinates,
+      color,
+      coolDownTimeStamp,
+    );
 
     return res.status(201).json({ coolDownTimeStamp: coolDownTimeStamp });
   } catch (error) {

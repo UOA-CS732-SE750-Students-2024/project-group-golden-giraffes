@@ -188,12 +188,12 @@ export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
  * this will do nothing.
  *
  * @param canvasId The ID of the canvas to update
- * @param point The coordinates of the pixel
+ * @param coordinates The coordinates of the pixel
  * @param color The color of the pixel
  */
 export function updateCachedCanvasPixel(
   canvasId: CanvasInfo["id"],
-  point: Point,
+  coordinates: Point,
   color: PixelColor,
 ): void {
   const cachedCanvas = CANVAS_CACHE[canvasId];
@@ -202,7 +202,7 @@ export function updateCachedCanvasPixel(
     return;
   }
 
-  const pixelIndex = point.y * cachedCanvas.width + point.x;
+  const pixelIndex = coordinates.y * cachedCanvas.width + coordinates.x;
   cachedCanvas.pixels[pixelIndex] = color;
 }
 
