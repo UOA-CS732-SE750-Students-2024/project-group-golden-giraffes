@@ -1,8 +1,8 @@
 "use client";
 
-import { Point } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 import { ORIGIN } from "../canvas/point";
 import PixelInfoTab from "./PixelInfoTab";
 import PlacePixelTab from "./PlacePixelTab";
@@ -90,14 +90,13 @@ export const Heading = styled("h2")`
   text-transform: uppercase;
 `;
 
-enum TabTypes {
-  Look = "Look",
-  Place = "Place",
-  Zen = "Zen",
-}
+const TABS = {
+  LOOK: "Look",
+  PLACE: "Place",
+};
 
 export default function ActionPanel() {
-  const [currentTab, setCurrentTab] = useState(TabTypes.Place);
+  const [currentTab, setCurrentTab] = useState(TABS.PLACE);
 
   const [coordinates, setCoordinates] = useState(ORIGIN);
 
@@ -106,14 +105,14 @@ export default function ActionPanel() {
   return (
     <>
       <TabBar>
-        <Tab onClick={() => setCurrentTab(TabTypes.Look)}>Look</Tab>
-        <Tab onClick={() => setCurrentTab(TabTypes.Place)}>Place</Tab>
+        <Tab onClick={() => setCurrentTab(TABS.LOOK)}>Look</Tab>
+        <Tab onClick={() => setCurrentTab(TABS.PLACE)}>Place</Tab>
       </TabBar>
 
-      <TabContainer active={currentTab === TabTypes.Look}>
+      <TabContainer active={currentTab === TABS.LOOK}>
         <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
       </TabContainer>
-      <TabContainer active={currentTab === TabTypes.Place}>
+      <TabContainer active={currentTab === TABS.PLACE}>
         <PlacePixelTab />
       </TabContainer>
     </>
