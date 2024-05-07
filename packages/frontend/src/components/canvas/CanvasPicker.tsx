@@ -73,8 +73,8 @@ export default function CanvasPicker() {
     canvasListIsLoading || mainCanvasIsLoading || currentEventIsLoading;
 
   const currentCanvases = canvases.filter(
-    ({ id }) => id !== mainCanvas?.id && id === currentEvent?.id,
-    //          ^~~~~~~~~~~~~~~~~~~~~ main canvas gets its own <optgroup>
+    ({ id, eventId }) => id !== mainCanvas?.id && eventId === currentEvent?.id,
+    //                   ^~~~~~~~~~~~~~~~~~~~~ main canvas gets its own <optgroup>
   );
   const pastCanvases = canvases.filter(({ id }) => id !== currentEvent?.id);
 
