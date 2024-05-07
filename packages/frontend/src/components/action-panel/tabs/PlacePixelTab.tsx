@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
-import ActionPanelTab from "./ActionPanelTab";
+import { ActionPanelTab } from "./ActionPanelTab";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
 const ColorPicker = styled("div")`

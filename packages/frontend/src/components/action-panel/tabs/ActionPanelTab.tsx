@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
 
-const Wrapper = styled("div")`
+export const ActionPanelTab = styled("div")`
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -10,11 +10,3 @@ const Wrapper = styled("div")`
     padding: 1rem;
   }
 `;
-
-export default function ActionPanelTab({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <Wrapper>{children}</Wrapper>;
-}

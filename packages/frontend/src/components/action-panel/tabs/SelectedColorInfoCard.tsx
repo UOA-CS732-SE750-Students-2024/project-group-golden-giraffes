@@ -19,7 +19,7 @@ const Heading = styled("h3")`
 const Subtitle = styled("p")`
   font-size: 1rem;
   letter-spacing: 0.005em;
-  margin-block: 0.25rem 0;
+  margin-block-start: 0.25rem;
 
   &,
   a {

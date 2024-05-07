@@ -72,7 +72,7 @@ export const Heading = styled("h2")`
   font-size: 1rem;
   grid-column: 1 / -1;
   letter-spacing: 0.08em;
-  margin-block-start: 1rem;
+  margin-block: 2rem 0.5rem;
   text-transform: uppercase;
 `;
 

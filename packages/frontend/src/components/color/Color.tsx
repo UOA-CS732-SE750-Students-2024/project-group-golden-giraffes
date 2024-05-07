@@ -4,7 +4,6 @@ import { css, styled } from "@mui/material";
 import React from "react";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
-import { StaticSwatch } from "../swatch/StaticSwatch";
 
 export const ColorfulDiv = styled("div", {
   shouldForwardProp: (prop) => prop !== "colorString",
@@ -40,10 +39,6 @@ export const ColorCode = styled("span")`
   }
 `;
 
-export const colorToSwatch = (color: PaletteColor) => {
-  return <StaticSwatch key={color.code} rgba={color.rgba} />;
-};
-
 interface ColorProps {
   color: PaletteColor;
   displaySwatch?: boolean;
@@ -56,13 +51,11 @@ const copyColorCode = (color: PaletteColor) =>
 
 export const PaletteColorRecord = ({
   color,
-  displaySwatch = true,
+
   displayName = true,
-  displayCode = true,
 }: ColorProps) => {
   return (
     <ColorContainer className="colorRecord">
-      {displaySwatch && colorToSwatch(color)}
       {displayName && <p className="colorName">{color.name}</p>}
       {/* {displayCode && (
         <span onClick={copyColorCode} onKeyUp={copyColorCode}>
