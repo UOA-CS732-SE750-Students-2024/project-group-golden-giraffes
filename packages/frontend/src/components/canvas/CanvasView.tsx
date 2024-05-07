@@ -337,14 +337,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
-      console.log(
-        "Clicked on pixel: ",
-        "x = ",
-        Math.floor(imageX),
-        "y = ",
-        Math.floor(imageY),
-      );
-
       // we only care about updating the location
       setPixelInfoLocation((prev) => ({
         ...prev,
@@ -357,6 +349,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
   useEffect(() => {
     canvasRef.current?.addEventListener("click", handleCanvasClick);
+
     return () =>
       canvasRef.current?.removeEventListener("click", handleCanvasClick);
   }, [handleCanvasClick]);
