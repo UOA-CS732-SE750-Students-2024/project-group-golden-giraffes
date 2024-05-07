@@ -7,5 +7,6 @@ export const SwatchBase = styled("div", {
     aspect-ratio: 1;
     background-color: ${colorString};
     border-radius: var(--card-border-radius);
+    // width: 3rem;
   `,
 );

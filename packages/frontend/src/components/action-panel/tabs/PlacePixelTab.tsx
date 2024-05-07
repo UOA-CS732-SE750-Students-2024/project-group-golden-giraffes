@@ -4,7 +4,8 @@ import { styled } from "@mui/material";
 import { useState } from "react";
 
 import { InteractiveSwatch } from "../../swatch";
-import { ActionMenu, Heading } from "../ActionPanel";
+import { Heading } from "../ActionPanel";
+import { ActionPanelTab } from "./ActionPanelTab";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
 const ColorPicker = styled("div")`
@@ -24,13 +25,13 @@ export const partitionPalette = (palette: Palette) => {
 };
 
 export default function PlacePixelTab() {
-  const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
+  const { data: palette = [] } = usePalette();
   const [mainColors, partnerColors] = partitionPalette(palette);
 
   const [selectedColor, setSelectedColor] = useState<PaletteColor | null>(null);
 
   return (
-    <ActionMenu>
+    <ActionPanelTab>
       <ColorPicker>
         <Heading>Main colors</Heading>
         {mainColors.map((color) => (
@@ -51,8 +52,7 @@ export default function PlacePixelTab() {
           />
         ))}
       </ColorPicker>
-
       <ColorInfoCard color={selectedColor} />
-    </ActionMenu>
+    </ActionPanelTab>
   );
 }

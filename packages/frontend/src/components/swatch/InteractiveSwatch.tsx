@@ -38,6 +38,7 @@ export function InteractiveSwatch({
   onAction,
   rgba,
   selected = false,
+  ...props
 }: InteractiveSwatchProps) {
   // Convert [255, 255, 255, 255] to rgb(255 255 255 / 1.0)
   const rgb = rgba.slice(0, 3).join(" ");
@@ -56,6 +57,7 @@ export function InteractiveSwatch({
       onClick={clickHandler}
       onKeyUp={keyUpHandler}
       tabIndex={0}
+      {...props}
     />
   );
 }

@@ -6,7 +6,6 @@ import axios from "axios";
 import config from "@/config";
 import { BlurpleEvent, PaletteRequest } from "@blurple-canvas-web/types";
 import Color, { Coords } from "colorjs.io";
-import { OKLCH } from "colorjs.io/fn";
 
 export function usePalette(eventId?: BlurpleEvent["id"]) {
   const getPalette = async () => {

@@ -4,8 +4,7 @@ import { styled } from "@mui/material";
 import { useState } from "react";
 
 import { ORIGIN } from "../canvas/point";
-// import PixelInfoTab from "./PixelInfoTab";
-import PlacePixelTab from "./tabs/PlacePixelTab";
+import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
 interface TabContainerProps {
   active: boolean;
@@ -67,23 +66,13 @@ const Tab = styled("li")`
   }
 `;
 
-export const ActionMenu = styled("div")`
-  display: grid;
-  gap: max(1rem, 8px);
-
-  & > * {
-    background-color: var(--discord-legacy-dark-but-not-black);
-    padding: 1rem;
-  }
-`;
-
 export const Heading = styled("h2")`
   color: oklch(var(--discord-white-oklch) / 60%);
   font-weight: 600;
   font-size: 1rem;
   grid-column: 1 / -1;
   letter-spacing: 0.08em;
-  margin-block-start: 1rem;
+  margin-block: 2rem 0.5rem;
   text-transform: uppercase;
 `;
 
@@ -94,7 +83,6 @@ const TABS = {
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
-
   const [coordinates, setCoordinates] = useState(ORIGIN);
 
   const canvasId = 2023; // This is a placeholder value
@@ -107,7 +95,7 @@ export default function ActionPanel() {
       </TabBar>
 
       <TabContainer active={currentTab === TABS.LOOK}>
-        {/* <PixelInfoTab coordinates={coordinates} canvasId={canvasId} /> */}
+        <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
       </TabContainer>
       <TabContainer active={currentTab === TABS.PLACE}>
         <PlacePixelTab />
