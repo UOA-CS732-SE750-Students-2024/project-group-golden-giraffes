@@ -71,10 +71,12 @@ describe("Canvas Pixels Tests", () => {
   it("Gets canvas pixels", async () => {
     const pixels = await getCanvasPixels(1);
     expect(pixels.length).toBe(4);
-    expect(pixels[0]).toStrictEqual([88, 101, 242, 127]);
-    expect(pixels[1]).toStrictEqual([88, 101, 242, 255]);
-    expect(pixels[2]).toStrictEqual([234, 35, 40, 255]);
-    expect(pixels[3]).toStrictEqual([88, 101, 242, 127]);
+    expect(pixels).toStrictEqual([
+      [88, 101, 242, 127],
+      [88, 101, 242, 255],
+      [234, 35, 40, 255],
+      [88, 101, 242, 127],
+    ]);
   });
 });
 
