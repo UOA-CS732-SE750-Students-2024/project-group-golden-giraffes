@@ -302,6 +302,13 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     [handleTouchMove, handleTouchEnd],
   );
 
+  /***********************************
+   * SELECTING PIXEL FUNCTIONALITY.  *
+   ***********************************/
+
+  /**
+   * When the canvas is clicked, we want to know which pixel was clicked on.
+   */
   const handleCanvasClick = useCallback(
     (event: MouseEvent): void => {
       if (!canvasRef.current || !imageDimensions) return;
