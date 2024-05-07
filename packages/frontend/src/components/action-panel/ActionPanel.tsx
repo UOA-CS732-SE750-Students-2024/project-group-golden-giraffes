@@ -4,8 +4,7 @@ import { styled } from "@mui/material";
 import { useState } from "react";
 
 import { ORIGIN } from "../canvas/point";
-// import PixelInfoTab from "./PixelInfoTab";
-import PlacePixelTab from "./tabs/PlacePixelTab";
+import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
 interface TabContainerProps {
   active: boolean;
@@ -94,7 +93,6 @@ const TABS = {
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
-
   const [coordinates, setCoordinates] = useState(ORIGIN);
 
   const canvasId = 2023; // This is a placeholder value
@@ -107,7 +105,7 @@ export default function ActionPanel() {
       </TabBar>
 
       <TabContainer active={currentTab === TABS.LOOK}>
-        {/* <PixelInfoTab coordinates={coordinates} canvasId={canvasId} /> */}
+        <PixelInfoTab coordinates={coordinates} canvasId={canvasId} />
       </TabContainer>
       <TabContainer active={currentTab === TABS.PLACE}>
         <PlacePixelTab />
