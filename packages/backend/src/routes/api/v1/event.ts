@@ -6,6 +6,15 @@ import { getCurrentEvent, getEventById } from "@/services/eventService";
 
 export const eventRouter = Router();
 
+eventRouter.get("/current", async (_req, res) => {
+  try {
+    const event = await getCurrentEvent();
+    res.status(200).json(event);
+  } catch (error) {
+    ApiError.sendError(res, error);
+  }
+});
+
 eventRouter.get("/:eventId", async (req, res) => {
   try {
     const pathParams = await EventIdParamModel.safeParseAsync(req.params);
@@ -20,15 +29,6 @@ eventRouter.get("/:eventId", async (req, res) => {
     const { eventId } = pathParams.data;
     const event = await getEventById(eventId);
 
-    res.status(200).json(event);
-  } catch (error) {
-    ApiError.sendError(res, error);
-  }
-});
-
-eventRouter.get("/current", async (_req, res) => {
-  try {
-    const event = await getCurrentEvent();
     res.status(200).json(event);
   } catch (error) {
     ApiError.sendError(res, error);
