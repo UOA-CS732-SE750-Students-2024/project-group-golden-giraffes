@@ -5,14 +5,16 @@ import { Check } from "lucide-react";
 import React from "react";
 
 export const ColorfulDiv = styled("div", {
-  shouldForwardProp: (prop) => prop !== "colorString" && prop !== "size",
-})<{ colorString: string; size?: number }>(
-  ({ colorString, size }) => css`
+  shouldForwardProp: (prop) =>
+    prop !== "clickable" && prop !== "colorString" && prop !== "size",
+})<{ clickable: boolean; colorString: string; size?: number }>(
+  ({ clickable, colorString, size }) => css`
     aspect-ratio: 1;
     background-color: ${colorString};
     border-radius: var(--card-border-radius);
     border: oklch(var(--discord-white-oklch) / 30%) 3px solid;
     gap: 0.25rem;
+    ${clickable && "cursor: pointer;"}
     position: relative;
     ${size && `inline-size: ${size}rem;`}
     transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
@@ -113,9 +115,10 @@ export const Swatch = ({
           "active"
         : undefined
       }
+      clickable={!!onClick}
       colorString={`rgb(${rgb} / ${alphaFloat})`}
-      size={size}
       onClick={onClick}
+      size={size}
     >
       <Check
         style={{ strokeWidth: "3px" }}
