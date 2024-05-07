@@ -315,17 +315,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
-      // Ensure the clicked coordinates are within the image bounds
-      if (
-        imageX < 0 ||
-        imageX >= imageDimensions.width ||
-        imageY < 0 ||
-        imageY >= imageDimensions.height
-      ) {
-        return;
-      }
-
-      // Do something with the selected pixel color
       console.log(
         "Clicked on pixel: ",
         "x = ",
