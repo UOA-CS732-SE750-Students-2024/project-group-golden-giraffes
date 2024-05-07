@@ -3,6 +3,7 @@
 import { useAuthContext } from "@/contexts/AuthProvider";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const Background = styled("div")`
@@ -51,12 +52,17 @@ const Disclaimer = () => (
 );
 
 export default function SignInPage() {
-  const { user, logout } = useAuthContext();
-  // logout();
+  const router = useRouter();
+  const { user } = useAuthContext();
 
   useEffect(() => {
-    logout();
-  }, [logout]);
+    if (user) {
+      console.log(
+        "[User Session]: User authenticated. Redirecting to home page",
+      );
+      router.replace("/");
+    }
+  }, [user, router]);
 
   return (
     <Background>
