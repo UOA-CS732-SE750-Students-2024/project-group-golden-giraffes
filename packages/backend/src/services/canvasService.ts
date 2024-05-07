@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { prisma } from "@/client";
 import config from "@/config";
 import { NotFoundError } from "@/errors";
-import { CanvasInfo, CanvasSummary } from "@blurple-canvas-web/types";
+import { CanvasInfo, CanvasSummary, Point } from "@blurple-canvas-web/types";
 import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 
@@ -181,6 +181,29 @@ export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
 
   console.debug(`Cache hit for canvas ${canvasId}`);
   return CANVAS_CACHE[canvasId];
+}
+
+/**
+ * Updates a pixel in the canvas cache. If the canvas is not in the cache, or the canvas is locked
+ * this will do nothing.
+ *
+ * @param canvasId The ID of the canvas to update
+ * @param coordinates The coordinates of the pixel
+ * @param color The color of the pixel
+ */
+export function updateCachedCanvasPixel(
+  canvasId: CanvasInfo["id"],
+  coordinates: Point,
+  color: PixelColor,
+) {
+  const cachedCanvas = CANVAS_CACHE[canvasId];
+
+  if (!cachedCanvas || cachedCanvas.isLocked) {
+    return;
+  }
+
+  const pixelIndex = coordinates.y * cachedCanvas.width + coordinates.x;
+  cachedCanvas.pixels[pixelIndex] = color;
 }
 
 async function getCanvasPixels(canvas: canvas): Promise<PixelColor[]> {

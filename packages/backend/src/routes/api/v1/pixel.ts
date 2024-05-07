@@ -13,7 +13,7 @@ import {
   validatePixel,
   validateUser,
 } from "@/services/pixelService";
-import { DiscordUserLoginInfo, PixelInfo } from "@blurple-canvas-web/types";
+import { DiscordUserLoginInfo, Point } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
@@ -32,8 +32,8 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
       );
     }
 
-    const { x, y } = queryResult.data;
-    const pixelHistory = await getPixelHistory(canvasId, x, y);
+    const coordinates = queryResult.data;
+    const pixelHistory = await getPixelHistory(canvasId, coordinates);
 
     res.status(200).json(pixelHistory);
   } catch (error) {
@@ -53,7 +53,7 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
       throw new BadRequestError("Body is not valid", result.error.issues);
     }
 
-    const data = result.data;
+    const { x, y, colorId } = result.data;
     const canvasId = await parseCanvasId(req.params);
     const user = req.user as DiscordUserLoginInfo;
 
@@ -67,10 +67,20 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     // TODO: check for canvas discord_only status (not sure which table to look here)
 
     // TODO: see if Promise.all() can work here
-    await validatePixel(canvasId, data.x, data.y, true);
-    await validateColor(data.colorId);
+
+    const coordinates: Point = { x, y };
+
+    await validatePixel(canvasId, coordinates, true);
     await validateUser(canvasId, BigInt(userId));
-    await placePixel(canvasId, BigInt(userId), data, coolDownTimeStamp);
+    const color = await validateColor(colorId);
+
+    await placePixel(
+      canvasId,
+      BigInt(userId),
+      coordinates,
+      color,
+      coolDownTimeStamp,
+    );
 
     return res.status(201).json({ coolDownTimeStamp: coolDownTimeStamp });
   } catch (error) {
