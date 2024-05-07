@@ -160,7 +160,7 @@ export default function PlacePixelTab({
           backgroundColor={
             selectedColor ? `rgb(${rgb} / ${alphaFloat})` : undefined
           }
-          // disabled={true}  << how to disable the button
+          // disabled={true} // << how to disable the button
           onClick={() => console.log("Place pixel")}
         >
           Paint it!{" "}
