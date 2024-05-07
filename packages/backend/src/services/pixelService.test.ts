@@ -1,3 +1,4 @@
+import { fail } from "node:assert";
 import { prisma } from "@/client";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
 import {
@@ -7,6 +8,7 @@ import {
   seedPixels,
   seedUsers,
 } from "@/test";
+import { getCanvasPng } from "./canvasService";
 import {
   placePixel,
   validateColor,
@@ -193,6 +195,48 @@ describe("Place Pixel Tests", () => {
     const after = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
 
     expect(before.history.length + 1).toEqual(after.history.length);
+  });
+
+  it("Resolves updating cached canvas pixel", async () => {
+    const canvasId = 1;
+    const userId = BigInt(1);
+
+    // Causes canvas to get loaded into cache
+    const canvas = await getCanvasPng(canvasId);
+
+    // Necessary for Typescript to correctly identify which of the union types are applicable.
+    if (canvas.isLocked) {
+      fail("Canvas should not be locked");
+    }
+
+    expect(canvas.pixels).toStrictEqual([
+      [88, 101, 242, 127],
+      [88, 101, 242, 255],
+      [234, 35, 40, 255],
+      [88, 101, 242, 127],
+    ]);
+
+    await placePixel(
+      canvasId,
+      userId,
+      1,
+      1,
+      { id: 2, rgba: [88, 101, 242, 255] },
+      new Date(),
+    );
+
+    const updatedCanvas = await getCanvasPng(canvasId);
+
+    if (updatedCanvas.isLocked) {
+      fail("Canvas should not be locked");
+    }
+
+    expect(updatedCanvas.pixels).toStrictEqual([
+      [88, 101, 242, 127],
+      [88, 101, 242, 255],
+      [234, 35, 40, 255],
+      [88, 101, 242, 255], // <- This pixel should have updated
+    ]);
   });
 
   async function fetchCooldownPixelHistory(
