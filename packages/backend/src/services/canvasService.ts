@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { prisma } from "@/client";
 import config from "@/config";
 import { NotFoundError } from "@/errors";
-import { CanvasInfo, CanvasSummary } from "@blurple-canvas-web/types";
+import { CanvasInfo, CanvasSummary, Point } from "@blurple-canvas-web/types";
 import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 
@@ -188,14 +188,12 @@ export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
  * this will do nothing.
  *
  * @param canvasId The ID of the canvas to update
- * @param x The x coordinate of the pixel
- * @param y The y coordinate of the pixel
+ * @param point The coordinates of the pixel
  * @param color The color of the pixel
  */
 export function updateCachedCanvasPixel(
   canvasId: CanvasInfo["id"],
-  x: number,
-  y: number,
+  point: Point,
   color: PixelColor,
 ): void {
   const cachedCanvas = CANVAS_CACHE[canvasId];
@@ -204,7 +202,7 @@ export function updateCachedCanvasPixel(
     return;
   }
 
-  const pixelIndex = y * cachedCanvas.width + x;
+  const pixelIndex = point.y * cachedCanvas.width + point.x;
   cachedCanvas.pixels[pixelIndex] = color;
 }
 

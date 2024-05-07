@@ -22,49 +22,57 @@ describe("Pixel Validation Tests", () => {
   });
 
   it("Resolves valid canvas on top left pixel (0, 0)", async () => {
-    return expect(validatePixel(1, 0, 0, false)).resolves.not.toThrow();
+    return expect(
+      validatePixel(1, { x: 0, y: 0 }, false),
+    ).resolves.not.toThrow();
   });
 
   it("Resolves valid canvas on bottom right pixel (1, 1)", async () => {
-    return expect(validatePixel(1, 1, 1, false)).resolves.not.toThrow();
+    return expect(
+      validatePixel(1, { x: 1, y: 1 }, false),
+    ).resolves.not.toThrow();
   });
 
   it("Rejects with x too small", async () => {
-    return expect(validatePixel(1, -1, 0, false)).rejects.toThrow(
+    return expect(validatePixel(1, { x: -1, y: 0 }, false)).rejects.toThrow(
       BadRequestError,
     );
   });
 
   it("Rejects with x too large", async () => {
-    return expect(validatePixel(1, 99, 0, false)).rejects.toThrow(
+    return expect(validatePixel(1, { x: 99, y: 0 }, false)).rejects.toThrow(
       BadRequestError,
     );
   });
 
   it("Rejects valid canvas with y too small", async () => {
-    return expect(validatePixel(1, 0, -1, false)).rejects.toThrow(
+    return expect(validatePixel(1, { x: 0, y: -1 }, false)).rejects.toThrow(
       BadRequestError,
     );
   });
 
   it("Rejects valid canvas with y too large", async () => {
-    return expect(validatePixel(1, 0, 99, false)).rejects.toThrow(
+    return expect(validatePixel(1, { x: 0, y: 99 }, false)).rejects.toThrow(
       BadRequestError,
     );
   });
 
   it("Rejects nonexistent canvas", async () => {
-    return expect(validatePixel(9999, 0, 0, false)).rejects.toThrow(
+    return expect(validatePixel(9999, { x: 0, y: 0 }, false)).rejects.toThrow(
       NotFoundError,
     );
   });
 
   it("Rejects locked canvas when honorLocked is true", async () => {
-    return expect(validatePixel(9, 0, 0, true)).rejects.toThrow(ForbiddenError);
+    return expect(validatePixel(9, { x: 0, y: 0 }, true)).rejects.toThrow(
+      ForbiddenError,
+    );
   });
 
   it("Resolves locked canvas when honorLocked is false", async () => {
-    return expect(validatePixel(9, 0, 0, false)).resolves.not.toThrow();
+    return expect(
+      validatePixel(9, { x: 0, y: 0 }, false),
+    ).resolves.not.toThrow();
   });
 });
 
@@ -153,8 +161,7 @@ describe("Place Pixel Tests", () => {
     await placePixel(
       canvasId,
       userId,
-      1,
-      1,
+      { x: 1, y: 1 },
       { id: 1, rgba: [88, 101, 242, 127] },
       new Date(),
     );
@@ -162,8 +169,7 @@ describe("Place Pixel Tests", () => {
     await placePixel(
       canvasId,
       userId,
-      1,
-      1,
+      { x: 1, y: 1 },
       { id: 2, rgba: [88, 101, 242, 255] },
       // create a user that is technically 31 seconds from the previous user.
       new Date(Date.now() + 31),
@@ -186,8 +192,7 @@ describe("Place Pixel Tests", () => {
       await placePixel(
         canvasId,
         userId,
-        1,
-        1,
+        { x: 1, y: 1 },
         { id: 1, rgba: [88, 101, 242, 127] },
         date,
       );
@@ -219,8 +224,7 @@ describe("Place Pixel Tests", () => {
     await placePixel(
       canvasId,
       userId,
-      1,
-      1,
+      { x: 1, y: 1 },
       { id: 2, rgba: [88, 101, 242, 255] },
       new Date(),
     );
