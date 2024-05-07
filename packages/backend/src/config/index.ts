@@ -14,6 +14,11 @@ function requiredEnv(key: keyof NodeJS.ProcessEnv): string {
 }
 
 const config = {
+  /**
+   * In development mode, secure cookies are not used for sending the profile. This is because
+   * they can't be accessed over HTTP on Safari.
+   */
+  environment: process.env.NODE_ENV || "production",
   api: {
     port: Number(process.env.PORT || 8000),
   },
@@ -21,10 +26,10 @@ const config = {
     root: path.resolve(),
     canvases: path.resolve("static", "canvas"),
   },
+  frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
   discord: {
     clientId: requiredEnv("DISCORD_CLIENT_ID"),
     clientSecret: requiredEnv("DISCORD_CLIENT_SECRET"),
-    loginRedirectUrl: requiredEnv("DISCORD_LOGIN_REDIRECT_URL"),
   },
   /**
    * Placed pixels are typically attributed to guilds they were place in.

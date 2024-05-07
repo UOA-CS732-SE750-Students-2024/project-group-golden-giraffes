@@ -26,7 +26,7 @@ discordRouter.post("/logout", (req, res, next) => {
 discordRouter.get(
   "/callback",
   passport.authenticate("discord", {
-    failureRedirect: config.discord.loginRedirectUrl,
+    failureRedirect: `${config.frontendUrl}/signin`,
   }),
   (req, res) => {
     const discordProfile = req.user as DiscordUserProfile;
@@ -37,6 +37,6 @@ discordRouter.get(
     });
 
     saveDiscordProfile(discordProfile);
-    res.redirect(config.discord.loginRedirectUrl);
+    res.redirect(config.frontendUrl);
   },
 );
