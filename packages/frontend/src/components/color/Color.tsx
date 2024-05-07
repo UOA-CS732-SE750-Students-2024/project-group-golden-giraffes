@@ -1,64 +1,34 @@
+/**
+ * DO NOT USE THIS MODULE
+ *
+ * It has been deprecated.
+ */
+
 "use client";
 
-import { css, styled } from "@mui/material";
+import { styled } from "@mui/material";
 import React from "react";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
 
-export const ColorfulDiv = styled("div", {
-  shouldForwardProp: (prop) => prop !== "colorString",
-})<{ colorString: string }>(
-  ({ colorString }) => css`
-    aspect-ratio: 1;
-    background-color: ${colorString};
-    border-radius: var(--card-border-radius);
-  `,
-);
-
-export const ColorContainer = styled("div")`
+const ColorContainer = styled("div")`
   align-items: center;
   display: flex;
   gap: 0.5rem;
 `;
 
-export const ColorCode = styled("span")`
-  background-color: rgba(255, 255, 255, 0.12);
-  border-radius: 0.25rem;
-  cursor: pointer;
-  font-family: var(--font-monospace);
-  font-size: 0.9rem;
-  padding: 0.25rem 0.5rem;
-  transition: background-color 0.2s;
-
-  :hover {
-    background-color: rgba(255, 255, 255, 0.24);
-  }
-
-  :active {
-    background-color: rgba(255, 255, 255, 0.36);
-  }
-`;
-
 interface ColorProps {
   color: PaletteColor;
-  displaySwatch?: boolean;
   displayName?: boolean;
-  displayCode?: boolean;
 }
 
 export const PaletteColorRecord = ({
   color,
-
   displayName = true,
 }: ColorProps) => {
   return (
     <ColorContainer className="colorRecord">
       {displayName && <p className="colorName">{color.name}</p>}
-      {/* {displayCode && (
-        <span onClick={copyColorCode} onKeyUp={copyColorCode}>
-          {color.code}
-        </span>
-      )} */}
     </ColorContainer>
   );
 };

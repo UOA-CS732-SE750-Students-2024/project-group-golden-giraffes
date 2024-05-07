@@ -13,8 +13,15 @@ const Container = styled("code")`
   padding: 0.25rem 0.5rem;
   transition: background-color var(--transition-duration-fast) ease;
 
+  :focus,
+  :focus-visible,
   :hover {
     background-color: oklch(var(--discord-white-oklch) / 20%);
+  }
+
+  :focus,
+  :focus-visible {
+    outline: var(--focus-outline);
   }
 
   :active {
@@ -22,11 +29,27 @@ const Container = styled("code")`
   }
 `;
 
+const copyToClipBoard = (str: string) => navigator.clipboard.writeText(str);
+
 export default function ColorCodeChip({
   colorCode,
   ...props
 }: {
   colorCode: PaletteColor["code"];
 }) {
-  return <Container {...props}>{colorCode}</Container>;
+  const clickHandler = () => copyToClipBoard(colorCode);
+  const keyUpHandler = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") copyToClipBoard(colorCode);
+  };
+
+  return (
+    <Container
+      onClick={clickHandler}
+      onKeyUp={keyUpHandler}
+      tabIndex={0}
+      {...props}
+    >
+      {colorCode}
+    </Container>
+  );
 }

@@ -27,9 +27,6 @@ const ColorName = styled("p")`
   letter-spacing: 0.005em;
 `;
 
-const copyColorCode = (color: PaletteColor) =>
-  navigator.clipboard.writeText(color.code);
-
 export default function PixelHistoryListItem({
   record,
 }: {
