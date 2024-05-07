@@ -1,7 +1,8 @@
 import { styled } from "@mui/material";
 
-import { PixelHistoryRecord } from "@blurple-canvas-web/types";
+import { PaletteColor, PixelHistoryRecord } from "@blurple-canvas-web/types";
 
+import { ColorCodeChip } from "@/components";
 import { StaticSwatch } from "@/components/swatch";
 
 const Wrapper = styled("div")`
@@ -26,6 +27,9 @@ const ColorName = styled("p")`
   letter-spacing: 0.005em;
 `;
 
+const copyColorCode = (color: PaletteColor) =>
+  navigator.clipboard.writeText(color.code);
+
 export default function PixelHistoryListItem({
   record,
 }: {
@@ -39,7 +43,9 @@ export default function PixelHistoryListItem({
       <StyledSwatch key={color.code} rgba={color.rgba} />
       <div>
         <Username title={userProfile.id}>{userProfile.username}</Username>
-        <ColorName>{color.name}</ColorName>
+        <ColorName>
+          {color.name} <ColorCodeChip colorCode={color.code} />
+        </ColorName>
       </div>
     </Wrapper>
   );

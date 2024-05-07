@@ -46,9 +46,6 @@ interface ColorProps {
   displayCode?: boolean;
 }
 
-const copyColorCode = (color: PaletteColor) =>
-  navigator.clipboard.writeText(color.code);
-
 export const PaletteColorRecord = ({
   color,
 
