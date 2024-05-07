@@ -106,44 +106,64 @@ export async function validateColor(colorId: number) {
  * Ensures that the given user is not blacklisted from using the canvas
  * and their pixel placement is not on cooldown
  */
-export async function validateUser(canvasId: number, userId: bigint) {
-  const [blacklist, canvas, cooldown] = await Promise.all([
-    prisma.blacklist.findFirst({
-      where: {
-        user_id: userId,
-      },
-    }),
-    prisma.canvas.findFirst({
-      where: {
-        id: canvasId,
-      },
-    }),
-    prisma.cooldown.findFirst({
-      where: {
-        user_id: userId,
-        canvas_id: canvasId,
-      },
-    }),
-  ]);
+export async function validateUser(userId: bigint) {
+  const blacklist = await prisma.blacklist.findFirst({
+    where: {
+      user_id: userId,
+    },
+  });
 
   if (blacklist) {
     throw new ForbiddenError("User is blacklisted");
   }
+}
+
+/**
+ * Gets the current and future (after pixel placement) cooldown time for the given canvas
+ *
+ * @param canvasId - The ID of the canvas
+ * @param userId - The ID of the user
+ * @param placementTime - The time that the pixel will be placed
+ *
+ * @returns The current and future cooldown time
+ */
+export async function getCooldown(
+  canvasId: number,
+  userId: bigint,
+  placementTime: Date,
+) {
+  const canvas = await prisma.canvas.findFirst({
+    where: {
+      id: canvasId,
+    },
+  });
+  const cooldown = await prisma.cooldown.findFirst({
+    where: {
+      user_id: userId,
+      canvas_id: canvasId,
+    },
+  });
+
+  // Don't need to return cooldown if canvas itself doesn't have cooldown
+  if (!canvas?.cooldown_length) {
+    return { currentCooldown: null, futureCooldown: null };
+  }
+
+  const futureCooldown = new Date(
+    placementTime.valueOf() + canvas.cooldown_length * 1000,
+  );
 
   // Return early if no cooldown exists
-  if (!canvas?.cooldown_length || !cooldown || !cooldown?.cooldown_time) {
-    return;
+  if (!cooldown || !cooldown?.cooldown_time) {
+    return { currentCooldown: null, futureCooldown };
   }
 
-  const cooldownTimeStamp = cooldown?.cooldown_time.valueOf();
-  const cooldownLength = canvas.cooldown_length;
+  const currentCooldown = cooldown.cooldown_time;
 
-  // Deny if the cooldown time is in the future (alternative to cooldown table is to )
-  // Can't be sure if cooldown handling is being handled in the database side or the server side
-  // Using milliseconds from unix epoch for calculations
-  if (cooldownTimeStamp + cooldownLength * 1000 > Date.now()) {
+  if (placementTime <= currentCooldown) {
     throw new ForbiddenError("Pixel placement is on cooldown");
   }
+  return { currentCooldown, futureCooldown };
 }
 
 /**

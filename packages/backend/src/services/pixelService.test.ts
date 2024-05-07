@@ -8,6 +8,7 @@ import {
   seedUsers,
 } from "@/test";
 import {
+  getCooldown,
   placePixel,
   validateColor,
   validatePixel,
@@ -86,13 +87,23 @@ describe("Color Validation Tests", () => {
 
 describe("User Validation Tests", () => {
   beforeEach(() => {
-    seedUsers();
     seedBlacklist();
-    seedCanvases();
   });
 
   it("Rejects blacklisted user", async () => {
-    return expect(validateUser(1, BigInt(9))).rejects.toThrow(ForbiddenError);
+    return expect(validateUser(BigInt(9))).rejects.toThrow(ForbiddenError);
+  });
+});
+
+describe("Get Cooldown Tests", () => {
+  beforeEach(() => {
+    seedUsers();
+    seedCanvases();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("Resolves canvas with no cooldown_time", async () => {
@@ -100,39 +111,60 @@ describe("User Validation Tests", () => {
     prisma.cooldown.create({
       data: { canvas_id: 9, user_id: BigInt(1), cooldown_time: new Date() },
     });
-    return expect(validateUser(9, BigInt(1))).resolves.not.toThrow();
+    return expect(getCooldown(9, BigInt(1), new Date())).resolves.toMatchObject(
+      {
+        currentCooldown: null,
+        futureCooldown: null,
+      },
+    );
   });
 
-  it("Resolves user with no cooldown", async () => {
-    // Don't create cooldown in the database.
-    return expect(validateUser(1, BigInt(1))).resolves.not.toThrow();
+  it("Resolves user with no entry in cooldown table", async () => {
+    return expect(getCooldown(1, BigInt(1), new Date())).resolves.toMatchObject(
+      {
+        currentCooldown: null,
+        futureCooldown: new Date(Date.now() + 30 * 1000),
+      },
+    );
   });
 
   it("Resolves user with null cooldown", async () => {
-    // A user theoretically shouldn't have cooldown time if the canvas doesn't
+    // Users with null cooldowns theoretically shouldn't exist
     prisma.cooldown.create({
       data: { canvas_id: 1, user_id: BigInt(1), cooldown_time: null },
     });
-    return expect(validateUser(1, BigInt(1))).resolves.not.toThrow();
+    return expect(getCooldown(1, BigInt(1), new Date())).resolves.toMatchObject(
+      {
+        currentCooldown: null,
+        futureCooldown: new Date(Date.now() + 30 * 1000),
+      },
+    );
   });
 
   it("Resolves user with cooldown greater than 30 seconds", async () => {
-    const dateTime = Date.now() - 1000 * 30;
     prisma.cooldown.create({
       data: {
         canvas_id: 1,
         user_id: BigInt(1),
-        cooldown_time: new Date(dateTime),
+        cooldown_time: new Date(),
       },
     });
-    return expect(validateUser(1, BigInt(1))).resolves.not.toThrow();
+    vi.advanceTimersByTime(30 * 1000);
+    return expect(getCooldown(1, BigInt(1), new Date())).resolves.toMatchObject(
+      {
+        currentCooldown: new Date(Date.now() - 30 * 1000),
+        futureCooldown: new Date(Date.now() + 30 * 1000),
+      },
+    );
   });
 
   it("Rejects user with cooldown less than 30 seconds", async () => {
     prisma.cooldown.create({
       data: { canvas_id: 1, user_id: BigInt(1), cooldown_time: new Date() },
     });
-    return expect(validateUser(1, BigInt(1))).rejects.toThrow(ForbiddenError);
+    return expect(getCooldown(1, BigInt(1), new Date())).rejects.toThrow(
+      ForbiddenError,
+    );
   });
 });
 
