@@ -69,7 +69,7 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     await validatePixel(canvasId, data.x, data.y, true);
     await validateColor(data.colorId);
     await validateUser(BigInt(userId));
-    const futureCooldown = await placePixel(canvasId, BigInt(userId), data);
+    const { futureCooldown } = await placePixel(canvasId, BigInt(userId), data);
 
     return res.status(201).json({ futureCooldown });
   } catch (error) {
