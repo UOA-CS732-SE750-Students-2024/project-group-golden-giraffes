@@ -93,6 +93,10 @@ describe("User Validation Tests", () => {
   it("Rejects blacklisted user", async () => {
     return expect(validateUser(BigInt(9))).rejects.toThrow(ForbiddenError);
   });
+
+  it("Resolves non-blacklisted user", async () => {
+    return expect(validateUser(BigInt(1))).resolves.not.toThrow();
+  });
 });
 
 describe("Get Cooldown Tests", () => {
