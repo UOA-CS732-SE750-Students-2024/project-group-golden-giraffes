@@ -34,7 +34,7 @@ describe("Place Pixel Tests", () => {
 
     const futureDate = new Date(30 * 1000);
     expect(response.body).toStrictEqual({
-      futureCooldown: futureDate.toISOString(),
+      cooldownEndTime: futureDate.toISOString(),
     });
     expect(response.status).toBe(201);
   });

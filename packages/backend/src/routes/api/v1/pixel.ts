@@ -13,7 +13,7 @@ import {
   validatePixel,
   validateUser,
 } from "@/services/pixelService";
-import { DiscordUserLoginInfo, PixelInfo } from "@blurple-canvas-web/types";
+import { DiscordUserLoginInfo } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
@@ -71,7 +71,7 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     await validateUser(BigInt(userId));
     const { futureCooldown } = await placePixel(canvasId, BigInt(userId), data);
 
-    return res.status(201).json({ futureCooldown });
+    return res.status(201).json({ cooldownEndTime: futureCooldown });
   } catch (error) {
     ApiError.sendError(res, error);
   }
