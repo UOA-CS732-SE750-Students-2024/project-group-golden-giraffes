@@ -13,7 +13,7 @@ import {
   validatePixel,
   validateUser,
 } from "@/services/pixelService";
-import { DiscordUserLoginInfo, PixelInfo } from "@blurple-canvas-web/types";
+import { DiscordProfile } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
 export const pixelRouter = Router({ mergeParams: true });
@@ -55,22 +55,18 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
 
     const data = result.data;
     const canvasId = await parseCanvasId(req.params);
-    const user = req.user as DiscordUserLoginInfo;
+    const profile = req.user as DiscordProfile;
 
-    if (!user) {
+    if (!profile || !profile.userId) {
       throw new UnauthorizedError("User is not authenticated");
-    }
-    const userId = user.profile.id;
-    if (!userId) {
-      throw new BadRequestError("UserId does not exist");
     }
     // TODO: check for canvas discord_only status (not sure which table to look here)
 
     // TODO: see if Promise.all() can work here
     await validatePixel(canvasId, data.x, data.y, true);
     await validateColor(data.colorId);
-    await validateUser(canvasId, BigInt(userId));
-    await placePixel(canvasId, BigInt(userId), data, coolDownTimeStamp);
+    await validateUser(canvasId, BigInt(profile.userId));
+    await placePixel(canvasId, BigInt(profile.userId), data, coolDownTimeStamp);
 
     return res.status(201).json({ coolDownTimeStamp: coolDownTimeStamp });
   } catch (error) {

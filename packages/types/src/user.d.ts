@@ -1,7 +1,7 @@
 import { Strategy as DiscordStrategy } from "passport-discord";
 
-export interface DiscordUserLoginInfo {
-  accessToken: string;
-  refreshToken: string;
-  profile: DiscordStrategy.Profile;
+export interface DiscordProfile {
+  userId: string;
+  username: string;
+  profilePictureUrl: string;
 }

@@ -1,5 +1,6 @@
 import { prisma } from "@/client";
 import { NotFoundError } from "@/errors";
+import { DiscordProfile } from "@blurple-canvas-web/types";
 import { discord_user_profile } from "@prisma/client";
 
 export async function getDiscordProfile(
@@ -18,20 +19,6 @@ export async function getDiscordProfile(
   return discordUserProfile;
 }
 
-export async function createOrUpdateDiscordProfile(
-  profile: discord_user_profile,
-): Promise<void> {
-  await prisma.discord_user_profile.upsert({
-    where: {
-      user_id: profile.user_id,
-    },
-    update: profile,
-    create: {
-      ...profile,
-    },
-  });
-}
-
 export function createDefaultAvatarUrl(userId: bigint): string {
   const BIT_SHIFT_VALUE = 22n;
   const NUMBER_OF_AVATARS = 6n;
@@ -40,26 +27,38 @@ export function createDefaultAvatarUrl(userId: bigint): string {
   return `https://cdn.discordapp.com/embed/avatars/${avatarId}.png`;
 }
 
+export function getProfilePictureUrlFromHash(
+  userId: discord_user_profile["user_id"],
+  profilePictureHash: string | null,
+): string {
+  if (!profilePictureHash) {
+    return createDefaultAvatarUrl(userId);
+  }
+
+  return createCustomAvatarUrl(userId, profilePictureHash);
+}
+
 export function createCustomAvatarUrl(
-  userId: bigint,
+  userId: discord_user_profile["user_id"],
   profilePictureHash: string,
 ): string {
   return `https://cdn.discordapp.com/avatars/${userId}/${profilePictureHash}.png`;
 }
 
 export async function saveDiscordProfile(
-  userId: bigint,
-  username: string,
-  profilePictureHash: string | null,
+  profile: DiscordProfile,
 ): Promise<void> {
-  const profilePictureUrl =
-    profilePictureHash ?
-      createCustomAvatarUrl(userId, profilePictureHash)
-    : createDefaultAvatarUrl(userId);
+  const dbProfile: discord_user_profile = {
+    user_id: BigInt(profile.userId),
+    username: profile.username,
+    profile_picture_url: profile.profilePictureUrl,
+  };
 
-  await createOrUpdateDiscordProfile({
-    user_id: userId,
-    username,
-    profile_picture_url: profilePictureUrl,
+  await prisma.discord_user_profile.upsert({
+    where: {
+      user_id: dbProfile.user_id,
+    },
+    update: dbProfile,
+    create: dbProfile,
   });
 }
