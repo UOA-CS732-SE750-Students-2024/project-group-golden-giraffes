@@ -1,13 +1,11 @@
-import { prisma } from "@/client";
-import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
+import { NotFoundError } from "@/errors";
+import { seedCanvases, seedColors, seedPixels } from "@/test";
 import {
-  seedBlacklist,
-  seedCanvases,
-  seedColors,
-  seedPixels,
-  seedUsers,
-} from "@/test";
-import { getCanvasInfo, getCanvasPixels, getCanvases } from "./canvasService";
+  getCanvasInfo,
+  getCanvasPixels,
+  getCanvasPng,
+  getCanvases,
+} from "./canvasService";
 
 describe("Canvas Info Tests", () => {
   beforeEach(() => {
@@ -72,11 +70,12 @@ describe("Canvas Pixels Tests", () => {
 
   it("Gets canvas pixels", async () => {
     const pixels = await getCanvasPixels(1);
-    expect(pixels.length).toBe(3);
+    expect(pixels.length).toBe(4);
     expect(pixels[0]).toStrictEqual([88, 101, 242, 127]);
     expect(pixels[1]).toStrictEqual([88, 101, 242, 255]);
     expect(pixels[2]).toStrictEqual([234, 35, 40, 255]);
+    expect(pixels[3]).toStrictEqual([88, 101, 242, 127]);
   });
 });
 
-// TO DO - PNG Canvas Tests
+// TO DO - PNG and Cached Canvas Tests
