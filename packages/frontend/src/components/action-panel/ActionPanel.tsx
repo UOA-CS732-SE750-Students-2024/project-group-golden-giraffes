@@ -90,7 +90,7 @@ export const Heading = styled("h2")`
 const TABS = {
   LOOK: "Look",
   PLACE: "Place",
-} as const;
+};
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
