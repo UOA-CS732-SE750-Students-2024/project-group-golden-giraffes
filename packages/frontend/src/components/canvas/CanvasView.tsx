@@ -317,9 +317,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       console.log(
         "Clicked on pixel: ",
         "x = ",
-        imageX.toFixed(0),
+        Math.floor(imageX),
         "y = ",
-        imageY.toFixed(0),
+        Math.floor(imageY),
       );
     },
     [zoom, imageDimensions],
