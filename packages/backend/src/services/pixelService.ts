@@ -25,7 +25,14 @@ export async function getPixelHistory(
   const pixelHistory = await prisma.history.findMany({
     select: {
       id: true,
-      color_id: true,
+      color: {
+        select: {
+          id: true,
+          code: true,
+          name: true,
+          rgba: true,
+        },
+      },
       timestamp: true,
       guild_id: true,
       discord_user_profile: true,
@@ -41,7 +48,7 @@ export async function getPixelHistory(
 
   return pixelHistory.map((history) => ({
     id: history.id.toString(),
-    colorId: history.color_id,
+    color: history.color,
     timestamp: history.timestamp,
     guildId: history.guild_id?.toString(),
     userProfile: {
