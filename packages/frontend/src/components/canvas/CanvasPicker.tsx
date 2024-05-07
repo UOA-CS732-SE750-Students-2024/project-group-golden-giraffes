@@ -4,6 +4,7 @@ import { NativeSelect, styled } from "@mui/material";
 import { ChevronsUpDown } from "lucide-react";
 
 import { useCanvasInfo, useCanvasList, useEventInfo } from "@/hooks";
+import { CanvasSummary } from "@blurple-canvas-web/types";
 
 const Select = styled(NativeSelect)`
   background-color: var(--discord-legacy-not-quite-black);
@@ -56,7 +57,7 @@ const Select = styled(NativeSelect)`
   }
 `;
 
-const canvasToSelectOption = ({ id, name }) => (
+const canvasToSelectOption = ({ id, name }: CanvasSummary) => (
   <option key={id} value={id}>
     {name}
   </option>
