@@ -12,7 +12,8 @@ import {
 
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { clamp } from "@/util";
-import { Point } from "@blurple-canvas-web/types";
+import { PixelInfo, Point } from "@blurple-canvas-web/types";
+import generatePreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
   position: relative;
@@ -42,6 +43,14 @@ const CanvasContainer = styled("div")`
     image-rendering: pixelated;
     max-width: inherit;
   }
+`;
+
+const PreviewCanvas = styled("canvas")`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  outline: 1px solid pink;
 `;
 
 /**
@@ -75,6 +84,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
   const [zoom, setZoom] = useState(1);
@@ -82,6 +92,11 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
+  const [pixelInfoLocation, setPixelInfoLocation] = useState<PixelInfo>({
+    x: 0,
+    y: 0,
+    colorId: 0,
+  });
 
   const isLoading = imageDimensions === null;
 
@@ -317,7 +332,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const mouseX = event.clientX - canvasRect.left;
       const mouseY = event.clientY - canvasRect.top;
 
-      // Convert mouse coordinates to coordinates relative to the image
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
@@ -328,16 +342,42 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         "y = ",
         Math.floor(imageY),
       );
+
+      // we only care about updating the location
+      setPixelInfoLocation((prev) => ({
+        ...prev,
+        x: Math.floor(imageX),
+        y: Math.floor(imageY),
+      }));
     },
     [zoom, imageDimensions],
   );
 
   useEffect(() => {
     canvasRef.current?.addEventListener("click", handleCanvasClick);
-
     return () =>
       canvasRef.current?.removeEventListener("click", handleCanvasClick);
   }, [handleCanvasClick]);
+
+  const handleDrawingSelectedPixel = useCallback(() => {
+    if (!imageDimensions) return;
+
+    const imageData = generatePreviewPixel(
+      imageDimensions.width,
+      imageDimensions.height,
+      pixelInfoLocation,
+    );
+
+    const context = previewCanvasRef.current?.getContext("2d");
+    if (!context) return;
+
+    context.putImageData(imageData, 0, 0);
+    console.log("Drawing pixel at: ", pixelInfoLocation);
+  }, [imageDimensions, pixelInfoLocation]);
+
+  useEffect(() => {
+    handleDrawingSelectedPixel();
+  }, [handleDrawingSelectedPixel]);
 
   return (
     <>
@@ -347,14 +387,16 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onTouchStart={handleStartTouchPan}
       >
         {isLoading && <CircularProgress className="loader" />}
-        <canvas
-          ref={canvasRef}
+        <div
           id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale: zoom,
           }}
-        />
+        >
+          <PreviewCanvas ref={previewCanvasRef} />
+          <canvas ref={canvasRef} />
+        </div>
       </CanvasContainer>
       <img
         alt="Blurple Canvas 2023"
