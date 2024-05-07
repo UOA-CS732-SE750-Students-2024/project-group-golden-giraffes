@@ -25,7 +25,6 @@ const CanvasContainer = styled("div")`
   place-content: center;
   place-items: center;
 
-  cursor: grab;
   :active {
     cursor: grabbing;
   }
@@ -65,7 +64,7 @@ function getDefaultZoom(
 }
 
 const SCALE_FACTOR = 0.2;
-const MAX_ZOOM = 10;
+const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
 export interface CanvasViewProps {
@@ -303,6 +302,43 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     [handleTouchMove, handleTouchEnd],
   );
 
+  /***********************************
+   * SELECTING PIXEL FUNCTIONALITY.  *
+   ***********************************/
+
+  /**
+   * When the canvas is clicked, we want to know which pixel was clicked on.
+   */
+  const handleCanvasClick = useCallback(
+    (event: MouseEvent): void => {
+      if (!canvasRef.current || !imageDimensions) return;
+
+      const canvasRect = canvasRef.current.getBoundingClientRect();
+      const mouseX = event.clientX - canvasRect.left;
+      const mouseY = event.clientY - canvasRect.top;
+
+      // Convert mouse coordinates to coordinates relative to the image
+      const imageX = mouseX / zoom;
+      const imageY = mouseY / zoom;
+
+      console.log(
+        "Clicked on pixel: ",
+        "x = ",
+        Math.floor(imageX),
+        "y = ",
+        Math.floor(imageY),
+      );
+    },
+    [zoom, imageDimensions],
+  );
+
+  useEffect(() => {
+    canvasRef.current?.addEventListener("click", handleCanvasClick);
+
+    return () =>
+      canvasRef.current?.removeEventListener("click", handleCanvasClick);
+  }, [handleCanvasClick]);
+
   return (
     <>
       <CanvasContainer
@@ -326,6 +362,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onLoad={(event) => handleLoadImage(event.currentTarget)}
         ref={imageRef}
         src={imageUrl}
+        crossOrigin="anonymous"
       />
     </>
   );
