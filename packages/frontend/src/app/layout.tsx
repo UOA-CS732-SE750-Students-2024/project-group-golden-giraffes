@@ -25,7 +25,7 @@ export const viewport: Viewport = {
  * action (requiring it to be async and returning a promise) while still allowing it to access the
  * cookies during SSR... I love Next.js 😭
  */
-export function getServerSideProfile(): DiscordUserProfile | null {
+function getServerSideProfile(): DiscordUserProfile | null {
   const profile = cookies().get("profile");
 
   if (!profile) {
