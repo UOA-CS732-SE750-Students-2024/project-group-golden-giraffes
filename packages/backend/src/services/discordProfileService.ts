@@ -19,6 +19,18 @@ export async function getDiscordProfile(
   return discordUserProfile;
 }
 
+export async function createOrUpdateDiscordProfile(
+  profile: discord_user_profile,
+): Promise<void> {
+  await prisma.discord_user_profile.upsert({
+    where: {
+      user_id: profile.user_id,
+    },
+    update: profile,
+    create: profile,
+  });
+}
+
 export function createDefaultAvatarUrl(userId: bigint): string {
   const BIT_SHIFT_VALUE = 22n;
   const NUMBER_OF_AVATARS = 6n;
@@ -48,17 +60,9 @@ export function createCustomAvatarUrl(
 export async function saveDiscordProfile(
   profile: DiscordProfile,
 ): Promise<void> {
-  const dbProfile: discord_user_profile = {
+  await createOrUpdateDiscordProfile({
     user_id: BigInt(profile.userId),
     username: profile.username,
     profile_picture_url: profile.profilePictureUrl,
-  };
-
-  await prisma.discord_user_profile.upsert({
-    where: {
-      user_id: dbProfile.user_id,
-    },
-    update: dbProfile,
-    create: dbProfile,
   });
 }
