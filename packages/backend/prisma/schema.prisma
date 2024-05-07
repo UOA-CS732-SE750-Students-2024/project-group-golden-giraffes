@@ -74,6 +74,12 @@ model discord_user_profile {
   history             history[]
 }
 
+model discord_guild_record {
+  guild_id BigInt  @id
+  name     String
+  guild    guild[]
+}
+
 model event {
   id           Int             @id
   name         String
@@ -97,13 +103,14 @@ model frame {
 }
 
 model guild {
-  id              BigInt              @id
-  manager_role    BigInt?
-  invite          String?
-  history         history[]
-  participantions participation[]
-  guild_stats     guild_stats[]
-  leaderboard     leaderboard_guild[]
+  id                   BigInt                @id
+  discord_guild_record discord_guild_record? @relation(fields: [id], references: [guild_id])
+  manager_role         BigInt?
+  invite               String?
+  history              history[]
+  participantions      participation[]
+  guild_stats          guild_stats[]
+  leaderboard          leaderboard_guild[]
 }
 
 model history {

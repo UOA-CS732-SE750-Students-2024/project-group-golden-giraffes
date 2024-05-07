@@ -5,6 +5,7 @@ export interface PaletteColor {
   rgba: number[]; // [r, g, b, a]
   global: boolean;
   invite: string | null;
+  guildName: string | null;
 }
 
 export type Palette = PaletteColor[];
