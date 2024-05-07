@@ -125,8 +125,7 @@ export async function validateColor(colorId: number): Promise<color> {
 }
 
 /**
- * Ensures that the given user is not blacklisted from using the canvas
- * and their pixel placement is not on cooldown
+ * Ensures that the given user is not blacklisted from placing pixels
  */
 export async function validateUser(userId: bigint) {
   const blacklist = await prisma.blacklist.findFirst({
@@ -190,6 +189,7 @@ export async function getCooldown(
 
 /**
  * Places a pixel in the given canvas and updates the cooldown and history tables
+ * This function also applies optimistic locking on the cooldown table
  *
  * @remarks
  *
