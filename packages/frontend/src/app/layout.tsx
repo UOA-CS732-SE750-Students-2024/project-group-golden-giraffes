@@ -3,7 +3,11 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import type { Metadata, Viewport } from "next";
 
 import config from "@/config";
-import { QueryClientProvider, SelectedColorProvider } from "@/contexts";
+import {
+  QueryClientProvider,
+  SelectedColorProvider,
+  SelectedPixelLocationProvider,
+} from "@/contexts";
 import "@/styles/core.css";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { Theme } from "@/theme";
@@ -51,7 +55,9 @@ export default function RootLayout({
           <AuthProvider profile={getServerSideProfile()}>
             <QueryClientProvider>
               <SelectedColorProvider>
-                <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+                <SelectedPixelLocationProvider>
+                  <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+                </SelectedPixelLocationProvider>
               </SelectedColorProvider>
             </QueryClientProvider>
           </AuthProvider>
