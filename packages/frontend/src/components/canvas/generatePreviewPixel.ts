@@ -1,50 +1,45 @@
 import { PaletteColor, PixelInfo } from "@blurple-canvas-web/types";
+import { RefObject } from "react";
 
 /**
  * Generate a PNG image with a pixel at a specific location.
- * @param width Width of the canvas.
- * @param height Height of the canvas.
+ * @param canvasRef Reference to the canvas element.
  * @param pixelX X coordinate of the pixel.
  * @param pixelY Y coordinate of the pixel.
- * @returns Image data of the generated PNG image.
  */
-export default function generatePixelPng(
-  width: number,
-  height: number,
+export default function updateCanvasPreviewPixel(
+  canvasRef: RefObject<HTMLCanvasElement>,
   pixelInfo: PixelInfo,
   color: PaletteColor,
-): ImageData {
-  const tempCanvas = document.createElement("canvas");
-  const tempCtx = tempCanvas.getContext("2d");
-  if (!tempCtx) throw new Error("Canvas context is not available.");
+) {
+  const context = canvasRef.current?.getContext("2d");
+  if (!context) {
+    throw new Error("Canvas context is null");
+  }
 
-  tempCanvas.width = width;
-  tempCanvas.height = height;
+  const { width, height } = context.canvas;
 
   const { x, y } = pixelInfo;
 
+  // clear the canvas
+  context.clearRect(0, 0, width, height);
+
   // draw a 5x5 white square around the pixel
-  tempCtx.fillStyle = "white";
-  tempCtx.fillRect(x - 6, y - 6, 13, 13);
+  context.fillStyle = "white";
+  context.fillRect(x - 6, y - 6, 13, 13);
 
   // draw a 3x3 black square around the pixel
-  tempCtx.fillStyle = "black";
-  tempCtx.fillRect(x - 3, y - 3, 7, 7);
+  context.fillStyle = "black";
+  context.fillRect(x - 3, y - 3, 7, 7);
 
   // clear quadrants to make a cross
-  tempCtx.clearRect(x - 6, y - 6, 6, 6);
-  tempCtx.clearRect(x + 1, y - 6, 6, 6);
-  tempCtx.clearRect(x - 6, y + 1, 6, 6);
-  tempCtx.clearRect(x + 1, y + 1, 6, 6);
+  context.clearRect(x - 6, y - 6, 6, 6);
+  context.clearRect(x + 1, y - 6, 6, 6);
+  context.clearRect(x - 6, y + 1, 6, 6);
+  context.clearRect(x + 1, y + 1, 6, 6);
 
-  tempCtx.clearRect(x - 2, y - 2, 5, 5);
+  context.clearRect(x - 2, y - 2, 5, 5);
 
-  tempCtx.fillStyle = `rgb(${color.rgba.join()})`;
-  tempCtx.fillRect(x, y, 1, 1);
-
-  const imageData = tempCtx.getImageData(0, 0, width, height);
-
-  tempCanvas.remove();
-
-  return imageData;
+  context.fillStyle = `rgb(${color.rgba.join()})`;
+  context.fillRect(x, y, 1, 1);
 }

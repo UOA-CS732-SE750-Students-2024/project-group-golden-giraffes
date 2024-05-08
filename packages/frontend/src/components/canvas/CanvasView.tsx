@@ -16,7 +16,7 @@ import {
   multiplyPoint,
 } from "./point";
 
-import generatePreviewPixel from "./generatePreviewPixel";
+import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
   position: relative;
@@ -359,17 +359,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
     pixelInfoLocation.colorId = color.id;
 
-    const imageData = generatePreviewPixel(
-      imageDimensions.width,
-      imageDimensions.height,
-      pixelInfoLocation,
-      color,
-    );
+    updateCanvasPreviewPixel(previewCanvasRef, pixelInfoLocation, color);
 
-    const context = previewCanvasRef.current?.getContext("2d");
-    if (!context) return;
-
-    context.putImageData(imageData, 0, 0);
     console.debug(
       `Drawing pixel at (${pixelInfoLocation.x}, ${pixelInfoLocation.y})`,
     );
