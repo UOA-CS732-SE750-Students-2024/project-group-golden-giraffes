@@ -2,6 +2,7 @@ import { styled } from "@mui/material";
 
 import { Palette, Point } from "@blurple-canvas-web/types";
 
+import Cooldown from "@/components/button/Cooldown";
 import { useSelectedColorContext } from "@/contexts";
 import { usePalette } from "@/hooks";
 import { DynamicAnchorButton, DynamicButton } from "../../button";
@@ -94,6 +95,7 @@ export default function PlacePixelTab({
           Join {selectedColor?.guildName ?? "server"}
         </DynamicAnchorButton>
       )}
+      <Cooldown />
       <BotCommandCard color={selectedColor} coordinates={selectedCoordinates} />
     </ActionPanelTabBody>
   );
