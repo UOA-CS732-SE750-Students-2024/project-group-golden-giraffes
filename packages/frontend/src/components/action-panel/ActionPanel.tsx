@@ -14,6 +14,8 @@ const Wrapper = styled("div")`
   display: grid;
   gap: 0.5rem;
   grid-template-rows: auto 1fr;
+  overflow-y: auto; // Fallback property, should appear before overflow-block
+  overflow-block: auto;
   padding: var(--padding-width);
 
   > * {
