@@ -52,6 +52,10 @@ const CanvasContainer = styled("div")`
   }
 `;
 
+const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+  ${({ isLoading }) => isLoading && "filter: grayscale(0.8);"}
+`;
+
 const PreviewCanvas = styled("canvas")`
   position: absolute;
   pointer-events: none;
@@ -394,7 +398,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
             width={imageDimensions?.width}
             height={imageDimensions?.height}
           />
-          <canvas ref={canvasRef} className={isLoading ? "loading" : ""} />
+          <DisplayCanvas ref={canvasRef} isLoading={isLoading} />
         </div>
         {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
