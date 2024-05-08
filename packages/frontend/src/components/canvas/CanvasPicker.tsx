@@ -69,7 +69,8 @@ export default function CanvasPicker() {
   const { data: mainCanvas, isLoading: mainCanvasIsLoading } = useCanvasInfo();
   const { data: currentEvent, isLoading: currentEventIsLoading } =
     useEventInfo();
-  const { setCanvas } = useActiveCanvasContext();
+  const { canvas: activeCanvas, setCanvas } = useActiveCanvasContext();
+  console.log(activeCanvas);
 
   const isLoading =
     canvasListIsLoading || mainCanvasIsLoading || currentEventIsLoading;
@@ -89,6 +90,7 @@ export default function CanvasPicker() {
       disabled={isLoading}
       IconComponent={ChevronsUpDown}
       onChange={handleChangeCanvas}
+      value={activeCanvas?.id || ""}
     >
       {mainCanvas && (
         <optgroup label="Main">{canvasToSelectOption(mainCanvas)}</optgroup>
