@@ -29,8 +29,8 @@ const Table = styled("table")`
   font-size: 1.75rem;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
-  max-width: 100%;
-  width: 40rem;
+  inline-size: 40rem;
+  max-inline-size: 100%;
 
   th,
   td {
@@ -44,11 +44,15 @@ const RankCell = styled("td")`
 `;
 
 const UserCell = styled("td")`
+  align-items: center;
   display: flex;
   font-stretch: 125%;
   font-weight: 900;
   gap: 1rem;
-  align-items: center;
+`;
+
+const Username = styled("p")`
+  max-inline-size: 22rem;
 `;
 
 const Avatar = styled("img")`
@@ -110,7 +114,7 @@ export default function Leaderboard() {
                     width={60}
                     height={60}
                   />
-                  <p>{username}</p>
+                  <Username>{username}</Username>
                 </UserCell>
                 <PixelCountCell>
                   <PixelCountCellContents>
