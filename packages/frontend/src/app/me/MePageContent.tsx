@@ -57,8 +57,7 @@ export default function MePageContent() {
 
   if (!activeCanvas) return null;
   const { data: stats, isLoading: statsAreLoading } = useUserStats(
-    // user.id,
-    "204778476102877187",
+    user.id,
     activeCanvas.id,
   );
 
