@@ -8,11 +8,13 @@ import {
   useState,
 } from "react";
 
-import { CanvasSummary } from "@blurple-canvas-web/types";
+import { CanvasInfo } from "@blurple-canvas-web/types";
+
+import { useCanvasInfo } from "@/hooks";
 
 interface ActiveCanvasContextType {
-  canvas: CanvasSummary | null;
-  setCanvas: Dispatch<SetStateAction<CanvasSummary | null>>;
+  canvas: CanvasInfo | null;
+  setCanvas: Dispatch<SetStateAction<CanvasInfo | null>>;
 }
 
 export const ActiveCanvasContext = createContext<ActiveCanvasContextType>({
@@ -25,8 +27,10 @@ export const ActiveCanvasProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { data: mainCanvas = null, isLoading: mainCanvasIsLoading } =
+    useCanvasInfo();
   const [activeCanvas, setActiveCanvas] =
-    useState<ActiveCanvasContextType["canvas"]>(null);
+    useState<ActiveCanvasContextType["canvas"]>(mainCanvas);
 
   return (
     <ActiveCanvasContext.Provider
