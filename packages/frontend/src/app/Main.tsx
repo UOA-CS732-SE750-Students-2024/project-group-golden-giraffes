@@ -5,6 +5,7 @@ import { styled } from "@mui/material";
 import { ActionPanel } from "@/components/action-panel";
 import { CanvasView } from "@/components/canvas";
 import config from "@/config";
+import { useActiveCanvasContext } from "@/contexts";
 
 const Wrapper = styled("main")`
   body:has(&) {
@@ -28,9 +29,11 @@ const Wrapper = styled("main")`
 `;
 
 export default function Main() {
+  const { canvas } = useActiveCanvasContext();
+
   return (
     <Wrapper>
-      <CanvasView imageUrl={`${config.apiUrl}/api/v1/canvas/current`} />
+      <CanvasView imageUrl={`${config.apiUrl}/api/v1/canvas/${canvas.id}`} />
       <ActionPanel />
     </Wrapper>
   );

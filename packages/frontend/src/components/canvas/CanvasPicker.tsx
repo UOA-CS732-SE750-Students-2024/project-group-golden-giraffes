@@ -3,6 +3,7 @@
 import { NativeSelect, nativeSelectClasses, styled } from "@mui/material";
 import { ChevronsUpDown } from "lucide-react";
 
+import { useActiveCanvasContext } from "@/contexts";
 import { useCanvasInfo, useCanvasList, useEventInfo } from "@/hooks";
 import { CanvasSummary } from "@blurple-canvas-web/types";
 
@@ -68,6 +69,7 @@ export default function CanvasPicker() {
   const { data: mainCanvas, isLoading: mainCanvasIsLoading } = useCanvasInfo();
   const { data: currentEvent, isLoading: currentEventIsLoading } =
     useEventInfo();
+  const { setCanvas } = useActiveCanvasContext();
 
   const isLoading =
     canvasListIsLoading || mainCanvasIsLoading || currentEventIsLoading;
@@ -78,8 +80,16 @@ export default function CanvasPicker() {
   );
   const pastCanvases = canvases.filter(({ id }) => id !== currentEvent?.id);
 
+  function handleChangeCanvas(event: React.ChangeEvent<HTMLSelectElement>) {
+    setCanvas(Number.parseInt(event.target.value));
+  }
+
   return (
-    <Select disabled={isLoading} IconComponent={ChevronsUpDown}>
+    <Select
+      disabled={isLoading}
+      IconComponent={ChevronsUpDown}
+      onChange={handleChangeCanvas}
+    >
       {mainCanvas && (
         <optgroup label="Main">{canvasToSelectOption(mainCanvas)}</optgroup>
       )}

@@ -3,6 +3,7 @@
 import { css, styled } from "@mui/material";
 import { useState } from "react";
 
+import { useActiveCanvasContext } from "@/contexts";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
 const Wrapper = styled("div")`
@@ -95,8 +96,7 @@ const TABS = {
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
-
-  const canvasId = 2023; // This is a placeholder value
+  const { canvas } = useActiveCanvasContext();
 
   return (
     <Wrapper>
@@ -125,8 +125,11 @@ export default function ActionPanel() {
         </Tab>
       </TabBar>
 
-      <PlacePixelTab active={currentTab === TABS.PLACE} />
-      <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvasId} />
+      <PlacePixelTab
+        active={currentTab === TABS.PLACE}
+        eventId={canvas.eventId}
+      />
+      <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvas.id} />
     </Wrapper>
   );
 }
