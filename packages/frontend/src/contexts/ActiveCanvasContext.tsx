@@ -1,22 +1,26 @@
 "use client";
 
-import {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useState,
-} from "react";
+import axios from "axios";
+import { createContext, useCallback, useContext, useState } from "react";
 
-import { CanvasInfo } from "@blurple-canvas-web/types";
+import config from "@/config";
+import { CanvasInfo, CanvasInfoRequest } from "@blurple-canvas-web/types";
 
 interface ActiveCanvasContextType {
-  canvas: CanvasInfo | null;
-  setCanvas: Dispatch<SetStateAction<CanvasInfo | null>>;
+  canvas: CanvasInfo;
+  setCanvas: (canvasId: CanvasInfo["id"]) => void;
 }
 
 export const ActiveCanvasContext = createContext<ActiveCanvasContextType>({
-  canvas: null,
+  canvas: {
+    id: -1,
+    name: "",
+    width: 0,
+    height: 0,
+    startCoordinates: [0, 0],
+    isLocked: false,
+    eventId: null,
+  },
   setCanvas: () => {},
 });
 
@@ -31,13 +35,22 @@ export const ActiveCanvasProvider = ({
 }: ActiveCanvasProviderProps) => {
   const [activeCanvas, setActiveCanvas] =
     useState<ActiveCanvasContextType["canvas"]>(mainCanvasInfo);
-  console.log(mainCanvasInfo);
+
+  const setCanvasById = useCallback<ActiveCanvasContextType["setCanvas"]>(
+    async (canvasId: CanvasInfo["id"]) => {
+      const response = await axios.get<CanvasInfoRequest.ResBody>(
+        `${config.apiUrl}/api/v1/canvas/${canvasId}/info`,
+      );
+      setActiveCanvas(response.data);
+    },
+    [],
+  );
 
   return (
     <ActiveCanvasContext.Provider
       value={{
         canvas: activeCanvas,
-        setCanvas: setActiveCanvas,
+        setCanvas: setCanvasById,
       }}
     >
       {children}
