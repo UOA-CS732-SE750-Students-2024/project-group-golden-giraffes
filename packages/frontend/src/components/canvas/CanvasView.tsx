@@ -2,6 +2,12 @@
 
 import { CircularProgress, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
+
+import { Point } from "@blurple-canvas-web/types";
+
+import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
+import { Dimensions } from "@/hooks/useScreenDimensions";
+import { clamp } from "@/util";
 import {
   ORIGIN,
   addPoints,
@@ -10,9 +16,7 @@ import {
   multiplyPoint,
 } from "./point";
 
-import { Dimensions } from "@/hooks/useScreenDimensions";
-import { clamp } from "@/util";
-import { Point } from "@blurple-canvas-web/types";
+import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
   position: relative;
@@ -42,6 +46,11 @@ const CanvasContainer = styled("div")`
     image-rendering: pixelated;
     max-width: inherit;
   }
+`;
+
+const PreviewCanvas = styled("canvas")`
+  position: absolute;
+  pointer-events: none;
 `;
 
 /**
@@ -75,13 +84,20 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
+
+  const { color } = useSelectedColorContext();
 
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
+  const [pixelPoint, setPixelPoint] = useState<Point>({
+    x: 0,
+    y: 0,
+  });
 
   const isLoading = imageDimensions === null;
 
@@ -311,25 +327,23 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
    */
   const handleCanvasClick = useCallback(
     (event: MouseEvent): void => {
-      if (!canvasRef.current || !imageDimensions) return;
+      if (!canvasRef.current) return;
 
       const canvasRect = canvasRef.current.getBoundingClientRect();
       const mouseX = event.clientX - canvasRect.left;
       const mouseY = event.clientY - canvasRect.top;
 
-      // Convert mouse coordinates to coordinates relative to the image
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
-      console.log(
-        "Clicked on pixel: ",
-        "x = ",
-        Math.floor(imageX),
-        "y = ",
-        Math.floor(imageY),
-      );
+      // we only care about updating the location
+      setPixelPoint((prev) => ({
+        ...prev,
+        x: Math.floor(imageX),
+        y: Math.floor(imageY),
+      }));
     },
-    [zoom, imageDimensions],
+    [zoom],
   );
 
   useEffect(() => {
@@ -339,6 +353,18 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       canvasRef.current?.removeEventListener("click", handleCanvasClick);
   }, [handleCanvasClick]);
 
+  const handleDrawingSelectedPixel = useCallback(() => {
+    if (!imageDimensions || !color) return;
+
+    updateCanvasPreviewPixel(previewCanvasRef, pixelPoint, color);
+
+    console.debug(`Drawing pixel at (${pixelPoint.x}, ${pixelPoint.y})`);
+  }, [imageDimensions, pixelPoint, color]);
+
+  useEffect(() => {
+    handleDrawingSelectedPixel();
+  }, [handleDrawingSelectedPixel]);
+
   return (
     <>
       <CanvasContainer
@@ -347,14 +373,20 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onTouchStart={handleStartTouchPan}
       >
         {isLoading && <CircularProgress className="loader" />}
-        <canvas
-          ref={canvasRef}
+        <div
           id="canvas-pan-and-zoom"
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale: zoom,
           }}
-        />
+        >
+          <PreviewCanvas
+            ref={previewCanvasRef}
+            width={imageDimensions?.width}
+            height={imageDimensions?.height}
+          />
+          <canvas ref={canvasRef} />
+        </div>
       </CanvasContainer>
       <img
         alt="Blurple Canvas 2023"

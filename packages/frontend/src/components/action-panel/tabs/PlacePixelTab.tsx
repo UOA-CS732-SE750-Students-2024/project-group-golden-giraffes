@@ -1,8 +1,8 @@
 import { styled } from "@mui/material";
-import { useState } from "react";
 
-import { Palette, PaletteColor, Point } from "@blurple-canvas-web/types";
+import { Palette, Point } from "@blurple-canvas-web/types";
 
+import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
 import { usePalette } from "@/hooks";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -30,7 +30,8 @@ export default function PlacePixelTab() {
   const { data: palette = [], isLoading: paletteIsLoading } = usePalette();
   const [mainColors, partnerColors] = partitionPalette(palette);
 
-  const [selectedColor, setSelectedColor] = useState<PaletteColor | null>(null);
+  const { color: selectedColor, setColor: setSelectedColor } =
+    useSelectedColorContext();
 
   return (
     <ActionPanelTab>
