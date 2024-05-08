@@ -26,17 +26,17 @@ discordRouter.post("/logout", (req, res, next) => {
 discordRouter.get(
   "/callback",
   passport.authenticate("discord", {
-    failureRedirect: config.discord.loginRedirectUrl,
+    failureRedirect: `${config.frontendUrl}/signin`,
   }),
   (req, res) => {
     const discordProfile = req.user as DiscordUserProfile;
 
     res.cookie("profile", JSON.stringify(discordProfile), {
       httpOnly: false, // Allow the frontend to read the cookie
-      secure: true,
+      secure: config.environment !== "development",
     });
 
     saveDiscordProfile(discordProfile);
-    res.redirect(config.discord.loginRedirectUrl);
+    res.redirect(config.frontendUrl);
   },
 );

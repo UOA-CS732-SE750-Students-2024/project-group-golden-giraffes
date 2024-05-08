@@ -5,8 +5,10 @@ import type { Metadata, Viewport } from "next";
 import config from "@/config";
 import { QueryClientProvider, SelectedColorProvider } from "@/contexts";
 import "@/styles/core.css";
-import AuthProvider from "@/contexts/AuthProvider";
+import { AuthProvider } from "@/contexts/AuthProvider";
 import { Theme } from "@/theme";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   metadataBase: new URL(config.baseUrl),
@@ -18,6 +20,25 @@ export const viewport: Viewport = {
   themeColor: "#23272a",
 };
 
+/**
+ * This specifically needs to be defined in this file so that it doesn't get classified as a server
+ * action (requiring it to be async and returning a promise) while still allowing it to access the
+ * cookies during SSR... I love Next.js 😭
+ */
+function getServerSideProfile(): DiscordUserProfile | null {
+  const profile = cookies().get("profile");
+
+  if (!profile) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(profile.value);
+  } catch {
+    return null;
+  }
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +48,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <AuthProvider>
+          <AuthProvider profile={getServerSideProfile()}>
             <QueryClientProvider>
               <SelectedColorProvider>
                 <ThemeProvider theme={Theme}>{children}</ThemeProvider>

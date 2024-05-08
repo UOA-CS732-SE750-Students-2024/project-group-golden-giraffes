@@ -17,10 +17,6 @@ interface AuthContextType {
   signOut: () => void;
 }
 
-interface AuthProviderProps {
-  children?: ReactNode;
-}
-
 const AuthContext = createContext<AuthContextType>({
   user: null,
   signOut: () => {},
@@ -28,11 +24,13 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuthContext = () => useContext(AuthContext);
 
-export default function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<DiscordUserProfile | null>(() => {
-    const profile = Cookies.get("profile");
-    return profile ? JSON.parse(profile) : null;
-  });
+interface AuthProviderProps {
+  children?: ReactNode;
+  profile: DiscordUserProfile | null;
+}
+
+export function AuthProvider({ children, profile }: AuthProviderProps) {
+  const [user, setUser] = useState(profile);
 
   const signOut = useCallback<AuthContextType["signOut"]>(() => {
     // Delete the session cookie

@@ -2,22 +2,28 @@
 
 import { styled } from "@mui/material";
 
+import { ActionPanel } from "@/components/action-panel";
+import { CanvasView } from "@/components/canvas";
 import config from "@/config";
-import { ActionPanel } from "../components/action-panel";
-import { CanvasView } from "../components/canvas";
 
 const Wrapper = styled("main")`
   body:has(&) {
+    --navbar-height: 4rem;
+
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: var(--navbar-height) 1fr;
+    height: 100vh;
   }
 
   display: grid;
   gap: 0.5rem 2rem;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
+    --padding-y: 2rem;
+
+    grid-auto-flow: column;
     grid-template-columns: 1fr 23rem;
-    padding: 2rem 4rem;
+    padding: var(--padding-y) 4rem;
   }
 `;
 
