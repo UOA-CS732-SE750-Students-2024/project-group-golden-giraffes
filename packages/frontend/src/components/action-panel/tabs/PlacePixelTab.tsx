@@ -135,7 +135,7 @@ export default function PlacePixelTab({
         ))}
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
-      {true && (
+      {canPlacePixel && !readOnly && (
         <DynamicButton
           color={selectedColor}
           disabled={paletteIsLoading || !selectedColor}
