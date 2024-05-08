@@ -76,6 +76,26 @@ export async function authenticated(
   if (apiKey && config.botApiKey && apiKey === config.botApiKey) {
     // TODO: Populate user object using id from header
 
+    const userId = req.header("x-user-id");
+    if (!userId) {
+      res.status(401).json({
+        message:
+          "Missing required x-user-id header indicating user the bot is acting on behalf of",
+      });
+      return;
+    }
+
+    const profile = await prisma.discord_user_profile.findUnique({
+      where: { user_id: BigInt(userId) },
+    });
+
+    if (!profile) {
+      res.status(401).json({
+        message: "No profile found for the user id provided in the header",
+      });
+      return;
+    }
+
     next();
     return;
   }
