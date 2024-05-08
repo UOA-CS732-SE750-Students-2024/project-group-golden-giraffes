@@ -20,6 +20,7 @@ export const ActiveCanvasContext = createContext<ActiveCanvasContextType>({
     startCoordinates: [0, 0],
     isLocked: false,
     eventId: null,
+    webPlacingEnabled: false,
   },
   setCanvas: () => {},
 });

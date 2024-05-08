@@ -39,6 +39,7 @@ const config = {
    * Identify pixels placed through the web with the ID of 0.
    */
   webGuildId: 0,
+  webPlacingEnabled: process.env.WEB_PLACING_ENABLED === "true",
 } as const;
 
 if (!fs.existsSync(config.paths.canvases)) {
