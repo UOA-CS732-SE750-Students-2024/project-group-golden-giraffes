@@ -4,7 +4,9 @@ import { styled } from "@mui/material";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
 
-const Container = styled("code")`
+const Container = styled("code", {
+  shouldForwardProp: (prop) => prop !== "backgroundColor",
+})<ColorCodeChipProps>`
   background-color: oklch(var(--discord-white-oklch) / 12%);
   border-radius: 0.25rem;
   cursor: pointer;
@@ -29,14 +31,20 @@ const Container = styled("code")`
   }
 `;
 
+interface ColorCodeChipProps {
+  onClick?: () => void;
+}
+
 const copyToClipBoard = (str: string) => navigator.clipboard.writeText(str);
 
 export default function ColorCodeChip({
-  colorCode,
+  color,
   ...props
 }: {
-  colorCode: PaletteColor["code"];
+  color: PaletteColor;
 }) {
+  const { code: colorCode } = color;
+
   const clickHandler = () => copyToClipBoard(colorCode);
   const keyUpHandler = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" || event.key === " ") copyToClipBoard(colorCode);
