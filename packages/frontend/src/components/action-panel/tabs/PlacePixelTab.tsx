@@ -1,8 +1,11 @@
 import { styled } from "@mui/material";
 
-import { Palette, Point } from "@blurple-canvas-web/types";
+import { Palette } from "@blurple-canvas-web/types";
 
-import { useSelectedColorContext } from "@/contexts";
+import {
+  useSelectedColorContext,
+  useSelectedPixelLocationContext,
+} from "@/contexts";
 import { usePalette } from "@/hooks";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -36,6 +39,7 @@ export default function PlacePixelTab({
 
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
+  const { pixelPoint } = useSelectedPixelLocationContext();
 
   return (
     <ActionPanelTabBody active={active}>
@@ -62,7 +66,7 @@ export default function PlacePixelTab({
       <ColorInfoCard color={selectedColor} />
       <PlacePixelButton
         color={selectedColor}
-        coordinates={{ x: 1, y: 1 } as Point}
+        coordinates={pixelPoint}
         disabled={paletteIsLoading || !selectedColor}
       />
     </ActionPanelTabBody>

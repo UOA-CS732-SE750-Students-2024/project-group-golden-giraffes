@@ -58,7 +58,7 @@ export const CoordinateLabel = styled("span")`
 
 interface PlacePixelButtonProps {
   color: PaletteColor | null;
-  coordinates: Point;
+  coordinates: Point | null;
   disabled?: boolean;
 }
 
@@ -72,14 +72,15 @@ export default function PlacePixelButton({
   const rgb = rgba?.slice(0, 3).join(" ");
 
   const backgroundColorStr = color ? `rgb(${rgb})` : undefined;
-  const { x, y } = coordinates; // TODO: Adjust coordinates by visual start coordinate offset (defined in canvas info)
+  const x = coordinates?.x;
+  const y = coordinates?.y;
 
   return (
     <DynamicButton backgroundColorStr={backgroundColorStr} {...props}>
       <DynamicButtonContent>
-        Place pixel
+        {coordinates ? "Place pixel" : "Select a pixel"}
         <CoordinateLabel>
-          ({x},&nbsp;{y})
+          {coordinates ? `${x},\u00A0${y}` : undefined}
         </CoordinateLabel>
       </DynamicButtonContent>
     </DynamicButton>
