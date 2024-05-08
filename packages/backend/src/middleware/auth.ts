@@ -47,6 +47,7 @@ export function initializeAuth(app: Express) {
     session({
       cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+        sameSite: config.environment === "development" ? "lax" : "strict",
       },
       secret: config.expressSessionSecret,
       resave: true,
