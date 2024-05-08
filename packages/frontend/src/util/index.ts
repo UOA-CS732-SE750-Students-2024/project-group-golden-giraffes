@@ -1,3 +1,4 @@
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { DateTime } from "luxon";
 
 /**
@@ -59,4 +60,10 @@ export function dateToString(date: Date, utc?: boolean) {
     format = { ...format, timeZoneName: undefined };
   }
   return luxonDate.toLocaleString(format);
+}
+
+export function decodeUserGuildsBase64(user: DiscordUserProfile) {
+  const base64 = user.guildIdsBase64 ?? "";
+  const guildIds = Buffer.from(base64, "base64").toString("utf-8");
+  return guildIds.split(" ");
 }

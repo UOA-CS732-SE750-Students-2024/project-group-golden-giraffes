@@ -9,6 +9,7 @@ import {
   useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
+import { decodeUserGuildsBase64 } from "@/util";
 import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -38,7 +39,8 @@ export const partitionPalette = (palette: Palette) => {
 
 function userWithinServer(user: DiscordUserProfile, serverId: string) {
   return false;
-  // return user.guilds.some((guild) => guild.id === serverId);
+  // const guildIds = decodeUserGuildsBase64(user);
+  // return guildIds.some((guildId) => guildId === serverId);
 }
 
 interface PlacePixelTabProps {
