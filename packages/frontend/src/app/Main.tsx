@@ -2,9 +2,9 @@
 
 import { styled } from "@mui/material";
 
+import { ActionPanel } from "@/components/action-panel";
+import { CanvasView } from "@/components/canvas";
 import config from "@/config";
-import { ActionPanel } from "../components/action-panel";
-import { CanvasView } from "../components/canvas";
 
 const Wrapper = styled("main")`
   body:has(&) {

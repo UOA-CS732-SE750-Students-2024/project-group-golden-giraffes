@@ -2,8 +2,6 @@
 
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 import { useAuthContext } from "@/contexts/AuthProvider";
 
@@ -53,18 +51,6 @@ const Disclaimer = () => (
 );
 
 export default function SignInPage() {
-  const router = useRouter();
-  const { user } = useAuthContext();
-
-  useEffect(() => {
-    if (user) {
-      console.log(
-        "[User Session]: User authenticated. Redirecting to home page",
-      );
-      router.replace("/");
-    }
-  }, [user, router]);
-
   return (
     <Background>
       <SignInForm>
