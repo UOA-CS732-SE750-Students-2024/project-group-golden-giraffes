@@ -1,26 +1,25 @@
 "use client";
 
-import { styled } from "@mui/material";
+import { css, styled } from "@mui/material";
 import { useState } from "react";
 
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
-interface TabContainerProps {
-  active: boolean;
-}
-
 const Wrapper = styled("div")`
-  display: block flex;
-  flex-direction: column;
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: var(--card-border);
+  display: grid;
+  flex-direction: column;
   gap: 1rem;
+  grid-template-rows: auto 1fr;
   padding: 1rem;
 `;
 
 const TabBar = styled("ul")`
+  border-radius: .5rem;
   display: grid;
+  gap: .5rem;
   grid-template-columns: repeat(2, 1fr);
   list-style-type: none;
 
@@ -36,15 +35,15 @@ const TabBar = styled("ul")`
   }
 `;
 
-const Tab = styled("li")`
+const Tab = styled("li")<{ active?: boolean }>`
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: inherit;
   cursor: pointer;
-  display: block flex;
   font-weight: 500;
   letter-spacing: 0.005rem;
   padding: 0.5rem 1rem;
   place-items: center;
+  text-align: center;
   touch-action: manipulation;
   transition:
     background-color var(--transition-duration-fast) ease,
@@ -52,8 +51,17 @@ const Tab = styled("li")`
     outline var(--transition-duration-fast) ease;
   user-select: none;
 
-  :hover {
-    background-color: var(--discord-legacy-greyple);
+  ${({ active }) =>
+    active ?
+      css`
+        background-color: var(--discord-legacy-dark-but-not-black);
+      `
+    : ""}
+
+  :hover,
+  :focus,
+  :focus-visible {
+    background-color: var(--discord-legacy-dark-but-not-black);
   }
 
   :focus,
@@ -62,8 +70,7 @@ const Tab = styled("li")`
   }
 
   :active {
-    background-color: var(--discord-yellow);
-    color: var(--discord-black);
+    background-color: var(--discord-legacy-greyple);
   }
 `;
 
@@ -90,8 +97,20 @@ export default function ActionPanel() {
   return (
     <Wrapper>
       <TabBar>
-        <Tab onClick={() => setCurrentTab(TABS.LOOK)}>Look</Tab>
-        <Tab onClick={() => setCurrentTab(TABS.PLACE)}>Place</Tab>
+        <Tab
+          active={currentTab === TABS.LOOK}
+          onClick={() => setCurrentTab(TABS.LOOK)}
+          tabIndex={0}
+        >
+          Look
+        </Tab>
+        <Tab
+          active={currentTab === TABS.PLACE}
+          onClick={() => setCurrentTab(TABS.PLACE)}
+          tabIndex={0}
+        >
+          Place
+        </Tab>
       </TabBar>
 
       <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvasId} />

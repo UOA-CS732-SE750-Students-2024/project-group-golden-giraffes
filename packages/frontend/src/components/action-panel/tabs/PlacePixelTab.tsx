@@ -26,7 +26,11 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-export default function PlacePixelTab(props: Record<string, unknown>) {
+export default function PlacePixelTab({
+  active = false,
+}: {
+  active?: boolean;
+}) {
   const { data: palette = [], isLoading: paletteIsLoading } = usePalette();
   const [mainColors, partnerColors] = partitionPalette(palette);
 
@@ -34,7 +38,7 @@ export default function PlacePixelTab(props: Record<string, unknown>) {
     useSelectedColorContext();
 
   return (
-    <ActionPanelTabBody {...props}>
+    <ActionPanelTabBody active={active}>
       <ColorPicker>
         <Heading>Main colors</Heading>
         {mainColors.map((color) => (

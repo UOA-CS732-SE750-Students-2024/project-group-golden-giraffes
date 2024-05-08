@@ -18,11 +18,12 @@ const HistoryList = styled("div")`
 
 interface PixelInfoTabProps {
   canvasId: number;
+  active?: boolean;
 }
 
 export default function PixelInfoTab({
+  active = false,
   canvasId,
-  ...props
 }: PixelInfoTabProps) {
   const { data: pixelHistory = [] } = usePixelHistory(canvasId, TEMP_COORDS);
 
@@ -35,7 +36,7 @@ export default function PixelInfoTab({
   // });
 
   return (
-    <ActionPanelTabBody {...props}>
+    <ActionPanelTabBody active={active}>
       <div>
         <CoordinatesCard coordinates={TEMP_COORDS} />
         <PixelHistoryListItem record={currentPixelInfo} />
