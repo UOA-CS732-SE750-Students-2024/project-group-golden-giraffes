@@ -5,6 +5,7 @@
   outline-offset: max(0.0625rem, 1px);
   padding: 0;
   text-decoration-thickness: from-font;
+  overflow: auto;
 }
 
 html {
