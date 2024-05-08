@@ -74,8 +74,6 @@ export async function authenticated(
   const apiKey = req.header("x-api-key");
 
   if (apiKey && config.botApiKey && apiKey === config.botApiKey) {
-    // TODO: Populate user object using id from header
-
     const userId = req.header("x-user-id");
     if (!userId) {
       res.status(401).json({
@@ -95,6 +93,12 @@ export async function authenticated(
       });
       return;
     }
+
+    req.user = {
+      id: profile.user_id.toString(),
+      username: profile.username,
+      profilePictureUrl: profile.profile_picture_url,
+    };
 
     next();
     return;
