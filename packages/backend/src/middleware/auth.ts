@@ -49,10 +49,6 @@ export function initializeAuth(app: Express) {
       secret: randomSecret,
       resave: false,
       saveUninitialized: false,
-      /*
-       * Double cast necessary as using example from https://www.npmjs.com/package/connect-pg-simple
-       * results in @prisma/client did not initialize yet.
-       */
       store: new PrismaSessionStore(prisma, {
         checkPeriod: 2 * 60 * 1000, //ms
         dbRecordIdIsSessionId: true,
