@@ -1,5 +1,6 @@
 "use client";
 
+import Avatar from "@/components/Avatar";
 import { useLeaderboard } from "@/hooks/queries/useLeaderboard";
 import { styled } from "@mui/material";
 
@@ -55,14 +56,6 @@ const Username = styled("p")`
   max-inline-size: 22rem;
 `;
 
-const Avatar = styled("object")`
-  --stroke-width: max(0.125rem, 1px);
-
-  border-radius: calc(infinity * 1px);
-  outline: oklch(var(--discord-white-oklch) / 12%) var(--stroke-width) solid;
-  outline-offset: calc(-1 * var(--stroke-width));
-`;
-
 const PixelCountCell = styled("td")`
   text-align: center;
 `;
@@ -110,12 +103,11 @@ export default function Leaderboard() {
               <tr key={userId}>
                 <RankCell>{rank}</RankCell>
                 <UserCell>
-                  <Avatar data={profilePictureUrl} width={60} height={60}>
-                    <img
-                      alt={`${username}’s avatar`}
-                      src="https://cdn.discordapp.com/embed/avatars/1.png"
-                    />
-                  </Avatar>
+                  <Avatar
+                    username={username}
+                    profilePictureUrl={profilePictureUrl}
+                    size={60}
+                  />
                   <Username>{username}</Username>
                 </UserCell>
                 <PixelCountCell>
