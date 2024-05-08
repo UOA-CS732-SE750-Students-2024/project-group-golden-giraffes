@@ -72,7 +72,6 @@ export default function PlacePixelButton({
   const rgb = rgba?.slice(0, 3).join(" ");
 
   const backgroundColorStr = color ? `rgb(${rgb})` : undefined;
-  console.log("backgroundColorStr", backgroundColorStr);
   const { x, y } = coordinates; // TODO: Adjust coordinates by visual start coordinate offset (defined in canvas info)
 
   return (
