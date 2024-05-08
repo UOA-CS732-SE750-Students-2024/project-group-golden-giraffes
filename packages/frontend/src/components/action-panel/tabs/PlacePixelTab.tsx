@@ -1,7 +1,8 @@
 import { styled } from "@mui/material";
 
-import { DiscordUserProfile, Palette, Point } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
+import config from "@/config";
 import {
   useActiveCanvasContext,
   useAuthContext,
@@ -9,6 +10,7 @@ import {
   useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
+import axios from "axios";
 import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -87,6 +89,35 @@ export default function PlacePixelTab({
 
   const isSelected = selectedCoordinates && selectedColor;
 
+  const handlePixelRequest = () => {
+    if (!selectedCoordinates || !selectedColor) return;
+
+    console.log(
+      `Placing pixel at ${selectedCoordinates.x}, ${selectedCoordinates.y}`,
+    );
+    const requestUrl = `${config.apiUrl}/api/v1/canvas/2123/pixel`;
+
+    const body = {
+      x: 187,
+      y: 428,
+      colorId: selectedColor.id,
+    };
+
+    console.log("Request body", body);
+
+    console.log(`Requesting pixel placement at ${requestUrl}`);
+    try {
+      axios.post(requestUrl, body, {
+        withCredentials: true,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
+    // TODO: set coords to null later
+    setSelectedColor(null);
+  };
+
   return (
     <ActionPanelTabBody active={active}>
       <ColorPicker>
@@ -110,17 +141,20 @@ export default function PlacePixelTab({
         ))}
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
-      {canPlacePixel && !readOnly && (
-        <DynamicButton
-          color={selectedColor}
-          disabled={paletteIsLoading || !selectedColor}
-        >
-          {isSelected ? "Place pixel" : "Select a pixel"}
-          <CoordinateLabel>
-            {isSelected ? `(${x},\u00A0${y})` : undefined}
-          </CoordinateLabel>
-        </DynamicButton>
-      )}
+      {
+        /*(canPlacePixel && !readOnly*/ true && (
+          <DynamicButton
+            color={selectedColor}
+            disabled={paletteIsLoading || !selectedColor}
+            onAction={handlePixelRequest}
+          >
+            {isSelected ? "Place pixel" : "Select a pixel"}
+            <CoordinateLabel>
+              {isSelected ? `(${x},\u00A0${y})` : undefined}
+            </CoordinateLabel>
+          </DynamicButton>
+        )
+      }
       {isJoinServerShown && (
         <DynamicAnchorButton color={selectedColor} href={serverInvite}>
           Join {selectedColor?.guildName ?? "server"}
