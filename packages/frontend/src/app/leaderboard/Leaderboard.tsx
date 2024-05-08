@@ -1,6 +1,7 @@
 "use client";
 
 import Avatar from "@/components/Avatar";
+import { useActiveCanvasContext } from "@/contexts";
 import { useLeaderboard } from "@/hooks/queries/useLeaderboard";
 import { styled } from "@mui/material";
 
@@ -68,14 +69,14 @@ const PixelCountLabel = styled("span")`
 `;
 
 export default function Leaderboard() {
-  const canvasId = 2023; // change later
-  const { data: leaderboard = [] } = useLeaderboard(canvasId);
+  const { canvas } = useActiveCanvasContext();
+  const { data: leaderboard = [] } = useLeaderboard(canvas.id);
 
   return (
     <Wrapper>
       <TitleBlock>
         <h1>Leaderboard</h1>
-        <h2>Canvas name</h2>
+        <h2>{canvas.name}</h2>
       </TitleBlock>
       <Table>
         <thead hidden>
