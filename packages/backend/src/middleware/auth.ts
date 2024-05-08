@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import { prisma } from "@/client";
 import config from "@/config";
 import { getProfilePictureUrlFromHash } from "@/services/discordProfileService";
