@@ -72,6 +72,11 @@ export default function Leaderboard() {
   const { canvas } = useActiveCanvasContext();
   const { data: leaderboard = [] } = useLeaderboard(canvas.id);
 
+  for (const user of leaderboard) {
+    const { userId, rank, profilePictureUrl, username, totalPixels } = user;
+    console.log(rank, userId, username, username ?? userId);
+  }
+
   return (
     <Wrapper>
       <TitleBlock>
@@ -95,11 +100,11 @@ export default function Leaderboard() {
                 <RankCell>{rank}</RankCell>
                 <UserCell>
                   <Avatar
-                    username={username}
+                    username={username ?? userId}
                     profilePictureUrl={profilePictureUrl}
                     size={60}
                   />
-                  <Username>{username}</Username>
+                  <Username>{username ?? userId}</Username>
                 </UserCell>
                 <PixelCountCell>
                   <PixelCountCellContents>
