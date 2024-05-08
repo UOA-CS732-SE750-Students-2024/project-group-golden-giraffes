@@ -56,16 +56,16 @@ const Wordmark = styled("div")`
 const Links = styled("ul")`
   display: flex;
 
+  li {
+    display: inline-flex;
+  }
+
   /*
    * Workaround for accessibility issue with VoiceOver.
    * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
    */
   li::before {
     content: "\\200B"; /* zero-width space */
-  }
-
-  li {
-    display: inline-flex;
   }
 `;
 
