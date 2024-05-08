@@ -1,8 +1,9 @@
 "use client";
 
 import { css, styled } from "@mui/material";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 
+import { useActiveCanvasContext } from "@/contexts";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
 const Wrapper = styled("div")`
@@ -95,8 +96,7 @@ const TABS = {
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
-
-  const canvasId = 2023; // This is a placeholder value
+  const { canvas } = useActiveCanvasContext();
 
   return (
     <Wrapper>
@@ -126,7 +126,7 @@ export default function ActionPanel() {
       </TabBar>
 
       <PlacePixelTab active={currentTab === TABS.PLACE} />
-      <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvasId} />
+      <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvas.id} />
     </Wrapper>
   );
 }
