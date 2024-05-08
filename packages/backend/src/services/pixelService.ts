@@ -220,7 +220,7 @@ export async function placePixel(
   );
 
   await prisma.$transaction(async (tx) => {
-    // only place a pixel if the canvas has a cooldown
+    // only update the cooldown table if the canvas has a cooldown
     if (futureCooldown) {
       // create the cooldown if it doesn't exist already
       if (!currentCooldown) {
