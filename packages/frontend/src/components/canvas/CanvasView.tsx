@@ -327,7 +327,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
    */
   const handleCanvasClick = useCallback(
     (event: MouseEvent): void => {
-      if (!canvasRef.current || !imageDimensions) return;
+      if (!canvasRef.current) return;
 
       const canvasRect = canvasRef.current.getBoundingClientRect();
       const mouseX = event.clientX - canvasRect.left;
@@ -343,7 +343,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         y: Math.floor(imageY),
       }));
     },
-    [zoom, imageDimensions],
+    [zoom],
   );
 
   useEffect(() => {
