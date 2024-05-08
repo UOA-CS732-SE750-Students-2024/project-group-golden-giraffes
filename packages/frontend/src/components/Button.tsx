@@ -1,5 +1,3 @@
-"use client";
-
 import { Button as MuiButton, styled } from "@mui/material";
 
 export const Button = styled(MuiButton)`
