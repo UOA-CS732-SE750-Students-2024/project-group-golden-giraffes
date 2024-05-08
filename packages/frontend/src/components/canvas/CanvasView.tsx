@@ -123,6 +123,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       setZoom(1);
     }
 
+    setOffset(ORIGIN);
     setImageDimension({ width: image.width, height: image.height });
     setIsLoading(false);
   }, []);
