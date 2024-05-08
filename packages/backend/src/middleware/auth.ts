@@ -45,9 +45,12 @@ export function initializeAuth(app: Express) {
 
   app.use(
     session({
-      secret: randomSecret,
-      resave: false,
-      saveUninitialized: false,
+      cookie: {
+        maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+      },
+      secret: config.expressSessionSecret,
+      resave: true,
+      saveUninitialized: true,
       store: new PrismaSessionStore(prisma, {
         checkPeriod: 2 * 60 * 1000, //ms
         dbRecordIdIsSessionId: true,

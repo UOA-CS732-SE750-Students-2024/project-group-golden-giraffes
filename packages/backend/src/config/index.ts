@@ -27,6 +27,8 @@ const config = {
     canvases: path.resolve("static", "canvas"),
   },
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
+  expressSessionSecret:
+    process.env.EXPRESS_SESSION_SECRET || "change the secret in production",
   discord: {
     clientId: requiredEnv("DISCORD_CLIENT_ID"),
     clientSecret: requiredEnv("DISCORD_CLIENT_SECRET"),
