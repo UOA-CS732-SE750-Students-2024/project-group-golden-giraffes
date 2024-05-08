@@ -1,5 +1,6 @@
 "use client";
 import config from "@/config";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function testauth() {
@@ -7,11 +8,10 @@ export default function testauth() {
   const [data, setData] = useState<any | null>(null);
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${config.apiUrl}/api/v1/discord/test`, {
-        credentials: "include",
+      const response = await axios.get(`${config.apiUrl}/api/v1/discord/test`, {
+        withCredentials: true,
       });
-      const data = await response.json();
-      setData(data);
+      setData(response.data);
     };
 
     fetchData();
