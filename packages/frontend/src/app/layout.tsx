@@ -1,17 +1,19 @@
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import axios from "axios";
 import type { Metadata, Viewport } from "next";
 
 import config from "@/config";
 import { QueryClientProvider, SelectedColorProvider } from "@/contexts";
 import "@/styles/core.css";
-import {
-  ActiveCanvasContext,
-  ActiveCanvasProvider,
-} from "@/contexts/ActiveCanvasContext";
+import { ActiveCanvasProvider } from "@/contexts/ActiveCanvasContext";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { Theme } from "@/theme";
-import { DiscordUserProfile } from "@blurple-canvas-web/types";
+import {
+  CanvasInfo,
+  CanvasInfoRequest,
+  DiscordUserProfile,
+} from "@blurple-canvas-web/types";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
@@ -43,7 +45,14 @@ function getServerSideProfile(): DiscordUserProfile | null {
   }
 }
 
-export default function RootLayout({
+async function getServerSideCanvasInfo(): Promise<CanvasInfo> {
+  const response = await axios.get<CanvasInfoRequest.ResBody>(
+    `${config.apiUrl}/api/v1/canvas/current/info`,
+  );
+  return response.data;
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -54,7 +63,9 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <AuthProvider profile={getServerSideProfile()}>
             <QueryClientProvider>
-              <ActiveCanvasProvider>
+              <ActiveCanvasProvider
+                mainCanvasInfo={await getServerSideCanvasInfo()}
+              >
                 <SelectedColorProvider>
                   <ThemeProvider theme={Theme}>{children}</ThemeProvider>
                 </SelectedColorProvider>
