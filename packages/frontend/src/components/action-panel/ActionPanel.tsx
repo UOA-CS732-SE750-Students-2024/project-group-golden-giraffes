@@ -3,46 +3,47 @@
 import { styled } from "@mui/material";
 import { useState } from "react";
 
-import { ORIGIN } from "../canvas/point";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
 interface TabContainerProps {
   active: boolean;
 }
 
-const TabContainer = styled("div")<TabContainerProps>`
+const Wrapper = styled("div")`
+  display: block flex;
+  flex-direction: column;
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: var(--card-border);
-  display: ${({ active }) => (active ? "block" : "none")};
-  gap: 0.5rem;
-  height: 100%;
+  gap: 1rem;
   padding: 1rem;
-  width: 100%;
 `;
 
 const TabBar = styled("ul")`
-  display: flex;
-  gap: 0.25rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   list-style-type: none;
 
-  /*
-   * Workaround for accessibility issue with VoiceOver.
-   * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
-   */
-  li::before {
-    content: "\\200B"; /* zero-width space */
+
+
+    /*
+     * Workaround for accessibility issue with VoiceOver.
+     * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
+     */
+    li::before {
+      content: "\\200B"; /* zero-width space */
+    }
   }
 `;
 
 const Tab = styled("li")`
   background-color: var(--discord-legacy-not-quite-black);
-  border-radius: var(--card-border-radius);
+  border-radius: inherit;
   cursor: pointer;
   display: block flex;
-  font-size: 1.5rem;
   font-weight: 500;
-  padding: 0.5rem 1.25rem;
+  letter-spacing: 0.005rem;
+  padding: 0.5rem 1rem;
   place-items: center;
   touch-action: manipulation;
   transition:
@@ -83,23 +84,18 @@ const TABS = {
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
-  const [coordinates, setCoordinates] = useState(ORIGIN);
 
   const canvasId = 2023; // This is a placeholder value
 
   return (
-    <>
+    <Wrapper>
       <TabBar>
         <Tab onClick={() => setCurrentTab(TABS.LOOK)}>Look</Tab>
         <Tab onClick={() => setCurrentTab(TABS.PLACE)}>Place</Tab>
       </TabBar>
 
-      <TabContainer active={currentTab === TABS.LOOK}>
-        <PixelInfoTab canvasId={canvasId} />
-      </TabContainer>
-      <TabContainer active={currentTab === TABS.PLACE}>
-        <PlacePixelTab />
-      </TabContainer>
-    </>
+      <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvasId} />
+      <PlacePixelTab active={currentTab === TABS.PLACE} />
+    </Wrapper>
   );
 }

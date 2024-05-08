@@ -1,9 +1,11 @@
 import { styled } from "@mui/material";
 
-export const ActionPanelTab = styled("div")`
-  display: flex;
+export const ActionPanelTabBody = styled("div")<{ active?: boolean }>`
+  display: ${({ active }) => (active ? "block flex" : "none")};
   flex-direction: column;
-  gap: 1rem;
+  background-color: var(--discord-legacy-not-quite-black);
+  border-radius: var(--card-border-radius);
+  gap: 0.5rem;
 
   > * {
     --padding-width: 1rem;

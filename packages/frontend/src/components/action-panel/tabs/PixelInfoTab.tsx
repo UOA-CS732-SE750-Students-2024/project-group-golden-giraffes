@@ -4,7 +4,7 @@ import { PixelHistoryRecord, Point } from "@blurple-canvas-web/types";
 
 import { usePixelHistory } from "@/hooks";
 import { Heading } from "../ActionPanel";
-import { ActionPanelTab } from "./ActionPanelTab";
+import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import CoordinatesCard from "./CoordinatesCard";
 import PixelHistoryListItem from "./PixelHistoryListItem";
 
@@ -20,7 +20,10 @@ interface PixelInfoTabProps {
   canvasId: number;
 }
 
-export default function PixelInfoTab({ canvasId }: PixelInfoTabProps) {
+export default function PixelInfoTab({
+  canvasId,
+  ...props
+}: PixelInfoTabProps) {
   const { data: pixelHistory = [] } = usePixelHistory(canvasId, TEMP_COORDS);
 
   const currentPixelInfo = pixelHistory[1]; // undefined if out of index
@@ -32,7 +35,7 @@ export default function PixelInfoTab({ canvasId }: PixelInfoTabProps) {
   // });
 
   return (
-    <ActionPanelTab>
+    <ActionPanelTabBody {...props}>
       <div>
         <CoordinatesCard coordinates={TEMP_COORDS} />
         <PixelHistoryListItem record={currentPixelInfo} />
@@ -43,6 +46,6 @@ export default function PixelInfoTab({ canvasId }: PixelInfoTabProps) {
           ))}
         </HistoryList>
       </div>
-    </ActionPanelTab>
+    </ActionPanelTabBody>
   );
 }
