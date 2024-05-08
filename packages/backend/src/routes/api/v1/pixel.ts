@@ -47,7 +47,6 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
  */
 pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
   try {
-    const coolDownTimeStamp = new Date();
     const result = await PlacePixelBodyModel.safeParseAsync(req.body);
     if (!result.success) {
       throw new BadRequestError("Body is not valid", result.error.issues);
@@ -63,22 +62,20 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     // TODO: check for canvas discord_only status (not sure which table to look here)
 
     // TODO: see if Promise.all() can work here
-
     const coordinates: Point = { x, y };
-
     await validatePixel(canvasId, coordinates, true);
-    await validateUser(canvasId, BigInt(profile.id));
+    await validateUser(BigInt(profile.id));
     const color = await validateColor(colorId);
-
-    await placePixel(
+    const { futureCooldown } = await placePixel(
       canvasId,
       BigInt(profile.id),
       coordinates,
       color,
-      coolDownTimeStamp,
     );
 
-    return res.status(201).json({ coolDownTimeStamp: coolDownTimeStamp });
+    return res
+      .status(201)
+      .json({ cooldownEndTime: futureCooldown?.toISOString() ?? null });
   } catch (error) {
     ApiError.sendError(res, error);
   }
