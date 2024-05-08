@@ -39,7 +39,10 @@ export default function StatsTable({
   stats,
   statsAreLoading,
 }: StatsTableProps) {
-  if (!stats) return <EmptyStateMessage>No stats!</EmptyStateMessage>;
+  if (!stats)
+    return (
+      <EmptyStateMessage>You don’t have any stats (yet)!</EmptyStateMessage>
+    );
 
   const { totalPixels, mostFrequentColor, mostRecentTimestamp, rank } = stats;
 
@@ -67,8 +70,8 @@ export default function StatsTable({
           <td>
             {statsAreLoading ?
               "Loading…"
-            : stats.mostRecentTimestamp ?
-              formatTimestampLocalTZ(stats.mostRecentTimestamp)
+            : mostRecentTimestamp ?
+              formatTimestampLocalTZ(mostRecentTimestamp)
             : "Unknown"}
           </td>
         </tr>
