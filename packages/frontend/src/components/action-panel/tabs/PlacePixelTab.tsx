@@ -26,12 +26,18 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
+interface PlacePixelTabProps {
+  eventId: number | null;
+  active?: boolean;
+}
+
 export default function PlacePixelTab({
   active = false,
-}: {
-  active?: boolean;
-}) {
-  const { data: palette = [], isLoading: paletteIsLoading } = usePalette();
+  eventId,
+}: PlacePixelTabProps) {
+  const { data: palette = [], isLoading: paletteIsLoading } = usePalette(
+    eventId ?? undefined,
+  );
   const [mainColors, partnerColors] = partitionPalette(palette);
 
   const { color: selectedColor, setColor: setSelectedColor } =
