@@ -1,9 +1,9 @@
 "use client";
 
+import { useAuthContext } from "@/contexts";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
-
-import { useAuthContext } from "@/contexts/AuthProvider";
+import Link from "next/link";
 
 const Background = styled("div")`
   align-items: center;
@@ -26,6 +26,11 @@ const SignInForm = styled("form")`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+`;
+
+const AlreadySignedIn = styled("p")`
+  color: #808080;
+  color: oklch(50% 0 0);
 `;
 
 const Footer = styled("footer")`
@@ -51,6 +56,8 @@ const Disclaimer = () => (
 );
 
 export default function SignInPage() {
+  const { user } = useAuthContext();
+
   return (
     <Background>
       <SignInForm>
@@ -67,7 +74,14 @@ export default function SignInPage() {
           <Button variant="contained">Sign in with Discord</Button>
         </a>
         <p>That’s it. There are no other options.</p>
+        {user && (
+          <AlreadySignedIn>
+            Already signed in as <strong>{user.username}</strong>.{" "}
+            <Link href="/">Go to the canvas</Link>
+          </AlreadySignedIn>
+        )}
       </SignInForm>
+
       <Disclaimer />
     </Background>
   );
