@@ -1,11 +1,16 @@
+import config from "@/config";
 import { ApiError } from "@/errors";
 import { BadRequestError, UnauthorizedError } from "@/errors";
-import { PlacePixelBodyModel } from "@/models/bodyModels";
+import {
+  PlacePixelArrayBodyModel,
+  PlacePixelBodyModel,
+} from "@/models/bodyModels";
 import {
   CanvasIdParam,
   PixelHistoryParamModel,
   parseCanvasId,
 } from "@/models/paramModels";
+import { updateCachedCanvasPixel } from "@/services/canvasService";
 import {
   getPixelHistory,
   placePixel,
@@ -41,11 +46,29 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
   }
 });
 
+pixelRouter.post<CanvasIdParam>("/bot", async (req, res) => {
+  try {
+    const canvasId = await parseCanvasId(req.params);
+
+    const apiKey = req.header("x-api-key");
+    if (!apiKey || !config.botApiKey || apiKey !== config.botApiKey) {
+      throw new UnauthorizedError("Invalid API key");
+    }
+
+    const result = await PlacePixelArrayBodyModel.safeParseAsync(req.body);
+    if (!result.success) {
+      throw new BadRequestError("Body is not valid", result.error.issues);
+    }
+  } catch (error) {
+    ApiError.sendError(res, error);
+  }
+});
+
 /*
  * Endpoint for placing a pixel on the canvas
  * Requires the user to be authenticated and not blacklisted
  */
-pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
+pixelRouter.post<CanvasIdParam>("/", authenticated, async (req, res) => {
   try {
     const result = await PlacePixelBodyModel.safeParseAsync(req.body);
     if (!result.success) {
