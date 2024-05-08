@@ -4,7 +4,6 @@ import config from "@/config";
 import { getProfilePictureUrlFromHash } from "@/services/discordProfileService";
 import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
-import { IPrisma } from "@quixo3/prisma-session-store/dist/@types";
 import { Express } from "express";
 import session from "express-session";
 import passport from "passport";
