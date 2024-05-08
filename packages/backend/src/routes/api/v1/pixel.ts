@@ -73,7 +73,9 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
       color,
     );
 
-    return res.status(201).json({ cooldownEndTime: futureCooldown });
+    return res
+      .status(201)
+      .json({ cooldownEndTime: futureCooldown?.toISOString() ?? null });
   } catch (error) {
     ApiError.sendError(res, error);
   }
