@@ -1,5 +1,6 @@
 "use client";
 
+import Avatar from "@/components/Avatar";
 import { useLeaderboard } from "@/hooks/queries/useLeaderboard";
 import { styled } from "@mui/material";
 
@@ -7,22 +8,12 @@ const Wrapper = styled("div")`
   display: flex;
   flex-direction: column;
   place-items: center;
-  padding: 8rem 4rem;
+  padding: 4rem 4rem;
   gap: 4rem;
 `;
 
 const TitleBlock = styled("div")`
   text-align: center;
-`;
-
-const Heading = styled("h1")`
-  font-stretch: 125%;
-  font-weight: 900;
-`;
-
-const Subtitle = styled("h2")`
-  color: oklch(var(--discord-white-oklch) / 55%);
-  font-weight: 400;
 `;
 
 const Table = styled("table")`
@@ -55,14 +46,6 @@ const Username = styled("p")`
   max-inline-size: 22rem;
 `;
 
-const Avatar = styled("object")`
-  --stroke-width: max(0.125rem, 1px);
-
-  border-radius: calc(infinity * 1px);
-  outline: oklch(var(--discord-white-oklch) / 12%) var(--stroke-width) solid;
-  outline-offset: calc(-1 * var(--stroke-width));
-`;
-
 const PixelCountCell = styled("td")`
   text-align: center;
 `;
@@ -91,8 +74,8 @@ export default function Leaderboard() {
   return (
     <Wrapper>
       <TitleBlock>
-        <Heading>Leaderboard</Heading>
-        <Subtitle>Canvas name</Subtitle>
+        <h1>Leaderboard</h1>
+        <h2>Canvas name</h2>
       </TitleBlock>
       <Table>
         <thead hidden>
@@ -110,12 +93,11 @@ export default function Leaderboard() {
               <tr key={userId}>
                 <RankCell>{rank}</RankCell>
                 <UserCell>
-                  <Avatar data={profilePictureUrl} width={60} height={60}>
-                    <img
-                      alt={`${username}’s avatar`}
-                      src="https://cdn.discordapp.com/embed/avatars/1.png"
-                    />
-                  </Avatar>
+                  <Avatar
+                    username={username}
+                    profilePictureUrl={profilePictureUrl}
+                    size={60}
+                  />
                   <Username>{username}</Username>
                 </UserCell>
                 <PixelCountCell>

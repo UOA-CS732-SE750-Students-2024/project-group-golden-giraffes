@@ -16,6 +16,7 @@ import {
   multiplyPoint,
 } from "./point";
 
+import { useSelectedPixelLocationContext } from "@/contexts";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
@@ -46,6 +47,10 @@ const CanvasContainer = styled("div")`
     image-rendering: pixelated;
     max-width: inherit;
   }
+`;
+
+const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+  ${({ isLoading }) => isLoading && "filter: grayscale(0.8);"}
 `;
 
 const PreviewCanvas = styled("canvas")`
@@ -88,18 +93,14 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
+  const { coords, setCoords } = useSelectedPixelLocationContext();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
-  const [pixelPoint, setPixelPoint] = useState<Point>({
-    x: 0,
-    y: 0,
-  });
-
-  const isLoading = imageDimensions === null;
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
@@ -120,17 +121,21 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       setZoom(1);
     }
 
+    setOffset(ORIGIN);
     setImageDimension({ width: image.width, height: image.height });
+    setIsLoading(false);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
   useEffect(() => {
+    setIsLoading(true);
     // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
     // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
     // need to check it's working correctly when we start placing pixels.
     if (imageRef.current?.complete) {
       handleLoadImage(imageRef.current);
     }
-  }, [handleLoadImage]);
+  }, [handleLoadImage, imageUrl]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
@@ -337,13 +342,13 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const imageY = mouseY / zoom;
 
       // we only care about updating the location
-      setPixelPoint((prev) => ({
+      setCoords((prev) => ({
         ...prev,
         x: Math.floor(imageX),
         y: Math.floor(imageY),
       }));
     },
-    [zoom],
+    [zoom, setCoords],
   );
 
   useEffect(() => {
@@ -354,12 +359,12 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
-    if (!imageDimensions || !color) return;
+    if (!imageDimensions || !color || !coords) return;
 
-    updateCanvasPreviewPixel(previewCanvasRef, pixelPoint, color);
+    updateCanvasPreviewPixel(previewCanvasRef, coords, color);
 
-    console.debug(`Drawing pixel at (${pixelPoint.x}, ${pixelPoint.y})`);
-  }, [imageDimensions, pixelPoint, color]);
+    console.debug(`Drawing pixel at (${coords.x}, ${coords.y})`);
+  }, [imageDimensions, coords, color]);
 
   useEffect(() => {
     handleDrawingSelectedPixel();
@@ -372,7 +377,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
-        {isLoading && <CircularProgress className="loader" />}
         <div
           id="canvas-pan-and-zoom"
           style={{
@@ -385,8 +389,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
             width={imageDimensions?.width}
             height={imageDimensions?.height}
           />
-          <canvas ref={canvasRef} />
+          <DisplayCanvas ref={canvasRef} isLoading={isLoading} />
         </div>
+        {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
       <img
         alt="Blurple Canvas 2023"

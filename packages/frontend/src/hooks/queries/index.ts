@@ -4,3 +4,4 @@ export { useEventInfo } from "./useEventInfo";
 export { useLeaderboard } from "./useLeaderboard";
 export { usePalette } from "./usePalette";
 export { usePixelHistory } from "./usePixelHistory";
+export { useUserStats } from "./useUserStats";
