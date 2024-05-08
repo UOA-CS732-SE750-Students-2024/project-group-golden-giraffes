@@ -1,12 +1,18 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+} from "react";
 
 import { CanvasSummary } from "@blurple-canvas-web/types";
 
 interface ActiveCanvasContextType {
   canvas: CanvasSummary | null;
-  setCanvas: (canvas: CanvasSummary) => void;
+  setCanvas: Dispatch<SetStateAction<CanvasSummary | null>>;
 }
 
 export const ActiveCanvasContext = createContext<ActiveCanvasContextType>({
