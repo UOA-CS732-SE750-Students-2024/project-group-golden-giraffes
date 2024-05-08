@@ -51,9 +51,11 @@ export default function BotCommandCard({
   coordinates,
 }: {
   color?: PaletteColor | null;
-  coordinates: Point;
+  coordinates: Point | null;
 }) {
   if (!color) return <Wrapper>No color selected</Wrapper>;
+
+  if (!coordinates) return <Wrapper>No coordinates selected</Wrapper>;
 
   const { x, y } = coordinates;
 
