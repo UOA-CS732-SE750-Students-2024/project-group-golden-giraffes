@@ -195,7 +195,7 @@ describe("Place Pixel Tests", () => {
     vi.useRealTimers();
   });
 
-  it("Resolves places the pixel", async () => {
+  it("Places the pixel", async () => {
     const canvasId = 1;
     const userId = BigInt(1);
 
@@ -222,7 +222,7 @@ describe("Place Pixel Tests", () => {
     expect(before.history.length + 1).toEqual(after.history.length);
   });
 
-  it("Resolves it only places once within 30 seconds", async () => {
+  it("It only places once within 30 seconds", async () => {
     const canvasId = 1;
     const userId = BigInt(1);
     const before = await fetchCooldownPixelHistory(canvasId, userId, 1, 1);
