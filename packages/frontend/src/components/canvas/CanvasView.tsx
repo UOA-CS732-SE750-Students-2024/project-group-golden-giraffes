@@ -3,7 +3,7 @@
 import { CircularProgress, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
-import { PixelInfo, Point } from "@blurple-canvas-web/types";
+import { Point } from "@blurple-canvas-web/types";
 
 import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
 import { Dimensions } from "@/hooks/useScreenDimensions";
@@ -94,10 +94,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
-  const [pixelInfoLocation, setPixelInfoLocation] = useState<PixelInfo>({
+  const [pixelPoint, setPixelPoint] = useState<Point>({
     x: 0,
     y: 0,
-    colorId: 0,
   });
 
   const isLoading = imageDimensions === null;
@@ -338,7 +337,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const imageY = mouseY / zoom;
 
       // we only care about updating the location
-      setPixelInfoLocation((prev) => ({
+      setPixelPoint((prev) => ({
         ...prev,
         x: Math.floor(imageX),
         y: Math.floor(imageY),
@@ -357,14 +356,10 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const handleDrawingSelectedPixel = useCallback(() => {
     if (!imageDimensions || !color) return;
 
-    pixelInfoLocation.colorId = color.id;
+    updateCanvasPreviewPixel(previewCanvasRef, pixelPoint, color);
 
-    updateCanvasPreviewPixel(previewCanvasRef, pixelInfoLocation, color);
-
-    console.debug(
-      `Drawing pixel at (${pixelInfoLocation.x}, ${pixelInfoLocation.y})`,
-    );
-  }, [imageDimensions, pixelInfoLocation, color]);
+    console.debug(`Drawing pixel at (${pixelPoint.x}, ${pixelPoint.y})`);
+  }, [imageDimensions, pixelPoint, color]);
 
   useEffect(() => {
     handleDrawingSelectedPixel();

@@ -1,4 +1,4 @@
-import { PaletteColor, PixelInfo } from "@blurple-canvas-web/types";
+import { PaletteColor, Point } from "@blurple-canvas-web/types";
 import { RefObject } from "react";
 
 /**
@@ -9,7 +9,7 @@ import { RefObject } from "react";
  */
 export default function updateCanvasPreviewPixel(
   canvasRef: RefObject<HTMLCanvasElement>,
-  pixelInfo: PixelInfo,
+  pixelPoint: Point,
   color: PaletteColor,
 ) {
   const context = canvasRef.current?.getContext("2d");
@@ -19,7 +19,7 @@ export default function updateCanvasPreviewPixel(
 
   const { width, height } = context.canvas;
 
-  const { x, y } = pixelInfo;
+  const { x, y } = pixelPoint;
 
   // clear the canvas
   context.clearRect(0, 0, width, height);
