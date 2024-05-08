@@ -2,7 +2,7 @@
 
 import { styled } from "@mui/material";
 
-import { getOrdinalSuffix } from "@/util";
+import { formatTimestampLocalTZ, getOrdinalSuffix } from "@/util";
 import { UserStats } from "@blurple-canvas-web/types";
 
 const EmptyStateMessage = styled("div")`
@@ -13,6 +13,7 @@ const EmptyStateMessage = styled("div")`
 
 const Table = styled("table")`
   margin-block-start: 1rem;
+  font-size: 1.125rem;
 
   th,
   td {
@@ -64,7 +65,11 @@ export default function StatsTable({
         <tr>
           <th>Most recently placed</th>
           <td>
-            {statsAreLoading ? "Loading…" : mostRecentTimestamp ?? "Unknown"}
+            {statsAreLoading ?
+              "Loading…"
+            : stats.mostRecentTimestamp ?
+              formatTimestampLocalTZ(stats.mostRecentTimestamp)
+            : "Unknown"}
           </td>
         </tr>
       </tbody>

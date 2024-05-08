@@ -33,6 +33,7 @@ const SignOutButton = styled(Link)`
 const StatsCard = styled("div")`
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
+  margin-block: 1rem;
   max-inline-size: 100%;
   min-inline-size: 20rem;
   padding: 1.5rem;
