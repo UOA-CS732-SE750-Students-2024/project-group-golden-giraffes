@@ -5,7 +5,8 @@ export interface PixelHistoryRecord {
   color: PaletteColor;
   timestamp: Date;
   guildId?: string;
-  userProfile: DiscordUserProfile;
+  userId: string;
+  userProfile?: DiscordUserProfile;
 }
 
 export type PixelHistory = PixelHistoryRecord[];
