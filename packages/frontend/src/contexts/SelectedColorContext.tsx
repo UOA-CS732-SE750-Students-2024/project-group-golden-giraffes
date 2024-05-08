@@ -1,14 +1,20 @@
 "use client";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
-import { createContext, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+} from "react";
 
 interface SelectedColorContextType {
   color: PaletteColor | null;
-  setColor: (color: PaletteColor) => void;
+  setColor: Dispatch<SetStateAction<PaletteColor | null>>;
 }
 
-export const SelectedColorContext = createContext<SelectedColorContextType>({
+const SelectedColorContext = createContext<SelectedColorContextType>({
   color: null,
   setColor: () => {},
 });

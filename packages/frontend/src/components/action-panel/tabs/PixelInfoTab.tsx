@@ -8,6 +8,8 @@ import { ActionPanelTab } from "./ActionPanelTab";
 import CoordinatesCard from "./CoordinatesCard";
 import PixelHistoryListItem from "./PixelHistoryListItem";
 
+const TEMP_COORDS = { x: 1, y: 1 } as Point;
+
 const HistoryList = styled("div")`
   display: flex;
   flex-direction: column;
@@ -15,15 +17,11 @@ const HistoryList = styled("div")`
 `;
 
 interface PixelInfoTabProps {
-  coordinates: Point;
   canvasId: number;
 }
 
-export default function PixelInfoTab({
-  coordinates,
-  canvasId,
-}: PixelInfoTabProps) {
-  const { data: pixelHistory = [] } = usePixelHistory(canvasId, coordinates);
+export default function PixelInfoTab({ canvasId }: PixelInfoTabProps) {
+  const { data: pixelHistory = [] } = usePixelHistory(canvasId, TEMP_COORDS);
 
   const currentPixelInfo = pixelHistory[1]; // undefined if out of index
   const pastPixelHistory = pixelHistory.slice(1); // [] if out of index
@@ -36,7 +34,7 @@ export default function PixelInfoTab({
   return (
     <ActionPanelTab>
       <div>
-        <CoordinatesCard coordinates={coordinates} />
+        <CoordinatesCard coordinates={TEMP_COORDS} />
         <PixelHistoryListItem record={currentPixelInfo} />
         <Heading>Paint history</Heading>
         <HistoryList>

@@ -1,8 +1,8 @@
 import { styled } from "@mui/material";
 
-import { PaletteColor, PixelHistoryRecord } from "@blurple-canvas-web/types";
+import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 
-import { ColorCodeChip } from "@/components";
+import ColorCodeChip from "@/components/ColorCodeChip";
 import { StaticSwatch } from "@/components/swatch";
 
 const Wrapper = styled("div")`
@@ -41,7 +41,7 @@ export default function PixelHistoryListItem({
       <div>
         <Username title={userProfile.id}>{userProfile.username}</Username>
         <ColorName>
-          {color.name} <ColorCodeChip colorCode={color.code} />
+          {color.name} <ColorCodeChip color={color} />
         </ColorName>
       </div>
     </Wrapper>

@@ -1,10 +1,11 @@
 "use client";
 
-import { useAuthContext } from "@/contexts/AuthProvider";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+
+import { useAuthContext } from "@/contexts/AuthProvider";
 
 const Background = styled("div")`
   align-items: center;
@@ -76,7 +77,7 @@ export default function SignInPage() {
           />
         </picture>
         <Title variant="h1">Blurple Canvas</Title>
-        <a href="http://localhost:8000/api/v1/discord/">
+        <a href="http://localhost:8000/api/v1/discord">
           <Button variant="contained">Sign in with Discord</Button>
         </a>
         <p>That’s it. There are no other options.</p>
