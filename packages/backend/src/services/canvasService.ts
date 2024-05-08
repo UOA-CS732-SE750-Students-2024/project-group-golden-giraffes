@@ -192,8 +192,8 @@ export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
 }
 
 /**
- * This allows for many pixels in the cache to be updated at once. If the canvas is not in the cache
- * or the canvas is locked this will do nothing.
+ * Updates many pixels in the canvas cache at once. If the canvas is not in the cache or the canvas
+ * is locked this will do nothing.
  *
  * @param canvasId The ID of the canvas to update
  * @param pixels The new pixel values

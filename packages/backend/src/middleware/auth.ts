@@ -3,7 +3,7 @@ import config from "@/config";
 import { getProfilePictureUrlFromHash } from "@/services/discordProfileService";
 import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
-import { Express, NextFunction, Request, Response } from "express";
+import { Express } from "express";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
