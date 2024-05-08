@@ -65,6 +65,12 @@ export async function getLeaderboard(
     select: {
       rank: true,
       user_id: true,
+      discord_user_profile: {
+        select: {
+          username: true,
+          profile_picture_url: true,
+        },
+      },
       total_pixels: true,
     },
   });
@@ -73,5 +79,7 @@ export async function getLeaderboard(
     rank: row.rank,
     userId: row.user_id.toString(),
     totalPixels: row.total_pixels,
+    username: row.discord_user_profile.username,
+    profilePictureUrl: row.discord_user_profile.profile_picture_url,
   }));
 }
