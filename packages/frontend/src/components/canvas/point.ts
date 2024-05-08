@@ -29,3 +29,7 @@ export function dividePoint(p1: Point, scale: number): Point {
 export function multiplyPoint(p1: Point, scale: number): Point {
   return { x: p1.x * scale, y: p1.y * scale };
 }
+
+export function addPointAndTuple(p1: Point, [x, y]: [number, number]): Point {
+  return { x: p1.x + x, y: p1.y + y };
+}
