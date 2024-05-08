@@ -75,8 +75,7 @@ export default function PlacePixelTab({
     webPlacingEnabled &&
     selectedColor &&
     user &&
-    (selectedColor.global || false);
-  // replace the false above with userWithinServer(user, selectedColor.guildId) once guildId added to PaletteColor
+    (selectedColor.global || userWithinServer(user, selectedColor.guildId));
 
   const readOnly = canvas.isLocked;
 
