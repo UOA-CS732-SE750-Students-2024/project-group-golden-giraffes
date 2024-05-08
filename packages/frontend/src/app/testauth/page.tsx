@@ -23,5 +23,5 @@ export default function testauth() {
   }
 
   console.log(data);
-  return <div>Finished Loading</div>;
+  return <div>{JSON.stringify(data)}</div>;
 }
