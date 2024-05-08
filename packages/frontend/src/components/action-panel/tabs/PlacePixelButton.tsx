@@ -1,8 +1,10 @@
-import { buttonClasses, css, styled } from "@mui/material";
+"use client";
+
+import { buttonClasses, styled } from "@mui/material";
 
 import { PaletteColor, Point } from "@blurple-canvas-web/types";
 
-import { Button as ButtonBase } from "@/components";
+import { Button as ButtonBase } from "@/components/Button";
 
 const DynamicButton = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== "backgroundColorStr",
@@ -54,15 +56,16 @@ export const CoordinateLabel = styled("span")`
   opacity: 0.6;
 `;
 
-type PlacePixelButtonProps = {
+interface PlacePixelButtonProps {
   color: PaletteColor | null;
   coordinates: Point;
   disabled?: boolean;
-};
+}
 
 export default function PlacePixelButton({
   color,
   coordinates,
+  disabled = false,
   ...props
 }: PlacePixelButtonProps) {
   const rgba = color?.rgba;

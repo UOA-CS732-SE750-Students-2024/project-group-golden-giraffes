@@ -2,7 +2,7 @@ import { styled } from "@mui/material";
 
 import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 
-import { ColorCodeChip } from "@/components";
+import ColorCodeChip from "@/components/ColorCodeChip";
 import { StaticSwatch } from "@/components/swatch";
 
 const Wrapper = styled("div")`

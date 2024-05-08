@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { LayoutWithNavbar } from "../components/";
+import LayoutWithNavbar from "../components/LayoutWithNavbar";
 import Main from "./Main";
 
 export const metadata: Metadata = {

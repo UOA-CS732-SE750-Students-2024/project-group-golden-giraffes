@@ -1,4 +1,6 @@
-import { Navbar } from "@/components";
+"use client";
+
+import { Navbar } from "@/components/nav";
 
 export default function LayoutWithNavbar({
   content,

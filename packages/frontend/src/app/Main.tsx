@@ -3,7 +3,8 @@
 import { styled } from "@mui/material";
 
 import config from "@/config";
-import { ActionPanel, CanvasView } from "../components";
+import { ActionPanel } from "../components/action-panel";
+import { CanvasView } from "../components/canvas";
 
 const Wrapper = styled("main")`
   body:has(&) {
