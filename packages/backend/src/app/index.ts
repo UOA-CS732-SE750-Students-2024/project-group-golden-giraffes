@@ -9,7 +9,11 @@ import { createServer } from "node:http";
 import { initializeAuth } from "@/middleware/auth";
 import { Server } from "socket.io";
 
-export function createApp() {
+interface App {
+  io: Server;
+}
+
+export function createApp(): App {
   const app = express();
 
   const corsOptions = {
@@ -26,6 +30,13 @@ export function createApp() {
 
   const server = createServer(app);
   const io = new Server(server);
+
+  io.on("connection", (socket) => {
+    console.log("a user connected");
+    socket.on("disconnect", () => {
+      console.log("user disconnected");
+    });
+  });
 
   app.get("/", (req, res) => {
     res.json({ message: "Hello, world!" });
@@ -62,4 +73,6 @@ export function createApp() {
   server.listen(config.api.port, () => {
     console.log(`⚡[server]: Server is running on port ${config.api.port}`);
   });
+
+  return { io };
 }

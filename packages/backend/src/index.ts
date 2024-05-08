@@ -1,3 +1,3 @@
 import { createApp } from "./app";
 
-createApp();
+export const { io } = createApp();
