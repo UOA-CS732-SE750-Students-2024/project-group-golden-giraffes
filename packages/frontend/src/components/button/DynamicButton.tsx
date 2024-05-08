@@ -4,7 +4,7 @@ import { buttonClasses, css, styled } from "@mui/material";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
 
-import { Button as ButtonBase } from "@/components/button/Button";
+import { Button as ButtonBase } from "@/components/button";
 
 const StyledAnchor = styled("a")`
   display: contents;

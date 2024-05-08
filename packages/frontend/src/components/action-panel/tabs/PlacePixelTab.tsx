@@ -1,11 +1,10 @@
-import { Button, styled } from "@mui/material";
+import { styled } from "@mui/material";
 
 import { Palette, Point } from "@blurple-canvas-web/types";
 
 import { useSelectedColorContext } from "@/contexts";
 import { usePalette } from "@/hooks";
-import { Server } from "lucide-react";
-import DynamicButton, { DynamicAnchorButton } from "../../button/DynamicButton";
+import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";

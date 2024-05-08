@@ -1,2 +1,2 @@
 export { Button } from "./Button";
-export { default as DynamicButton, DynamicAnchorButton } from "./DynamicButton";
+export { DynamicAnchorButton, default as DynamicButton } from "./DynamicButton";
