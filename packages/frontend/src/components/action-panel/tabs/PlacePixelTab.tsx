@@ -2,7 +2,10 @@ import { styled } from "@mui/material";
 
 import { Palette, Point } from "@blurple-canvas-web/types";
 
-import { useSelectedColorContext } from "@/contexts";
+import {
+  useSelectedColorContext,
+  useSelectedPixelLocationContext,
+} from "@/contexts";
 import { usePalette } from "@/hooks";
 import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
@@ -42,14 +45,16 @@ export default function PlacePixelTab({
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
 
-  const selectedCoordinates = { x: 1, y: 1 } as Point;
-
-  const { x, y } = selectedCoordinates;
+  const { pixelPoint } = useSelectedPixelLocationContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
+
+  const selectedCoordinates = pixelPoint;
+  const x = selectedCoordinates?.x;
+  const y = selectedCoordinates?.y;
 
   return (
     <ActionPanelTabBody active={active}>
@@ -78,9 +83,11 @@ export default function PlacePixelTab({
         color={selectedColor}
         disabled={paletteIsLoading || !selectedColor}
       >
-        Place pixel
+        {selectedCoordinates && selectedColor ?
+          "Place pixel"
+        : "Select a pixel"}
         <CoordinateLabel>
-          ({x},&nbsp;{y})
+          {selectedCoordinates && selectedColor ? `${x},\u00A0${y}` : undefined}
         </CoordinateLabel>
       </DynamicButton>
       {!selectedColor?.global && serverInvite && (
