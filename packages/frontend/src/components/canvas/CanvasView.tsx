@@ -46,10 +46,6 @@ const CanvasContainer = styled("div")`
     image-rendering: pixelated;
     max-width: inherit;
   }
-
-  canvas.loading {
-    filter: grayscale(0.8);
-  }
 `;
 
 const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
