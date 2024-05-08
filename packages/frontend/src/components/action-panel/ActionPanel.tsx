@@ -12,7 +12,7 @@ const Wrapper = styled("div")`
   border: var(--card-border);
   display: grid;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
   grid-template-rows: auto 1fr;
   padding: var(--padding-width);
 
