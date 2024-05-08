@@ -1,9 +1,13 @@
 "use client";
 
 import { css, styled } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useActiveCanvasContext } from "@/contexts";
+import {
+  useActiveCanvasContext,
+  useSelectedColorContext,
+  useSelectedPixelLocationContext,
+} from "@/contexts";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
 const Wrapper = styled("div")`
@@ -99,6 +103,17 @@ const TABS = {
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
   const { canvas } = useActiveCanvasContext();
+  const { setCoords } = useSelectedPixelLocationContext();
+  const { setColor: setSelectedColor } = useSelectedColorContext();
+
+  useEffect(() => {
+    if (canvas) {
+      // for some reason, useEffect was complaining if I didn't use `canvas` anywhere
+      // "This hook specifies more dependencies than necessary"
+      setSelectedColor(null);
+      setCoords(null);
+    }
+  }, [canvas, setSelectedColor, setCoords]);
 
   return (
     <Wrapper>
