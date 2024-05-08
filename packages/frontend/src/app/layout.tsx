@@ -9,6 +9,10 @@ import {
   SelectedPixelLocationProvider,
 } from "@/contexts";
 import "@/styles/core.css";
+import {
+  ActiveCanvasContext,
+  ActiveCanvasProvider,
+} from "@/contexts/ActiveCanvasContext";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { Theme } from "@/theme";
 import { DiscordUserProfile } from "@blurple-canvas-web/types";
@@ -54,11 +58,13 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <AuthProvider profile={getServerSideProfile()}>
             <QueryClientProvider>
-              <SelectedColorProvider>
-                <SelectedPixelLocationProvider>
-                  <ThemeProvider theme={Theme}>{children}</ThemeProvider>
-                </SelectedPixelLocationProvider>
-              </SelectedColorProvider>
+              <ActiveCanvasProvider>
+                <SelectedColorProvider>
+                  <SelectedPixelLocationProvider>
+                    <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+                  </SelectedPixelLocationProvider>
+                </SelectedColorProvider>
+              </ActiveCanvasProvider>
             </QueryClientProvider>
           </AuthProvider>
         </AppRouterCacheProvider>

@@ -1,22 +1,24 @@
 import { styled } from "@mui/material";
 
-import { Palette } from "@blurple-canvas-web/types";
+import { Palette, Point } from "@blurple-canvas-web/types";
 
-import {
-  useSelectedColorContext,
-  useSelectedPixelLocationContext,
-} from "@/contexts";
+import { useSelectedColorContext } from "@/contexts";
 import { usePalette } from "@/hooks";
+import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
-import PlacePixelButton from "./PlacePixelButton";
+import BotCommandCard from "./BotCommandCard";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
 const ColorPicker = styled("div")`
   display: grid;
   gap: 0.25rem;
   grid-template-columns: repeat(5, 1fr);
+`;
+
+export const CoordinateLabel = styled("span")`
+  opacity: 0.6;
 `;
 
 export const partitionPalette = (palette: Palette) => {
@@ -39,7 +41,15 @@ export default function PlacePixelTab({
 
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
-  const { pixelPoint } = useSelectedPixelLocationContext();
+
+  const selectedCoordinates = { x: 1, y: 1 } as Point;
+
+  const { x, y } = selectedCoordinates;
+
+  const inviteSlug = selectedColor?.invite;
+  const hasInvite = !!inviteSlug;
+  const serverInvite =
+    hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
   return (
     <ActionPanelTabBody active={active}>
@@ -63,12 +73,22 @@ export default function PlacePixelTab({
           />
         ))}
       </ColorPicker>
-      <ColorInfoCard color={selectedColor} />
-      <PlacePixelButton
+      <ColorInfoCard color={selectedColor} invite={serverInvite} />
+      <DynamicButton
         color={selectedColor}
-        coordinates={pixelPoint}
         disabled={paletteIsLoading || !selectedColor}
-      />
+      >
+        Place pixel
+        <CoordinateLabel>
+          ({x},&nbsp;{y})
+        </CoordinateLabel>
+      </DynamicButton>
+      {!selectedColor?.global && serverInvite && (
+        <DynamicAnchorButton color={selectedColor} href={serverInvite}>
+          Join {selectedColor?.guildName ?? "server"}
+        </DynamicAnchorButton>
+      )}
+      <BotCommandCard color={selectedColor} coordinates={selectedCoordinates} />
     </ActionPanelTabBody>
   );
 }
