@@ -8,22 +8,12 @@ const Wrapper = styled("div")`
   display: flex;
   flex-direction: column;
   place-items: center;
-  padding: 8rem 4rem;
+  padding: 4rem 4rem;
   gap: 4rem;
 `;
 
 const TitleBlock = styled("div")`
   text-align: center;
-`;
-
-const Heading = styled("h1")`
-  font-stretch: 125%;
-  font-weight: 900;
-`;
-
-const Subtitle = styled("h2")`
-  color: oklch(var(--discord-white-oklch) / 55%);
-  font-weight: 400;
 `;
 
 const Table = styled("table")`
@@ -84,8 +74,8 @@ export default function Leaderboard() {
   return (
     <Wrapper>
       <TitleBlock>
-        <Heading>Leaderboard</Heading>
-        <Subtitle>Canvas name</Subtitle>
+        <h1>Leaderboard</h1>
+        <h2>Canvas name</h2>
       </TitleBlock>
       <Table>
         <thead hidden>

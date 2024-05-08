@@ -9,12 +9,14 @@ import { Button } from "@/components/button";
 import { useActiveCanvasContext, useAuthContext } from "@/contexts";
 import { useUserStats } from "@/hooks";
 import { useEffect } from "react";
+import StatsTable from "./StatsTable";
 
 const Container = styled("main")`
   display: flex;
   flex-direction: column;
   padding-block: 2rem;
   place-items: center;
+  gap: 1rem;
   width: 100%;
   padding: 8rem 4rem;
 
@@ -23,38 +25,19 @@ const Container = styled("main")`
   }
 `;
 
-const Username = styled("h1")`
-  font-stretch: 125%;
-  font-weight: 900;
-`;
-
 const SignOutButton = styled(Link)`
   /* Otherwise the height of the link doesn't include the button padding */
   display: inline-block;
 `;
 
 const StatsCard = styled("div")`
-  max-inline-size: 20rem;
   background-color: var(--discord-legacy-not-quite-black);
-  padding: 1rem;
+  border-radius: var(--card-border-radius);
+  max-inline-size: 100%;
+  min-inline-size: 20rem;
+  padding: 1.5rem;
+  text-align: center;
 `;
-
-const getOrdinalSuffix = (rank: number) => {
-  const trailingDigits = rank % 100;
-  if (11 <= trailingDigits && trailingDigits <= 13) {
-    return "th";
-  }
-  switch (rank % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
-};
 
 export default function MePageContent() {
   const { signOut, user } = useAuthContext();
@@ -66,34 +49,26 @@ export default function MePageContent() {
     }
   }, [user, router]);
 
-  if (!user) {
-    console.debug("no user");
-    return null;
-  }
+  if (!user) return null;
+
   const { username, profilePictureUrl } = user;
   const { canvas: activeCanvas } = useActiveCanvasContext();
 
-  if (!activeCanvas) {
-    console.debug("no active canvas");
-    return null;
-  }
-
+  if (!activeCanvas) return null;
   const { data: stats, isLoading: statsAreLoading } = useUserStats(
-    user.id,
+    // user.id,
+    "204778476102877187",
     activeCanvas.id,
   );
-
-  const { totalPixels, rank, mostFrequentColor, mostRecentTimestamp } =
-    stats ?? {};
 
   return (
     <Container>
       <Avatar
         username={username}
         profilePictureUrl={profilePictureUrl}
-        size={128}
+        size={96}
       />
-      <Username>{username}</Username>
+      <h1>{username}</h1>
       <SignOutButton href="/">
         <Button variant="contained" onClick={signOut}>
           Sign out
@@ -101,34 +76,7 @@ export default function MePageContent() {
       </SignOutButton>
       <StatsCard>
         <h2>{activeCanvas.name}</h2>
-        <table>
-          <tbody>
-            <tr>
-              <th>{totalPixels ?? "?"}&nbsp;pixels placed</th>
-              <td>
-                {statsAreLoading ?
-                  "Loading…"
-                : rank && `${rank}${getOrdinalSuffix(rank)}`}
-              </td>
-            </tr>
-            <tr>
-              <th>Most used color</th>
-              <td>
-                {statsAreLoading ?
-                  "Loading…"
-                : mostFrequentColor.name ?? "Unknown"}
-              </td>
-            </tr>
-            <tr>
-              <th>Most recently placed</th>
-              <td>
-                {statsAreLoading ?
-                  "Loading…"
-                : mostRecentTimestamp ?? "Unknown"}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <StatsTable stats={stats} statsAreLoading={statsAreLoading} />
       </StatsCard>
     </Container>
   );
