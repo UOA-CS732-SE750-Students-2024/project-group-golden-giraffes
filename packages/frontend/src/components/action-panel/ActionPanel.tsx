@@ -103,17 +103,6 @@ export default function ActionPanel() {
     <Wrapper>
       <TabBar>
         <Tab
-          active={currentTab === TABS.LOOK}
-          onClick={() => setCurrentTab(TABS.LOOK)}
-          onKeyUp={(event) => {
-            if (event.key === "Enter" || event.key === " ")
-              setCurrentTab(TABS.LOOK);
-          }}
-          tabIndex={0}
-        >
-          Look
-        </Tab>
-        <Tab
           active={currentTab === TABS.PLACE}
           onClick={() => setCurrentTab(TABS.PLACE)}
           onKeyUp={(event) => {
@@ -124,10 +113,21 @@ export default function ActionPanel() {
         >
           Place
         </Tab>
+        <Tab
+          active={currentTab === TABS.LOOK}
+          onClick={() => setCurrentTab(TABS.LOOK)}
+          onKeyUp={(event) => {
+            if (event.key === "Enter" || event.key === " ")
+              setCurrentTab(TABS.LOOK);
+          }}
+          tabIndex={0}
+        >
+          Look
+        </Tab>
       </TabBar>
 
-      <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvasId} />
       <PlacePixelTab active={currentTab === TABS.PLACE} />
+      <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvasId} />
     </Wrapper>
   );
 }
