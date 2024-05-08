@@ -9,8 +9,6 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
 
-const randomSecret = crypto.randomBytes(64).toString("hex");
-
 const discordStrategy = new DiscordStrategy(
   {
     clientID: config.discord.clientId,
