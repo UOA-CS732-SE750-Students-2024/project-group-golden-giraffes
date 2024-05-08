@@ -62,9 +62,9 @@
     --card-border: var(--border-color) solid 2px;
     --card-border-radius: 0.1875rem;
     --focus-outline: var(--discord-blurple) solid 2px;
-    --transition-duration-fast: 150ms;
-    --transition-duration-medium: 200ms;
-    --transition-duration-slow: 250ms;
+    --transition-duration-fast: 100ms;
+    --transition-duration-medium: 150ms;
+    --transition-duration-slow: 200ms;
     --text-glow: 0 0 1rem var(--discord-blurple);
 
     background-color: var(--discord-legacy-dark-but-not-black);
