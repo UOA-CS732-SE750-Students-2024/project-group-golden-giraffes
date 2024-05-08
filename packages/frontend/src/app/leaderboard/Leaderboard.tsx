@@ -55,7 +55,7 @@ const Username = styled("p")`
   max-inline-size: 22rem;
 `;
 
-const Avatar = styled("img")`
+const Avatar = styled("object")`
   --stroke-width: max(0.125rem, 1px);
 
   border-radius: calc(infinity * 1px);
@@ -103,17 +103,19 @@ export default function Leaderboard() {
           </tr>
         </thead>
         <tbody>
-          {leaderboard.map(
-            ({ userId, rank, profilePictureUrl, username, totalPixels }) => (
+          {leaderboard.map((user) => {
+            const { userId, rank, profilePictureUrl, username, totalPixels } =
+              user;
+            return (
               <tr key={userId}>
                 <RankCell>{rank}</RankCell>
                 <UserCell>
-                  <Avatar
-                    src={profilePictureUrl}
-                    alt={`${username}’s avatar`}
-                    width={60}
-                    height={60}
-                  />
+                  <Avatar data={profilePictureUrl} width={60} height={60}>
+                    <img
+                      alt={`${username}’s avatar`}
+                      src="https://cdn.discordapp.com/embed/avatars/1.png"
+                    />
+                  </Avatar>
                   <Username>{username}</Username>
                 </UserCell>
                 <PixelCountCell>
@@ -123,8 +125,8 @@ export default function Leaderboard() {
                   </PixelCountCellContents>
                 </PixelCountCell>
               </tr>
-            ),
-          )}
+            );
+          })}
         </tbody>
       </Table>
     </Wrapper>
