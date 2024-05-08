@@ -1,11 +1,12 @@
 "use client";
 
 import { css, styled } from "@mui/material";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
 const Wrapper = styled("div")`
+  --padding-width: 1rem;
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: var(--card-border);
@@ -13,7 +14,11 @@ const Wrapper = styled("div")`
   flex-direction: column;
   gap: 1rem;
   grid-template-rows: auto 1fr;
-  padding: 1rem;
+  padding: var(--padding-width);
+
+  > * {
+    border-radius: calc(var(--card-border-radius) - var(--padding-width));
+  }
 `;
 
 const TabBar = styled("ul")`
@@ -100,6 +105,10 @@ export default function ActionPanel() {
         <Tab
           active={currentTab === TABS.LOOK}
           onClick={() => setCurrentTab(TABS.LOOK)}
+          onKeyUp={(event) => {
+            if (event.key === "Enter" || event.key === " ")
+              setCurrentTab(TABS.LOOK);
+          }}
           tabIndex={0}
         >
           Look
@@ -107,6 +116,10 @@ export default function ActionPanel() {
         <Tab
           active={currentTab === TABS.PLACE}
           onClick={() => setCurrentTab(TABS.PLACE)}
+          onKeyUp={(event) => {
+            if (event.key === "Enter" || event.key === " ")
+              setCurrentTab(TABS.PLACE);
+          }}
           tabIndex={0}
         >
           Place
