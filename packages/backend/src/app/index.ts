@@ -7,7 +7,6 @@ import config from "@/config";
 import { apiRouter } from "@/routes";
 import "@/utils"; // Make BigInt JSON serializable
 import { initializeAuth } from "@/middleware/auth";
-import proxy from "express-http-proxy";
 
 export interface ExpressServer {
   app: Express;
@@ -17,13 +16,17 @@ export interface ExpressServer {
 export function createApp(): ExpressServer {
   const app = express();
 
-  app.use(cors());
+  const corsOptions = {
+    origin: config.frontendUrl,
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
+
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
   initializeAuth(app);
   app.use(apiRouter);
-  app.use(proxy("http://localhost:3000")); // assuming your Reacts runs on P3000
 
   app.get("/", (req, res) => {
     res.json({ message: "Hello, world!" });

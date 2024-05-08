@@ -7,10 +7,9 @@ export default function testauth() {
   const [data, setData] = useState<any | null>(null);
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(
-        `${config.apiUrl}/api/v1/discord/test`,
-        /* { credentials: "same-origin", } */
-      );
+      const response = await fetch(`${config.apiUrl}/api/v1/discord/test`, {
+        credentials: "include",
+      });
       const data = await response.json();
       setData(data);
     };
