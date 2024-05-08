@@ -128,19 +128,16 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     setIsLoading(false);
   }, []);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader whenever
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
   useEffect(() => {
     setIsLoading(true);
-  }, [imageUrl]);
-
-  useEffect(() => {
     // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
     // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
     // need to check it's working correctly when we start placing pixels.
     if (imageRef.current?.complete) {
       handleLoadImage(imageRef.current);
     }
-  }, [handleLoadImage]);
+  }, [handleLoadImage, imageUrl]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
