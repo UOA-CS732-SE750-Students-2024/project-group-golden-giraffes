@@ -6,9 +6,12 @@ export const ActionPanelTab = styled("div")`
   gap: 1rem;
 
   > * {
+    --padding-width: 1rem;
+
     background-color: var(--discord-legacy-dark-but-not-black);
+    border-radius: calc(var(--card-border-radius) - var(--padding-width));
     margin-trim: block;
-    padding: 1rem;
+    padding: var(--padding-width);
 
     @supports not (margin-trim: block) {
       > :first-child {
