@@ -50,7 +50,7 @@ export default function StatsTable({
     <Table>
       <tbody>
         <tr>
-          <th>{totalPixels ?? "?"}&nbsp;pixels placed</th>
+          <th>{totalPixels?.toLocaleString() ?? "?"}&nbsp;pixels placed</th>
           <td>
             {statsAreLoading ?
               "Loading…"
