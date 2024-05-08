@@ -85,6 +85,8 @@ export default function PlacePixelTab({
   const isJoinServerShown =
     (!canPlacePixel || readOnly) && !selectedColor?.global && serverInvite;
 
+  const isSelected = selectedCoordinates && selectedColor;
+
   return (
     <ActionPanelTabBody active={active}>
       <ColorPicker>
@@ -113,13 +115,9 @@ export default function PlacePixelTab({
           color={selectedColor}
           disabled={paletteIsLoading || !selectedColor}
         >
-          {selectedCoordinates && selectedColor ?
-            "Place pixel"
-          : "Select a pixel"}
+          {isSelected ? "Place pixel" : "Select a pixel"}
           <CoordinateLabel>
-            {selectedCoordinates && selectedColor ?
-              `(${x},\u00A0${y})`
-            : undefined}
+            {isSelected ? `(${x},\u00A0${y})` : undefined}
           </CoordinateLabel>
         </DynamicButton>
       )}
@@ -128,7 +126,7 @@ export default function PlacePixelTab({
           Join {selectedColor?.guildName ?? "server"}
         </DynamicAnchorButton>
       )}
-      {!readOnly && (
+      {!readOnly && isSelected && (
         <BotCommandCard
           color={selectedColor}
           coordinates={selectedCoordinates}
