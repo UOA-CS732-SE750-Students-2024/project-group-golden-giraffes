@@ -52,7 +52,6 @@ export const Theme = createTheme({
       },
       styleOverrides: {
         root: {
-          backgroundColor: "var(--discord-blurple)",
           borderRadius: ".5rem",
           fontSize: "1rem",
           fontWeight: 500,
