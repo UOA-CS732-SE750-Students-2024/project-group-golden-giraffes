@@ -78,9 +78,9 @@ export default function PlacePixelButton({
   return (
     <DynamicButton backgroundColorStr={backgroundColorStr} {...props}>
       <DynamicButtonContent>
-        {coordinates ? "Place pixel" : "Select a pixel"}
+        {coordinates && color ? "Place pixel" : "Select a pixel"}
         <CoordinateLabel>
-          {coordinates ? `${x},\u00A0${y}` : undefined}
+          {coordinates && color ? `${x},\u00A0${y}` : undefined}
         </CoordinateLabel>
       </DynamicButtonContent>
     </DynamicButton>
