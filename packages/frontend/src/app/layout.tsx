@@ -5,6 +5,10 @@ import type { Metadata, Viewport } from "next";
 import config from "@/config";
 import { QueryClientProvider, SelectedColorProvider } from "@/contexts";
 import "@/styles/core.css";
+import {
+  ActiveCanvasContext,
+  ActiveCanvasProvider,
+} from "@/contexts/ActiveCanvasContext";
 import { AuthProvider } from "@/contexts/AuthProvider";
 import { Theme } from "@/theme";
 import { DiscordUserProfile } from "@blurple-canvas-web/types";
@@ -50,9 +54,11 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <AuthProvider profile={getServerSideProfile()}>
             <QueryClientProvider>
-              <SelectedColorProvider>
-                <ThemeProvider theme={Theme}>{children}</ThemeProvider>
-              </SelectedColorProvider>
+              <ActiveCanvasProvider>
+                <SelectedColorProvider>
+                  <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+                </SelectedColorProvider>
+              </ActiveCanvasProvider>
             </QueryClientProvider>
           </AuthProvider>
         </AppRouterCacheProvider>
