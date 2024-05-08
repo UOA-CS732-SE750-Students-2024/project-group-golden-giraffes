@@ -4,3 +4,7 @@ export {
   SelectedColorProvider,
   useSelectedColorContext,
 } from "./SelectedColorContext";
+export {
+  ActiveCanvasProvider,
+  useActiveCanvasContext,
+} from "./ActiveCanvasContext";
