@@ -58,7 +58,6 @@ export const Theme = createTheme({
           fontWeight: 500,
           letterSpacing: "0.005em",
           textTransform: "none",
-          touchAction: "manipulation",
           userSelect: "none",
 
           "&.Mui-disabled": {
