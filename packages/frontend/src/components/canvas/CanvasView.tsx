@@ -1,6 +1,6 @@
 "use client";
 
-import { CircularProgress, styled } from "@mui/material";
+import { CircularProgress, css, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
 import { Point } from "@blurple-canvas-web/types";
@@ -50,10 +50,21 @@ const CanvasContainer = styled("div")`
 `;
 
 const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
-  ${({ isLoading }) => isLoading && "filter: grayscale(0.8);"}
+  transition: filter var(--transition-duration-medium) ease;
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      cursor: wait;
+      filter: grayscale(80%);
+    `}
 `;
 
-const PreviewCanvas = styled("canvas")`
+const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      display: none;
+    `}
   position: absolute;
   pointer-events: none;
 `;
@@ -385,6 +396,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
           }}
         >
           <PreviewCanvas
+            isLoading={isLoading}
             ref={previewCanvasRef}
             width={imageDimensions?.width}
             height={imageDimensions?.height}
