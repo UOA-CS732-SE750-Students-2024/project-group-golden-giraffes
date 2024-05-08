@@ -38,6 +38,8 @@ export default function PlacePixelTab({
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
 
+  const selectedCoordinates = { x: 1, y: 1 } as Point;
+
   return (
     <ActionPanelTabBody active={active}>
       <ColorPicker>
@@ -63,13 +65,10 @@ export default function PlacePixelTab({
       <ColorInfoCard color={selectedColor} />
       <PlacePixelButton
         color={selectedColor}
-        coordinates={{ x: 1, y: 1 } as Point}
+        coordinates={selectedCoordinates}
         disabled={paletteIsLoading || !selectedColor}
       />
-      <BotCommandCard
-        color={selectedColor}
-        coordinates={{ x: 1, y: 1 } as Point}
-      />
+      <BotCommandCard color={selectedColor} coordinates={selectedCoordinates} />
     </ActionPanelTabBody>
   );
 }
