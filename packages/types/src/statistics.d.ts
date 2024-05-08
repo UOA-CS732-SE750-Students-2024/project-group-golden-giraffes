@@ -1,6 +1,8 @@
+import { CanvasInfo } from "./canvasInfo";
+
 export interface UserStats {
   userId: string;
-  canvasId: number;
+  canvasId: CanvasInfo["id"];
   totalPixels?: number;
   rank?: number;
   mostFrequentColor?: PaletteColor;
