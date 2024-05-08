@@ -47,6 +47,7 @@ export function initializeAuth(app: Express) {
         maxAge: 7 * 24 * 60 * 60 * 1000, // ms
         sameSite: config.environment === "development" ? "lax" : "strict",
       },
+      // having a random secret would mess with persistent sessions
       secret: config.expressSessionSecret,
       resave: true,
       saveUninitialized: true,
