@@ -46,6 +46,10 @@ const CanvasContainer = styled("div")`
     image-rendering: pixelated;
     max-width: inherit;
   }
+
+  canvas.loading {
+    filter: grayscale(0.8);
+  }
 `;
 
 const PreviewCanvas = styled("canvas")`
@@ -89,6 +93,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
   const { color } = useSelectedColorContext();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
     null,
@@ -98,8 +103,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     x: 0,
     y: 0,
   });
-
-  const isLoading = imageDimensions === null;
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
@@ -121,7 +124,13 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     }
 
     setImageDimension({ width: image.width, height: image.height });
+    setIsLoading(false);
   }, []);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader whenever
+  useEffect(() => {
+    setIsLoading(true);
+  }, [imageUrl]);
 
   useEffect(() => {
     // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
@@ -372,7 +381,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
-        {isLoading && <CircularProgress className="loader" />}
         <div
           id="canvas-pan-and-zoom"
           style={{
@@ -385,8 +393,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
             width={imageDimensions?.width}
             height={imageDimensions?.height}
           />
-          <canvas ref={canvasRef} />
+          <canvas ref={canvasRef} className={isLoading ? "loading" : ""} />
         </div>
+        {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
       <img
         alt="Blurple Canvas 2023"
