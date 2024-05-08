@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/Button";
 import { Container } from "@/components/Container";
+import { Button } from "@/components/button/Button";
 import { useAuthContext } from "@/contexts";
 import { styled } from "@mui/material";
 import Link from "next/link";
