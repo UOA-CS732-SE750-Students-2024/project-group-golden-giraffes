@@ -8,7 +8,7 @@ interface SelectedColorContextType {
   setColor: (color: PaletteColor) => void;
 }
 
-export const SelectedColorContext = createContext<SelectedColorContextType>({
+const SelectedColorContext = createContext<SelectedColorContextType>({
   color: null,
   setColor: () => {},
 });

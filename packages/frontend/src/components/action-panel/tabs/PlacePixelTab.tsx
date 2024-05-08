@@ -2,7 +2,7 @@ import { styled } from "@mui/material";
 
 import { Palette, Point } from "@blurple-canvas-web/types";
 
-import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
+import { useSelectedColorContext } from "@/contexts";
 import { usePalette } from "@/hooks";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
