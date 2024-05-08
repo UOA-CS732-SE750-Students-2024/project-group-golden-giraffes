@@ -44,7 +44,6 @@ discordRouter.get(
 
 discordRouter.get("/test", (req, res) => {
   try {
-    console.log(req.session);
     const profile = req.user as DiscordUserProfile;
 
     if (!profile || !profile.id) {
