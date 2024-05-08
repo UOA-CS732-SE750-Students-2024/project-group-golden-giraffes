@@ -49,7 +49,7 @@ jobs:
         package:
           - types
           - backend
-          - web-app
+          - frontend
     steps:
       - uses: actions/checkout@v4
 

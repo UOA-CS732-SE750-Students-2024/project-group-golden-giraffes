@@ -2,8 +2,10 @@ import { DiscordUserProfile } from "./discordUserProfile";
 
 export interface PixelHistoryRecord {
   id: string;
-  colorId: number;
+  color: PaletteColor;
   timestamp: Date;
   guildId?: string;
   userProfile: DiscordUserProfile;
 }
+
+export type PixelHistory = PixelHistoryRecord[];
