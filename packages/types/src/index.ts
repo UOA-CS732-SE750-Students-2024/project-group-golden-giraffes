@@ -1,5 +1,6 @@
 export * from "./api";
 export * from "./canvasInfo";
+export * from "./discordGuildRecord";
 export * from "./discordUserProfile";
 export * from "./pixelInfo";
 export * from "./event";

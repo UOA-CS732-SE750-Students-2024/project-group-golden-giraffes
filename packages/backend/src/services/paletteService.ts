@@ -34,7 +34,7 @@ export async function getEventPalette(
       rgba: true,
       participations: {
         select: {
-          guild: { select: { invite: true } }, // Include the guild invite
+          guild: { select: { invite: true, discord_guild_record: true } }, // Include the guild invite
         },
         // Only include the participation for the event we're looking at. This way the only element
         // in the participations array will be the one for the event we're looking at.
@@ -63,5 +63,7 @@ export async function getEventPalette(
     // We don't need to worry about the size of participations because JS doesn't throw index out
     // of bounds errors, instead it just returns undefined.
     invite: color.participations[0]?.guild?.invite ?? null,
+    guildName:
+      color.participations[0]?.guild?.discord_guild_record?.name ?? null,
   }));
 }
