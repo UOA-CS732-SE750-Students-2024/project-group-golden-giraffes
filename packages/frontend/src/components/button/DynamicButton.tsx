@@ -2,9 +2,13 @@
 
 import { buttonClasses, css, styled } from "@mui/material";
 
-import { PaletteColor, Point } from "@blurple-canvas-web/types";
+import { PaletteColor } from "@blurple-canvas-web/types";
 
 import { Button as ButtonBase } from "@/components/button/Button";
+
+const StyledAnchor = styled("a")`
+  display: contents;
+`;
 
 const StyledButton = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== "backgroundColorStr",
@@ -73,5 +77,17 @@ export default function DynamicButton({
     <StyledButton backgroundColorStr={backgroundColorStr} {...props}>
       <DynamicButtonContent>{children}</DynamicButtonContent>
     </StyledButton>
+  );
+}
+
+export function DynamicAnchorButton({
+  children,
+  href,
+  ...props
+}: DynamicButtonProps & { href: string }) {
+  return (
+    <StyledAnchor href={href} target="_blank" rel="noreferrer">
+      <DynamicButton {...props}>{children}</DynamicButton>
+    </StyledAnchor>
   );
 }

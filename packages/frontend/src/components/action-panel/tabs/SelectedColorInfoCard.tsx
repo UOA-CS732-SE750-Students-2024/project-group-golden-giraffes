@@ -18,6 +18,7 @@ const Heading = styled("h3")`
 
 const Subtitle = styled("p")`
   font-size: 1rem;
+  grid-column: 1/-1;
   letter-spacing: 0.005em;
   margin-block-start: 0.25rem;
 
@@ -40,20 +41,18 @@ export default function ColorInfoCard({
   if (!color) return <Wrapper>No color selected</Wrapper>;
 
   const { name: colorName, code: colorCode, invite: inviteSlug } = color;
-  const hasInvite = !!inviteSlug;
-  const serverInvite = hasInvite ? `discord.gg/${inviteSlug}` : null;
 
   return (
     <Wrapper>
       <div>
         <Heading>{colorName}</Heading>
-        {serverInvite && (
-          <Subtitle>
-            <a href={`https://${serverInvite}`}>{serverInvite}</a>
-          </Subtitle>
-        )}
       </div>
       <Code>{colorCode}</Code>
+      {!color.global && (
+        <Subtitle>
+          This color can be used in {color.guildName ?? "a partnered server"}
+        </Subtitle>
+      )}
     </Wrapper>
   );
 }

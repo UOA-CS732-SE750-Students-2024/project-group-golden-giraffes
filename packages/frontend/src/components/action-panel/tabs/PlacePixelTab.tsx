@@ -5,7 +5,7 @@ import { Palette, Point } from "@blurple-canvas-web/types";
 import { useSelectedColorContext } from "@/contexts";
 import { usePalette } from "@/hooks";
 import { Server } from "lucide-react";
-import DynamicButton from "../../button/DynamicButton";
+import DynamicButton, { DynamicAnchorButton } from "../../button/DynamicButton";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
@@ -47,6 +47,11 @@ export default function PlacePixelTab({
 
   const { x, y } = selectedCoordinates;
 
+  const inviteSlug = selectedColor?.invite;
+  const hasInvite = !!inviteSlug;
+  const serverInvite =
+    hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
+
   return (
     <ActionPanelTabBody active={active}>
       <ColorPicker>
@@ -79,7 +84,11 @@ export default function PlacePixelTab({
           ({x},&nbsp;{y})
         </CoordinateLabel>
       </DynamicButton>
-      <DynamicButton color={selectedColor}>Join SWTOR</DynamicButton>
+      {!selectedColor?.global && serverInvite && (
+        <DynamicAnchorButton color={selectedColor} href={serverInvite}>
+          Join {selectedColor?.guildName ?? "server"}
+        </DynamicAnchorButton>
+      )}
       <BotCommandCard color={selectedColor} coordinates={selectedCoordinates} />
     </ActionPanelTabBody>
   );
