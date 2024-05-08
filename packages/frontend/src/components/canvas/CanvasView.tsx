@@ -53,7 +53,8 @@ const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
   ${({ isLoading }) => isLoading && "filter: grayscale(0.8);"}
 `;
 
-const PreviewCanvas = styled("canvas")`
+const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
+  ${({ isLoading }) => isLoading && "display: none;"}
   position: absolute;
   pointer-events: none;
 `;
@@ -385,9 +386,10 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
           }}
         >
           <PreviewCanvas
+            height={imageDimensions?.height}
+            isLoading={isLoading}
             ref={previewCanvasRef}
             width={imageDimensions?.width}
-            height={imageDimensions?.height}
           />
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} />
         </div>
