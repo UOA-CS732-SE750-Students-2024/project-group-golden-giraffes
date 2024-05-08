@@ -30,7 +30,7 @@ const ColorName = styled("p")`
 export default function PixelHistoryListItem({
   record,
 }: {
-  record: PixelHistoryRecord;
+  record?: PixelHistoryRecord;
 }) {
   if (!record) return null;
   const { color, userProfile } = record;
