@@ -1,7 +1,8 @@
 "use client";
 
-import { CanvasSummary } from "@blurple-canvas-web/types";
 import { createContext, useContext, useState } from "react";
+
+import { CanvasSummary } from "@blurple-canvas-web/types";
 
 interface ActiveCanvasContextType {
   canvas: CanvasSummary | null;
