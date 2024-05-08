@@ -98,8 +98,8 @@ export default function PlacePixelTab({
     const requestUrl = `${config.apiUrl}/api/v1/canvas/2123/pixel`;
 
     const body = {
-      x: 187,
-      y: 428,
+      x: 0,
+      y: 0,
       colorId: selectedColor.id,
     };
 
