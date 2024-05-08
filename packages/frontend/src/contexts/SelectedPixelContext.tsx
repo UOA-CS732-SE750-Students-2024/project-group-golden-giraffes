@@ -10,14 +10,14 @@ import {
 } from "react";
 
 interface SelectedPixelPointContextType {
-  pixelPoint: Point | null;
-  setPixelPoint: Dispatch<SetStateAction<Point | null>>;
+  coords: Point | null;
+  setCoords: Dispatch<SetStateAction<Point | null>>;
 }
 
 const SelectedPixelLocationContext =
   createContext<SelectedPixelPointContextType>({
-    pixelPoint: null,
-    setPixelPoint: () => {},
+    coords: null,
+    setCoords: () => {},
   });
 
 export const SelectedPixelLocationProvider = ({
@@ -25,15 +25,15 @@ export const SelectedPixelLocationProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [selectedPixelPoint, setSelectedPixelPoint] = useState<
-    SelectedPixelPointContextType["pixelPoint"] | null
+  const [selectedCoords, setSelectedCoords] = useState<
+    SelectedPixelPointContextType["coords"] | null
   >(null);
 
   return (
     <SelectedPixelLocationContext.Provider
       value={{
-        pixelPoint: selectedPixelPoint,
-        setPixelPoint: setSelectedPixelPoint,
+        coords: selectedCoords,
+        setCoords: setSelectedCoords,
       }}
     >
       {children}
@@ -41,6 +41,6 @@ export const SelectedPixelLocationProvider = ({
   );
 };
 
-export const useSelectedPixelLocationContext = () => {
+export const useSelectedPixelContext = () => {
   return useContext(SelectedPixelLocationContext);
 };

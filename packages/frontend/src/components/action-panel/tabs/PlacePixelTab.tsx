@@ -45,14 +45,14 @@ export default function PlacePixelTab({
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
 
-  const { pixelPoint } = useSelectedPixelLocationContext();
+  const { coords } = useSelectedPixelLocationContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
-  const selectedCoordinates = pixelPoint;
+  const selectedCoordinates = coords;
   const x = selectedCoordinates?.x;
   const y = selectedCoordinates?.y;
 

@@ -89,7 +89,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
-  const { pixelPoint, setPixelPoint } = useSelectedPixelLocationContext();
+  const { coords, setCoords } = useSelectedPixelLocationContext();
 
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
@@ -335,13 +335,13 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const imageY = mouseY / zoom;
 
       // we only care about updating the location
-      setPixelPoint((prev) => ({
+      setCoords((prev) => ({
         ...prev,
         x: Math.floor(imageX),
         y: Math.floor(imageY),
       }));
     },
-    [zoom, setPixelPoint],
+    [zoom, setCoords],
   );
 
   useEffect(() => {
@@ -352,12 +352,12 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
-    if (!imageDimensions || !color || !pixelPoint) return;
+    if (!imageDimensions || !color || !coords) return;
 
-    updateCanvasPreviewPixel(previewCanvasRef, pixelPoint, color);
+    updateCanvasPreviewPixel(previewCanvasRef, coords, color);
 
-    console.debug(`Drawing pixel at (${pixelPoint.x}, ${pixelPoint.y})`);
-  }, [imageDimensions, pixelPoint, color]);
+    console.debug(`Drawing pixel at (${coords.x}, ${coords.y})`);
+  }, [imageDimensions, coords, color]);
 
   useEffect(() => {
     handleDrawingSelectedPixel();

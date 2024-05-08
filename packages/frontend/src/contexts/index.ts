@@ -10,5 +10,5 @@ export {
 } from "./SelectedColorContext";
 export {
   SelectedPixelLocationProvider,
-  useSelectedPixelLocationContext,
-} from "./SelectedPixelPointContext";
+  useSelectedPixelContext as useSelectedPixelLocationContext,
+} from "./SelectedPixelContext";
