@@ -2,11 +2,15 @@
 
 import { buttonClasses, css, styled } from "@mui/material";
 
-import { PaletteColor, Point } from "@blurple-canvas-web/types";
+import { PaletteColor } from "@blurple-canvas-web/types";
 
-import { Button as ButtonBase } from "@/components/Button";
+import { Button as ButtonBase } from "@/components/button";
 
-const DynamicButton = styled(ButtonBase, {
+const StyledAnchor = styled("a")`
+  display: contents;
+`;
+
+const StyledButton = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== "backgroundColorStr",
 })<{ backgroundColorStr?: string }>`
   :not(.${buttonClasses.disabled}) {
@@ -52,36 +56,38 @@ const DynamicButtonContent = styled("span")`
   mix-blend-mode: luminosity;
 `;
 
-export const CoordinateLabel = styled("span")`
-  opacity: 0.6;
-`;
-
-interface PlacePixelButtonProps {
+interface DynamicButtonProps {
+  children: React.ReactNode;
   color: PaletteColor | null;
-  coordinates: Point;
   disabled?: boolean;
 }
 
-export default function PlacePixelButton({
+export default function DynamicButton({
+  children,
   color,
-  coordinates,
   disabled = false,
   ...props
-}: PlacePixelButtonProps) {
+}: DynamicButtonProps) {
   const rgba = color?.rgba;
   const rgb = rgba?.slice(0, 3).join(" ");
 
   const backgroundColorStr = color ? `rgb(${rgb})` : undefined;
-  const { x, y } = coordinates; // TODO: Adjust coordinates by visual start coordinate offset (defined in canvas info)
 
   return (
-    <DynamicButton backgroundColorStr={backgroundColorStr} {...props}>
-      <DynamicButtonContent>
-        Place pixel
-        <CoordinateLabel>
-          ({x},&nbsp;{y})
-        </CoordinateLabel>
-      </DynamicButtonContent>
-    </DynamicButton>
+    <StyledButton backgroundColorStr={backgroundColorStr} {...props}>
+      <DynamicButtonContent>{children}</DynamicButtonContent>
+    </StyledButton>
+  );
+}
+
+export function DynamicAnchorButton({
+  children,
+  href,
+  ...props
+}: DynamicButtonProps & { href: string }) {
+  return (
+    <StyledAnchor href={href} target="_blank" rel="noreferrer">
+      <DynamicButton {...props}>{children}</DynamicButton>
+    </StyledAnchor>
   );
 }
