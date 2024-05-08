@@ -33,8 +33,7 @@ export const ActiveCanvasProvider = ({
   children,
   mainCanvasInfo,
 }: ActiveCanvasProviderProps) => {
-  const [activeCanvas, setActiveCanvas] =
-    useState<ActiveCanvasContextType["canvas"]>(mainCanvasInfo);
+  const [activeCanvas, setActiveCanvas] = useState(mainCanvasInfo);
 
   const setCanvasById = useCallback<ActiveCanvasContextType["setCanvas"]>(
     async (canvasId: CanvasInfo["id"]) => {
