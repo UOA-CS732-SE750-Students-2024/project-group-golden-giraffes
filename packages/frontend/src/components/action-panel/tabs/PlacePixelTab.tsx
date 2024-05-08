@@ -72,7 +72,7 @@ export default function PlacePixelTab({
   const x = selectedCoordinates?.x;
   const y = selectedCoordinates?.y;
 
-  const webPlacingEnabled = true;
+  const webPlacingEnabled = canvas.webPlacingEnabled;
 
   const canPlacePixel =
     webPlacingEnabled &&
