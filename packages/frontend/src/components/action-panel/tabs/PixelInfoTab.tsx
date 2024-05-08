@@ -1,128 +1,48 @@
-// import { usePalette, usePixelHistory } from "@/hooks";
-// import {
-//   PaletteColor,
-//   PixelHistoryRecord,
-//   Point,
-// } from "@blurple-canvas-web/types";
-// import { styled } from "@mui/material";
+import { styled } from "@mui/material";
 
-// import { useEffect, useState } from "react";
-// import { PaletteColorRecord, colorToSwatch } from "../color/Color";
-// import { ActionMenu, Heading } from "./ActionPanel";
-// import CoordinatesCard from "./CoordinatesCard";
+import { PixelHistoryRecord, Point } from "@blurple-canvas-web/types";
 
-// const StyledCoordinatesCard = styled(CoordinatesCard)`
-//   grid-column: 1 / -1;
-// `;
+import { usePixelHistory } from "@/hooks";
+import { Heading } from "../ActionPanel";
+import { ActionPanelTab } from "./ActionPanelTab";
+import CoordinatesCard from "./CoordinatesCard";
+import PixelHistoryListItem from "./PixelHistoryListItem";
 
-// export const HistoryRecords = styled("div")`
-//   display: grid;
-//   grid-column: 1 / -1;
-//   row-gap: 1.5rem;
-// `;
+const TEMP_COORDS = { x: 1, y: 1 } as Point;
 
-// export const Record = styled("div")`
-//   align-items: center;
-//   display: flex;
-//   gap: 1rem;
-//   justify-content: space-between;
-// `;
+const HistoryList = styled("div")`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
 
-// export const RecordInfo = styled("div")`
-//   display: flex;
-//   flex-direction: column;
-//   flex: 1;
-//   gap: 0.5rem;
-// `;
+interface PixelInfoTabProps {
+  canvasId: number;
+}
 
-// export const RecordAuthor = styled("span")`
-//   font-size: 1.3rem;
-// `;
+export default function PixelInfoTab({ canvasId }: PixelInfoTabProps) {
+  const { data: pixelHistory = [] } = usePixelHistory(canvasId, TEMP_COORDS);
 
-// export const RecordColor = styled("div")`
-//   opacity: 0.6;
-// `;
-// export const HistoryRecordComponent = ({
-//   history,
-//   color,
-// }: {
-//   history: PixelHistoryRecord;
-//   color?: PaletteColor;
-// }) => {
-//   return (
-//     <Record>
-//       {color && colorToSwatch(color)}
-//       <RecordInfo>
-//         <RecordAuthor title={history.userProfile.id}>
-//           {history.userProfile.username}
-//         </RecordAuthor>
-//         {color && (
-//           <RecordColor>
-//             <PaletteColorRecord color={color} displaySwatch={false} />
-//           </RecordColor>
-//         )}
-//       </RecordInfo>
-//     </Record>
-//   );
-// };
+  const currentPixelInfo = pixelHistory[1]; // undefined if out of index
+  const pastPixelHistory = pixelHistory.slice(1); // [] if out of index
 
-// interface PixelInfoTabProps {
-//   coordinates: Point;
-//   canvasId: number;
-// }
+  // Do this ⬇️ to cancel history query
+  // queryClient.cancelQueries({
+  //   queryKey: ["pixelHistory", canvasId, coordinates],
+  // });
 
-// export default function PixelInfoTab({
-//   coordinates,
-//   canvasId,
-// }: PixelInfoTabProps) {
-//   const { data: palette = [], isLoading: colorsAreLoading } = usePalette();
-
-//   const { data: pixelHistory = [], isLoading: historyIsLoading } =
-//     usePixelHistory(canvasId, coordinates);
-
-//   const [currentPixelHistory, setCurrentPixelHistory] =
-//     useState<PixelHistoryRecord | null>(null);
-//   const [pastPixelHistory, setPastPixelHistory] = useState<
-//     PixelHistoryRecord[]
-//   >([]);
-
-//   useEffect(() => {
-//     setCurrentPixelHistory(pixelHistory[0] || null);
-//     setPastPixelHistory(pixelHistory.slice(1) || []);
-//   }, [pixelHistory]);
-
-//   // Do this ⬇️ to cancel history query
-//   // queryClient.cancelQueries({
-//   //   queryKey: ["pixelHistory", canvasId, coordinates],
-//   // });
-
-//   return (
-//     <ActionMenu>
-//       <div>
-//         <StyledCoordinatesCard coordinates={coordinates} />
-//         {currentPixelHistory && ( // To be redesigned later
-//           <HistoryRecords>
-//             <HistoryRecordComponent
-//               history={currentPixelHistory}
-//               color={palette.find(
-//                 (color) => color.id === currentPixelHistory.colorId,
-//               )}
-//             />
-//           </HistoryRecords>
-//         )}
-//         <Heading>Paint history</Heading>
-//         {pastPixelHistory && (
-//           <HistoryRecords>
-//             {pastPixelHistory.map((history) => (
-//               <HistoryRecordComponent
-//                 key={history.id}
-//                 history={history}
-//                 color={palette.find((color) => color.id === history.colorId)}
-//               />
-//             ))}
-//           </HistoryRecords>
-//         )}
-//       </div>
-//     </ActionMenu>
-//   );
-// }
+  return (
+    <ActionPanelTab>
+      <div>
+        <CoordinatesCard coordinates={TEMP_COORDS} />
+        <PixelHistoryListItem record={currentPixelInfo} />
+        <Heading>Paint history</Heading>
+        <HistoryList>
+          {pastPixelHistory.map((history: PixelHistoryRecord) => (
+            <PixelHistoryListItem key={history.id} record={history} />
+          ))}
+        </HistoryList>
+      </div>
+    </ActionPanelTab>
+  );
+}

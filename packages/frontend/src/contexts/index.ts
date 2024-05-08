@@ -1,2 +1,6 @@
+export { AuthProvider, useAuthContext } from "./AuthProvider";
 export { QueryClientProvider } from "./QueryClientProvider";
-export * from "./AuthProvider";
+export {
+  SelectedColorProvider,
+  useSelectedColorContext,
+} from "./SelectedColorContext";
