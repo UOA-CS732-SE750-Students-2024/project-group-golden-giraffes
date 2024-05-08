@@ -71,6 +71,13 @@
     color: var(--discord-white);
     color-scheme: only dark;
     font-family: var(--font-body);
+
+    code,
+    kbd,
+    pre,
+    samp {
+      font-family: var(--font-monospace);
+    }
   }
 
   @supports (font-tech(variations)) {
