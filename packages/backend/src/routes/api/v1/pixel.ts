@@ -10,7 +10,10 @@ import {
   PixelHistoryParamModel,
   parseCanvasId,
 } from "@/models/paramModels";
-import { updateCachedCanvasPixel } from "@/services/canvasService";
+import {
+  updateCachedCanvasPixel,
+  updateManyCachedPixels,
+} from "@/services/canvasService";
 import {
   getPixelHistory,
   placePixel,
@@ -46,6 +49,13 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
   }
 });
 
+/**
+ * Endpoint that is only used by the bot to update the API cache. This does not insert the pixels
+ * into the database as the bot already does this.
+ *
+ * @remarks This design decision best allows for the bot to continue functioning, even if the API
+ * is down, or unable to handle the load.
+ */
 pixelRouter.post<CanvasIdParam>("/bot", async (req, res) => {
   try {
     const canvasId = await parseCanvasId(req.params);
@@ -59,6 +69,9 @@ pixelRouter.post<CanvasIdParam>("/bot", async (req, res) => {
     if (!result.success) {
       throw new BadRequestError("Body is not valid", result.error.issues);
     }
+
+    await updateManyCachedPixels(canvasId, result.data);
+    res.status(204).end();
   } catch (error) {
     ApiError.sendError(res, error);
   }
@@ -68,7 +81,7 @@ pixelRouter.post<CanvasIdParam>("/bot", async (req, res) => {
  * Endpoint for placing a pixel on the canvas
  * Requires the user to be authenticated and not blacklisted
  */
-pixelRouter.post<CanvasIdParam>("/", authenticated, async (req, res) => {
+pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
   try {
     const result = await PlacePixelBodyModel.safeParseAsync(req.body);
     if (!result.success) {
