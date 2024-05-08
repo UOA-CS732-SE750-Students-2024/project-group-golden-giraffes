@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import { prisma } from "@/client";
 import config from "@/config";
 import { getProfilePictureUrlFromHash } from "@/services/discordProfileService";
@@ -8,8 +7,6 @@ import { Express } from "express";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
-
-const randomSecret = crypto.randomBytes(64).toString("hex");
 
 const discordStrategy = new DiscordStrategy(
   {
@@ -45,9 +42,13 @@ export function initializeAuth(app: Express) {
 
   app.use(
     session({
-      secret: randomSecret,
-      resave: false,
-      saveUninitialized: false,
+      cookie: {
+        maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+      },
+      // having a random secret would mess with persistent sessions
+      secret: config.expressSessionSecret,
+      resave: true,
+      saveUninitialized: true,
       store: new PrismaSessionStore(prisma, {
         checkPeriod: 2 * 60 * 1000, //ms
         dbRecordIdIsSessionId: true,
