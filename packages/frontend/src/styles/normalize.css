@@ -115,3 +115,7 @@ fieldset {
 button {
   touch-action: manipulation;
 }
+
+table {
+  border-collapse: collapse;
+}
