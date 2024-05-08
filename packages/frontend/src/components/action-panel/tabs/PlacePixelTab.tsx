@@ -79,6 +79,9 @@ export default function PlacePixelTab({
 
   const readOnly = canvas.isLocked;
 
+  const isJoinServerShown =
+    (!canPlacePixel || readOnly) && !selectedColor?.global && serverInvite;
+
   return (
     <ActionPanelTabBody active={active}>
       <ColorPicker>
@@ -113,13 +116,11 @@ export default function PlacePixelTab({
           </CoordinateLabel>
         </DynamicButton>
       )}
-      {(!canPlacePixel || readOnly) &&
-        !selectedColor?.global &&
-        serverInvite && (
-          <DynamicAnchorButton color={selectedColor} href={serverInvite}>
-            Join {selectedColor?.guildName ?? "server"}
-          </DynamicAnchorButton>
-        )}
+      {isJoinServerShown && (
+        <DynamicAnchorButton color={selectedColor} href={serverInvite}>
+          Join {selectedColor?.guildName ?? "server"}
+        </DynamicAnchorButton>
+      )}
       {!readOnly && (
         <BotCommandCard
           color={selectedColor}
