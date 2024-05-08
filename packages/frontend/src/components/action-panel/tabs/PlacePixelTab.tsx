@@ -6,6 +6,7 @@ import {
   useActiveCanvasContext,
   useAuthContext,
   useSelectedColorContext,
+  useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
 import { DynamicAnchorButton, DynamicButton } from "../../button";
@@ -60,14 +61,16 @@ export default function PlacePixelTab({
   const { user } = useAuthContext();
   const { canvas } = useActiveCanvasContext();
 
-  const selectedCoordinates = { x: 1, y: 1 } as Point;
-
-  const { x, y } = selectedCoordinates;
+  const { coords } = useSelectedPixelLocationContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
+
+  const selectedCoordinates = coords;
+  const x = selectedCoordinates?.x;
+  const y = selectedCoordinates?.y;
 
   const webPlacingEnabled = true;
 
@@ -110,9 +113,13 @@ export default function PlacePixelTab({
           color={selectedColor}
           disabled={paletteIsLoading || !selectedColor}
         >
-          Place pixel
+          {selectedCoordinates && selectedColor ?
+            "Place pixel"
+          : "Select a pixel"}
           <CoordinateLabel>
-            ({x},&nbsp;{y})
+            {selectedCoordinates && selectedColor ?
+              `(${x},\u00A0${y})`
+            : undefined}
           </CoordinateLabel>
         </DynamicButton>
       )}

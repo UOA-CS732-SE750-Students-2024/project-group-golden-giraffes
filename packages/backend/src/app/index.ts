@@ -16,7 +16,12 @@ export interface ExpressServer {
 export function createApp(): ExpressServer {
   const app = express();
 
-  app.use(cors());
+  const corsOptions = {
+    origin: config.frontendUrl,
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
+
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
