@@ -63,7 +63,7 @@ export default function PlacePixelTab({
   const { user } = useAuthContext();
   const { canvas } = useActiveCanvasContext();
 
-  const { coords } = useSelectedPixelLocationContext();
+  const { coords, setCoords } = useSelectedPixelLocationContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
@@ -92,20 +92,14 @@ export default function PlacePixelTab({
   const handlePixelRequest = () => {
     if (!selectedCoordinates || !selectedColor) return;
 
-    console.log(
-      `Placing pixel at ${selectedCoordinates.x}, ${selectedCoordinates.y}`,
-    );
     const requestUrl = `${config.apiUrl}/api/v1/canvas/2123/pixel`;
 
     const body = {
-      x: 0,
-      y: 0,
+      x: selectedCoordinates.x,
+      y: selectedCoordinates.y,
       colorId: selectedColor.id,
     };
 
-    console.log("Request body", body);
-
-    console.log(`Requesting pixel placement at ${requestUrl}`);
     try {
       axios.post(requestUrl, body, {
         withCredentials: true,
@@ -114,8 +108,8 @@ export default function PlacePixelTab({
       console.error(e);
     }
 
-    // TODO: set coords to null later
     setSelectedColor(null);
+    setCoords(null);
   };
 
   return (
@@ -141,20 +135,18 @@ export default function PlacePixelTab({
         ))}
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
-      {
-        /*(canPlacePixel && !readOnly*/ true && (
-          <DynamicButton
-            color={selectedColor}
-            disabled={paletteIsLoading || !selectedColor}
-            onAction={handlePixelRequest}
-          >
-            {isSelected ? "Place pixel" : "Select a pixel"}
-            <CoordinateLabel>
-              {isSelected ? `(${x},\u00A0${y})` : undefined}
-            </CoordinateLabel>
-          </DynamicButton>
-        )
-      }
+      {true && (
+        <DynamicButton
+          color={selectedColor}
+          disabled={paletteIsLoading || !selectedColor}
+          onAction={handlePixelRequest}
+        >
+          {isSelected ? "Place pixel" : "Select a pixel"}
+          <CoordinateLabel>
+            {isSelected ? `(${x},\u00A0${y})` : undefined}
+          </CoordinateLabel>
+        </DynamicButton>
+      )}
       {isJoinServerShown && (
         <DynamicAnchorButton color={selectedColor} href={serverInvite}>
           Join {selectedColor?.guildName ?? "server"}
