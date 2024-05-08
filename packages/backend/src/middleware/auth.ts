@@ -3,7 +3,7 @@ import config from "@/config";
 import { getProfilePictureUrlFromHash } from "@/services/discordProfileService";
 import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
-import { Express } from "express";
+import { Express, NextFunction, Request, Response } from "express";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
@@ -59,4 +59,28 @@ export function initializeAuth(app: Express) {
 
   app.use(passport.initialize());
   app.use(passport.session());
+}
+
+export async function authenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  if (req.isAuthenticated()) {
+    next();
+    return;
+  }
+
+  const apiKey = req.header("x-api-key");
+
+  if (apiKey && config.botApiKey && apiKey === config.botApiKey) {
+    // TODO: Populate user object using id from header
+
+    next();
+    return;
+  }
+
+  res
+    .status(401)
+    .json({ message: "You need to be authenticated to use this endpoint" });
 }
