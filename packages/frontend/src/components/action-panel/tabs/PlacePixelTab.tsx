@@ -1,8 +1,10 @@
 import { styled } from "@mui/material";
 
-import { Palette, Point } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Palette, Point } from "@blurple-canvas-web/types";
 
 import {
+  useActiveCanvasContext,
+  useAuthContext,
   useSelectedColorContext,
   useSelectedPixelLocationContext,
 } from "@/contexts";
@@ -34,6 +36,11 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
+function userWithinServer(user: DiscordUserProfile, serverId: string) {
+  return false;
+  // return user.guilds.some((guild) => guild.id === serverId);
+}
+
 interface PlacePixelTabProps {
   eventId: number | null;
   active?: boolean;
@@ -51,6 +58,9 @@ export default function PlacePixelTab({
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
 
+  const { user } = useAuthContext();
+  const { canvas } = useActiveCanvasContext();
+
   const { coords } = useSelectedPixelLocationContext();
 
   const inviteSlug = selectedColor?.invite;
@@ -61,6 +71,21 @@ export default function PlacePixelTab({
   const selectedCoordinates = coords;
   const x = selectedCoordinates?.x;
   const y = selectedCoordinates?.y;
+
+  const webPlacingEnabled = true;
+
+  const canPlacePixel =
+    webPlacingEnabled &&
+    selectedColor &&
+    user &&
+    (selectedColor.global || userWithinServer(user, selectedColor.guildId));
+
+  const readOnly = canvas.isLocked;
+
+  const isJoinServerShown =
+    (!canPlacePixel || readOnly) && !selectedColor?.global && serverInvite;
+
+  const isSelected = selectedCoordinates && selectedColor;
 
   return (
     <ActionPanelTabBody active={active}>
@@ -85,25 +110,28 @@ export default function PlacePixelTab({
         ))}
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
-      <DynamicButton
-        color={selectedColor}
-        disabled={paletteIsLoading || !selectedColor}
-      >
-        {selectedCoordinates && selectedColor ?
-          "Place pixel"
-        : "Select a pixel"}
-        <CoordinateLabel>
-          {selectedCoordinates && selectedColor ?
-            `(${x},\u00A0${y})` /* Nonbreaking space */
-          : undefined}
-        </CoordinateLabel>
-      </DynamicButton>
-      {!selectedColor?.global && serverInvite && (
+      {canPlacePixel && !readOnly && (
+        <DynamicButton
+          color={selectedColor}
+          disabled={paletteIsLoading || !selectedColor}
+        >
+          {isSelected ? "Place pixel" : "Select a pixel"}
+          <CoordinateLabel>
+            {isSelected ? `(${x},\u00A0${y})` : undefined}
+          </CoordinateLabel>
+        </DynamicButton>
+      )}
+      {isJoinServerShown && (
         <DynamicAnchorButton color={selectedColor} href={serverInvite}>
           Join {selectedColor?.guildName ?? "server"}
         </DynamicAnchorButton>
       )}
-      <BotCommandCard color={selectedColor} coordinates={selectedCoordinates} />
+      {!readOnly && isSelected && (
+        <BotCommandCard
+          color={selectedColor}
+          coordinates={selectedCoordinates}
+        />
+      )}
     </ActionPanelTabBody>
   );
 }

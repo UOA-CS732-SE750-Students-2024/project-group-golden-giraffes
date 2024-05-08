@@ -34,7 +34,9 @@ export async function getEventPalette(
       rgba: true,
       participations: {
         select: {
-          guild: { select: { invite: true, discord_guild_record: true } }, // Include the guild invite
+          guild: {
+            select: { invite: true, discord_guild_record: true, id: true },
+          }, // Include the guild invite
         },
         // Only include the participation for the event we're looking at. This way the only element
         // in the participations array will be the one for the event we're looking at.
@@ -65,5 +67,6 @@ export async function getEventPalette(
     invite: color.participations[0]?.guild?.invite ?? null,
     guildName:
       color.participations[0]?.guild?.discord_guild_record?.name ?? null,
+    guildId: color.participations[0]?.guild?.id.toString() ?? null,
   }));
 }
