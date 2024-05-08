@@ -10,7 +10,6 @@ const Container = styled("code", {
   background-color: oklch(var(--discord-white-oklch) / 12%);
   border-radius: 0.25rem;
   cursor: pointer;
-  font-family: var(--font-monospace);
   font-size: 0.9rem;
   padding: 0.25rem 0.5rem;
   transition: background-color var(--transition-duration-fast) ease;

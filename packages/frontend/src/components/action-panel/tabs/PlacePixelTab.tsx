@@ -6,7 +6,7 @@ import { useSelectedColorContext } from "@/contexts";
 import { usePalette } from "@/hooks";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
-import { ActionPanelTab } from "./ActionPanelTab";
+import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import PlacePixelButton from "./PlacePixelButton";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
@@ -26,7 +26,11 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-export default function PlacePixelTab() {
+export default function PlacePixelTab({
+  active = false,
+}: {
+  active?: boolean;
+}) {
   const { data: palette = [], isLoading: paletteIsLoading } = usePalette();
   const [mainColors, partnerColors] = partitionPalette(palette);
 
@@ -34,7 +38,7 @@ export default function PlacePixelTab() {
     useSelectedColorContext();
 
   return (
-    <ActionPanelTab>
+    <ActionPanelTabBody active={active}>
       <ColorPicker>
         <Heading>Main colors</Heading>
         {mainColors.map((color) => (
@@ -61,6 +65,6 @@ export default function PlacePixelTab() {
         coordinates={{ x: 1, y: 1 } as Point}
         disabled={paletteIsLoading || !selectedColor}
       />
-    </ActionPanelTab>
+    </ActionPanelTabBody>
   );
 }

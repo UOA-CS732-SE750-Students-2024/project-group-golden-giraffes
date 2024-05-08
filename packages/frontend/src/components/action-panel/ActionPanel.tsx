@@ -1,49 +1,54 @@
 "use client";
 
-import { styled } from "@mui/material";
-import { useState } from "react";
+import { css, styled } from "@mui/material";
+import { SetStateAction, useState } from "react";
 
-import { ORIGIN } from "../canvas/point";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
-interface TabContainerProps {
-  active: boolean;
-}
-
-const TabContainer = styled("div")<TabContainerProps>`
+const Wrapper = styled("div")`
+  --padding-width: 1rem;
   background-color: var(--discord-legacy-not-quite-black);
   border-radius: var(--card-border-radius);
   border: var(--card-border);
-  display: ${({ active }) => (active ? "block" : "none")};
+  display: grid;
+  flex-direction: column;
   gap: 0.5rem;
-  height: 100%;
-  padding: 1rem;
-  width: 100%;
-`;
+  grid-template-rows: auto 1fr;
+  padding: var(--padding-width);
 
-const TabBar = styled("ul")`
-  display: flex;
-  gap: 0.25rem;
-  list-style-type: none;
-
-  /*
-   * Workaround for accessibility issue with VoiceOver.
-   * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
-   */
-  li::before {
-    content: "\\200B"; /* zero-width space */
+  > * {
+    border-radius: calc(var(--card-border-radius) - var(--padding-width));
   }
 `;
 
-const Tab = styled("li")`
+const TabBar = styled("ul")`
+  border-radius: .5rem;
+  display: grid;
+  gap: .5rem;
+  grid-template-columns: repeat(2, 1fr);
+  list-style-type: none;
+
+
+
+    /*
+     * Workaround for accessibility issue with VoiceOver.
+     * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
+     */
+    li::before {
+      content: "\\200B"; /* zero-width space */
+    }
+  }
+`;
+
+const Tab = styled("li")<{ active?: boolean }>`
   background-color: var(--discord-legacy-not-quite-black);
-  border-radius: var(--card-border-radius);
+  border-radius: inherit;
   cursor: pointer;
-  display: block flex;
-  font-size: 1.5rem;
   font-weight: 500;
-  padding: 0.5rem 1.25rem;
+  letter-spacing: 0.005rem;
+  padding: 0.5rem 1rem;
   place-items: center;
+  text-align: center;
   touch-action: manipulation;
   transition:
     background-color var(--transition-duration-fast) ease,
@@ -51,8 +56,17 @@ const Tab = styled("li")`
     outline var(--transition-duration-fast) ease;
   user-select: none;
 
-  :hover {
-    background-color: var(--discord-legacy-greyple);
+  ${({ active }) =>
+    active ?
+      css`
+        background-color: var(--discord-legacy-dark-but-not-black);
+      `
+    : ""}
+
+  :hover,
+  :focus,
+  :focus-visible {
+    background-color: var(--discord-legacy-dark-but-not-black);
   }
 
   :focus,
@@ -61,8 +75,7 @@ const Tab = styled("li")`
   }
 
   :active {
-    background-color: var(--discord-yellow);
-    color: var(--discord-black);
+    background-color: var(--discord-legacy-greyple);
   }
 `;
 
@@ -83,23 +96,38 @@ const TABS = {
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
-  const [coordinates, setCoordinates] = useState(ORIGIN);
 
   const canvasId = 2023; // This is a placeholder value
 
   return (
-    <>
+    <Wrapper>
       <TabBar>
-        <Tab onClick={() => setCurrentTab(TABS.LOOK)}>Look</Tab>
-        <Tab onClick={() => setCurrentTab(TABS.PLACE)}>Place</Tab>
+        <Tab
+          active={currentTab === TABS.PLACE}
+          onClick={() => setCurrentTab(TABS.PLACE)}
+          onKeyUp={(event) => {
+            if (event.key === "Enter" || event.key === " ")
+              setCurrentTab(TABS.PLACE);
+          }}
+          tabIndex={0}
+        >
+          Place
+        </Tab>
+        <Tab
+          active={currentTab === TABS.LOOK}
+          onClick={() => setCurrentTab(TABS.LOOK)}
+          onKeyUp={(event) => {
+            if (event.key === "Enter" || event.key === " ")
+              setCurrentTab(TABS.LOOK);
+          }}
+          tabIndex={0}
+        >
+          Look
+        </Tab>
       </TabBar>
 
-      <TabContainer active={currentTab === TABS.LOOK}>
-        <PixelInfoTab canvasId={canvasId} />
-      </TabContainer>
-      <TabContainer active={currentTab === TABS.PLACE}>
-        <PlacePixelTab />
-      </TabContainer>
-    </>
+      <PlacePixelTab active={currentTab === TABS.PLACE} />
+      <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvasId} />
+    </Wrapper>
   );
 }

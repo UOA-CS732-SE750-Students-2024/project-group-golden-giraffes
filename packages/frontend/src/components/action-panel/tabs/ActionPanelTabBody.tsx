@@ -1,14 +1,16 @@
 import { styled } from "@mui/material";
 
-export const ActionPanelTab = styled("div")`
-  display: flex;
+export const ActionPanelTabBody = styled("div")<{ active?: boolean }>`
+  display: ${({ active }) => (active ? "block flex" : "none")};
   flex-direction: column;
-  gap: 1rem;
+  background-color: var(--discord-legacy-not-quite-black);
+  gap: 0.5rem;
 
   > * {
     background-color: var(--discord-legacy-dark-but-not-black);
+    border-radius: inherit;
     margin-trim: block;
-    padding: 1rem;
+    padding: var(--padding-width);
 
     @supports not (margin-trim: block) {
       > :first-child {

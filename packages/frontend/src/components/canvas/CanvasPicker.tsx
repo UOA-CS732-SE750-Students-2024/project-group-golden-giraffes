@@ -9,7 +9,7 @@ import { CanvasSummary } from "@blurple-canvas-web/types";
 const Select = styled(NativeSelect)`
   background-color: var(--discord-legacy-not-quite-black);
   border: 0;
-  border-radius: var(--card-border-radius);
+  border-radius: 0.5rem;
   cursor: pointer;
   font-size: inherit;
   font-weight: 500;

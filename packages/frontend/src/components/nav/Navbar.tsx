@@ -16,7 +16,7 @@ const Nav = styled("nav")`
   place-items: center;
 
   a {
-    border-radius: 0.125rem;
+    border-radius: 0.5rem;
     color: var(--discord-white);
     padding: 0.5rem 1rem;
     text-decoration: none;

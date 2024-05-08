@@ -22,9 +22,6 @@ const Wrapper = styled("main")`
     --padding-y: 2rem;
 
     grid-auto-flow: column;
-    grid-template-rows: 3rem calc(
-        100vh - var(--navbar-height) - 4 * var(--padding-y)
-      );
     grid-template-columns: 1fr 23rem;
     padding: var(--padding-y) 4rem;
   }
