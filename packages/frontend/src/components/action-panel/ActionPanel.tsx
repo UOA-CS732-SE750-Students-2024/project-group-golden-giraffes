@@ -11,7 +11,6 @@ const Wrapper = styled("div")`
   border-radius: var(--card-border-radius);
   border: var(--card-border);
   display: grid;
-  flex-direction: column;
   gap: 0.5rem;
   grid-template-rows: auto 1fr;
   padding: var(--padding-width);
