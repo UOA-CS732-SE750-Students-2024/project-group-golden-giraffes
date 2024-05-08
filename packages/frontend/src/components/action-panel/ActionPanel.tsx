@@ -1,7 +1,7 @@
 "use client";
 
 import { css, styled } from "@mui/material";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
