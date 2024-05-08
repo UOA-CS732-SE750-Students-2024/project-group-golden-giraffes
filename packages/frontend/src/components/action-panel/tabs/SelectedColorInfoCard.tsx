@@ -35,12 +35,16 @@ const Code = styled("code")`
 
 export default function ColorInfoCard({
   color,
+  invite,
 }: {
   color?: PaletteColor | null;
+  invite?: string;
 }) {
   if (!color) return <Wrapper>No color selected</Wrapper>;
 
-  const { name: colorName, code: colorCode, invite: inviteSlug } = color;
+  const { name: colorName, code: colorCode } = color;
+
+  const guildName = color.guildName ?? "a partnered server";
 
   return (
     <Wrapper>
@@ -50,7 +54,10 @@ export default function ColorInfoCard({
       <Code>{colorCode}</Code>
       {!color.global && (
         <Subtitle>
-          This color can be used in {color.guildName ?? "a partnered server"}
+          This color can be used in{" "}
+          {invite ?
+            <a href={invite}>{guildName}</a>
+          : guildName}
         </Subtitle>
       )}
     </Wrapper>
