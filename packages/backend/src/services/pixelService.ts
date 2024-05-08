@@ -146,6 +146,11 @@ export async function validateUser(userId: bigint) {
  * @param userId - The ID of the user
  * @param placementTime - The time that the pixel will be placed
  *
+ * @remarks
+ *
+ * Some canvases may not have a placement cooldown timer set,
+ * which means that returned values can be null and need to be handled
+ *
  * @returns The current and future cooldown time
  */
 export async function getCooldown(
