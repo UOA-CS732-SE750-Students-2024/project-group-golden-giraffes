@@ -87,7 +87,9 @@ export default function PlacePixelTab({
           "Place pixel"
         : "Select a pixel"}
         <CoordinateLabel>
-          {selectedCoordinates && selectedColor ? `(${x},\u00A0${y})` /* Nonbreaking space */ : undefined}
+          {selectedCoordinates && selectedColor ?
+            `(${x},\u00A0${y})` /* Nonbreaking space */
+          : undefined}
         </CoordinateLabel>
       </DynamicButton>
       {!selectedColor?.global && serverInvite && (
