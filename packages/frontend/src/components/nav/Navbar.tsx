@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthContext } from "@/contexts";
 import { styled } from "@mui/material";
 import Link from "next/link";
 import { CanvasPicker } from "../canvas";
@@ -54,7 +55,6 @@ const Wordmark = styled("div")`
 
 const Links = styled("ul")`
   display: flex;
-  list-style-type: none;
 
   /*
    * Workaround for accessibility issue with VoiceOver.
@@ -63,9 +63,15 @@ const Links = styled("ul")`
   li::before {
     content: "\\200B"; /* zero-width space */
   }
+
+  li {
+    display: inline-flex;
+  }
 `;
 
 export default function Navbar() {
+  const { user } = useAuthContext();
+
   return (
     <Nav>
       <CompositeLogo href="/">
@@ -80,10 +86,12 @@ export default function Navbar() {
       <CanvasPicker />
       <Links>
         <li>
-          <a href="/leaderboard">Leaderboard</a>
+          <Link href="/leaderboard">Leaderboard</Link>
         </li>
         <li>
-          <a href="/">Sign out</a>
+          {user ?
+            <Link href="/me">{user.username}</Link>
+          : <Link href="/signin">Sign in</Link>}
         </li>
       </Links>
     </Nav>
