@@ -23,6 +23,9 @@ importers:
       '@prisma/client':
         specifier: ^5.12.1
         version: 5.12.1(prisma@5.12.1)
+      '@quixo3/prisma-session-store':
+        specifier: ^3.1.13
+        version: 3.1.13(@prisma/client@5.12.1(prisma@5.12.1))(express-session@1.18.0)
       '@types/express-session':
         specifier: ^1.18.0
         version: 1.18.0
@@ -726,6 +729,13 @@ packages:
 
   '@prisma/schema-files-loader@5.13.0':
     resolution: {integrity: sha512-6sVMoqobkWKsmzb98LfLiIt/aFRucWfkzSUBsqk7sc+h99xjynJt6aKtM2SSkyndFdWpRU0OiCHfQ9UlYUEJIw==}
+
+  '@quixo3/prisma-session-store@3.1.13':
+    resolution: {integrity: sha512-EAuOvYAaAsQ0OqxkdJG/Qs3cxlT4VV8SFHjtsA3G01uB1b6r7xftX3oeg7mcG0HN/DI1qOqwvy3YFoJ38ls0iA==}
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      '@prisma/client': '>=2.16.1'
+      express-session: '>=1.17.1'
 
   '@rollup/rollup-android-arm-eabi@4.17.2':
     resolution: {integrity: sha512-NM0jFxY8bB8QLkoKxIQeObCaDlJKewVlIEkuyYKm5An1tdVZ966w2+MPQ2l8LBZLjR+SgyV+nRkTIunzOYBMLQ==}
@@ -2041,6 +2051,10 @@ packages:
     resolution: {integrity: sha512-WBx8Uy5TLtOSRtIq+M03/sKDrXCLHxwDcquSP2c43Le03/9serjQBIztjRz6FkJez9D/hleyAXTBGLwwZUw9lA==}
     hasBin: true
 
+  ts-dedent@2.2.0:
+    resolution: {integrity: sha512-q5W7tVM71e2xjHZTlgfTDoPF/SmqKG5hddq9SzR49CH2hayqRKJtQ4mtRlSxKaJlR/+9rEM+mnBHf7I2/BQcpQ==}
+    engines: {node: '>=6.10'}
+
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
@@ -2065,6 +2079,10 @@ packages:
   type-detect@4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
     engines: {node: '>=4'}
+
+  type-fest@2.19.0:
+    resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
+    engines: {node: '>=12.20'}
 
   type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
@@ -2658,6 +2676,14 @@ snapshots:
   '@prisma/schema-files-loader@5.13.0':
     dependencies:
       fs-extra: 11.1.1
+
+  '@quixo3/prisma-session-store@3.1.13(@prisma/client@5.12.1(prisma@5.12.1))(express-session@1.18.0)':
+    dependencies:
+      '@paralleldrive/cuid2': 2.2.2
+      '@prisma/client': 5.12.1(prisma@5.12.1)
+      express-session: 1.18.0
+      ts-dedent: 2.2.0
+      type-fest: 2.19.0
 
   '@rollup/rollup-android-arm-eabi@4.17.2':
     optional: true
@@ -3999,6 +4025,8 @@ snapshots:
     dependencies:
       nopt: 1.0.10
 
+  ts-dedent@2.2.0: {}
+
   ts-node@10.9.2(@types/node@20.12.8)(typescript@5.4.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
@@ -4026,6 +4054,8 @@ snapshots:
   tslib@2.6.2: {}
 
   type-detect@4.0.8: {}
+
+  type-fest@2.19.0: {}
 
   type-is@1.6.18:
     dependencies:

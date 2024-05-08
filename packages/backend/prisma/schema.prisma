@@ -186,6 +186,13 @@ model user {
   leaderboard_guild leaderboard_guild[]
 }
 
+model session {
+  id          String    @id
+  sid         String    @unique
+  data        String
+  expiresAt   DateTime  @db.Timestamptz(6)
+}
+
 view user_stats {
   user_id                BigInt
   user                   user     @relation(fields: [user_id], references: [id])
