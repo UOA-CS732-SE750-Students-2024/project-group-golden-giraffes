@@ -7,6 +7,7 @@ import { usePalette } from "@/hooks";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
+import BotCommandCard from "./BotCommandCard";
 import PlacePixelButton from "./PlacePixelButton";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
@@ -37,6 +38,8 @@ export default function PlacePixelTab({
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
 
+  const selectedCoordinates = { x: 1, y: 1 } as Point;
+
   return (
     <ActionPanelTabBody active={active}>
       <ColorPicker>
@@ -62,9 +65,10 @@ export default function PlacePixelTab({
       <ColorInfoCard color={selectedColor} />
       <PlacePixelButton
         color={selectedColor}
-        coordinates={{ x: 1, y: 1 } as Point}
+        coordinates={selectedCoordinates}
         disabled={paletteIsLoading || !selectedColor}
       />
+      <BotCommandCard color={selectedColor} coordinates={selectedCoordinates} />
     </ActionPanelTabBody>
   );
 }
