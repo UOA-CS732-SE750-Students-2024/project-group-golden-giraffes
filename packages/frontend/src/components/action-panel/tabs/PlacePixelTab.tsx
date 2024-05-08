@@ -1,8 +1,12 @@
 import { styled } from "@mui/material";
 
-import { Palette, Point } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Palette, Point } from "@blurple-canvas-web/types";
 
-import { useSelectedColorContext } from "@/contexts";
+import {
+  useActiveCanvasContext,
+  useAuthContext,
+  useSelectedColorContext,
+} from "@/contexts";
 import { usePalette } from "@/hooks";
 import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
@@ -31,6 +35,11 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
+function userWithinServer(user: DiscordUserProfile, serverId: string) {
+  return false;
+  // return user.guilds.some((guild) => guild.id === serverId);
+}
+
 interface PlacePixelTabProps {
   eventId: number | null;
   active?: boolean;
@@ -48,6 +57,9 @@ export default function PlacePixelTab({
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
 
+  const { user } = useAuthContext();
+  const { canvas } = useActiveCanvasContext();
+
   const selectedCoordinates = { x: 1, y: 1 } as Point;
 
   const { x, y } = selectedCoordinates;
@@ -56,6 +68,17 @@ export default function PlacePixelTab({
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
+
+  const webPlacingEnabled = true;
+
+  const canPlacePixel =
+    webPlacingEnabled &&
+    selectedColor &&
+    user &&
+    (selectedColor.global || false);
+  // replace the false above with userWithinServer(user, selectedColor.guildId) once guildId added to PaletteColor
+
+  const readOnly = canvas.isLocked;
 
   return (
     <ActionPanelTabBody active={active}>
@@ -80,21 +103,30 @@ export default function PlacePixelTab({
         ))}
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
-      <DynamicButton
-        color={selectedColor}
-        disabled={paletteIsLoading || !selectedColor}
-      >
-        Place pixel
-        <CoordinateLabel>
-          ({x},&nbsp;{y})
-        </CoordinateLabel>
-      </DynamicButton>
-      {!selectedColor?.global && serverInvite && (
-        <DynamicAnchorButton color={selectedColor} href={serverInvite}>
-          Join {selectedColor?.guildName ?? "server"}
-        </DynamicAnchorButton>
+      {canPlacePixel && !readOnly && (
+        <DynamicButton
+          color={selectedColor}
+          disabled={paletteIsLoading || !selectedColor}
+        >
+          Place pixel
+          <CoordinateLabel>
+            ({x},&nbsp;{y})
+          </CoordinateLabel>
+        </DynamicButton>
       )}
-      <BotCommandCard color={selectedColor} coordinates={selectedCoordinates} />
+      {(!canPlacePixel || readOnly) &&
+        !selectedColor?.global &&
+        serverInvite && (
+          <DynamicAnchorButton color={selectedColor} href={serverInvite}>
+            Join {selectedColor?.guildName ?? "server"}
+          </DynamicAnchorButton>
+        )}
+      {!readOnly && (
+        <BotCommandCard
+          color={selectedColor}
+          coordinates={selectedCoordinates}
+        />
+      )}
     </ActionPanelTabBody>
   );
 }
