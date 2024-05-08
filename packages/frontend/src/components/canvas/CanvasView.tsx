@@ -49,6 +49,10 @@ const CanvasContainer = styled("div")`
   }
 `;
 
+const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+  ${({ isLoading }) => isLoading && "filter: grayscale(0.8);"}
+`;
+
 const PreviewCanvas = styled("canvas")`
   position: absolute;
   pointer-events: none;
@@ -91,13 +95,12 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const { color } = useSelectedColorContext();
   const { coords, setCoords } = useSelectedPixelLocationContext();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
-
-  const isLoading = imageDimensions === null;
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
@@ -118,17 +121,21 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       setZoom(1);
     }
 
+    setOffset(ORIGIN);
     setImageDimension({ width: image.width, height: image.height });
+    setIsLoading(false);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
   useEffect(() => {
+    setIsLoading(true);
     // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
     // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
     // need to check it's working correctly when we start placing pixels.
     if (imageRef.current?.complete) {
       handleLoadImage(imageRef.current);
     }
-  }, [handleLoadImage]);
+  }, [handleLoadImage, imageUrl]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
@@ -370,7 +377,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
-        {isLoading && <CircularProgress className="loader" />}
         <div
           id="canvas-pan-and-zoom"
           style={{
@@ -383,8 +389,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
             width={imageDimensions?.width}
             height={imageDimensions?.height}
           />
-          <canvas ref={canvasRef} />
+          <DisplayCanvas ref={canvasRef} isLoading={isLoading} />
         </div>
+        {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
       <img
         alt="Blurple Canvas 2023"

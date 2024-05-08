@@ -124,7 +124,6 @@ export default function ActionPanel() {
           Look
         </Tab>
       </TabBar>
-
       <PlacePixelTab
         active={currentTab === TABS.PLACE}
         eventId={canvas.eventId}
