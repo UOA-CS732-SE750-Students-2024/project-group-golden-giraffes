@@ -7,4 +7,4 @@ export {
 export {
   SelectedPixelLocationProvider,
   useSelectedPixelLocationContext,
-} from "./SelectedPixelLocationContext";
+} from "./SelectedPixelPointContext";

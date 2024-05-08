@@ -16,6 +16,7 @@ import {
   multiplyPoint,
 } from "./point";
 
+import { useSelectedPixelLocationContext } from "@/contexts";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
@@ -88,16 +89,13 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
+  const { pixelPoint, setPixelPoint } = useSelectedPixelLocationContext();
 
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
-  const [pixelPoint, setPixelPoint] = useState<Point>({
-    x: 0,
-    y: 0,
-  });
 
   const isLoading = imageDimensions === null;
 
@@ -343,7 +341,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         y: Math.floor(imageY),
       }));
     },
-    [zoom],
+    [zoom, setPixelPoint],
   );
 
   useEffect(() => {
@@ -354,7 +352,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
-    if (!imageDimensions || !color) return;
+    if (!imageDimensions || !color || !pixelPoint) return;
 
     updateCanvasPreviewPixel(previewCanvasRef, pixelPoint, color);
 
