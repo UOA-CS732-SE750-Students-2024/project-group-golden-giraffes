@@ -3,11 +3,14 @@
 import { CircularProgress, css, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
-import { PixelInfo, PlacePixelSocket, Point } from "@blurple-canvas-web/types";
+import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
-import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
+import { useSelectedColorContext } from "@/contexts";
+import { useSelectedPixelLocationContext } from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
+import { socket } from "@/socket";
 import { clamp } from "@/util";
+import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
   addPoints,
@@ -15,11 +18,6 @@ import {
   dividePoint,
   multiplyPoint,
 } from "./point";
-
-import { useSelectedPixelLocationContext } from "@/contexts";
-import { set } from "colorjs.io/fn";
-import { socket } from "@/socket";
-import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
   position: relative;
