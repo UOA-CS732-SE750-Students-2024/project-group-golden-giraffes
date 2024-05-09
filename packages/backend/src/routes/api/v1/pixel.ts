@@ -1,6 +1,7 @@
 import config from "@/config";
 import { ApiError, ForbiddenError } from "@/errors";
 import { BadRequestError, UnauthorizedError } from "@/errors";
+import { socketHandler } from "@/index";
 import {
   PlacePixelArrayBodyModel,
   PlacePixelBodyModel,
@@ -68,6 +69,10 @@ pixelRouter.post<CanvasIdParam>("/bot", async (req, res) => {
     const result = await PlacePixelArrayBodyModel.safeParseAsync(req.body);
     if (!result.success) {
       throw new BadRequestError("Body is not valid", result.error.issues);
+    }
+
+    for (const pixel of result.data) {
+      socketHandler.broadcastPixelPlacement(canvasId, pixel);
     }
 
     await updateManyCachedPixels(canvasId, result.data);

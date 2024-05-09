@@ -3,7 +3,7 @@
 import { CircularProgress, css, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
-import { Point } from "@blurple-canvas-web/types";
+import { PixelInfo, PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
 import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
 import { Dimensions } from "@/hooks/useScreenDimensions";
@@ -17,6 +17,7 @@ import {
 } from "./point";
 
 import { useSelectedPixelLocationContext } from "@/contexts";
+import { socket } from "@/socket";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
@@ -94,9 +95,15 @@ const MIN_ZOOM = 0.5;
 
 export interface CanvasViewProps {
   imageUrl: string;
+  canvasId: number;
+  isLocked: boolean;
 }
 
-export default function CanvasView({ imageUrl }: CanvasViewProps) {
+export default function CanvasView({
+  imageUrl,
+  canvasId,
+  isLocked,
+}: CanvasViewProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -147,6 +154,61 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       handleLoadImage(imageRef.current);
     }
   }, [handleLoadImage, imageUrl]);
+
+  /********************************
+   * SOCKET FUNCTIONALITY.       *
+   ********************************/
+
+  useEffect(() => {
+    const onDisconnect = () => {
+      console.debug("[Live Updating]: Disconnected from server");
+    };
+
+    // If the canvas is locked, we don't need to listen for updates.
+    if (isLocked) {
+      if (socket.connected) {
+        onDisconnect();
+        socket.disconnect();
+      }
+      return;
+    }
+
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    const onConnect = () => {
+      console.debug("[Live Updating]: Connected to server");
+      console.debug(
+        `[Live Updating]: Listening to pixel updates for canvas ${canvasId}`,
+      );
+    };
+
+    const onPixelPlaced = (payload: PlacePixelSocket.Payload) => {
+      console.debug("[Live Updating]: Received pixel update");
+
+      if (!canvasRef.current) return;
+
+      const context = canvasRef.current.getContext("2d");
+      if (!context) return;
+
+      const [r, g, b, a] = payload.rgba;
+      context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+      context.fillRect(payload.x, payload.y, 1, 1);
+    };
+
+    const pixelPlaceEvent = `place pixel ${canvasId}`;
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on(pixelPlaceEvent, onPixelPlaced);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off(pixelPlaceEvent, onPixelPlaced);
+    };
+  }, [canvasId, isLocked]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *

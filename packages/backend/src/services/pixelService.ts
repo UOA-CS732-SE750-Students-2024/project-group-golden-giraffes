@@ -1,6 +1,7 @@
 import { prisma } from "@/client";
 import config from "@/config";
 import { BadRequestError, ForbiddenError, NotFoundError } from "@/errors";
+import { socketHandler } from "@/index";
 import {
   PaletteColor,
   PixelHistoryRecord,
@@ -276,6 +277,13 @@ export async function placePixel(
       },
     });
   });
+
+  socketHandler.broadcastPixelPlacement(canvasId, {
+    x: coordinates.x,
+    y: coordinates.y,
+    rgba: color.rgba,
+  });
+
   // Only update the cache if the transaction is successful
   updateCachedCanvasPixel(canvasId, coordinates, color.rgba);
   return { futureCooldown };
