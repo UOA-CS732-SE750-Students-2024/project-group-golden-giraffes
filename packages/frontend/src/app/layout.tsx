@@ -67,15 +67,15 @@ export default async function RootLayout({
         <AppRouterCacheProvider>
           <AuthProvider profile={getServerSideProfile()}>
             <QueryClientProvider>
-              <ActiveCanvasProvider
-                mainCanvasInfo={await getServerSideCanvasInfo()}
-              >
-                <SelectedColorProvider>
-                  <SelectedPixelLocationProvider>
+              <SelectedColorProvider>
+                <SelectedPixelLocationProvider>
+                  <ActiveCanvasProvider
+                    mainCanvasInfo={await getServerSideCanvasInfo()}
+                  >
                     <ThemeProvider theme={Theme}>{children}</ThemeProvider>
-                  </SelectedPixelLocationProvider>
-                </SelectedColorProvider>
-              </ActiveCanvasProvider>
+                  </ActiveCanvasProvider>
+                </SelectedPixelLocationProvider>
+              </SelectedColorProvider>
             </QueryClientProvider>
           </AuthProvider>
         </AppRouterCacheProvider>
