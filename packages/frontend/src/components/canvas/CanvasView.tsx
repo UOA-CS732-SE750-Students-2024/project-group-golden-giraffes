@@ -353,10 +353,10 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       );
 
       // we only care about updating the location
-      setCoords(() => ({
+      setCoords({
         x: boundedX,
         y: boundedY,
-      }));
+      });
     },
     [zoom, setCoords],
   );
