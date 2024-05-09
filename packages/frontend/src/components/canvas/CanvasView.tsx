@@ -161,7 +161,7 @@ export default function CanvasView({
 
   useEffect(() => {
     const onDisconnect = () => {
-      console.log("[Live Updating]: Disconnected from server");
+      console.debug("[Live Updating]: Disconnected from server");
     };
 
     // If the canvas is locked, we don't need to listen for updates.
@@ -178,14 +178,14 @@ export default function CanvasView({
     }
 
     const onConnect = () => {
-      console.log("[Live Updating]: Connected to server");
-      console.log(
+      console.debug("[Live Updating]: Connected to server");
+      console.debug(
         `[Live Updating]: Listening to pixel updates for canvas ${canvasId}`,
       );
     };
 
     const onPixelPlaced = (payload: PlacePixelSocket.Payload) => {
-      console.log("[Live Updating]: Received pixel update", payload);
+      console.debug("[Live Updating]: Received pixel update");
 
       if (!canvasRef.current) return;
 
