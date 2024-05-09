@@ -113,7 +113,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
-
+  const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
+  const [controlledPan, setControlledPan] = useState(false);
   const [targetZoom, setTargetZoom] = useState(1);
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
@@ -242,9 +243,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   /********************************
    * PANNING FUNCTIONALITY.       *
    ********************************/
-
-  const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
-  const [controlledPan, setControlledPan] = useState(false);
 
   /**
    * Ensure that the offset is within bounds. This is defined as at least half the canvas being on
