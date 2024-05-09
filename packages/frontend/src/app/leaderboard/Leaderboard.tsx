@@ -72,11 +72,6 @@ export default function Leaderboard() {
   const { canvas } = useActiveCanvasContext();
   const { data: leaderboard = [] } = useLeaderboard(canvas.id);
 
-  for (const user of leaderboard) {
-    const { userId, rank, profilePictureUrl, username, totalPixels } = user;
-    console.log(rank, userId, username, username ?? userId);
-  }
-
   return (
     <Wrapper>
       <TitleBlock>
