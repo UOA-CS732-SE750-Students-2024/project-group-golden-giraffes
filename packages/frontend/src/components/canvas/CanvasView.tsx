@@ -17,6 +17,7 @@ import {
 } from "./point";
 
 import { useSelectedPixelLocationContext } from "@/contexts";
+import { set } from "colorjs.io/fn";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
@@ -215,6 +216,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
    * PANNING FUNCTIONALITY.       *
    ********************************/
 
+  const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
+  const [controlledPan, setControlledPan] = useState(false);
+
   /**
    * Ensure that the offset is within bounds. This is defined as at least half the canvas being on
    * screen along an axis.
@@ -249,7 +253,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
   const handleMouseMove = useCallback(
     (event: MouseEvent): void => {
-      updateOffset({ x: event.movementX, y: event.movementY });
+      const diff = { x: event.movementX, y: event.movementY };
+      setVelocity({ x: diff.x, y: diff.y });
+      updateOffset(diff);
     },
     [updateOffset],
   );
@@ -259,6 +265,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
    */
   const handleMouseUp = useCallback((): void => {
     if (!containerRef.current) return;
+
+    setControlledPan(false);
 
     containerRef.current.removeEventListener("mousemove", handleMouseMove);
     containerRef.current.removeEventListener("mouseup", handleMouseUp);
@@ -271,6 +279,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
    */
   const handleStartMousePan = useCallback((): void => {
     if (!containerRef.current) return;
+
+    setControlledPan(true);
 
     containerRef.current.addEventListener("mousemove", handleMouseMove);
     containerRef.current.addEventListener("mouseup", handleMouseUp);
@@ -296,6 +306,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         x: touch.pageX - startTouch.pageX,
         y: touch.pageY - startTouch.pageY,
       };
+
+      setVelocity(touchDiff);
 
       updateOffset({ x: touchDiff.x, y: touchDiff.y });
       startTouchesRef.current = [touch];
@@ -333,6 +345,25 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     },
     [handleTouchMove, handleTouchEnd],
   );
+
+  useEffect(() => {
+    const decayVelocity = () => {
+      if (velocity.x === 0 && velocity.y === 0) return;
+      if (controlledPan) return;
+      updateOffset(velocity);
+      const decay = 0.9;
+      setVelocity((prevVelocity) => ({
+        x: prevVelocity.x * decay,
+        y: prevVelocity.y * decay,
+      }));
+    };
+
+    const interval = setInterval(decayVelocity, 16); // Run every 16 milliseconds (60 FPS)
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [velocity, controlledPan, updateOffset]);
 
   /***********************************
    * SELECTING PIXEL FUNCTIONALITY.  *
