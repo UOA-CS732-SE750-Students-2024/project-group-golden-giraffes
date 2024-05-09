@@ -1,18 +1,14 @@
 import { Skeleton, styled } from "@mui/material";
-import axios from "axios";
 
 import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
-import config from "@/config";
 import {
-  useActiveCanvasContext,
   useAuthContext,
+  useCanvasContext,
   useSelectedColorContext,
-  useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
-
-import { DynamicAnchorButton, DynamicButton } from "../../button";
+import { DynamicAnchorButton, PlacePixelButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
@@ -61,65 +57,31 @@ export default function PlacePixelTab({
   active = false,
   eventId,
 }: PlacePixelTabProps) {
-  const { data: palette = [], isLoading: paletteIsLoading } = usePalette(
-    eventId ?? undefined,
-  );
+  const { data: palette = [] } = usePalette(eventId ?? undefined);
   const [mainColors, partnerColors] = partitionPalette(palette);
 
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
 
   const { user } = useAuthContext();
-  const { canvas } = useActiveCanvasContext();
-
-  const { adjustedCoords, setCoords } = useSelectedPixelLocationContext();
+  const { canvas } = useCanvasContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
-  const selectedCoordinates = adjustedCoords;
-  const x = selectedCoordinates?.x;
-  const y = selectedCoordinates?.y;
-
   const webPlacingEnabled = canvas.webPlacingEnabled;
 
   const canPlacePixel =
-    webPlacingEnabled &&
-    selectedColor &&
-    user &&
-    (selectedColor.global || userWithinServer(user, selectedColor.guildId));
+    webPlacingEnabled && (!selectedColor || selectedColor.global);
 
   const readOnly = canvas.isLocked;
 
   const isJoinServerShown =
-    (!canPlacePixel || readOnly) && !selectedColor?.global && serverInvite;
-
-  const isSelected = selectedCoordinates && selectedColor;
-
-  const handlePixelRequest = () => {
-    if (!selectedCoordinates || !selectedColor) return;
-
-    const requestUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}/pixel`;
-
-    const body = {
-      x: selectedCoordinates.x,
-      y: selectedCoordinates.y,
-      colorId: selectedColor.id,
-    };
-
-    try {
-      axios.post(requestUrl, body, {
-        withCredentials: true,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-
-    setSelectedColor(null);
-    setCoords(null);
-  };
+    (!(canPlacePixel && user) || readOnly) &&
+    !selectedColor?.global &&
+    serverInvite;
 
   return (
     <ActionPanelTabBody active={active}>
@@ -156,29 +118,13 @@ export default function PlacePixelTab({
         }
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
-      {canPlacePixel && !readOnly && (
-        <DynamicButton
-          color={selectedColor}
-          disabled={paletteIsLoading || !selectedColor}
-          onAction={handlePixelRequest}
-        >
-          {isSelected ? "Place pixel" : "Select a pixel"}
-          <CoordinateLabel>
-            {isSelected ? `(${x},\u00A0${y})` : undefined}
-          </CoordinateLabel>
-        </DynamicButton>
-      )}
+      {canPlacePixel && <PlacePixelButton />}
       {isJoinServerShown && (
         <DynamicAnchorButton color={selectedColor} href={serverInvite}>
           Join {selectedColor?.guildName ?? "server"}
         </DynamicAnchorButton>
       )}
-      {!readOnly && isSelected && (
-        <BotCommandCard
-          color={selectedColor}
-          coordinates={selectedCoordinates}
-        />
-      )}
+      {!readOnly && <BotCommandCard />}
     </ActionPanelTabBody>
   );
 }

@@ -1,13 +1,9 @@
 "use client";
 
 import { css, styled } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import {
-  useActiveCanvasContext,
-  useSelectedColorContext,
-  useSelectedPixelLocationContext,
-} from "@/contexts";
+import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { PaletteColor } from "@blurple-canvas-web/types";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
@@ -106,7 +102,7 @@ export default function ActionPanel() {
   const [tempColor, setTempColor] = useState<PaletteColor | null>(null);
 
   const { color, setColor } = useSelectedColorContext();
-  const { canvas } = useActiveCanvasContext();
+  const { canvas } = useCanvasContext();
 
   const onSwitchTab = (isTabLook: boolean) => {
     // switching tabs

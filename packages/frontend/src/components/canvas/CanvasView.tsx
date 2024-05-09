@@ -1,13 +1,23 @@
 "use client";
 
 import { CircularProgress, css, styled } from "@mui/material";
-import { Touch, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Touch,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import { PixelInfo, PlacePixelSocket, Point } from "@blurple-canvas-web/types";
+import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
-import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
+import config from "@/config";
+import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
+import { socket } from "@/socket";
 import { clamp } from "@/util";
+import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
   addPoints,
@@ -15,10 +25,6 @@ import {
   dividePoint,
   multiplyPoint,
 } from "./point";
-
-import { useSelectedPixelLocationContext } from "@/contexts";
-import { socket } from "@/socket";
-import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
   position: relative;
@@ -93,17 +99,7 @@ const SCALE_FACTOR = 0.2;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
-export interface CanvasViewProps {
-  imageUrl: string;
-  canvasId: number;
-  isLocked: boolean;
-}
-
-export default function CanvasView({
-  imageUrl,
-  canvasId,
-  isLocked,
-}: CanvasViewProps) {
+export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -111,7 +107,12 @@ export default function CanvasView({
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
-  const { coords, setCoords } = useSelectedPixelLocationContext();
+  const { canvas, coords, setCoords } = useCanvasContext();
+
+  const imageUrl = useMemo(
+    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
+    [canvas.id],
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -119,6 +120,10 @@ export default function CanvasView({
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
+  const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
+  const [controlledPan, setControlledPan] = useState(false);
+  const [targetZoom, setTargetZoom] = useState(1);
+  const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
@@ -165,7 +170,7 @@ export default function CanvasView({
     };
 
     // If the canvas is locked, we don't need to listen for updates.
-    if (isLocked) {
+    if (canvas.isLocked) {
       if (socket.connected) {
         onDisconnect();
         socket.disconnect();
@@ -180,7 +185,7 @@ export default function CanvasView({
     const onConnect = () => {
       console.debug("[Live Updating]: Connected to server");
       console.debug(
-        `[Live Updating]: Listening to pixel updates for canvas ${canvasId}`,
+        `[Live Updating]: Listening to pixel updates for canvas ${canvas.id}`,
       );
     };
 
@@ -206,7 +211,7 @@ export default function CanvasView({
       context.fillRect(payload.x, payload.y, 1, 1);
     };
 
-    const pixelPlaceEvent = `place pixel ${canvasId}`;
+    const pixelPlaceEvent = `place pixel ${canvas.id}`;
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
@@ -217,7 +222,7 @@ export default function CanvasView({
       socket.off("disconnect", onDisconnect);
       socket.off(pixelPlaceEvent, onPixelPlaced);
     };
-  }, [canvasId, isLocked]);
+  }, [canvas.id, canvas.isLocked]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
@@ -241,18 +246,43 @@ export default function CanvasView({
 
       // The mouse position's origin is in the top left of the canvas. The offset's origin is the
       // center of the canvas so we do this to convert between the two.
-      const mouseOffsetDirection = diffPoints(
-        {
-          x: imageDimensions.width / 2,
-          y: imageDimensions.height / 2,
-        },
-        mousePositionOnCanvas,
+      setMouseOffsetDirection(
+        diffPoints(
+          {
+            x: imageDimensions.width / 2,
+            y: imageDimensions.height / 2,
+          },
+          mousePositionOnCanvas,
+        ),
       );
 
       const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
-      const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
+      const newZoom = clamp(targetZoom * scale, MIN_ZOOM, MAX_ZOOM);
 
-      // Clamping the zoom means the actual scale may be different.
+      setTargetZoom(newZoom);
+    };
+
+    canvasRef.current?.addEventListener("wheel", handleWheel, {
+      passive: false,
+    });
+
+    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
+  }, [imageDimensions, targetZoom]);
+
+  useEffect(() => {
+    if (zoom === targetZoom) return;
+
+    const glideZoom = () => {
+      const diff = (targetZoom - zoom) / targetZoom;
+      const scale = Math.exp(
+        Math.sign(diff) * SCALE_FACTOR * Math.abs(diff) * 2,
+      );
+      const newZoom = clamp(
+        zoom * scale,
+        diff > 0 ? MIN_ZOOM : targetZoom,
+        diff < 0 ? MAX_ZOOM : targetZoom,
+      );
+
       const effectiveScale = newZoom / zoom;
 
       setOffset((prevOffset) => {
@@ -272,15 +302,14 @@ export default function CanvasView({
 
         return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
       });
+
       setZoom(newZoom);
     };
 
-    canvasRef.current?.addEventListener("wheel", handleWheel, {
-      passive: false,
-    });
+    const interval = setInterval(glideZoom, 8);
 
-    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
-  }, [imageDimensions, zoom]);
+    return () => clearInterval(interval);
+  }, [zoom, targetZoom, mouseOffsetDirection]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -320,7 +349,9 @@ export default function CanvasView({
 
   const handleMouseMove = useCallback(
     (event: MouseEvent): void => {
-      updateOffset({ x: event.movementX, y: event.movementY });
+      const diff = { x: event.movementX, y: event.movementY };
+      setVelocity({ x: diff.x, y: diff.y });
+      updateOffset(diff);
     },
     [updateOffset],
   );
@@ -330,6 +361,8 @@ export default function CanvasView({
    */
   const handleMouseUp = useCallback((): void => {
     if (!containerRef.current) return;
+
+    setControlledPan(false);
 
     containerRef.current.removeEventListener("mousemove", handleMouseMove);
     containerRef.current.removeEventListener("mouseup", handleMouseUp);
@@ -342,6 +375,8 @@ export default function CanvasView({
    */
   const handleStartMousePan = useCallback((): void => {
     if (!containerRef.current) return;
+
+    setControlledPan(true);
 
     containerRef.current.addEventListener("mousemove", handleMouseMove);
     containerRef.current.addEventListener("mouseup", handleMouseUp);
@@ -367,6 +402,8 @@ export default function CanvasView({
         x: touch.pageX - startTouch.pageX,
         y: touch.pageY - startTouch.pageY,
       };
+
+      setVelocity(touchDiff);
 
       updateOffset({ x: touchDiff.x, y: touchDiff.y });
       startTouchesRef.current = [touch];
@@ -404,6 +441,25 @@ export default function CanvasView({
     },
     [handleTouchMove, handleTouchEnd],
   );
+
+  useEffect(() => {
+    const decayVelocity = () => {
+      if (velocity.x === 0 && velocity.y === 0) return;
+      if (controlledPan) return;
+      updateOffset(velocity);
+      const decay = 0.75;
+      setVelocity((prevVelocity) => ({
+        x: prevVelocity.x * decay,
+        y: prevVelocity.y * decay,
+      }));
+    };
+
+    const interval = setInterval(decayVelocity, 16); // Run every 16 milliseconds (60 FPS)
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [velocity, controlledPan, updateOffset]);
 
   /***********************************
    * SELECTING PIXEL FUNCTIONALITY.  *

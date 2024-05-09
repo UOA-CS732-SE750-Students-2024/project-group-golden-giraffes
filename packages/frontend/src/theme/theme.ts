@@ -62,6 +62,7 @@ export const Theme = createTheme({
           "&.Mui-disabled": {
             backgroundColor: "var(--discord-legacy-greyple)",
             opacity: 0.55,
+            color: "#ffffff",
           },
         },
       },

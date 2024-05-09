@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import Avatar from "@/components/Avatar";
 import { Button } from "@/components/button";
-import { useActiveCanvasContext, useAuthContext } from "@/contexts";
+import { useAuthContext, useCanvasContext } from "@/contexts";
 import { useUserStats } from "@/hooks";
 import { useEffect } from "react";
 import StatsTable from "./StatsTable";
@@ -41,7 +41,7 @@ const StatsCard = styled("div")`
 `;
 
 export default function MePageContent() {
-  const { canvas: activeCanvas } = useActiveCanvasContext();
+  const { canvas: activeCanvas } = useCanvasContext();
   const { signOut, user } = useAuthContext();
   const router = useRouter();
 

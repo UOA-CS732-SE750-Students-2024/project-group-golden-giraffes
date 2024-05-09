@@ -1,4 +1,4 @@
-import { PaletteColor, Point } from "@blurple-canvas-web/types";
+import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { styled } from "@mui/material";
 import { Copy as CopyIcon } from "lucide-react";
 
@@ -46,19 +46,12 @@ const CopyButton = styled("button")<CopyButtonProps>`
   }
 `;
 
-export default function BotCommandCard({
-  color,
-  coordinates,
-}: {
-  color?: PaletteColor | null;
-  coordinates: Point | null;
-}) {
-  if (!color) return <Wrapper>No color selected</Wrapper>;
+export default function BotCommandCard() {
+  const { adjustedCoords: coordinates } = useCanvasContext();
+  const { color } = useSelectedColorContext();
 
-  if (!coordinates) return <Wrapper>No coordinates selected</Wrapper>;
-
+  if (!(coordinates && color)) return null;
   const { x, y } = coordinates;
-
   const command = `/place x:${x} y:${y} color:${color.code}`;
 
   return (
