@@ -6,7 +6,7 @@
 
 Blurple Canvas Web is a web alternative to the [existing Discord bot](https://github.com/Rocked03/Blurple-Canvas) Discord bot, which brings canvas to the web!
 
-If you’d like a bit more context, [we have a wiki!](https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/wiki/Blurple-Canvas-Web-Wiki)
+If you’d like a bit more context, [we have a wiki!](https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/wiki)
 
 ## 🥪 Tech stack & repo structure
 
