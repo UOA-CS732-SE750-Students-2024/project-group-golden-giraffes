@@ -60,12 +60,14 @@ interface DynamicButtonProps {
   children: React.ReactNode;
   color: PaletteColor | null;
   disabled?: boolean;
+  onAction?: () => void;
 }
 
 export default function DynamicButton({
   children,
   color,
   disabled = false,
+  onAction,
   ...props
 }: DynamicButtonProps) {
   const rgba = color?.rgba;
@@ -73,8 +75,20 @@ export default function DynamicButton({
 
   const backgroundColorStr = color ? `rgb(${rgb})` : undefined;
 
+  const clickHandler = onAction;
+  const keyUpHandler = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      onAction?.();
+    }
+  };
+
   return (
-    <StyledButton backgroundColorStr={backgroundColorStr} {...props}>
+    <StyledButton
+      backgroundColorStr={backgroundColorStr}
+      onClick={clickHandler}
+      onKeyUp={keyUpHandler}
+      {...props}
+    >
       <DynamicButtonContent>{children}</DynamicButtonContent>
     </StyledButton>
   );

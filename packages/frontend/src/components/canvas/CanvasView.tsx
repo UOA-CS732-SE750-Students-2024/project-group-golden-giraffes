@@ -1,6 +1,6 @@
 "use client";
 
-import { CircularProgress, styled } from "@mui/material";
+import { CircularProgress, css, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
 import { PixelInfo, PlacePixelSocket, Point } from "@blurple-canvas-web/types";
@@ -51,10 +51,21 @@ const CanvasContainer = styled("div")`
 `;
 
 const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
-  ${({ isLoading }) => isLoading && "filter: grayscale(0.8);"}
+  transition: filter var(--transition-duration-medium) ease;
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      cursor: wait;
+      filter: grayscale(80%);
+    `}
 `;
 
-const PreviewCanvas = styled("canvas")`
+const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      display: none;
+    `}
   position: absolute;
   pointer-events: none;
 `;
@@ -150,7 +161,7 @@ export default function CanvasView({
 
   useEffect(() => {
     const onDisconnect = () => {
-      console.log("[Live Updating]: Disconnected from server");
+      console.debug("[Live Updating]: Disconnected from server");
     };
 
     // If the canvas is locked, we don't need to listen for updates.
@@ -177,7 +188,7 @@ export default function CanvasView({
       payload: PlacePixelSocket.Payload,
       pixelTimestamp: string,
     ) => {
-      console.log("[Live Updating]: Received pixel update", payload);
+      console.debug("[Live Updating]: Received pixel update", payload);
 
       // If we disconnect and reconnect this tells the server we've received pixels up to this point
       socket.auth = {
@@ -411,12 +422,22 @@ export default function CanvasView({
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
+      const boundedX = clamp(
+        Math.floor(imageX),
+        0,
+        canvasRef.current.width - 1,
+      );
+      const boundedY = clamp(
+        Math.floor(imageY),
+        0,
+        canvasRef.current.height - 1,
+      );
+
       // we only care about updating the location
-      setCoords((prev) => ({
-        ...prev,
-        x: Math.floor(imageX),
-        y: Math.floor(imageY),
-      }));
+      setCoords({
+        x: boundedX,
+        y: boundedY,
+      });
     },
     [zoom, setCoords],
   );
@@ -429,7 +450,7 @@ export default function CanvasView({
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
-    if (!imageDimensions || !color || !coords) return;
+    if (!imageDimensions || !coords) return;
 
     updateCanvasPreviewPixel(previewCanvasRef, coords, color);
 
@@ -455,6 +476,7 @@ export default function CanvasView({
           }}
         >
           <PreviewCanvas
+            isLoading={isLoading}
             ref={previewCanvasRef}
             width={imageDimensions?.width}
             height={imageDimensions?.height}

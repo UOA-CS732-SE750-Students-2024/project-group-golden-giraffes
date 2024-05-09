@@ -1,5 +1,6 @@
 "use client";
 
+import config from "@/config";
 import { useAuthContext } from "@/contexts";
 import { Button, Typography, styled } from "@mui/material";
 import Image from "next/image";
@@ -70,7 +71,7 @@ export default function SignInPage() {
           />
         </picture>
         <Title variant="h1">Blurple Canvas</Title>
-        <a href="http://localhost:8000/api/v1/discord">
+        <a href={`${config.apiUrl}/api/v1/discord`}>
           <Button variant="contained">Sign in with Discord</Button>
         </a>
         <p>That’s it. There are no other options.</p>

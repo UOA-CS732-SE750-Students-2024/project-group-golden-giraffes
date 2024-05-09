@@ -4,7 +4,7 @@ export interface PaletteColor {
   id: number;
   code: string;
   name: string;
-  rgba: PixelColor;
+  rgba: number[]; // [r, g, b, a];
   global: boolean;
   invite: string | null;
   guildName: string | null;

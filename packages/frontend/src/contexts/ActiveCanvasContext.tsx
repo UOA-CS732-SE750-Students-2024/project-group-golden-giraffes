@@ -6,6 +6,7 @@ import { createContext, useCallback, useContext, useState } from "react";
 import config from "@/config";
 import { socket } from "@/socket";
 import { CanvasInfo, CanvasInfoRequest } from "@blurple-canvas-web/types";
+import { useSelectedColorContext, useSelectedPixelLocationContext } from ".";
 
 interface ActiveCanvasContextType {
   canvas: CanvasInfo;
@@ -36,6 +37,8 @@ export const ActiveCanvasProvider = ({
   mainCanvasInfo,
 }: ActiveCanvasProviderProps) => {
   const [activeCanvas, setActiveCanvas] = useState(mainCanvasInfo);
+  const { setCoords } = useSelectedPixelLocationContext();
+  const { setColor: setSelectedColor } = useSelectedColorContext();
 
   const setCanvasById = useCallback<ActiveCanvasContextType["setCanvas"]>(
     async (canvasId: CanvasInfo["id"]) => {
@@ -44,8 +47,10 @@ export const ActiveCanvasProvider = ({
       );
 
       setActiveCanvas(response.data);
+      setSelectedColor(null);
+      setCoords(null);
 
-      // When we load an image, we want to make sure any pixels placed since now get inluded in the
+      // When we load an image, we want to make sure any pixels placed since now get included in the
       // response. This is because in the time it takes for the image to load some pixels may have
       // already been placed.
       socket.auth = {
@@ -53,7 +58,7 @@ export const ActiveCanvasProvider = ({
         pixelTimestamp: new Date().toISOString(),
       };
     },
-    [],
+    [setSelectedColor, setCoords],
   );
 
   return (

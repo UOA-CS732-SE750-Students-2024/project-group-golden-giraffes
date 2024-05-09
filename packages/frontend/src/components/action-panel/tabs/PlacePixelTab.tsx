@@ -1,7 +1,9 @@
-import { styled } from "@mui/material";
+import { Skeleton, styled } from "@mui/material";
+import axios from "axios";
 
-import { DiscordUserProfile, Palette, Point } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
+import config from "@/config";
 import {
   useActiveCanvasContext,
   useAuthContext,
@@ -9,6 +11,7 @@ import {
   useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
+
 import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -26,6 +29,13 @@ export const CoordinateLabel = styled("span")`
   opacity: 0.6;
 `;
 
+const SwatchSkeleton = styled(Skeleton)`
+  aspect-ratio: 1;
+  border-radius: 0.5rem;
+  width: 100%;
+  height: auto;
+`;
+
 export const partitionPalette = (palette: Palette) => {
   const mainColors: Palette = [];
   const partnerColors: Palette = [];
@@ -38,7 +48,8 @@ export const partitionPalette = (palette: Palette) => {
 
 function userWithinServer(user: DiscordUserProfile, serverId: string) {
   return false;
-  // return user.guilds.some((guild) => guild.id === serverId);
+  // const guildIds = decodeUserGuildsBase64(user);
+  // return guildIds.some((guildId) => guildId === serverId);
 }
 
 interface PlacePixelTabProps {
@@ -61,14 +72,14 @@ export default function PlacePixelTab({
   const { user } = useAuthContext();
   const { canvas } = useActiveCanvasContext();
 
-  const { coords } = useSelectedPixelLocationContext();
+  const { adjustedCoords, setCoords } = useSelectedPixelLocationContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
-  const selectedCoordinates = coords;
+  const selectedCoordinates = adjustedCoords;
   const x = selectedCoordinates?.x;
   const y = selectedCoordinates?.y;
 
@@ -87,33 +98,69 @@ export default function PlacePixelTab({
 
   const isSelected = selectedCoordinates && selectedColor;
 
+  const handlePixelRequest = () => {
+    if (!selectedCoordinates || !selectedColor) return;
+
+    const requestUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}/pixel`;
+
+    const body = {
+      x: selectedCoordinates.x,
+      y: selectedCoordinates.y,
+      colorId: selectedColor.id,
+    };
+
+    try {
+      axios.post(requestUrl, body, {
+        withCredentials: true,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
+    setSelectedColor(null);
+    setCoords(null);
+  };
+
   return (
     <ActionPanelTabBody active={active}>
       <ColorPicker>
         <Heading>Main colors</Heading>
-        {mainColors.map((color) => (
-          <InteractiveSwatch
-            key={color.code}
-            rgba={color.rgba}
-            onAction={() => setSelectedColor(color)}
-            selected={color === selectedColor}
-          />
-        ))}
+        {mainColors.length ?
+          mainColors.map((color) => (
+            <InteractiveSwatch
+              key={color.code}
+              rgba={color.rgba}
+              onAction={() => setSelectedColor(color)}
+              selected={color === selectedColor}
+            />
+          ))
+        : Array.from({ length: 12 }).map((_, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: These will never change
+            <SwatchSkeleton key={i} variant="rectangular" />
+          ))
+        }
         <Heading>Partner colors</Heading>
-        {partnerColors.map((color) => (
-          <InteractiveSwatch
-            key={color.code}
-            onAction={() => setSelectedColor(color)}
-            rgba={color.rgba}
-            selected={color === selectedColor}
-          />
-        ))}
+        {partnerColors.length ?
+          partnerColors.map((color) => (
+            <InteractiveSwatch
+              key={color.code}
+              onAction={() => setSelectedColor(color)}
+              rgba={color.rgba}
+              selected={color === selectedColor}
+            />
+          ))
+        : Array.from({ length: 13 }).map((_, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: These will never change
+            <SwatchSkeleton key={i} variant="rectangular" />
+          ))
+        }
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
       {canPlacePixel && !readOnly && (
         <DynamicButton
           color={selectedColor}
           disabled={paletteIsLoading || !selectedColor}
+          onAction={handlePixelRequest}
         >
           {isSelected ? "Place pixel" : "Select a pixel"}
           <CoordinateLabel>

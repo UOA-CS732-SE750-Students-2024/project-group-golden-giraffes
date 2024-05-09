@@ -1,6 +1,13 @@
 import { prisma } from "@/client";
-import { PlacePixelSocket } from "@blurple-canvas-web/types";
 import { Server, Socket } from "socket.io";
+
+import { PlacePixelSocket } from "@blurple-canvas-web/types";
+
+const TEN_MINUTES_IN_MS = 10 * 60 * 1000;
+
+function timestampTooLongAgo(timestamp: string): boolean {
+  return Date.now() - new Date(timestamp).getTime() > TEN_MINUTES_IN_MS;
+}
 
 export class SocketHandler {
   public constructor(private io: Server) {
@@ -16,7 +23,12 @@ export class SocketHandler {
 
     // If the socket wasn't able to automatically recover after a temporary disconnection
     const { pixelTimestamp, canvasId } = socket.handshake.auth;
-    if (!socket.recovered && pixelTimestamp && canvasId) {
+    if (
+      !socket.recovered &&
+      pixelTimestamp &&
+      canvasId &&
+      !timestampTooLongAgo(pixelTimestamp)
+    ) {
       prisma.history
         .findMany({
           select: {
@@ -35,7 +47,7 @@ export class SocketHandler {
         })
         .then((pixels) => {
           console.log(
-            `[Socket ${socket.id}]: Synchronising client requires ${pixels.length} pixels to be sent`,
+            `[Socket ${socket.id}]: Synchronizing client requires ${pixels.length} pixels to be sent`,
           );
 
           for (const pixel of pixels) {
@@ -49,7 +61,7 @@ export class SocketHandler {
     }
   }
 
-  public broadcastPlacePixel(
+  public broadcastPixelPlacement(
     canvasId: number,
     payload: PlacePixelSocket.Payload,
   ) {
