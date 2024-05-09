@@ -40,10 +40,16 @@ brew install nvm
 nvm use
 ```
 
-**Enable [Corepack](https://nodejs.org/api/corepack.html).** We recommend using Corepack to manage your pnpm version, but if you’d prefer installing pnpm a different way, [go ahead](https://pnpm.io/installation). (Make sure it matches the version number specified in the [root manifest file](/package.json).)
+**Enable [Corepack](https://nodejs.org/api/corepack.html).** We use [pnpm](https://pnpm.io) to manage dependencies. We recommend using Corepack to manage your pnpm version, but if you’d prefer installing pnpm a different way, [go ahead](https://pnpm.io/installation).
 
 ```sh
 corepack enable pnpm
+```
+
+**Verify pnpm is working.** By now the package manager should be good to go. Double check with this command, and make sure it matches the version number specified in the [root manifest file](/package.json).
+
+```sh
+pnpm --version
 ```
 
 ### 🤫 Secrets & environment variables
