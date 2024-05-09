@@ -103,17 +103,6 @@ const TABS = {
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
   const { canvas } = useActiveCanvasContext();
-  const { setCoords } = useSelectedPixelLocationContext();
-  const { setColor: setSelectedColor } = useSelectedColorContext();
-
-  useEffect(() => {
-    if (canvas) {
-      // for some reason, useEffect was complaining if I didn't use `canvas` anywhere
-      // "This hook specifies more dependencies than necessary"
-      setSelectedColor(null);
-      setCoords(null);
-    }
-  }, [canvas, setSelectedColor, setCoords]);
 
   return (
     <Wrapper>
