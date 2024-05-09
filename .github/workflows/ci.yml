@@ -13,6 +13,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
   cancel-in-progress: true
 
+env:
+  NODE_ENV: test
+  DISCORD_CLIENT_ID: 0000000000000000000
+  DISCORD_CLIENT_SECRET: super_duper_secret
+
 jobs:
   format_and_lint:
     name: "Format & lint"
@@ -76,3 +81,27 @@ jobs:
 
       - name: Build
         run: pnpm --filter ${{ matrix.package }} build
+
+  test:
+    name: "Test"
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3.0.0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm --filter backend test
