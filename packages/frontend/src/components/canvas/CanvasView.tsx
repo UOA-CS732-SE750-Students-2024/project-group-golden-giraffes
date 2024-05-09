@@ -1,14 +1,19 @@
 "use client";
 
 import { CircularProgress, css, styled } from "@mui/material";
-import { Touch, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Touch,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
-import {
-  useSelectedColorContext,
-  useSelectedPixelLocationContext,
-} from "@/contexts";
+import config from "@/config";
+import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
@@ -94,17 +99,7 @@ const SCALE_FACTOR = 0.2;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
-export interface CanvasViewProps {
-  imageUrl: string;
-  canvasId: number;
-  isLocked: boolean;
-}
-
-export default function CanvasView({
-  imageUrl,
-  canvasId,
-  isLocked,
-}: CanvasViewProps) {
+export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -112,7 +107,12 @@ export default function CanvasView({
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
-  const { coords, setCoords } = useSelectedPixelLocationContext();
+  const { canvas, coords, setCoords } = useCanvasContext();
+
+  const imageUrl = useMemo(
+    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
+    [canvas.id],
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -170,7 +170,7 @@ export default function CanvasView({
     };
 
     // If the canvas is locked, we don't need to listen for updates.
-    if (isLocked) {
+    if (canvas.isLocked) {
       if (socket.connected) {
         onDisconnect();
         socket.disconnect();
@@ -185,7 +185,7 @@ export default function CanvasView({
     const onConnect = () => {
       console.debug("[Live Updating]: Connected to server");
       console.debug(
-        `[Live Updating]: Listening to pixel updates for canvas ${canvasId}`,
+        `[Live Updating]: Listening to pixel updates for canvas ${canvas.id}`,
       );
     };
 
@@ -202,7 +202,7 @@ export default function CanvasView({
       context.fillRect(payload.x, payload.y, 1, 1);
     };
 
-    const pixelPlaceEvent = `place pixel ${canvasId}`;
+    const pixelPlaceEvent = `place pixel ${canvas.id}`;
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
@@ -213,7 +213,7 @@ export default function CanvasView({
       socket.off("disconnect", onDisconnect);
       socket.off(pixelPlaceEvent, onPixelPlaced);
     };
-  }, [canvasId, isLocked]);
+  }, [canvas.id, canvas.isLocked]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *

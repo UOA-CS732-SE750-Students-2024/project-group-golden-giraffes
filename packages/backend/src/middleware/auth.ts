@@ -63,7 +63,7 @@ export function initializeAuth(app: Express) {
       // having a random secret would mess with persistent sessions
       secret: config.expressSessionSecret,
       resave: true,
-      saveUninitialized: true,
+      saveUninitialized: false,
       store: new PrismaSessionStore(prisma, {
         checkPeriod: 2 * 60 * 1000, //ms
         dbRecordIdIsSessionId: true,

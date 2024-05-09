@@ -38,38 +38,6 @@ export function createApp(): App {
 
   const socketHandler = new SocketHandler(io);
 
-  app.get("/", (req, res) => {
-    res.json({ message: "Hello, world!" });
-  });
-
-  app.get("/pixels", async (req, res) => {
-    // Example usage :)
-    const pixels = await prisma.pixel.findMany({
-      // Only select a subset of the table
-      select: { x: true, y: true, color_id: true },
-      where: {
-        x: { lte: 10 },
-        y: { lte: 10 },
-      },
-    });
-
-    res.status(200).json(pixels);
-  });
-
-  app.get("/stats", async (req, res) => {
-    // Testing views in Prisma
-    const rocked03Stats = await prisma.user_stats.findFirst({
-      where: { user_id: BigInt("204778476102877187"), canvas_id: 2023 },
-      include: { user: true },
-    });
-
-    if (rocked03Stats) {
-      res.status(200).json(rocked03Stats);
-    } else {
-      res.status(404).json({ message: "No stats found :pensive:" });
-    }
-  });
-
   server.listen(config.api.port, () => {
     console.log(`⚡[server]: Server is running on port ${config.api.port}`);
   });
