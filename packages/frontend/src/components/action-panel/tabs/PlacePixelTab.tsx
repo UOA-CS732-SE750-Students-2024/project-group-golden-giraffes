@@ -1,4 +1,5 @@
-import { styled } from "@mui/material";
+import { Skeleton, styled } from "@mui/material";
+import axios from "axios";
 
 import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
@@ -10,7 +11,7 @@ import {
   useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
-import axios from "axios";
+
 import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -26,6 +27,13 @@ const ColorPicker = styled("div")`
 
 export const CoordinateLabel = styled("span")`
   opacity: 0.6;
+`;
+
+const SwatchSkeleton = styled(Skeleton)`
+  aspect-ratio: 1;
+  border-radius: 0.5rem;
+  width: 100%;
+  height: auto;
 `;
 
 export const partitionPalette = (palette: Palette) => {
@@ -117,23 +125,35 @@ export default function PlacePixelTab({
     <ActionPanelTabBody active={active}>
       <ColorPicker>
         <Heading>Main colors</Heading>
-        {mainColors.map((color) => (
-          <InteractiveSwatch
-            key={color.code}
-            rgba={color.rgba}
-            onAction={() => setSelectedColor(color)}
-            selected={color === selectedColor}
-          />
-        ))}
+        {mainColors.length ?
+          mainColors.map((color) => (
+            <InteractiveSwatch
+              key={color.code}
+              rgba={color.rgba}
+              onAction={() => setSelectedColor(color)}
+              selected={color === selectedColor}
+            />
+          ))
+        : Array.from({ length: 12 }).map((_, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: These will never change
+            <SwatchSkeleton key={i} variant="rectangular" />
+          ))
+        }
         <Heading>Partner colors</Heading>
-        {partnerColors.map((color) => (
-          <InteractiveSwatch
-            key={color.code}
-            onAction={() => setSelectedColor(color)}
-            rgba={color.rgba}
-            selected={color === selectedColor}
-          />
-        ))}
+        {partnerColors.length ?
+          partnerColors.map((color) => (
+            <InteractiveSwatch
+              key={color.code}
+              onAction={() => setSelectedColor(color)}
+              rgba={color.rgba}
+              selected={color === selectedColor}
+            />
+          ))
+        : Array.from({ length: 13 }).map((_, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: These will never change
+            <SwatchSkeleton key={i} variant="rectangular" />
+          ))
+        }
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
       {canPlacePixel && !readOnly && (
