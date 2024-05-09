@@ -95,11 +95,11 @@ export default function Leaderboard() {
                 <RankCell>{rank}</RankCell>
                 <UserCell>
                   <Avatar
-                    username={username}
+                    username={username ?? userId}
                     profilePictureUrl={profilePictureUrl}
                     size={60}
                   />
-                  <Username>{username}</Username>
+                  <Username>{username ?? userId}</Username>
                 </UserCell>
                 <PixelCountCell>
                   <PixelCountCellContents>
