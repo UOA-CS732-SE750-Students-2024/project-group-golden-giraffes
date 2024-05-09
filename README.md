@@ -20,7 +20,7 @@ If you’d like a bit more context, [we have a wiki!](https://github.com/UOA-CS7
 ### Placing pixels
 
 > [!NOTE]
-> Pixel placement is only enabled for canvases that are part of an ongoing Project Blurple event. Once that year’s Project Blurple ends, the canvas is locked.
+> Pixel placement is only enabled for active canvases that are part of an ongoing event. Once that event ends, the canvas is locked.
 
 - **Sign in with Discord.** Anyone can view canvases (no account needed), but you’ll need to sign with Discord to place pixels. (You can also sign out.)
 - **View colour palette.** As you switch between events, see the colours which were/are allowed on that canvas.
