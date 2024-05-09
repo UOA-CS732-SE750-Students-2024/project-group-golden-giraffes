@@ -1,5 +1,6 @@
-import { PlacePixelSocket } from "@blurple-canvas-web/types";
 import { Server, Socket } from "socket.io";
+
+import { PlacePixelSocket } from "@blurple-canvas-web/types";
 
 export class SocketHandler {
   public constructor(private io: Server) {
@@ -13,7 +14,7 @@ export class SocketHandler {
     });
   }
 
-  public broadcastPlacePixel(
+  public broadcastPixelPlacement(
     canvasId: number,
     payload: PlacePixelSocket.Payload,
   ) {
