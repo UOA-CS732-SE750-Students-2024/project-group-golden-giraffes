@@ -14,7 +14,10 @@ COPY . .
 
 RUN pnpm run build
 
+RUN pnpm store prune
+
 EXPOSE 3000
-EXPOSE 8000
+
+WORKDIR /app/packages/frontend
 
 CMD ["pnpm", "start"]

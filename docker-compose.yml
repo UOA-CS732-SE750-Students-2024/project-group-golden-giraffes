@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+
+  caddy:
+    image: caddy:2.7-alpine
+
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # copy local ./Caddyfile to /etc/caddy/Caddyfile on docker
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    network_mode: host
