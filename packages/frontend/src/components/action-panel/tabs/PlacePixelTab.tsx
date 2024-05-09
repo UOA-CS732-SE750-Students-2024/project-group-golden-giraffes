@@ -92,7 +92,7 @@ export default function PlacePixelTab({
   const handlePixelRequest = () => {
     if (!selectedCoordinates || !selectedColor) return;
 
-    const requestUrl = `${config.apiUrl}/api/v1/canvas/2123/pixel`;
+    const requestUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}/pixel`;
 
     const body = {
       x: selectedCoordinates.x,
