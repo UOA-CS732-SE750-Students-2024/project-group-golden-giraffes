@@ -13,19 +13,34 @@ const discordStrategy = new DiscordStrategy(
     clientID: config.discord.clientId,
     clientSecret: config.discord.clientSecret,
     callbackURL: "/api/v1/discord/callback",
-    scope: ["identify"],
+    scope: ["identify", "guilds"],
   },
-  (_accessToken, _refreshToken, profile, done) => {
-    const user: DiscordUserProfile = {
-      id: profile.id,
-      username: profile.username,
-      profilePictureUrl: getProfilePictureUrlFromHash(
-        BigInt(profile.id),
-        profile.avatar,
-      ),
-    };
+  async (_accessToken, _refreshToken, profile, done) => {
+    const guildIds = profile.guilds?.map((guild) => BigInt(guild.id)) ?? [];
 
-    done(null, user);
+    try {
+      const filteredGuildIds = await prisma.guild.findMany({
+        select: { id: true },
+        where: { id: { in: guildIds } },
+      });
+
+      const guildString = filteredGuildIds.map((guild) => guild.id).join(" ");
+      const guildStringBase64 = Buffer.from(guildString).toString("base64");
+
+      const user: DiscordUserProfile = {
+        id: profile.id,
+        username: profile.username,
+        profilePictureUrl: getProfilePictureUrlFromHash(
+          BigInt(profile.id),
+          profile.avatar,
+        ),
+        guildIdsBase64: guildStringBase64,
+      };
+
+      done(null, user);
+    } catch (error) {
+      done(error as Error, undefined);
+    }
   },
 );
 
@@ -43,7 +58,7 @@ export function initializeAuth(app: Express) {
   app.use(
     session({
       cookie: {
-        maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+        maxAge: 24 * 60 * 60 * 1000, // 1 day (in ms)
       },
       // having a random secret would mess with persistent sessions
       secret: config.expressSessionSecret,

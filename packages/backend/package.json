@@ -25,7 +25,7 @@
     "pnpm": ">=9.0.1"
   },
   "scripts": {
-    "build": "tsc --project tsconfig.build.json",
+    "build": "tsc --project tsconfig.build.json && tsc-alias -p tsconfig.json",
     "dev": "nodemon src/index.ts --devmode",
     "start": "node build/index.js",
     "postinstall": "prisma generate",
@@ -68,6 +68,7 @@
     "prismock": "^1.31.0",
     "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.8",
     "typescript": "^5.4.2",
     "vitest": "^1.6.0"
   }

@@ -30,7 +30,7 @@ const ColorName = styled("p")`
 export default function PixelHistoryListItem({
   record,
 }: {
-  record: PixelHistoryRecord;
+  record?: PixelHistoryRecord;
 }) {
   if (!record) return null;
   const { color, userProfile } = record;
@@ -39,7 +39,9 @@ export default function PixelHistoryListItem({
     <Wrapper>
       <StyledSwatch key={color.code} rgba={color.rgba} />
       <div>
-        <Username title={userProfile.id}>{userProfile.username}</Username>
+        <Username title={record.userId}>
+          {userProfile?.username ?? record.userId}
+        </Username>
         <ColorName>
           {color.name} <ColorCodeChip color={color} />
         </ColorName>
