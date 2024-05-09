@@ -2,32 +2,23 @@ import { styled } from "@mui/material";
 
 import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
-import config from "@/config";
 import {
   useActiveCanvasContext,
   useAuthContext,
   useSelectedColorContext,
-  useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
-import axios from "axios";
-import { DynamicAnchorButton, DynamicButton } from "../../button";
+import { DynamicAnchorButton, PlacePixelButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import BotCommandCard from "./BotCommandCard";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
-import Cooldown from "@/components/button/Cooldown";
-
 const ColorPicker = styled("div")`
   display: grid;
   gap: 0.25rem;
   grid-template-columns: repeat(5, 1fr);
-`;
-
-export const CoordinateLabel = styled("span")`
-  opacity: 0.6;
 `;
 
 export const partitionPalette = (palette: Palette) => {
@@ -55,9 +46,7 @@ export default function PlacePixelTab({
   active = false,
   eventId,
 }: PlacePixelTabProps) {
-  const { data: palette = [], isLoading: paletteIsLoading } = usePalette(
-    eventId ?? undefined,
-  );
+  const { data: palette = [] } = usePalette(eventId ?? undefined);
   const [mainColors, partnerColors] = partitionPalette(palette);
 
   const { color: selectedColor, setColor: setSelectedColor } =
@@ -66,54 +55,24 @@ export default function PlacePixelTab({
   const { user } = useAuthContext();
   const { canvas } = useActiveCanvasContext();
 
-  const { adjustedCoords, setCoords } = useSelectedPixelLocationContext();
-
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
-  const selectedCoordinates = adjustedCoords;
-  const x = selectedCoordinates?.x;
-  const y = selectedCoordinates?.y;
-
   const webPlacingEnabled = canvas.webPlacingEnabled;
 
   const canPlacePixel =
     webPlacingEnabled &&
-    selectedColor &&
     user &&
-    (selectedColor.global || userWithinServer(user, selectedColor.guildId));
+    (!selectedColor ||
+      selectedColor.global ||
+      userWithinServer(user, selectedColor.guildId));
 
   const readOnly = canvas.isLocked;
 
   const isJoinServerShown =
     (!canPlacePixel || readOnly) && !selectedColor?.global && serverInvite;
-
-  const isSelected = selectedCoordinates && selectedColor;
-
-  const handlePixelRequest = () => {
-    if (!selectedCoordinates || !selectedColor) return;
-
-    const requestUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}/pixel`;
-
-    const body = {
-      x: selectedCoordinates.x,
-      y: selectedCoordinates.y,
-      colorId: selectedColor.id,
-    };
-
-    try {
-      axios.post(requestUrl, body, {
-        withCredentials: true,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-
-    setSelectedColor(null);
-    setCoords(null);
-  };
 
   return (
     <ActionPanelTabBody active={active}>
@@ -138,30 +97,14 @@ export default function PlacePixelTab({
         ))}
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
-      {canPlacePixel && !readOnly && (
-        <DynamicButton
-          color={selectedColor}
-          disabled={paletteIsLoading || !selectedColor}
-          onAction={handlePixelRequest}
-        >
-          {isSelected ? "Place pixel" : "Select a pixel"}
-          <CoordinateLabel>
-            {isSelected ? `(${x},\u00A0${y})` : undefined}
-          </CoordinateLabel>
-        </DynamicButton>
-      )}
+      {canPlacePixel && !readOnly && <PlacePixelButton />}
       {isJoinServerShown && (
         <DynamicAnchorButton color={selectedColor} href={serverInvite}>
           Join {selectedColor?.guildName ?? "server"}
         </DynamicAnchorButton>
       )}
-      {!readOnly && isSelected && (
-        <BotCommandCard
-          color={selectedColor}
-          coordinates={selectedCoordinates}
-        />
-      )}
-      <Cooldown />
+      {!readOnly && <BotCommandCard />}
+      {/* <Cooldown /> */}
     </ActionPanelTabBody>
   );
 }
