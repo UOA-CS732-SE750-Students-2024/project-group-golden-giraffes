@@ -235,7 +235,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       setZoom(newZoom);
     };
 
-    const interval = setInterval(glideZoom, 16);
+    const interval = setInterval(glideZoom, 8);
 
     return () => clearInterval(interval);
   }, [zoom, targetZoom, mouseOffsetDirection]);
@@ -376,7 +376,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       if (velocity.x === 0 && velocity.y === 0) return;
       if (controlledPan) return;
       updateOffset(velocity);
-      const decay = 0.9;
+      const decay = 0.75;
       setVelocity((prevVelocity) => ({
         x: prevVelocity.x * decay,
         y: prevVelocity.y * decay,
