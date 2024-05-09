@@ -193,7 +193,7 @@ export default function CanvasView({
       if (!context) return;
 
       const [r, g, b, a] = payload.rgba;
-      context.fillStyle = `rgb(${r}, ${g}, ${b} / ${a / 255})`;
+      context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
       context.fillRect(payload.x, payload.y, 1, 1);
     };
 
