@@ -19,6 +19,9 @@ export function useUserStats(
 
     const response = await axios.get<UserStatsRequest.ResBody>(
       `${config.apiUrl}/api/v1/statistics/user/${userId}/${canvasId}`,
+      {
+        withCredentials: true,
+      },
     );
     return response.data;
   };

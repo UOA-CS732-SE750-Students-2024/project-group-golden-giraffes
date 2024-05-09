@@ -1,16 +1,23 @@
-import { ApiError, BadRequestError } from "@/errors";
+import { ApiError, BadRequestError, UnauthorizedError } from "@/errors";
 import {
   LeaderboardParamModel,
   LeaderboardQueryModel,
   parseCanvasId,
 } from "@/models/paramModels";
 import { getLeaderboard, getUserStats } from "@/services/statisticsService";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { Router } from "express";
 
 export const statisticsRouter = Router();
 
 statisticsRouter.get("/user/:userId/:canvasId", async (req, res) => {
   try {
+    const profile = req.user as DiscordUserProfile;
+
+    if (!profile || !profile.id) {
+      throw new UnauthorizedError("User is not authenticated");
+    }
+
     const userId = req.params.userId;
     const canvasId = await parseCanvasId({ canvasId: req.params.canvasId });
     const stats = await getUserStats(userId, canvasId);
