@@ -171,10 +171,6 @@ export default function CanvasView() {
 
     // If the canvas is locked, we don't need to listen for updates.
     if (canvas.isLocked) {
-      if (socket.connected) {
-        onDisconnect();
-        socket.disconnect();
-      }
       return;
     }
 
@@ -221,6 +217,7 @@ export default function CanvasView() {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off(pixelPlaceEvent, onPixelPlaced);
+      socket.disconnect();
     };
   }, [canvas.id, canvas.isLocked]);
 
