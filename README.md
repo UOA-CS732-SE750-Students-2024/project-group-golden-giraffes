@@ -8,13 +8,41 @@ Blurple Canvas Web is a web alternative to the [existing Discord bot](https://gi
 
 If you’d like a bit more context, [we have a wiki!](https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/wiki)
 
+## 🧚 Features
+
+### Viewing canvases
+
+- **View canvases.** View the current canvas (if/when there is an active event), or view archived canvases from past events. Pick which canvas to view from the dropdown in the navbar.
+- **Pan and zoom.** Pan around the canvas by dragging, and scroll to zoom.
+- **Live updates.** When there’s an ongoing Project Blurple event, the active canvas will update in real time as people place pixels.
+- **Pixel history.** Select a pixel to see what colours have been placed there, and who placed it.
+
+### Placing pixels
+
+> [!NOTE]
+> Pixel placement is only enabled for canvases that are part of an ongoing Project Blurple event. Once that year’s Project Blurple ends, the canvas is locked.
+
+- **Sign in with Discord.** Anyone can view canvases (no account needed), but you’ll need to sign with Discord to place pixels. (You can also sign out.)
+- **View colour palette.** As you switch between events, see the colours which were/are allowed on that canvas.
+- **Place pixels.** When there is an active Project Blurple event (and you aren’t in cooldown), you can place pixels on the canvas.
+  - **…Or not.** Placing pixels via Blurple Canvas Web can be disabled by unsetting an environment variable when deploying.
+- **Bot command.** When you select a pixel and colour, it’ll show the `/place` Discord bot command for placing a pixel—along with a button to copy it.
+- **Partnered colours.** Each server participating in Project Blurple gets a _partnered_ pixel colour which can only be used from within that server. For these, Blurple Canvas Web gives a link to join the server.
+
+### Statistics
+
+- **Leaderboard.** View the top 10 participants for each canvas, ranked by the number of pixels they’ve placed on that canvas.
+- **User stats.** View your own stats for each canvas, including how you rank against everyone else for that canvas (by pixels placed) and your most frequently used colour—among other details.
+
 ## 🥪 Tech stack & repo structure
 
 This is a [monorepo](https://monorepo.tools), with three packages:
 
 - **[@blurple-canvas-web/backend](/packages/backend#readme)**: The [Node](https://nodejs.org)–[Express](https://expressjs.com) back-end server
-- **[@blurple-canvas-web/frontend](/packages/frontend#readme)**: The [React](https://react.dev) front-end
+- **[@blurple-canvas-web/frontend](/packages/frontend#readme)**: The [Next.js](https://nextjs.org) front-end
 - **[@blurple-canvas-web/types](/packages/types#readme)**: Where [TypeScript](https://www.typescriptlang.org) types shared by the front- and back-end live
+
+All packages are written in [TypeScript](https://www.typescriptlang.org). **backend** talks to the same [PostgreSQL](http://www.postgresql.org) as the [Blurple Canvas](https://github.com/Rocked03/Blurple-Canvas) Discord bot. [Prisma](https://www.prisma.io) serves as the ORM layer. **frontend** uses [Axios](https://axios-http.com) and [TanStack Query](https://tanstack.com/query) to query the **backend** API. Realtime canvas updates are pushed to clients with [Socket.IO](https://socket.io). Testing is conducted with [Vitest](https://vitest.dev). [GitHub Actions](https://docs.github.com/en/actions) handles CI.
 
 ## 🌱 Getting started
 
