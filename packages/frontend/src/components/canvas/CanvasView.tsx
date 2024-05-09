@@ -99,8 +99,6 @@ export default function CanvasView({
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
-  const [pixelQueue, setPixelQueue] = useState<PixelInfo[]>([]);
-
   const { color } = useSelectedColorContext();
   const { coords, setCoords } = useSelectedPixelLocationContext();
 
