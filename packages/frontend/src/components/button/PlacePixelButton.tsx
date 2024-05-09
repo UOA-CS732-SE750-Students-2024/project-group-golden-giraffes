@@ -6,8 +6,11 @@ import {
 } from "@/contexts";
 import { styled } from "@mui/material";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import DynamicButton from "./DynamicButton";
+
+import { Cooldown } from "@blurple-canvas-web/types";
 
 interface PlacePixelButtonProps {
   disabled?: boolean;
@@ -23,6 +26,18 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
   const { color, setColor } = useSelectedColorContext();
   const { canvas } = useActiveCanvasContext();
   const isSelected = adjustedCoords && color;
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+
+  // cooldown timer
+  useEffect(() => {
+    if (timeLeft) {
+      const timerId = setTimeout(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+      return () => clearTimeout(timerId);
+    }
+    setTimeLeft(0);
+  }, [timeLeft]);
 
   const handlePixelRequest = () => {
     if (!coords || !color) return;
@@ -36,9 +51,19 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
     };
 
     try {
-      axios.post(requestUrl, body, {
-        withCredentials: true,
-      });
+      axios
+        .post(requestUrl, body, {
+          withCredentials: true,
+        })
+        .then((res) => res.data)
+        .then((data: Cooldown) => {
+          const cooldown = data.cooldownEndTime;
+          if (cooldown) {
+            setTimeLeft(
+              Math.round((new Date(cooldown).valueOf() - Date.now()) / 1000),
+            );
+          }
+        });
     } catch (e) {
       console.error(e);
     }
@@ -49,6 +74,14 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
 
   if (canvas.isLocked) {
     return <Button disabled>Can't place on read-only</Button>;
+  }
+
+  if (timeLeft > 0) {
+    return (
+      <Button variant="contained" disabled>
+        On cooldown: {timeLeft} seconds left
+      </Button>
+    );
   }
 
   // Temporary fix to show disabled button because I
