@@ -114,6 +114,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   );
   const [offset, setOffset] = useState(ORIGIN);
 
+  const [targetZoom, setTargetZoom] = useState(1);
+  const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
+
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
 
@@ -171,18 +174,43 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
       // The mouse position's origin is in the top left of the canvas. The offset's origin is the
       // center of the canvas so we do this to convert between the two.
-      const mouseOffsetDirection = diffPoints(
-        {
-          x: imageDimensions.width / 2,
-          y: imageDimensions.height / 2,
-        },
-        mousePositionOnCanvas,
+      setMouseOffsetDirection(
+        diffPoints(
+          {
+            x: imageDimensions.width / 2,
+            y: imageDimensions.height / 2,
+          },
+          mousePositionOnCanvas,
+        ),
       );
 
       const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
-      const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
+      const newZoom = clamp(targetZoom * scale, MIN_ZOOM, MAX_ZOOM);
 
-      // Clamping the zoom means the actual scale may be different.
+      setTargetZoom(newZoom);
+    };
+
+    canvasRef.current?.addEventListener("wheel", handleWheel, {
+      passive: false,
+    });
+
+    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
+  }, [imageDimensions, targetZoom]);
+
+  useEffect(() => {
+    if (zoom === targetZoom) return;
+
+    const glideZoom = () => {
+      const diff = (targetZoom - zoom) / targetZoom;
+      const scale = Math.exp(
+        Math.sign(diff) * SCALE_FACTOR * Math.abs(diff) * 2,
+      );
+      const newZoom = clamp(
+        zoom * scale,
+        diff > 0 ? MIN_ZOOM : targetZoom,
+        diff < 0 ? MAX_ZOOM : targetZoom,
+      );
+
       const effectiveScale = newZoom / zoom;
 
       setOffset((prevOffset) => {
@@ -202,15 +230,14 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
         return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
       });
+
       setZoom(newZoom);
     };
 
-    canvasRef.current?.addEventListener("wheel", handleWheel, {
-      passive: false,
-    });
+    const interval = setInterval(glideZoom, 16);
 
-    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
-  }, [imageDimensions, zoom]);
+    return () => clearInterval(interval);
+  }, [zoom, targetZoom, mouseOffsetDirection]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
