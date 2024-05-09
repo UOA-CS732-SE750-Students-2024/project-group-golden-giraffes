@@ -3,11 +3,7 @@
 import { NativeSelect, nativeSelectClasses, styled } from "@mui/material";
 import { ChevronsUpDown } from "lucide-react";
 
-import {
-  useActiveCanvasContext,
-  useSelectedColorContext,
-  useSelectedPixelLocationContext,
-} from "@/contexts";
+import { useCanvasContext } from "@/contexts";
 import { useCanvasInfo, useCanvasList, useEventInfo } from "@/hooks";
 import { CanvasSummary } from "@blurple-canvas-web/types";
 
@@ -73,7 +69,7 @@ export default function CanvasPicker() {
   const { data: mainCanvas, isLoading: mainCanvasIsLoading } = useCanvasInfo();
   const { data: currentEvent, isLoading: currentEventIsLoading } =
     useEventInfo();
-  const { canvas: activeCanvas, setCanvas } = useActiveCanvasContext();
+  const { canvas: activeCanvas, setCanvas } = useCanvasContext();
 
   const isLoading =
     canvasListIsLoading || mainCanvasIsLoading || currentEventIsLoading;

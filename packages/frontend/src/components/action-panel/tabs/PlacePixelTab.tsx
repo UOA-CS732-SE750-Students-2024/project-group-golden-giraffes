@@ -3,8 +3,8 @@ import { Skeleton, styled } from "@mui/material";
 import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
 import {
-  useActiveCanvasContext,
   useAuthContext,
+  useCanvasContext,
   useSelectedColorContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
@@ -64,7 +64,7 @@ export default function PlacePixelTab({
     useSelectedColorContext();
 
   const { user } = useAuthContext();
-  const { canvas } = useActiveCanvasContext();
+  const { canvas } = useCanvasContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
