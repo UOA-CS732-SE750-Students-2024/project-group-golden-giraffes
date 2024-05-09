@@ -106,13 +106,13 @@ export default function ActionPanel() {
 
   const onSwitchTab = (isTabLook: boolean) => {
     // switching tabs
-    isTabLook ? setCurrentTab(TABS.LOOK) : setCurrentTab(TABS.PLACE);
-
     // hiding colour from reticle if we are on look tab
     if (isTabLook) {
+      setCurrentTab(TABS.LOOK);
       setTempColor(color);
       setColor(null);
     } else {
+      setCurrentTab(TABS.PLACE);
       setColor(tempColor);
     }
   };
