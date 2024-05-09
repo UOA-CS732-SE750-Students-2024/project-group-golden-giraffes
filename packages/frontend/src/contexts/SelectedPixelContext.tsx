@@ -1,6 +1,6 @@
 "use client";
 
-import { addPointAndTuple } from "@/components/canvas/point";
+import { addPoints, tupleToPoint } from "@/components/canvas/point";
 import { Point } from "@blurple-canvas-web/types";
 import {
   Dispatch,
@@ -41,7 +41,7 @@ export const SelectedPixelLocationProvider = ({
         coords: selectedCoords,
         adjustedCoords:
           selectedCoords ?
-            addPointAndTuple(selectedCoords, canvas.startCoordinates)
+            addPoints(selectedCoords, tupleToPoint(canvas.startCoordinates))
           : null,
         setCoords: setSelectedCoords,
       }}
