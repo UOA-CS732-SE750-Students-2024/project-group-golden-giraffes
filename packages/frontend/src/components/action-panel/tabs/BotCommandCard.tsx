@@ -54,18 +54,9 @@ export default function BotCommandCard() {
   const { color } = useSelectedColorContext();
   const coordinates = adjustedCoords;
 
-  const selectedCoordinates = adjustedCoords;
-  const isSelected = selectedCoordinates && color;
-
-  if (!color) return <Wrapper>No color selected</Wrapper>;
-
-  if (!coordinates) return <Wrapper>No coordinates selected</Wrapper>;
-
+  if (!(coordinates && color)) return null;
   const { x, y } = coordinates;
-
   const command = `/place x:${x} y:${y} color:${color.code}`;
-
-  if (!isSelected) return null;
 
   return (
     <Wrapper>
