@@ -1,6 +1,6 @@
 # <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/86000a76-a73b-4abe-8c61-05dbfecbec40" width="23" height="23" /> Blurple Canvas Web
 
-## <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/02ac039f-67da-4aeb-a7be-c0363fee3917" width="22" height="22" /> Project Blurple
+## <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/02ac039f-67da-4aeb-a7be-c0363fee3917" width="20" height="20" /> Project Blurple
 
 [Project Blurple](https://projectblurple.com) is an annual, week-long, community-run event which celebrates Discord’s anniversary. Part of this is Blurple Canvas where people in participating servers create pixel art on a shared canvas.
 
