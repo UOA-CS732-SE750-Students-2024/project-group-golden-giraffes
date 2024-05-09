@@ -1,4 +1,4 @@
 blurple.guo.nz {
-    reverse_proxy /api/* localhost:8000
-	reverse_proxy /* localhost:3000
+  reverse_proxy /api/* localhost:8000
+  reverse_proxy /* localhost:3000
 }
