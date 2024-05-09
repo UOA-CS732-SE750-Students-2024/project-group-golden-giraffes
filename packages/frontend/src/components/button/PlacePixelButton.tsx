@@ -4,7 +4,7 @@ import {
   useSelectedColorContext,
   useSelectedPixelLocationContext,
 } from "@/contexts";
-import { styled } from "@mui/material";
+import { CircularProgress, styled } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "./Button";
@@ -27,6 +27,7 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
   const { canvas } = useActiveCanvasContext();
   const isSelected = adjustedCoords && color;
   const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [isPlacing, setIsPlacing] = useState<boolean>(false);
 
   // cooldown timer
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
       colorId: color.id,
     };
 
+    setIsPlacing(true);
     axios
       .post(requestUrl, body, {
         withCredentials: true,
@@ -62,6 +64,7 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
             Math.round((new Date(cooldown).valueOf() - Date.now()) / 1000),
           );
         }
+        setIsPlacing(false);
       })
       .catch((e) => console.error(e));
 
@@ -71,6 +74,20 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
 
   if (canvas.isLocked) {
     return <Button disabled>Can't place on read-only</Button>;
+  }
+
+  if (isPlacing) {
+    return (
+      <Button variant="contained" disabled>
+        {"Placing Pixel"}
+        <CircularProgress
+          color="inherit"
+          // Can't get sizing to work dynamically
+          size="1.5rem"
+          style={{ marginLeft: "1rem" }}
+        />
+      </Button>
+    );
   }
 
   if (timeLeft > 0) {
