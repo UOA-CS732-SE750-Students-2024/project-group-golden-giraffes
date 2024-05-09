@@ -13,15 +13,11 @@ import DynamicButton from "./DynamicButton";
 
 import { Cooldown } from "@blurple-canvas-web/types";
 
-interface PlacePixelButtonProps {
-  disabled?: boolean;
-}
-
 export const CoordinateLabel = styled("span")`
   opacity: 0.6;
 `;
 
-export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
+export default function PlacePixelButton() {
   const { coords, adjustedCoords, setCoords } =
     useSelectedPixelLocationContext();
   const { color, setColor } = useSelectedColorContext();
@@ -118,11 +114,7 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
   }
 
   return (
-    <DynamicButton
-      color={color}
-      disabled={disabled}
-      onAction={handlePixelRequest}
-    >
+    <DynamicButton color={color} onAction={handlePixelRequest}>
       {isSelected ? "Place pixel" : "Select a pixel"}
       <CoordinateLabel>
         {isSelected ?
