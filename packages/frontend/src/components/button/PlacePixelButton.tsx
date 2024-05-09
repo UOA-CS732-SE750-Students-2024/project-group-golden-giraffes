@@ -25,7 +25,7 @@ export default function PlacePixelButton() {
   const isSelected = adjustedCoords && color;
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isPlacing, setIsPlacing] = useState<boolean>(false);
-  const { user } = useAuthContext();
+  const { user, signOut } = useAuthContext();
 
   // cooldown timer
   useEffect(() => {
@@ -64,7 +64,14 @@ export default function PlacePixelButton() {
         }
         setIsPlacing(false);
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        console.error(e);
+        // Should I include an alert?
+        if (e.response?.status === 401) {
+          signOut();
+        }
+        alert("Failed to place pixel, please refresh the page");
+      });
 
     setColor(null);
     setCoords(null);
