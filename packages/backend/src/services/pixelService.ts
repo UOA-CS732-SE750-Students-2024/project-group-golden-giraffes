@@ -53,7 +53,7 @@ export async function getPixelHistory(
           username: history.discord_user_profile.username,
           profilePictureUrl: history.discord_user_profile.profile_picture_url,
         }
-      : undefined,
+      : null,
   }));
 }
 

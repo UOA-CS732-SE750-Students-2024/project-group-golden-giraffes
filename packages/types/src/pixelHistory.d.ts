@@ -6,7 +6,7 @@ export interface PixelHistoryRecord {
   timestamp: Date;
   guildId?: string;
   userId: string;
-  userProfile?: DiscordUserProfile;
+  userProfile: DiscordUserProfile | null;
 }
 
 export type PixelHistory = PixelHistoryRecord[];
