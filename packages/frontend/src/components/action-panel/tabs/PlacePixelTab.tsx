@@ -120,7 +120,7 @@ export default function PlacePixelTab({
         }
       </ColorPicker>
       <ColorInfoCard color={selectedColor} invite={serverInvite} />
-      {canPlacePixel && !readOnly && <PlacePixelButton />}
+      {canPlacePixel && <PlacePixelButton />}
       {isJoinServerShown && (
         <DynamicAnchorButton color={selectedColor} href={serverInvite}>
           Join {selectedColor?.guildName ?? "server"}

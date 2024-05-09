@@ -73,7 +73,7 @@ export default function PlacePixelButton() {
   // Both these buttons never show as the logic is hoisted at the level above this
   // My issues with having it above is that the user has no indication of why they can't place pixels
   if (canvas.isLocked) {
-    return <Button disabled>Can't place on read-only</Button>;
+    return <Button disabled>Canvas can't be modified</Button>;
   }
   if (!user) {
     return <Button disabled>Log in to place pixels</Button>;
