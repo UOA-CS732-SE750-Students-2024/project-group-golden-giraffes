@@ -34,7 +34,7 @@ We suggest opening this project as a Visual Studio Code [multi-root workspace](h
 brew install nvm
 ```
 
-**Use the appropriate version of Node.** You may be prompted to run `nvm install`. (If for whatever reason you aren’t using nvm, make sure you’re using the Node version specified in [`/.nvmrc`](/.nvmrc).)
+**Use the appropriate version of Node.** You may be prompted to run `nvm install`. (If for whatever reason you aren’t using nvm, make sure to install _and use_ the Node version specified in [`/.nvmrc`](/.nvmrc).)
 
 ```sh
 nvm use
