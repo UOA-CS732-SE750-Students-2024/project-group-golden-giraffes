@@ -1,6 +1,8 @@
+import { CanvasInfo } from "./canvasInfo";
+
 export interface UserStats {
   userId: string;
-  canvasId: number;
+  canvasId: CanvasInfo["id"];
   totalPixels?: number;
   rank?: number;
   mostFrequentColor?: PaletteColor;
@@ -12,6 +14,6 @@ export interface LeaderboardEntry {
   rank: number;
   userId: string;
   totalPixels: number;
-  username: string;
+  username?: string;
   profilePictureUrl: string;
 }

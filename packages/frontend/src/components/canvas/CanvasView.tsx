@@ -1,6 +1,6 @@
 "use client";
 
-import { CircularProgress, styled } from "@mui/material";
+import { CircularProgress, css, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
 import { Point } from "@blurple-canvas-web/types";
@@ -49,7 +49,22 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const PreviewCanvas = styled("canvas")`
+const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+  transition: filter var(--transition-duration-medium) ease;
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      cursor: wait;
+      filter: grayscale(80%);
+    `}
+`;
+
+const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      display: none;
+    `}
   position: absolute;
   pointer-events: none;
 `;
@@ -91,13 +106,12 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const { color } = useSelectedColorContext();
   const { coords, setCoords } = useSelectedPixelLocationContext();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
-
-  const isLoading = imageDimensions === null;
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
@@ -118,17 +132,21 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       setZoom(1);
     }
 
+    setOffset(ORIGIN);
     setImageDimension({ width: image.width, height: image.height });
+    setIsLoading(false);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
   useEffect(() => {
+    setIsLoading(true);
     // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
     // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
     // need to check it's working correctly when we start placing pixels.
     if (imageRef.current?.complete) {
       handleLoadImage(imageRef.current);
     }
-  }, [handleLoadImage]);
+  }, [handleLoadImage, imageUrl]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
@@ -334,12 +352,22 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
+      const boundedX = clamp(
+        Math.floor(imageX),
+        0,
+        canvasRef.current.width - 1,
+      );
+      const boundedY = clamp(
+        Math.floor(imageY),
+        0,
+        canvasRef.current.height - 1,
+      );
+
       // we only care about updating the location
-      setCoords((prev) => ({
-        ...prev,
-        x: Math.floor(imageX),
-        y: Math.floor(imageY),
-      }));
+      setCoords({
+        x: boundedX,
+        y: boundedY,
+      });
     },
     [zoom, setCoords],
   );
@@ -370,7 +398,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
-        {isLoading && <CircularProgress className="loader" />}
         <div
           id="canvas-pan-and-zoom"
           style={{
@@ -379,12 +406,14 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
           }}
         >
           <PreviewCanvas
+            isLoading={isLoading}
             ref={previewCanvasRef}
             width={imageDimensions?.width}
             height={imageDimensions?.height}
           />
-          <canvas ref={canvasRef} />
+          <DisplayCanvas ref={canvasRef} isLoading={isLoading} />
         </div>
+        {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
       <img
         alt="Blurple Canvas 2023"

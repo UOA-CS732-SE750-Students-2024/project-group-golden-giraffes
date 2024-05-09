@@ -63,18 +63,18 @@ export default function PlacePixelTab({
   const { user } = useAuthContext();
   const { canvas } = useActiveCanvasContext();
 
-  const { coords, setCoords } = useSelectedPixelLocationContext();
+  const { adjustedCoords, setCoords } = useSelectedPixelLocationContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
-  const selectedCoordinates = coords;
+  const selectedCoordinates = adjustedCoords;
   const x = selectedCoordinates?.x;
   const y = selectedCoordinates?.y;
 
-  const webPlacingEnabled = true;
+  const webPlacingEnabled = canvas.webPlacingEnabled;
 
   const canPlacePixel =
     webPlacingEnabled &&

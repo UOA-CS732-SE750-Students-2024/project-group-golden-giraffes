@@ -6,6 +6,7 @@ export interface CanvasInfo {
   startCoordinates: [number, number];
   isLocked: boolean;
   eventId: number | null;
+  webPlacingEnabled: boolean;
 }
 
 export type CanvasSummary = Pick<CanvasInfo, "id" | "name" | "eventId">;

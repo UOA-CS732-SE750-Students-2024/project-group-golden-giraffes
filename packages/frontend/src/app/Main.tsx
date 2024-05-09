@@ -12,7 +12,7 @@ const Wrapper = styled("main")`
     --navbar-height: 4rem;
 
     display: grid;
-    grid-template-rows: var(--navbar-height) 1fr;
+    grid-template-rows: var(--navbar-height) calc(100vh - var(--navbar-height));
     height: 100vh;
   }
 

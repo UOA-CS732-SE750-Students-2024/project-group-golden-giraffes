@@ -196,6 +196,16 @@
     samp {
       font-family: var(--font-monospace);
     }
+
+    h1 {
+      font-stretch: 125%;
+      font-weight: 900;
+    }
+
+    h2 {
+      color: oklch(var(--discord-white-oklch) / 55%);
+      font-weight: 400;
+    }
   }
 
   @supports (font-tech(variations)) {
@@ -209,25 +219,6 @@
     var {
       font-style: normal;
       --text-slnt: -12;
-    }
-  }
-
-  @keyframes breathe {
-    0% {
-      font-variation-settings:
-        "wght" 100,
-        "wdth" 85;
-    }
-    60% {
-      font-variation-settings:
-        "wght" 700,
-        "wdth" 100;
-    }
-
-    100% {
-      font-variation-settings:
-        "wght" 100,
-        "wdth" 85;
     }
   }
 }

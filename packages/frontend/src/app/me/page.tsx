@@ -1,6 +1,6 @@
 import LayoutWithNavbar from "@/components/LayoutWithNavbar";
-import Main from "./Main";
+import MePageContent from "./MePageContent";
 
 export default function MePage() {
-  return <LayoutWithNavbar content={<Main />} />;
+  return <LayoutWithNavbar content={<MePageContent />} />;
 }

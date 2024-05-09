@@ -2,7 +2,13 @@ import fs from "node:fs";
 import { prisma } from "@/client";
 import config from "@/config";
 import { NotFoundError } from "@/errors";
-import { CanvasInfo, CanvasSummary, Point } from "@blurple-canvas-web/types";
+import { PlacePixelArray } from "@/models/bodyModels";
+import {
+  CanvasInfo,
+  CanvasSummary,
+  PixelInfo,
+  Point,
+} from "@blurple-canvas-web/types";
 import { canvas } from "@prisma/client";
 import { PNG } from "pngjs";
 
@@ -143,6 +149,7 @@ export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
     ],
     isLocked: canvas.locked,
     eventId: canvas.event_id,
+    webPlacingEnabled: config.webPlacingEnabled,
   };
 }
 
@@ -182,6 +189,29 @@ export async function getCanvasPng(canvasId: number): Promise<CachedCanvas> {
 
   console.debug(`Cache hit for canvas ${canvasId}`);
   return CANVAS_CACHE[canvasId];
+}
+
+/**
+ * Updates many pixels in the canvas cache at once. If the canvas is not in the cache or the canvas
+ * is locked this will do nothing.
+ *
+ * @param canvasId The ID of the canvas to update
+ * @param pixels The new pixel values
+ */
+export async function updateManyCachedPixels(
+  canvasId: number,
+  pixels: PlacePixelArray,
+): Promise<void> {
+  const cachedCanvas = CANVAS_CACHE[canvasId];
+
+  if (!cachedCanvas || cachedCanvas.isLocked) {
+    return;
+  }
+
+  for (const pixel of pixels) {
+    const pixelIndex = pixel.y * cachedCanvas.width + pixel.x;
+    cachedCanvas.pixels[pixelIndex] = pixel.rgba;
+  }
 }
 
 /**

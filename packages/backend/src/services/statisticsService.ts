@@ -4,6 +4,7 @@ import {
   LeaderboardEntry,
   UserStats,
 } from "@blurple-canvas-web/types";
+import { createDefaultAvatarUrl } from "./discordProfileService";
 
 export async function getUserStats(
   userId: string,
@@ -79,7 +80,9 @@ export async function getLeaderboard(
     rank: row.rank,
     userId: row.user_id.toString(),
     totalPixels: row.total_pixels,
-    username: row.discord_user_profile.username,
-    profilePictureUrl: row.discord_user_profile.profile_picture_url,
+    username: row.discord_user_profile?.username,
+    profilePictureUrl:
+      row.discord_user_profile?.profile_picture_url ??
+      createDefaultAvatarUrl(row.user_id),
   }));
 }

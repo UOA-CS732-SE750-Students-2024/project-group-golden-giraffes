@@ -187,10 +187,10 @@ model user {
 }
 
 model session {
-  id          String    @id
-  sid         String    @unique
-  data        String
-  expiresAt   DateTime  @db.Timestamptz(6)
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime @db.Timestamptz(6)
 }
 
 view user_stats {
@@ -226,10 +226,10 @@ view guild_stats {
 
 view leaderboard {
   user_id              BigInt
-  user                 user                 @relation(fields: [user_id], references: [id])
+  user                 user                  @relation(fields: [user_id], references: [id])
   canvas_id            Int
-  canvas               canvas               @relation(fields: [canvas_id], references: [id])
-  discord_user_profile discord_user_profile @relation(fields: [user_id], references: [user_id])
+  canvas               canvas                @relation(fields: [canvas_id], references: [id])
+  discord_user_profile discord_user_profile? @relation(fields: [user_id], references: [user_id])
   total_pixels         Int
   rank                 Int
 
@@ -238,12 +238,12 @@ view leaderboard {
 
 view leaderboard_guild {
   user_id              BigInt
-  user                 user                 @relation(fields: [user_id], references: [id])
+  user                 user                  @relation(fields: [user_id], references: [id])
   canvas_id            Int
-  canvas               canvas               @relation(fields: [canvas_id], references: [id])
+  canvas               canvas                @relation(fields: [canvas_id], references: [id])
   guild_id             BigInt
-  guild                guild                @relation(fields: [guild_id], references: [id])
-  discord_user_profile discord_user_profile @relation(fields: [user_id], references: [user_id])
+  guild                guild                 @relation(fields: [guild_id], references: [id])
+  discord_user_profile discord_user_profile? @relation(fields: [user_id], references: [user_id])
   total_pixels         Int
   rank                 Int
 
