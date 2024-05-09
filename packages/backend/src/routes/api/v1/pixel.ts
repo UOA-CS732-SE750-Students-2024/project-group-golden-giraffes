@@ -72,7 +72,7 @@ pixelRouter.post<CanvasIdParam>("/bot", async (req, res) => {
     }
 
     for (const pixel of result.data) {
-      socketHandler.broadcastPlacePixel(canvasId, pixel);
+      socketHandler.broadcastPixelPlacement(canvasId, pixel);
     }
 
     await updateManyCachedPixels(canvasId, result.data);

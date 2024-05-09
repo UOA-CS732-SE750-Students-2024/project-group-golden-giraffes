@@ -278,7 +278,7 @@ export async function placePixel(
     });
   });
 
-  socketHandler.broadcastPlacePixel(canvasId, {
+  socketHandler.broadcastPixelPlacement(canvasId, {
     x: coordinates.x,
     y: coordinates.y,
     rgba: color.rgba,
