@@ -18,6 +18,10 @@ const StyledObject = styled("object")`
   outline-offset: calc(-1 * var(--stroke-width));
 `;
 
+const AvatarImage = styled("img")`
+  border-radius: inherit;
+`;
+
 export default function Avatar({
   username,
   profilePictureUrl,
@@ -25,7 +29,7 @@ export default function Avatar({
 }: AvatarProps) {
   return (
     <StyledObject data={profilePictureUrl} width={size} height={size}>
-      <img
+      <AvatarImage
         alt={`${username}’s avatar`}
         src="https://cdn.discordapp.com/embed/avatars/1.png"
       />

@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useState } from "react";
 
 import config from "@/config";
 import { CanvasInfo, CanvasInfoRequest } from "@blurple-canvas-web/types";
+import { useSelectedColorContext, useSelectedPixelLocationContext } from ".";
 
 interface ActiveCanvasContextType {
   canvas: CanvasInfo;
@@ -35,6 +36,8 @@ export const ActiveCanvasProvider = ({
   mainCanvasInfo,
 }: ActiveCanvasProviderProps) => {
   const [activeCanvas, setActiveCanvas] = useState(mainCanvasInfo);
+  const { setCoords } = useSelectedPixelLocationContext();
+  const { setColor: setSelectedColor } = useSelectedColorContext();
 
   const setCanvasById = useCallback<ActiveCanvasContextType["setCanvas"]>(
     async (canvasId: CanvasInfo["id"]) => {
@@ -42,8 +45,10 @@ export const ActiveCanvasProvider = ({
         `${config.apiUrl}/api/v1/canvas/${canvasId}/info`,
       );
       setActiveCanvas(response.data);
+      setSelectedColor(null);
+      setCoords(null);
     },
-    [],
+    [setSelectedColor, setCoords],
   );
 
   return (

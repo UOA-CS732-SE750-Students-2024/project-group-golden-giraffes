@@ -33,7 +33,11 @@ export default function Main() {
 
   return (
     <Wrapper>
-      <CanvasView imageUrl={`${config.apiUrl}/api/v1/canvas/${canvas.id}`} />
+      <CanvasView
+        imageUrl={`${config.apiUrl}/api/v1/canvas/${canvas.id}`}
+        canvasId={canvas.id}
+        isLocked={canvas.isLocked}
+      />
       <ActionPanel />
     </Wrapper>
   );

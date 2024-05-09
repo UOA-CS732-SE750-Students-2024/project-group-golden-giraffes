@@ -1,9 +1,13 @@
 "use client";
 
 import { css, styled } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useActiveCanvasContext, useSelectedColorContext } from "@/contexts";
+import {
+  useActiveCanvasContext,
+  useSelectedColorContext,
+  useSelectedPixelLocationContext,
+} from "@/contexts";
 import { PaletteColor } from "@blurple-canvas-web/types";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 

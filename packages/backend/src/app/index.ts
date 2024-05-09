@@ -1,19 +1,20 @@
-import { Server } from "node:http";
 import cors from "cors";
-import express, { Express } from "express";
+import express from "express";
 
 import { prisma } from "@/client";
 import config from "@/config";
 import { apiRouter } from "@/routes";
 import "@/utils"; // Make BigInt JSON serializable
+import { createServer } from "node:http";
 import { initializeAuth } from "@/middleware/auth";
+import { Server } from "socket.io";
+import { SocketHandler } from "./SockerHandler";
 
-export interface ExpressServer {
-  app: Express;
-  server: Server;
+interface App {
+  socketHandler: SocketHandler;
 }
 
-export function createApp(): ExpressServer {
+export function createApp(): App {
   const app = express();
 
   const corsOptions = {
@@ -27,6 +28,15 @@ export function createApp(): ExpressServer {
 
   initializeAuth(app);
   app.use(apiRouter);
+
+  const server = createServer(app);
+  const io = new Server(server, {
+    cors: {
+      origin: config.frontendUrl,
+    },
+  });
+
+  const socketHandler = new SocketHandler(io);
 
   app.get("/", (req, res) => {
     res.json({ message: "Hello, world!" });
@@ -60,9 +70,9 @@ export function createApp(): ExpressServer {
     }
   });
 
-  const server = app.listen(config.api.port, () => {
+  server.listen(config.api.port, () => {
     console.log(`⚡[server]: Server is running on port ${config.api.port}`);
   });
 
-  return { app, server };
+  return { socketHandler };
 }
