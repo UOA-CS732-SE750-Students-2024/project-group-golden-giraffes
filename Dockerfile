@@ -8,6 +8,8 @@ COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install
 
+RUN pnpm -F backend postinstall
+
 COPY . .
 
 RUN pnpm run build

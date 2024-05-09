@@ -1,0 +1,3 @@
+blurple.guo.nz {
+	reverse_proxy localhost:3000
+}
