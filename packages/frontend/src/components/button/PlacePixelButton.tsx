@@ -6,6 +6,7 @@ import {
 } from "@/contexts";
 import { styled } from "@mui/material";
 import axios from "axios";
+import { Button } from "./Button";
 import DynamicButton from "./DynamicButton";
 
 interface PlacePixelButtonProps {
@@ -45,6 +46,22 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
     setColor(null);
     setCoords(null);
   };
+
+  if (canvas.isLocked) {
+    return <Button disabled>Can't place on read-only</Button>;
+  }
+
+  // Temporary fix to show disabled button because I
+  // did not make the dynamic button component
+  if (!color && !adjustedCoords) {
+    return <Button disabled>Select a pixel and color</Button>;
+  }
+  if (!color) {
+    return <Button disabled>Select a color</Button>;
+  }
+  if (!adjustedCoords) {
+    return <Button disabled>Select a pixel</Button>;
+  }
 
   return (
     <DynamicButton
