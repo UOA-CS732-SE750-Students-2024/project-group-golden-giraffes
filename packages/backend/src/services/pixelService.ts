@@ -29,6 +29,7 @@ export async function getPixelHistory(
       color: true,
       timestamp: true,
       guild_id: true,
+      user_id: true,
       discord_user_profile: true,
     },
     where: {
@@ -45,11 +46,15 @@ export async function getPixelHistory(
     color: history.color,
     timestamp: history.timestamp,
     guildId: history.guild_id?.toString(),
-    userProfile: {
-      id: history.discord_user_profile.user_id.toString(),
-      username: history.discord_user_profile.username,
-      profilePictureUrl: history.discord_user_profile.profile_picture_url,
-    },
+    userId: history.user_id.toString(),
+    userProfile:
+      history.discord_user_profile ?
+        {
+          id: history.discord_user_profile.user_id.toString(),
+          username: history.discord_user_profile.username,
+          profilePictureUrl: history.discord_user_profile.profile_picture_url,
+        }
+      : null,
   }));
 }
 
@@ -244,7 +249,7 @@ export async function placePixel(
         throw new ForbiddenError("Pixel placement is on cooldown");
       }
     }
-    tx.pixel.upsert({
+    await tx.pixel.upsert({
       where: {
         canvas_id_x_y: {
           canvas_id: canvasId,
@@ -260,11 +265,12 @@ export async function placePixel(
         color_id: color.id,
       },
     });
-    tx.history.create({
+    await tx.history.create({
       data: {
-        user_id: userId,
         canvas_id: canvasId,
-        ...coordinates,
+        user_id: userId,
+        x: coordinates.x,
+        y: coordinates.y,
         color_id: color.id,
         timestamp: placementTime,
         guild_id: config.webGuildId,
