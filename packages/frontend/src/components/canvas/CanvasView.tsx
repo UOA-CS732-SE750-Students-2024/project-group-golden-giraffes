@@ -178,8 +178,8 @@ export default function CanvasView({
     }
 
     const onConnect = () => {
-      console.log("[Live Updating]: Connected to server");
-      console.log(
+      console.debug("[Live Updating]: Connected to server");
+      console.debug(
         `[Live Updating]: Listening to pixel updates for canvas ${canvasId}`,
       );
     };
