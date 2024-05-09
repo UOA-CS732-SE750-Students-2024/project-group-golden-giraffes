@@ -5,8 +5,10 @@ import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
 import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
-import { useSelectedColorContext } from "@/contexts";
-import { useSelectedPixelLocationContext } from "@/contexts";
+import {
+  useSelectedColorContext,
+  useSelectedPixelLocationContext,
+} from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
