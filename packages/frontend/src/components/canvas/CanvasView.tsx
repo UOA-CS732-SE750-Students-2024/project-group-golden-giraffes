@@ -3,7 +3,7 @@
 import { CircularProgress, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
-import { PixelInfo, Point } from "@blurple-canvas-web/types";
+import { PixelInfo, PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
 import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
 import { Dimensions } from "@/hooks/useScreenDimensions";
@@ -170,12 +170,22 @@ export default function CanvasView({
 
     const onConnect = () => {
       console.log("[Live Updating]: Connected to server");
-      setPixelQueue([]);
+      console.log(
+        `[Live Updating]: Listening to pixel updates for canvas ${canvasId}`,
+      );
     };
 
-    const onPixelPlaced = (pixel: PixelInfo) => {
-      console.log("[Live Updating]: Received pixel update", pixel);
-      setPixelQueue((prev) => [...prev, pixel]);
+    const onPixelPlaced = (payload: PlacePixelSocket.Payload) => {
+      console.log("[Live Updating]: Received pixel update", payload);
+
+      if (!canvasRef.current) return;
+
+      const context = canvasRef.current.getContext("2d");
+      if (!context) return;
+
+      const [r, g, b, a] = payload.rgba;
+      context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+      context.fillRect(payload.x, payload.y, 1, 1);
     };
 
     const pixelPlaceEvent = `place pixel ${canvasId}`;
