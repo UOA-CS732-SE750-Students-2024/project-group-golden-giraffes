@@ -1,3 +1,5 @@
+export type PixelColor = number[]; // [r, g, b, a]
+
 export interface PaletteColor {
   id: number;
   code: string;
