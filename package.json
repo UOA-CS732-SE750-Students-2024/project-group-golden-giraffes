@@ -22,6 +22,7 @@
   "scripts": {
     "build": "pnpm --recursive build",
     "dev": "pnpm --recursive --parallel dev",
+    "start": "pnpm --recursive --parallel start",
     "test": "pnpm --recursive test",
     "lint": "pnpm --recursive lint",
     "lint:fix": "pnpm --recursive lint:fix",
