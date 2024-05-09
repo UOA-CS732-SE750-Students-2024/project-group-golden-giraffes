@@ -3,7 +3,7 @@
 import { CircularProgress, styled } from "@mui/material";
 import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
-import { Point } from "@blurple-canvas-web/types";
+import { PixelInfo, Point } from "@blurple-canvas-web/types";
 
 import { useSelectedColorContext } from "@/contexts/SelectedColorContext";
 import { Dimensions } from "@/hooks/useScreenDimensions";
@@ -17,6 +17,7 @@ import {
 } from "./point";
 
 import { useSelectedPixelLocationContext } from "@/contexts";
+import { socket } from "@/socket";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 
 const CanvasContainer = styled("div")`
@@ -83,14 +84,17 @@ const MIN_ZOOM = 0.5;
 
 export interface CanvasViewProps {
   imageUrl: string;
+  isLocked: boolean;
 }
 
-export default function CanvasView({ imageUrl }: CanvasViewProps) {
+export default function CanvasView({ imageUrl, isLocked }: CanvasViewProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
+
+  const [pixelQueue, setPixelQueue] = useState<PixelInfo[]>([]);
 
   const { color } = useSelectedColorContext();
   const { coords, setCoords } = useSelectedPixelLocationContext();
@@ -136,6 +140,42 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       handleLoadImage(imageRef.current);
     }
   }, [handleLoadImage, imageUrl]);
+
+  /********************************
+   * SOCKET FUNCTIONALITY.       *
+   ********************************/
+
+  useEffect(() => {
+    const onDisconnect = () => {
+      console.log("[Live Updating]: Disconnected from server");
+    };
+
+    // If the canvas is locked, we don't need to listen for updates.
+    if (isLocked) {
+      if (socket.connected) {
+        onDisconnect();
+        socket.disconnect();
+      }
+      return;
+    }
+
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    const onConnect = () => {
+      console.log("[Live Updating]: Connected to server");
+      setPixelQueue([]);
+    };
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, [isLocked]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *

@@ -30,7 +30,11 @@ export function createApp(): App {
   app.use(apiRouter);
 
   const server = createServer(app);
-  const io = new Server(server);
+  const io = new Server(server, {
+    cors: {
+      origin: config.frontendUrl,
+    },
+  });
 
   const socketHandler = new SocketHandler(io);
 
