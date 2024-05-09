@@ -27,7 +27,7 @@ If you’d like a bit more context, [we have a wiki!](https://github.com/UOA-CS7
 - **Place pixels.** When there is an active Project Blurple event (and you aren’t in cooldown), you can place pixels on the canvas.
   - **…Or not.** Placing pixels via Blurple Canvas Web can be disabled by unsetting an environment variable when deploying.
 - **Bot command.** When you select a pixel and colour, it’ll show the `/place` Discord bot command for placing a pixel—along with a button to copy it.
-- **Partnered colours.** Each server participating in Project Blurple gets a _partnered_ pixel colour which can only be used from within that server. For these, Blurple Canvas Web gives a link to join the server.
+- **Partnered colours.** Each server partnered with the Project Blurple event gets a _unique_ pixel colour which can only be used from within that server. For these, Blurple Canvas Web gives a link to join the server.
 
 ### Statistics
 
