@@ -1,6 +1,7 @@
 import config from "@/config";
 import {
   useActiveCanvasContext,
+  useAuthContext,
   useSelectedColorContext,
   useSelectedPixelLocationContext,
 } from "@/contexts";
@@ -28,6 +29,7 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
   const isSelected = adjustedCoords && color;
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isPlacing, setIsPlacing] = useState<boolean>(false);
+  const { user } = useAuthContext();
 
   // cooldown timer
   useEffect(() => {
@@ -72,8 +74,13 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
     setCoords(null);
   };
 
+  // Both these buttons never show as the logic is hoisted at the level above this
+  // My issues with having it above is that the user has no indication of why they can't place pixels
   if (canvas.isLocked) {
     return <Button disabled>Can't place on read-only</Button>;
+  }
+  if (!user) {
+    return <Button disabled>Log in to place pixels</Button>;
   }
 
   if (isPlacing) {
