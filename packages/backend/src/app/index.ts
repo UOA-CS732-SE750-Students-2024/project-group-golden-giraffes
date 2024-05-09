@@ -8,9 +8,10 @@ import "@/utils"; // Make BigInt JSON serializable
 import { createServer } from "node:http";
 import { initializeAuth } from "@/middleware/auth";
 import { Server } from "socket.io";
+import { SocketHandler } from "./SockerHandler";
 
 interface App {
-  io: Server;
+  socketHandler: SocketHandler;
 }
 
 export function createApp(): App {
@@ -31,12 +32,7 @@ export function createApp(): App {
   const server = createServer(app);
   const io = new Server(server);
 
-  io.on("connection", (socket) => {
-    console.log("a user connected");
-    socket.on("disconnect", () => {
-      console.log("user disconnected");
-    });
-  });
+  const socketHandler = new SocketHandler(io);
 
   app.get("/", (req, res) => {
     res.json({ message: "Hello, world!" });
@@ -74,5 +70,5 @@ export function createApp(): App {
     console.log(`⚡[server]: Server is running on port ${config.api.port}`);
   });
 
-  return { io };
+  return { socketHandler };
 }
