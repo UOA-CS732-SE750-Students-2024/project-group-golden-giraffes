@@ -17,6 +17,10 @@ services:
     image: caddy:2.7-alpine
 
     restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       # copy local ./Caddyfile to /etc/caddy/Caddyfile on docker
       - ./Caddyfile:/etc/caddy/Caddyfile
+    network_mode: host
