@@ -36,11 +36,15 @@ async function resyncClient(
     );
 
     for (const pixel of pixels) {
-      socket.emit(`place pixel ${canvasId}`, {
-        x: pixel.x,
-        y: pixel.y,
-        color: pixel.color.rgba,
-      });
+      socket.emit(
+        `place pixel ${canvasId}`,
+        {
+          x: pixel.x,
+          y: pixel.y,
+          color: pixel.color.rgba,
+        },
+        new Date().toISOString(),
+      );
     }
   } catch (error) {
     console.error(

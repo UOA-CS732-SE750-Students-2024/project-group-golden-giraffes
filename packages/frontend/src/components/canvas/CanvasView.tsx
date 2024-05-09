@@ -192,6 +192,7 @@ export default function CanvasView({
 
       // If we disconnect and reconnect this tells the server we've received pixels up to this point
       socket.auth = {
+        ...socket.auth,
         pixelTimestamp,
       };
 
