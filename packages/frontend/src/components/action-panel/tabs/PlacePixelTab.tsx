@@ -40,7 +40,8 @@ export const partitionPalette = (palette: Palette) => {
 
 function userWithinServer(user: DiscordUserProfile, serverId: string) {
   return false;
-  // return user.guilds.some((guild) => guild.id === serverId);
+  // const guildIds = decodeUserGuildsBase64(user);
+  // return guildIds.some((guildId) => guildId === serverId);
 }
 
 interface PlacePixelTabProps {
