@@ -104,7 +104,6 @@ export default function PlacePixelTab({
         </DynamicAnchorButton>
       )}
       {!readOnly && <BotCommandCard />}
-      {/* <Cooldown /> */}
     </ActionPanelTabBody>
   );
 }
