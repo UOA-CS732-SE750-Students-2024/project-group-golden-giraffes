@@ -1,4 +1,5 @@
-import { ApiError } from "@/errors";
+import config from "@/config";
+import { ApiError, ForbiddenError } from "@/errors";
 import { BadRequestError, UnauthorizedError } from "@/errors";
 import { PlacePixelBodyModel } from "@/models/bodyModels";
 import {
@@ -46,6 +47,10 @@ pixelRouter.get<CanvasIdParam>("/history", async (req, res) => {
  * Requires the user to be authenticated and not blacklisted
  */
 pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
+  if (!config.webPlacingEnabled) {
+    throw new ForbiddenError("Web placing is disabled");
+  }
+
   try {
     const result = await PlacePixelBodyModel.safeParseAsync(req.body);
     if (!result.success) {
@@ -59,7 +64,6 @@ pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
     if (!profile || !profile.id) {
       throw new UnauthorizedError("User is not authenticated");
     }
-    // TODO: check for canvas discord_only status (not sure which table to look here)
 
     // TODO: see if Promise.all() can work here
     const coordinates: Point = { x, y };
