@@ -1,9 +1,12 @@
-# <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/02ac039f-67da-4aeb-a7be-c0363fee3917" width="23" height="23" /> Blurple Canvas Web
+# <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/86000a76-a73b-4abe-8c61-05dbfecbec40" width="23" height="23" /> Blurple Canvas Web
 
-> [!IMPORTANT]
-> Blurple Canvas Web is under development. It’s not even in alpha yet.
+## <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/02ac039f-67da-4aeb-a7be-c0363fee3917" width="17.25" height="17.25" /> Project Blurple
 
-Blurple Canvas Web is a web alternative to the [Blurple Canvas](https://github.com/Rocked03/Blurple-Canvas) Discord bot with (hopefully, eventually) a couple extra bells and whistles.
+[Project Blurple](https://projectblurple.com) is an annual, week-long, community-run event which celebrates Discord’s anniversary. Part of this is Blurple Canvas where people in participating servers create pixel art on a shared canvas.
+
+Blurple Canvas Web is a web alternative to the [existing Discord bot](https://github.com/Rocked03/Blurple-Canvas) Discord bot, which brings canvas to the web!
+
+If you’d like a bit more context, [we have a wiki!](https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/wiki/Blurple-Canvas-Web-Wiki)
 
 ## 🥪 Tech stack & repo structure
 
@@ -14,6 +17,9 @@ This is a [monorepo](https://monorepo.tools), with three packages:
 - **[@blurple-canvas-web/types](/packages/types#readme)**: Where [TypeScript](https://www.typescriptlang.org) types shared by the front- and back-end live
 
 ## 🌱 Getting started
+
+> [!TIP]
+> If you use VS Code, instead of opening the root folder of this repo, open the [`blurple-canvas-web.code-workspace`](/blurple-canvas-web.code-workspace) file.
 
 We suggest opening this project as a Visual Studio Code [multi-root workspace](https://code.visualstudio.com/docs/editor/multi-root-workspaces): just open the [`blurple-canvas-web.code-workspace`](/blurple-canvas-web.code-workspace) file. The workspace is configured to use the right linter and formatter, and recommends a few extensions. But, you’re welcome to use your preferred editor.
 
@@ -34,11 +40,15 @@ brew install nvm
 nvm use
 ```
 
-**Enable [Corepack](https://nodejs.org/api/corepack.html).** We recommend using Corepack to manage your pnpm version, but if you’d prefer installing pnpm a different way, [go ahead](https://pnpm.io/installation).
+**Enable [Corepack](https://nodejs.org/api/corepack.html).** We recommend using Corepack to manage your pnpm version, but if you’d prefer installing pnpm a different way, [go ahead](https://pnpm.io/installation). (Make sure it matches the version number specified in the [root manifest file](/package.json).)
 
 ```sh
 corepack enable pnpm
 ```
+
+### 🤫 Secrets & environment variables
+
+The **[backend](/packages/backend/.env.example)** and **[frontend](/packages/frontend/.env.example)** packages need to have some environment variables set work correctly (in `/packages/backend/.env` and `/packages/frontend/.env`, respectively). Consult the `.env.example` files in each of those packages to see what variables are needed, and contact one of the [contributors](https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/graphs/contributors) if you need any secrets.
 
 ### 🚀 Build & deploy
 
