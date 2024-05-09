@@ -380,7 +380,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
-    if (!imageDimensions || !color || !coords) return;
+    if (!imageDimensions || !coords) return;
 
     updateCanvasPreviewPixel(previewCanvasRef, coords, color);
 
