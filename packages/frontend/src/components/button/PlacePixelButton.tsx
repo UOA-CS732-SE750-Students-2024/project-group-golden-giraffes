@@ -51,11 +51,11 @@ export default function PlacePixelButton() {
 
     setIsPlacing(true);
     axios
-      .post(requestUrl, body, {
+      .post<Cooldown>(requestUrl, body, {
         withCredentials: true,
       })
       .then((res) => res.data)
-      .then((data: Cooldown) => {
+      .then((data) => {
         const cooldown = data.cooldownEndTime;
         if (cooldown) {
           setTimeLeft(
