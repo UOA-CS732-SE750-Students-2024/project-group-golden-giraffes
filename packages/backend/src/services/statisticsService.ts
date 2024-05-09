@@ -29,6 +29,12 @@ export async function getUserStats(
           rgba: true,
         },
       },
+      discord_user_profile: {
+        select: {
+          username: true,
+          profile_picture_url: true,
+        },
+      },
     },
   });
 
@@ -44,6 +50,10 @@ export async function getUserStats(
     mostFrequentColor: stats.most_frequent_color,
     // placeFrequency: place_frequency,
     mostRecentTimestamp: stats.most_recent_timestamp?.toISOString(),
+    username: stats.discord_user_profile?.username,
+    profilePictureUrl:
+      stats.discord_user_profile?.profile_picture_url ??
+      createDefaultAvatarUrl(stats.user_id),
   };
 }
 

@@ -8,6 +8,8 @@ export interface UserStats {
   mostFrequentColor?: PaletteColor;
   // placeFrequency?: string;  // Not currently supported by Prisma
   mostRecentTimestamp?: string;
+  username?: string;
+  profilePictureUrl: string;
 }
 
 export interface LeaderboardEntry {

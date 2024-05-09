@@ -8,6 +8,7 @@ import Avatar from "@/components/Avatar";
 import { Button } from "@/components/button";
 import { useActiveCanvasContext, useAuthContext } from "@/contexts";
 import { useUserStats } from "@/hooks";
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { useEffect } from "react";
 import StatsTable from "./StatsTable";
 
@@ -40,25 +41,36 @@ const StatsCard = styled("div")`
   text-align: center;
 `;
 
-export default function MePageContent() {
+export interface UserStatsPageContentProps {
+  userId: string;
+  user?: DiscordUserProfile;
+  signOut?: () => void;
+}
+
+export default function UserStatsPageContent({
+  userId,
+  user = undefined,
+  signOut,
+}: UserStatsPageContentProps) {
   const { canvas: activeCanvas } = useActiveCanvasContext();
-  const { signOut, user } = useAuthContext();
-  const router = useRouter();
+
+  let username = user?.username ?? user?.id ?? "Loading...";
+  let profilePictureUrl =
+    user?.profilePictureUrl ?? "https://cdn.discordapp.com/embed/avatars/1.png";
 
   const { data: stats, isLoading: statsAreLoading } = useUserStats(
-    user?.id,
+    userId,
     activeCanvas.id,
   );
 
-  useEffect(() => {
-    if (!user) {
-      router.replace("/");
-    }
-  }, [user, router]);
+  if (!activeCanvas) return null;
 
-  if (!user || !activeCanvas) return null;
-
-  const { username, profilePictureUrl } = user;
+  if (!user) {
+    username = stats?.username ?? stats?.userId ?? "Not found";
+    profilePictureUrl =
+      stats?.profilePictureUrl ??
+      "https://cdn.discordapp.com/embed/avatars/1.png";
+  }
 
   return (
     <Container>
@@ -68,11 +80,13 @@ export default function MePageContent() {
         size={96}
       />
       <h1>{username}</h1>
-      <SignOutButton href="/">
-        <Button variant="contained" onClick={signOut}>
-          Sign out
-        </Button>
-      </SignOutButton>
+      {signOut && (
+        <SignOutButton href="/">
+          <Button variant="contained" onClick={signOut}>
+            Sign out
+          </Button>
+        </SignOutButton>
+      )}
       <StatsCard>
         <h2>{activeCanvas.name}</h2>
         <StatsTable
@@ -82,4 +96,17 @@ export default function MePageContent() {
       </StatsCard>
     </Container>
   );
+}
+
+export function MePageContent() {
+  const { signOut, user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.replace("/");
+    }
+  }, [user, router]);
+
+  return <UserStatsPageContent userId={user?.id ?? ""} signOut={signOut} />;
 }
