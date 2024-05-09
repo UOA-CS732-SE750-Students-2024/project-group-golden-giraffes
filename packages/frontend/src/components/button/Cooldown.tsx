@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/button";
 import { useActiveCanvasContext } from "@/contexts";
+import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 
 interface CooldownProps {
@@ -53,7 +54,13 @@ export default function Cooldown({ children }: CooldownProps) {
   if (cooldownLoading) {
     return (
       <Button variant="contained" disabled>
-        Loading
+        {"Loading"}
+        <CircularProgress
+          color="inherit"
+          // Can't get sizing to work dynamically
+          size="1.5rem"
+          style={{ marginLeft: "1rem" }}
+        />
       </Button>
     );
   }
