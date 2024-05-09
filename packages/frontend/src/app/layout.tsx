@@ -50,10 +50,26 @@ function getServerSideProfile(): DiscordUserProfile | null {
 }
 
 async function getServerSideCanvasInfo(): Promise<CanvasInfo> {
-  const response = await axios.get<CanvasInfoRequest.ResBody>(
-    `${config.apiUrl}/api/v1/canvas/current/info`,
-  );
-  return response.data;
+  try {
+    const response = await axios.get<CanvasInfoRequest.ResBody>(
+      `${config.apiUrl}/api/v1/canvas/current/info`,
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+
+    // Fallback in case something goes wrong
+    return {
+      id: 1,
+      name: "Something went wrong...",
+      isLocked: true,
+      width: 600,
+      height: 600,
+      startCoordinates: [1, 1],
+      eventId: 1,
+      webPlacingEnabled: false,
+    };
+  }
 }
 
 export default async function RootLayout({
