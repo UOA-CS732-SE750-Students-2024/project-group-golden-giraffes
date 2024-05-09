@@ -103,6 +103,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
+  const mouseOffsetDirection = useRef<Point>(ORIGIN);
 
   const { color } = useSelectedColorContext();
   const { coords, setCoords } = useSelectedPixelLocationContext();
@@ -116,7 +117,8 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
   const [controlledPan, setControlledPan] = useState(false);
   const [targetZoom, setTargetZoom] = useState(1);
-  const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
+
+  const startAverageTouchDistance = useRef(0);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
@@ -175,15 +177,15 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
       // The mouse position's origin is in the top left of the canvas. The offset's origin is the
       // center of the canvas so we do this to convert between the two.
-      setMouseOffsetDirection(
-        diffPoints(
-          {
-            x: imageDimensions.width / 2,
-            y: imageDimensions.height / 2,
-          },
-          mousePositionOnCanvas,
-        ),
+      mouseOffsetDirection.current = diffPoints(
+        {
+          x: imageDimensions.width / 2,
+          y: imageDimensions.height / 2,
+        },
+        mousePositionOnCanvas,
       );
+
+      // console.log(mousePositionOnCanvas, mouseOffsetDirection.current);
 
       const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
       const newZoom = clamp(targetZoom * scale, MIN_ZOOM, MAX_ZOOM);
@@ -213,10 +215,11 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       );
 
       const effectiveScale = newZoom / zoom;
+      console.log(effectiveScale, newZoom, zoom);
 
       setOffset((prevOffset) => {
         // The direction we need to shift the offset to keep the pixel in the same place
-        const offsetDif = diffPoints(mouseOffsetDirection, prevOffset);
+        const offsetDif = diffPoints(mouseOffsetDirection.current, prevOffset);
 
         // The amount we shift is scaled based on the amount we've zoomed in.
         const scaledOffsetDiff = multiplyPoint(
@@ -238,7 +241,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
     const interval = setInterval(glideZoom, 8);
 
     return () => clearInterval(interval);
-  }, [zoom, targetZoom, mouseOffsetDirection]);
+  }, [zoom, targetZoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -314,34 +317,127 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
 
   const handleTouchMove = useCallback(
     (event: TouchEvent): void => {
+      if (!canvasRef.current) return;
       const touchCount = event.touches.length;
       event.preventDefault();
 
       // TODO: Implement multi-touch zooming
-      if (touchCount !== 1) return;
+      if (touchCount !== 1) {
+        if (!imageDimensions) return;
 
-      // Check that the touch event is the same as the one that started the pan
-      if (event.touches[0].identifier !== startTouchesRef.current[0].identifier)
-        return;
+        const touches = Array.from(event.touches);
+        const touchCentroid = touches.reduce(
+          (centroid, touch) => {
+            centroid.x += touch.pageX;
+            centroid.y += touch.pageY;
+            return centroid;
+          },
+          { x: 0, y: 0 },
+        );
+        touchCentroid.x /= touches.length;
+        touchCentroid.y /= touches.length;
 
-      const startTouch = startTouchesRef.current[0];
-      const touch = event.touches[0];
+        const rect = canvasRef.current.getBoundingClientRect();
+        const touchCentroidOnCanvas: Point = {
+          x: (touchCentroid.x - rect.left) / zoom,
+          y: (touchCentroid.y - rect.top) / zoom,
+        };
 
-      const touchDiff: Point = {
-        x: touch.pageX - startTouch.pageX,
-        y: touch.pageY - startTouch.pageY,
-      };
+        const averageDistance =
+          touches.reduce((totalDistance, touch) => {
+            const distanceX = Math.abs(touch.pageX - touchCentroid.x);
+            const distanceY = Math.abs(touch.pageY - touchCentroid.y);
+            const distance = Math.sqrt(
+              distanceX * distanceX + distanceY * distanceY,
+            );
+            return totalDistance + distance;
+          }, 0) / touches.length;
 
-      setVelocity(touchDiff);
+        if (startAverageTouchDistance.current === 0) {
+          startAverageTouchDistance.current = averageDistance;
+        }
 
-      updateOffset({ x: touchDiff.x, y: touchDiff.y });
-      startTouchesRef.current = [touch];
+        const diff = averageDistance - startAverageTouchDistance.current;
+        const scale = Math.exp(
+          Math.sign(diff) * Math.abs(diff / 25) * SCALE_FACTOR,
+        );
+        const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
+
+        const effectiveScale = newZoom / zoom;
+        // the zoom isn't updating for some reason
+        console.log(effectiveScale, newZoom, zoom);
+
+        mouseOffsetDirection.current = diffPoints(
+          {
+            x: imageDimensions.width / 2,
+            y: imageDimensions.height / 2,
+          },
+          touchCentroidOnCanvas,
+        );
+
+        // console.log(touchCentroidOnCanvas, mouseOffsetDirection.current);
+
+        console.log(zoom, newZoom);
+        setZoom(newZoom);
+        console.log(zoom);
+        setTargetZoom(newZoom);
+
+        setOffset((prevOffset) => {
+          // The direction we need to shift the offset to keep the pixel in the same place
+          const offsetDif = diffPoints(
+            mouseOffsetDirection.current,
+            prevOffset,
+          );
+
+          // The amount we shift is scaled based on the amount we've zoomed in.
+          const scaledOffsetDiff = multiplyPoint(
+            offsetDif,
+            // If the scale is 1, we've not zoomed in at all and so this multiplier becomes 0
+            // (causing no offset). If the scale is greater than 1, we're zooming in. A larger scale
+            // corresponds to a larger step (as 1/effectiveScale approaches 0). If the scale is less
+            // than 1, we're zooming out. In this case, 1 / effective scale becomes greater than 1,
+            // causing a negative offset. Thanks Henry for figuring out this equation 🙏.
+            1 - 1 / effectiveScale,
+          );
+
+          // console.log(
+          //   offsetDif,
+          //   mouseOffsetDirection.current,
+          //   prevOffset,
+          //   scaledOffsetDiff,
+          // );
+
+          return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
+        });
+      } else {
+        // Check that the touch event is the same as the one that started the pan
+        if (
+          event.touches[0].identifier !== startTouchesRef.current[0].identifier
+        )
+          return;
+
+        const startTouch = startTouchesRef.current[0];
+        const touch = event.touches[0];
+
+        const touchDiff: Point = {
+          x: touch.pageX - startTouch.pageX,
+          y: touch.pageY - startTouch.pageY,
+        };
+
+        setVelocity(touchDiff);
+
+        updateOffset({ x: touchDiff.x, y: touchDiff.y });
+        startTouchesRef.current = [touch];
+      }
     },
-    [updateOffset],
+    [updateOffset, zoom, imageDimensions, clampOffset],
   );
 
   const handleTouchEnd = useCallback((): void => {
     if (!canvasRef.current) return;
+
+    setControlledPan(false);
+    startAverageTouchDistance.current = 0;
 
     canvasRef.current.removeEventListener("touchmove", handleTouchMove);
     canvasRef.current.removeEventListener("touchend", handleTouchEnd);
@@ -359,7 +455,9 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const touchCount = event.touches.length;
 
       // TODO: Implement multi-touch zooming
-      if (touchCount !== 1) return;
+      // if (touchCount !== 1) return;
+
+      setControlledPan(true);
 
       canvasRef.current.addEventListener("touchmove", handleTouchMove, {
         passive: false,
