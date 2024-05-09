@@ -41,8 +41,14 @@ const StatsCard = styled("div")`
 `;
 
 export default function MePageContent() {
+  const { canvas: activeCanvas } = useActiveCanvasContext();
   const { signOut, user } = useAuthContext();
   const router = useRouter();
+
+  const { data: stats, isLoading: statsAreLoading } = useUserStats(
+    user?.id,
+    activeCanvas.id,
+  );
 
   useEffect(() => {
     if (!user) {
@@ -50,16 +56,9 @@ export default function MePageContent() {
     }
   }, [user, router]);
 
-  if (!user) return null;
+  if (!user || !activeCanvas) return null;
 
   const { username, profilePictureUrl } = user;
-  const { canvas: activeCanvas } = useActiveCanvasContext();
-
-  if (!activeCanvas) return null;
-  const { data: stats, isLoading: statsAreLoading } = useUserStats(
-    user.id,
-    activeCanvas.id,
-  );
 
   return (
     <Container>
@@ -76,7 +75,10 @@ export default function MePageContent() {
       </SignOutButton>
       <StatsCard>
         <h2>{activeCanvas.name}</h2>
-        <StatsTable stats={stats} statsAreLoading={statsAreLoading} />
+        <StatsTable
+          stats={stats ?? undefined}
+          statsAreLoading={statsAreLoading}
+        />
       </StatsCard>
     </Container>
   );

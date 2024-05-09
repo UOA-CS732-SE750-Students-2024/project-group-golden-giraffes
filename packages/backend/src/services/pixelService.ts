@@ -248,7 +248,7 @@ export async function placePixel(
         throw new ForbiddenError("Pixel placement is on cooldown");
       }
     }
-    tx.pixel.upsert({
+    await tx.pixel.upsert({
       where: {
         canvas_id_x_y: {
           canvas_id: canvasId,
@@ -264,11 +264,12 @@ export async function placePixel(
         color_id: color.id,
       },
     });
-    tx.history.create({
+    await tx.history.create({
       data: {
-        user_id: userId,
         canvas_id: canvasId,
-        ...coordinates,
+        user_id: userId,
+        x: coordinates.x,
+        y: coordinates.y,
         color_id: color.id,
         timestamp: placementTime,
         guild_id: config.webGuildId,

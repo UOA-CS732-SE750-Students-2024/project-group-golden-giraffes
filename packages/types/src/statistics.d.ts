@@ -14,6 +14,6 @@ export interface LeaderboardEntry {
   rank: number;
   userId: string;
   totalPixels: number;
-  username: string;
+  username?: string;
   profilePictureUrl: string;
 }

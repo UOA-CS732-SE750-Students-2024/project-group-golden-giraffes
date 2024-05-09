@@ -1,7 +1,8 @@
 import { styled } from "@mui/material";
 
-import { DiscordUserProfile, Palette, Point } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
+import config from "@/config";
 import {
   useActiveCanvasContext,
   useAuthContext,
@@ -9,6 +10,7 @@ import {
   useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
+import axios from "axios";
 import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -61,18 +63,18 @@ export default function PlacePixelTab({
   const { user } = useAuthContext();
   const { canvas } = useActiveCanvasContext();
 
-  const { coords } = useSelectedPixelLocationContext();
+  const { adjustedCoords, setCoords } = useSelectedPixelLocationContext();
 
   const inviteSlug = selectedColor?.invite;
   const hasInvite = !!inviteSlug;
   const serverInvite =
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
-  const selectedCoordinates = coords;
+  const selectedCoordinates = adjustedCoords;
   const x = selectedCoordinates?.x;
   const y = selectedCoordinates?.y;
 
-  const webPlacingEnabled = true;
+  const webPlacingEnabled = canvas.webPlacingEnabled;
 
   const canPlacePixel =
     webPlacingEnabled &&
@@ -86,6 +88,29 @@ export default function PlacePixelTab({
     (!canPlacePixel || readOnly) && !selectedColor?.global && serverInvite;
 
   const isSelected = selectedCoordinates && selectedColor;
+
+  const handlePixelRequest = () => {
+    if (!selectedCoordinates || !selectedColor) return;
+
+    const requestUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}/pixel`;
+
+    const body = {
+      x: selectedCoordinates.x,
+      y: selectedCoordinates.y,
+      colorId: selectedColor.id,
+    };
+
+    try {
+      axios.post(requestUrl, body, {
+        withCredentials: true,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
+    setSelectedColor(null);
+    setCoords(null);
+  };
 
   return (
     <ActionPanelTabBody active={active}>
@@ -114,6 +139,7 @@ export default function PlacePixelTab({
         <DynamicButton
           color={selectedColor}
           disabled={paletteIsLoading || !selectedColor}
+          onAction={handlePixelRequest}
         >
           {isSelected ? "Place pixel" : "Select a pixel"}
           <CoordinateLabel>
