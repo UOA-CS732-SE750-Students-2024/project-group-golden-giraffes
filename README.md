@@ -98,9 +98,9 @@ Blurple Canvas Web started as a [SOFTENG 750](https://courseoutline.auckland.ac
 
 - Aaron Guo
 - Emily Zou
-- Henry Wang
-- Jasper Lai
-- Josh Jeffers
+- [Henry Wang](http://henryh.wang)
+- [Jasper Lai](https://lai.nz)
+- [Josh Jeffers](https://pumbas.net)
 - Samuel Ou
 
 ![](./group-image/Golden%20Giraffes.webp)
