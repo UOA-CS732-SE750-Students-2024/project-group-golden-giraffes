@@ -4,7 +4,6 @@ import passport from "passport";
 import { DiscordUserProfile } from "@blurple-canvas-web/types";
 
 import config from "@/config";
-import { ApiError, UnauthorizedError } from "@/errors";
 import { saveDiscordProfile } from "@/services/discordProfileService";
 
 export const discordRouter = Router();
