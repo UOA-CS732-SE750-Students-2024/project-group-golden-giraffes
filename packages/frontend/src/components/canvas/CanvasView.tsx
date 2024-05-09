@@ -341,7 +341,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
-
       const boundedX = clamp(
         Math.floor(imageX),
         0,
@@ -354,8 +353,7 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       );
 
       // we only care about updating the location
-      setCoords((prev) => ({
-        ...prev,
+      setCoords(() => ({
         x: boundedX,
         y: boundedY,
       }));
