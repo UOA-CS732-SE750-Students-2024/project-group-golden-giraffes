@@ -341,7 +341,6 @@ export default function CanvasView({ imageUrl }: CanvasViewProps) {
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
-      canvasRef.current.width;
 
       const boundedX = clamp(
         Math.floor(imageX),
