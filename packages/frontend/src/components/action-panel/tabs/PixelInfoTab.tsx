@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
 
-import { PixelHistoryRecord, Point } from "@blurple-canvas-web/types";
+import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 
 import { useSelectedPixelContext } from "@/contexts/SelectedPixelContext";
 import { usePixelHistory } from "@/hooks";
@@ -59,7 +59,7 @@ export default function PixelInfoTab({
   active = false,
   canvasId,
 }: PixelInfoTabProps) {
-  const { coords } = useSelectedPixelContext();
+  const { coords, adjustedCoords } = useSelectedPixelContext();
   const { data: pixelHistory = [], isLoading } = usePixelHistory(
     canvasId,
     coords,
@@ -67,9 +67,9 @@ export default function PixelInfoTab({
 
   return (
     <ActionPanelTabBody active={active}>
-      {coords ?
+      {adjustedCoords ?
         <div>
-          <CoordinatesCard coordinates={coords} />
+          <CoordinatesCard coordinates={adjustedCoords} />
           <PixelHistory history={pixelHistory} isLoading={isLoading} />
         </div>
       : <p>No selected pixel</p>}
