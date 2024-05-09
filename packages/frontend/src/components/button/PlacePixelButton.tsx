@@ -17,24 +17,24 @@ export const CoordinateLabel = styled("span")`
 `;
 
 export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
-  const { adjustedCoords, setCoords } = useSelectedPixelLocationContext();
+  const { adjustedCoords: selectCoordinates, setCoords } =
+    useSelectedPixelLocationContext();
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
   const { canvas } = useActiveCanvasContext();
 
-  const selectedCoordinates = adjustedCoords;
-  const x = selectedCoordinates?.x;
-  const y = selectedCoordinates?.y;
-  const isSelected = selectedCoordinates && selectedColor;
+  const x = selectCoordinates?.x;
+  const y = selectCoordinates?.y;
+  const isSelected = selectCoordinates && selectedColor;
 
   const handlePixelRequest = () => {
-    if (!selectedCoordinates || !selectedColor) return;
+    if (!selectCoordinates || !selectedColor) return;
 
     const requestUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}/pixel`;
 
     const body = {
-      x: selectedCoordinates.x,
-      y: selectedCoordinates.y,
+      x: selectCoordinates.x,
+      y: selectCoordinates.y,
       colorId: selectedColor.id,
     };
 
