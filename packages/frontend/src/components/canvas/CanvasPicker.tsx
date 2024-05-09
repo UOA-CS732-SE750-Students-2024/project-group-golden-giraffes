@@ -74,8 +74,6 @@ export default function CanvasPicker() {
   const { data: currentEvent, isLoading: currentEventIsLoading } =
     useEventInfo();
   const { canvas: activeCanvas, setCanvas } = useActiveCanvasContext();
-  const { setCoords } = useSelectedPixelLocationContext();
-  const { setColor: setSelectedColor } = useSelectedColorContext();
 
   const isLoading =
     canvasListIsLoading || mainCanvasIsLoading || currentEventIsLoading;
@@ -88,8 +86,6 @@ export default function CanvasPicker() {
 
   function handleChangeCanvas(event: React.ChangeEvent<HTMLSelectElement>) {
     setCanvas(Number.parseInt(event.target.value));
-    setSelectedColor(null);
-    setCoords(null);
   }
 
   return (
