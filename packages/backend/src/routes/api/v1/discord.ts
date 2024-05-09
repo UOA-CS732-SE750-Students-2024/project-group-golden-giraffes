@@ -41,16 +41,3 @@ discordRouter.get(
     res.redirect(config.frontendUrl);
   },
 );
-
-discordRouter.get("/test", (req, res) => {
-  try {
-    const profile = req.user as DiscordUserProfile;
-
-    if (!profile || !profile.id) {
-      throw new UnauthorizedError("User is not authenticated");
-    }
-    res.status(200).json(profile);
-  } catch (error) {
-    ApiError.sendError(res, error);
-  }
-});
