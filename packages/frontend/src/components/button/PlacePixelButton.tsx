@@ -17,25 +17,21 @@ export const CoordinateLabel = styled("span")`
 `;
 
 export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
-  const { adjustedCoords: selectCoordinates, setCoords } =
+  const { coords, adjustedCoords, setCoords } =
     useSelectedPixelLocationContext();
-  const { color: selectedColor, setColor: setSelectedColor } =
-    useSelectedColorContext();
+  const { color, setColor } = useSelectedColorContext();
   const { canvas } = useActiveCanvasContext();
-
-  const x = selectCoordinates?.x;
-  const y = selectCoordinates?.y;
-  const isSelected = selectCoordinates && selectedColor;
+  const isSelected = adjustedCoords && color;
 
   const handlePixelRequest = () => {
-    if (!selectCoordinates || !selectedColor) return;
+    if (!coords || !color) return;
 
     const requestUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}/pixel`;
 
     const body = {
-      x: selectCoordinates.x,
-      y: selectCoordinates.y,
-      colorId: selectedColor.id,
+      x: coords.x,
+      y: coords.y,
+      colorId: color.id,
     };
 
     try {
@@ -46,19 +42,21 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
       console.error(e);
     }
 
-    setSelectedColor(null);
+    setColor(null);
     setCoords(null);
   };
 
   return (
     <DynamicButton
-      color={selectedColor}
+      color={color}
       disabled={disabled}
       onAction={handlePixelRequest}
     >
       {isSelected ? "Place pixel" : "Select a pixel"}
       <CoordinateLabel>
-        {isSelected ? `(${x},\u00A0${y})` : undefined}
+        {isSelected ?
+          `(${adjustedCoords.x},\u00A0${adjustedCoords.y})`
+        : undefined}
       </CoordinateLabel>
     </DynamicButton>
   );
