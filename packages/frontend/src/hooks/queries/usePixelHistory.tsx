@@ -8,7 +8,7 @@ import { CanvasInfo, HistoryRequest, Point } from "@blurple-canvas-web/types";
 
 export function usePixelHistory(
   canvasId: CanvasInfo["id"],
-  coordinates: Point,
+  coordinates: Point | null,
 ) {
   const fetchHistory = async ({ signal }: { signal: AbortSignal }) => {
     if (!coordinates) return [] as HistoryRequest.ResBody;
@@ -26,6 +26,5 @@ export function usePixelHistory(
     queryFn: fetchHistory,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-    placeholderData: [] as HistoryRequest.ResBody,
   });
 }

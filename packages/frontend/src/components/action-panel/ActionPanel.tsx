@@ -8,6 +8,7 @@ import {
   useSelectedColorContext,
   useSelectedPixelLocationContext,
 } from "@/contexts";
+import { PaletteColor } from "@blurple-canvas-web/types";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
 const Wrapper = styled("div")`
@@ -102,17 +103,32 @@ const TABS = {
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
+  const [tempColor, setTempColor] = useState<PaletteColor | null>(null);
+
+  const { color, setColor } = useSelectedColorContext();
   const { canvas } = useActiveCanvasContext();
+
+  const onSwitchTab = (isTabLook: boolean) => {
+    // switching tabs
+    // hiding colour from reticle if we are on look tab
+    if (isTabLook) {
+      setCurrentTab(TABS.LOOK);
+      setTempColor(color);
+      setColor(null);
+    } else {
+      setCurrentTab(TABS.PLACE);
+      setColor(tempColor);
+    }
+  };
 
   return (
     <Wrapper>
       <TabBar>
         <Tab
           active={currentTab === TABS.PLACE}
-          onClick={() => setCurrentTab(TABS.PLACE)}
+          onClick={() => onSwitchTab(false)}
           onKeyUp={(event) => {
-            if (event.key === "Enter" || event.key === " ")
-              setCurrentTab(TABS.PLACE);
+            if (event.key === "Enter" || event.key === " ") onSwitchTab(false);
           }}
           tabIndex={0}
         >
@@ -120,10 +136,9 @@ export default function ActionPanel() {
         </Tab>
         <Tab
           active={currentTab === TABS.LOOK}
-          onClick={() => setCurrentTab(TABS.LOOK)}
+          onClick={() => onSwitchTab(true)}
           onKeyUp={(event) => {
-            if (event.key === "Enter" || event.key === " ")
-              setCurrentTab(TABS.LOOK);
+            if (event.key === "Enter" || event.key === " ") onSwitchTab(true);
           }}
           tabIndex={0}
         >

@@ -7,15 +7,16 @@ import config from "@/config";
 import {
   CanvasInfo,
   DiscordUserProfile,
-  EventRequest,
   UserStatsRequest,
 } from "@blurple-canvas-web/types";
 
 export function useUserStats(
-  userId: DiscordUserProfile["id"],
+  userId: DiscordUserProfile["id"] | undefined,
   canvasId: CanvasInfo["id"],
 ) {
   const getUserStats = async () => {
+    if (!userId) return null;
+
     const response = await axios.get<UserStatsRequest.ResBody>(
       `${config.apiUrl}/api/v1/statistics/user/${userId}/${canvasId}`,
     );

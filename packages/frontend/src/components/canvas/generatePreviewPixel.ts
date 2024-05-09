@@ -10,7 +10,7 @@ import { RefObject } from "react";
 export default function updateCanvasPreviewPixel(
   canvasRef: RefObject<HTMLCanvasElement>,
   pixelPoint: Point,
-  color: PaletteColor,
+  color: PaletteColor | null,
 ) {
   const context = canvasRef.current?.getContext("2d");
   if (!context) {
@@ -40,6 +40,8 @@ export default function updateCanvasPreviewPixel(
 
   context.clearRect(x - 2, y - 2, 5, 5);
 
-  context.fillStyle = `rgb(${color.rgba.join()})`;
-  context.fillRect(x, y, 1, 1);
+  if (color) {
+    context.fillStyle = `rgb(${color.rgba.join()})`;
+    context.fillRect(x, y, 1, 1);
+  }
 }
