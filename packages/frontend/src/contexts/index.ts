@@ -8,7 +8,3 @@ export {
   SelectedColorProvider,
   useSelectedColorContext,
 } from "./SelectedColorContext";
-export {
-  SelectedPixelLocationProvider,
-  useSelectedPixelContext as useSelectedPixelLocationContext,
-} from "./SelectedPixelContext";

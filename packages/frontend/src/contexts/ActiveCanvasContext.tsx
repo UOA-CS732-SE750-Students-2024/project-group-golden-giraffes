@@ -1,18 +1,34 @@
 "use client";
 
 import axios from "axios";
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
+import { addPoints, tupleToPoint } from "@/components/canvas/point";
 import config from "@/config";
-import { CanvasInfo, CanvasInfoRequest } from "@blurple-canvas-web/types";
-import { useSelectedColorContext, useSelectedPixelLocationContext } from ".";
+import {
+  CanvasInfo,
+  CanvasInfoRequest,
+  Point,
+} from "@blurple-canvas-web/types";
+import { useSelectedColorContext } from "./SelectedColorContext";
 
-interface ActiveCanvasContextType {
+interface CanvasContextType {
   canvas: CanvasInfo;
+  coords: Point | null;
+  adjustedCoords: Point | null;
   setCanvas: (canvasId: CanvasInfo["id"]) => void;
+  setCoords: Dispatch<SetStateAction<Point | null>>;
 }
 
-export const ActiveCanvasContext = createContext<ActiveCanvasContextType>({
+export const ActiveCanvasContext = createContext<CanvasContextType>({
   canvas: {
     id: -1,
     name: "",
@@ -23,10 +39,13 @@ export const ActiveCanvasContext = createContext<ActiveCanvasContextType>({
     eventId: null,
     webPlacingEnabled: false,
   },
+  coords: null,
+  adjustedCoords: null,
+  setCoords: () => {},
   setCanvas: () => {},
 });
 
-interface ActiveCanvasProviderProps {
+interface CanvasProviderProps {
   children: React.ReactNode;
   mainCanvasInfo: CanvasInfo;
 }
@@ -34,27 +53,43 @@ interface ActiveCanvasProviderProps {
 export const ActiveCanvasProvider = ({
   children,
   mainCanvasInfo,
-}: ActiveCanvasProviderProps) => {
+}: CanvasProviderProps) => {
   const [activeCanvas, setActiveCanvas] = useState(mainCanvasInfo);
-  const { setCoords } = useSelectedPixelLocationContext();
+  const [selectedCoords, setSelectedCoords] =
+    useState<CanvasContextType["coords"]>(null);
+
+  const adjustedCoords = useMemo(() => {
+    if (selectedCoords) {
+      return addPoints(
+        selectedCoords,
+        tupleToPoint(activeCanvas.startCoordinates),
+      );
+    }
+
+    return null;
+  }, [activeCanvas.startCoordinates, selectedCoords]);
+
   const { setColor: setSelectedColor } = useSelectedColorContext();
 
-  const setCanvasById = useCallback<ActiveCanvasContextType["setCanvas"]>(
+  const setCanvasById = useCallback<CanvasContextType["setCanvas"]>(
     async (canvasId: CanvasInfo["id"]) => {
       const response = await axios.get<CanvasInfoRequest.ResBody>(
         `${config.apiUrl}/api/v1/canvas/${canvasId}/info`,
       );
       setActiveCanvas(response.data);
       setSelectedColor(null);
-      setCoords(null);
+      setSelectedCoords(null);
     },
-    [setSelectedColor, setCoords],
+    [setSelectedColor],
   );
 
   return (
     <ActiveCanvasContext.Provider
       value={{
+        coords: selectedCoords,
+        adjustedCoords,
         canvas: activeCanvas,
+        setCoords: setSelectedCoords,
         setCanvas: setCanvasById,
       }}
     >

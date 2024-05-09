@@ -5,10 +5,7 @@ import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
 import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
-import {
-  useSelectedColorContext,
-  useSelectedPixelLocationContext,
-} from "@/contexts";
+import { useActiveCanvasContext, useSelectedColorContext } from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
@@ -112,7 +109,7 @@ export default function CanvasView({
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
-  const { coords, setCoords } = useSelectedPixelLocationContext();
+  const { coords, setCoords } = useActiveCanvasContext();
 
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);

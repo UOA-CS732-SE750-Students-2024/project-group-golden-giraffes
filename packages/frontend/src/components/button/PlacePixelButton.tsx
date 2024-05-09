@@ -3,7 +3,6 @@ import {
   useActiveCanvasContext,
   useAuthContext,
   useSelectedColorContext,
-  useSelectedPixelLocationContext,
 } from "@/contexts";
 import { CircularProgress, styled } from "@mui/material";
 import axios from "axios";
@@ -18,10 +17,9 @@ export const CoordinateLabel = styled("span")`
 `;
 
 export default function PlacePixelButton() {
-  const { coords, adjustedCoords, setCoords } =
-    useSelectedPixelLocationContext();
+  const { canvas, coords, adjustedCoords, setCoords } =
+    useActiveCanvasContext();
   const { color, setColor } = useSelectedColorContext();
-  const { canvas } = useActiveCanvasContext();
   const isSelected = adjustedCoords && color;
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isPlacing, setIsPlacing] = useState<boolean>(false);

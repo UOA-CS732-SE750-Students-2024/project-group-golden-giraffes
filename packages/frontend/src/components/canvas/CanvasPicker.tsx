@@ -3,11 +3,7 @@
 import { NativeSelect, nativeSelectClasses, styled } from "@mui/material";
 import { ChevronsUpDown } from "lucide-react";
 
-import {
-  useActiveCanvasContext,
-  useSelectedColorContext,
-  useSelectedPixelLocationContext,
-} from "@/contexts";
+import { useActiveCanvasContext } from "@/contexts";
 import { useCanvasInfo, useCanvasList, useEventInfo } from "@/hooks";
 import { CanvasSummary } from "@blurple-canvas-web/types";
 

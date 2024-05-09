@@ -4,11 +4,7 @@ import axios from "axios";
 import type { Metadata, Viewport } from "next";
 
 import config from "@/config";
-import {
-  QueryClientProvider,
-  SelectedColorProvider,
-  SelectedPixelLocationProvider,
-} from "@/contexts";
+import { QueryClientProvider, SelectedColorProvider } from "@/contexts";
 import "@/styles/core.css";
 import { ActiveCanvasProvider } from "@/contexts/ActiveCanvasContext";
 import { AuthProvider } from "@/contexts/AuthProvider";
@@ -68,13 +64,11 @@ export default async function RootLayout({
           <AuthProvider profile={getServerSideProfile()}>
             <QueryClientProvider>
               <SelectedColorProvider>
-                <SelectedPixelLocationProvider>
-                  <ActiveCanvasProvider
-                    mainCanvasInfo={await getServerSideCanvasInfo()}
-                  >
-                    <ThemeProvider theme={Theme}>{children}</ThemeProvider>
-                  </ActiveCanvasProvider>
-                </SelectedPixelLocationProvider>
+                <ActiveCanvasProvider
+                  mainCanvasInfo={await getServerSideCanvasInfo()}
+                >
+                  <ThemeProvider theme={Theme}>{children}</ThemeProvider>
+                </ActiveCanvasProvider>
               </SelectedColorProvider>
             </QueryClientProvider>
           </AuthProvider>
