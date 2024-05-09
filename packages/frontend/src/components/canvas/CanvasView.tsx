@@ -173,8 +173,16 @@ export default function CanvasView({
       );
     };
 
-    const onPixelPlaced = (payload: PlacePixelSocket.Payload) => {
+    const onPixelPlaced = (
+      payload: PlacePixelSocket.Payload,
+      pixelTimestamp: string,
+    ) => {
       console.log("[Live Updating]: Received pixel update", payload);
+
+      // If we disconnect and reconnect this tells the server we've received pixels up to this point
+      socket.auth = {
+        pixelTimestamp,
+      };
 
       if (!canvasRef.current) return;
 

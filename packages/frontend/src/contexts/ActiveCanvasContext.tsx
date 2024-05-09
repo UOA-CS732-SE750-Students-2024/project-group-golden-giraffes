@@ -4,6 +4,7 @@ import axios from "axios";
 import { createContext, useCallback, useContext, useState } from "react";
 
 import config from "@/config";
+import { socket } from "@/socket";
 import { CanvasInfo, CanvasInfoRequest } from "@blurple-canvas-web/types";
 
 interface ActiveCanvasContextType {
@@ -41,7 +42,16 @@ export const ActiveCanvasProvider = ({
       const response = await axios.get<CanvasInfoRequest.ResBody>(
         `${config.apiUrl}/api/v1/canvas/${canvasId}/info`,
       );
+
       setActiveCanvas(response.data);
+
+      // When we load an image, we want to make sure any pixels placed since now get inluded in the
+      // response. This is because in the time it takes for the image to load some pixels may have
+      // already been placed.
+      socket.auth = {
+        canvasId,
+        pixelTimestamp: new Date().toISOString(),
+      };
     },
     [],
   );
