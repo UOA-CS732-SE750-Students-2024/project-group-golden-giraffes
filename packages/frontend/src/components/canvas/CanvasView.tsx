@@ -76,6 +76,16 @@ const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
   pointer-events: none;
 `;
 
+const ReticleContainer = styled("div")`
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+`;
+
+const Reticle = styled("img")`
+  image-rendering: pixelated;
+`;
+
 /**
  * Calculate the default scale to use for the canvas. This tries to maximise the size of the canvas
  * without it overflowing the screen.
@@ -98,6 +108,11 @@ function getDefaultZoom(
 const SCALE_FACTOR = 0.2;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
+
+// This is to avoid weird business with the reticle not sizing properly
+const RETICLE_ORIGINAL_SIZE = 14;
+const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
+const RETICLE_SCALE = 0.01;
 
 export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
@@ -529,6 +544,24 @@ export default function CanvasView() {
             scale: zoom,
           }}
         >
+          <ReticleContainer
+            style={{
+              ...(coords && {
+                transform: `translate(${coords.x - (RETICLE_SIZE - 1) / 2}px, ${coords.y - (RETICLE_SIZE - 1) / 2}px)`,
+              }),
+            }}
+          >
+            <Reticle
+              src="./images/reticle.png"
+              alt="Reticle"
+              className="reticle"
+              style={{
+                width: RETICLE_SIZE,
+                height: RETICLE_SIZE,
+                scale: RETICLE_SCALE,
+              }}
+            />
+          </ReticleContainer>
           <PreviewCanvas
             isLoading={isLoading}
             ref={previewCanvasRef}
