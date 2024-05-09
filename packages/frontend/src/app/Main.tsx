@@ -35,6 +35,7 @@ export default function Main() {
     <Wrapper>
       <CanvasView
         imageUrl={`${config.apiUrl}/api/v1/canvas/${canvas.id}`}
+        canvasId={canvas.id}
         isLocked={canvas.isLocked}
       />
       <ActionPanel />

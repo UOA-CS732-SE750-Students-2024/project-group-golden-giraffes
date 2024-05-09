@@ -84,10 +84,15 @@ const MIN_ZOOM = 0.5;
 
 export interface CanvasViewProps {
   imageUrl: string;
+  canvasId: number;
   isLocked: boolean;
 }
 
-export default function CanvasView({ imageUrl, isLocked }: CanvasViewProps) {
+export default function CanvasView({
+  imageUrl,
+  canvasId,
+  isLocked,
+}: CanvasViewProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -168,14 +173,23 @@ export default function CanvasView({ imageUrl, isLocked }: CanvasViewProps) {
       setPixelQueue([]);
     };
 
+    const onPixelPlaced = (pixel: PixelInfo) => {
+      console.log("[Live Updating]: Received pixel update", pixel);
+      setPixelQueue((prev) => [...prev, pixel]);
+    };
+
+    const pixelPlaceEvent = `place pixel ${canvasId}`;
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
+    socket.on(pixelPlaceEvent, onPixelPlaced);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off(pixelPlaceEvent, onPixelPlaced);
     };
-  }, [isLocked]);
+  }, [canvasId, isLocked]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *

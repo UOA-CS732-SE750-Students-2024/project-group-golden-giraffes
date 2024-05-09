@@ -1,3 +1,4 @@
+import { PlacePixelSocket } from "@blurple-canvas-web/types";
 import { Server, Socket } from "socket.io";
 
 export class SocketHandler {
@@ -10,5 +11,12 @@ export class SocketHandler {
     socket.on("disconnect", () => {
       console.log("user disconnected");
     });
+  }
+
+  public broadcastPlacePixel(
+    canvasId: number,
+    payload: PlacePixelSocket.Payload,
+  ) {
+    this.io.emit(`place pixel ${canvasId}`, payload);
   }
 }
