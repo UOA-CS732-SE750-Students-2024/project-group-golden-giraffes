@@ -74,16 +74,14 @@ export default function PlacePixelTab({
   const webPlacingEnabled = canvas.webPlacingEnabled;
 
   const canPlacePixel =
-    webPlacingEnabled &&
-    user &&
-    (!selectedColor ||
-      selectedColor.global ||
-      userWithinServer(user, selectedColor.guildId));
+    webPlacingEnabled && (!selectedColor || selectedColor.global);
 
   const readOnly = canvas.isLocked;
 
   const isJoinServerShown =
-    (!canPlacePixel || readOnly) && !selectedColor?.global && serverInvite;
+    (!(canPlacePixel && user) || readOnly) &&
+    !selectedColor?.global &&
+    serverInvite;
 
   return (
     <ActionPanelTabBody active={active}>

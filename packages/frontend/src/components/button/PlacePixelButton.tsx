@@ -76,7 +76,7 @@ export default function PlacePixelButton() {
     return <Button disabled>Canvas can't be modified</Button>;
   }
   if (!user) {
-    return <Button disabled>Log in to place pixels</Button>;
+    return <Button disabled>Sign in to place pixels</Button>;
   }
 
   if (isPlacing) {
