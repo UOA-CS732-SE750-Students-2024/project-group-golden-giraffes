@@ -1,4 +1,4 @@
-# <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/86000a76-a73b-4abe-8c61-05dbfecbec40" width="23" height="23" /> Blurple Canvas Web
+# <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/86000a76-a73b-4abe-8c61-05dbfecbec40" width="24" height="24" /> Blurple Canvas Web
 
 ## <img src="https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/assets/33956381/02ac039f-67da-4aeb-a7be-c0363fee3917" width="20" height="20" /> Project Blurple
 
