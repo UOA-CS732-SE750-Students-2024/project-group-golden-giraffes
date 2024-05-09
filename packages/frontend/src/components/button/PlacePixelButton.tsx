@@ -50,23 +50,20 @@ export default function PlacePixelButton({ disabled }: PlacePixelButtonProps) {
       colorId: color.id,
     };
 
-    try {
-      axios
-        .post(requestUrl, body, {
-          withCredentials: true,
-        })
-        .then((res) => res.data)
-        .then((data: Cooldown) => {
-          const cooldown = data.cooldownEndTime;
-          if (cooldown) {
-            setTimeLeft(
-              Math.round((new Date(cooldown).valueOf() - Date.now()) / 1000),
-            );
-          }
-        });
-    } catch (e) {
-      console.error(e);
-    }
+    axios
+      .post(requestUrl, body, {
+        withCredentials: true,
+      })
+      .then((res) => res.data)
+      .then((data: Cooldown) => {
+        const cooldown = data.cooldownEndTime;
+        if (cooldown) {
+          setTimeLeft(
+            Math.round((new Date(cooldown).valueOf() - Date.now()) / 1000),
+          );
+        }
+      })
+      .catch((e) => console.error(e));
 
     setColor(null);
     setCoords(null);
