@@ -116,19 +116,19 @@ model guild {
 }
 
 model history {
-  id                   BigInt               @id @default(autoincrement())
+  id                   BigInt                @id @default(autoincrement())
   canvas_id            Int
-  canvas               canvas               @relation(fields: [canvas_id], references: [id])
+  canvas               canvas                @relation(fields: [canvas_id], references: [id])
   user_id              BigInt
-  user                 user                 @relation(fields: [user_id], references: [id])
+  user                 user                  @relation(fields: [user_id], references: [id])
   x                    Int
   y                    Int
   color_id             Int
-  color                color                @relation(fields: [color_id], references: [id])
-  timestamp            DateTime             @db.Timestamptz(6)
+  color                color                 @relation(fields: [color_id], references: [id])
+  timestamp            DateTime              @db.Timestamptz(6)
   guild_id             BigInt?
-  guild                guild?               @relation(fields: [guild_id], references: [id])
-  discord_user_profile discord_user_profile @relation(fields: [user_id], references: [user_id], map: "discord_user_profile_user_id_fkey")
+  guild                guild?                @relation(fields: [guild_id], references: [id])
+  discord_user_profile discord_user_profile? @relation(fields: [user_id], references: [user_id], map: "discord_user_profile_user_id_fkey")
 }
 
 /// This is a special table that will only ever have one row. The title being the primary key
@@ -187,10 +187,10 @@ model user {
 }
 
 model session {
-  id          String    @id
-  sid         String    @unique
-  data        String
-  expiresAt   DateTime  @db.Timestamptz(6)
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime @db.Timestamptz(6)
 }
 
 view user_stats {

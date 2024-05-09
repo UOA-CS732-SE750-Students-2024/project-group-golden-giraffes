@@ -39,7 +39,9 @@ export default function PixelHistoryListItem({
     <Wrapper>
       <StyledSwatch key={color.code} rgba={color.rgba} />
       <div>
-        <Username title={userProfile.id}>{userProfile.username}</Username>
+        <Username title={record.userId}>
+          {userProfile?.username ?? record.userId}
+        </Username>
         <ColorName>
           {color.name} <ColorCodeChip color={color} />
         </ColorName>
