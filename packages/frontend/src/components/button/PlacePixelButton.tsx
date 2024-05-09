@@ -1,7 +1,7 @@
 import config from "@/config";
 import {
-  useActiveCanvasContext,
   useAuthContext,
+  useCanvasContext,
   useSelectedColorContext,
 } from "@/contexts";
 import { CircularProgress, styled } from "@mui/material";
@@ -17,8 +17,7 @@ export const CoordinateLabel = styled("span")`
 `;
 
 export default function PlacePixelButton() {
-  const { canvas, coords, adjustedCoords, setCoords } =
-    useActiveCanvasContext();
+  const { canvas, coords, adjustedCoords, setCoords } = useCanvasContext();
   const { color, setColor } = useSelectedColorContext();
   const isSelected = adjustedCoords && color;
   const [timeLeft, setTimeLeft] = useState<number>(0);

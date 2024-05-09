@@ -6,8 +6,8 @@ import type { Metadata, Viewport } from "next";
 import config from "@/config";
 import { QueryClientProvider, SelectedColorProvider } from "@/contexts";
 import "@/styles/core.css";
-import { ActiveCanvasProvider } from "@/contexts/ActiveCanvasContext";
 import { AuthProvider } from "@/contexts/AuthProvider";
+import { CanvasProvider } from "@/contexts/CanvasContext";
 import { Theme } from "@/theme";
 import {
   CanvasInfo,
@@ -64,11 +64,11 @@ export default async function RootLayout({
           <AuthProvider profile={getServerSideProfile()}>
             <QueryClientProvider>
               <SelectedColorProvider>
-                <ActiveCanvasProvider
+                <CanvasProvider
                   mainCanvasInfo={await getServerSideCanvasInfo()}
                 >
                   <ThemeProvider theme={Theme}>{children}</ThemeProvider>
-                </ActiveCanvasProvider>
+                </CanvasProvider>
               </SelectedColorProvider>
             </QueryClientProvider>
           </AuthProvider>

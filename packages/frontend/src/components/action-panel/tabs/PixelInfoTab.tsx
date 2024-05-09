@@ -2,7 +2,7 @@ import { styled } from "@mui/material";
 
 import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 
-import { useActiveCanvasContext } from "@/contexts";
+import { useCanvasContext } from "@/contexts";
 import { usePixelHistory } from "@/hooks";
 import { Heading } from "../ActionPanel";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
@@ -59,7 +59,7 @@ export default function PixelInfoTab({
   active = false,
   canvasId,
 }: PixelInfoTabProps) {
-  const { coords, adjustedCoords } = useActiveCanvasContext();
+  const { coords, adjustedCoords } = useCanvasContext();
   const { data: pixelHistory = [], isLoading } = usePixelHistory(
     canvasId,
     coords,

@@ -1,4 +1,4 @@
-import { useActiveCanvasContext, useSelectedColorContext } from "@/contexts";
+import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { styled } from "@mui/material";
 import { Copy as CopyIcon } from "lucide-react";
 
@@ -47,7 +47,7 @@ const CopyButton = styled("button")<CopyButtonProps>`
 `;
 
 export default function BotCommandCard() {
-  const { adjustedCoords: coordinates } = useActiveCanvasContext();
+  const { adjustedCoords: coordinates } = useCanvasContext();
   const { color } = useSelectedColorContext();
 
   if (!(coordinates && color)) return null;

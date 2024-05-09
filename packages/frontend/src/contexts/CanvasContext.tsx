@@ -28,7 +28,7 @@ interface CanvasContextType {
   setCoords: Dispatch<SetStateAction<Point | null>>;
 }
 
-export const ActiveCanvasContext = createContext<CanvasContextType>({
+export const CanvasContext = createContext<CanvasContextType>({
   canvas: {
     id: -1,
     name: "",
@@ -50,7 +50,7 @@ interface CanvasProviderProps {
   mainCanvasInfo: CanvasInfo;
 }
 
-export const ActiveCanvasProvider = ({
+export const CanvasProvider = ({
   children,
   mainCanvasInfo,
 }: CanvasProviderProps) => {
@@ -84,7 +84,7 @@ export const ActiveCanvasProvider = ({
   );
 
   return (
-    <ActiveCanvasContext.Provider
+    <CanvasContext.Provider
       value={{
         coords: selectedCoords,
         adjustedCoords,
@@ -94,10 +94,8 @@ export const ActiveCanvasProvider = ({
       }}
     >
       {children}
-    </ActiveCanvasContext.Provider>
+    </CanvasContext.Provider>
   );
 };
 
-export const useActiveCanvasContext = () => {
-  return useContext(ActiveCanvasContext);
-};
+export const useCanvasContext = () => useContext(CanvasContext);
