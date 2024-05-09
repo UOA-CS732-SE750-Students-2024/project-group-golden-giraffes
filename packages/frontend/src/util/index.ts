@@ -1,5 +1,6 @@
-import { DiscordUserProfile } from "@blurple-canvas-web/types";
 import { DateTime } from "luxon";
+
+import { DiscordUserProfile } from "@blurple-canvas-web/types";
 
 /**
  * Return the value clamped so that it is within the range [min, max].

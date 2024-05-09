@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
 
-import { DiscordUserProfile, Palette, Point } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
 import {
   useActiveCanvasContext,
@@ -9,7 +9,6 @@ import {
   useSelectedPixelLocationContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
-import { decodeUserGuildsBase64 } from "@/util";
 import { DynamicAnchorButton, DynamicButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
