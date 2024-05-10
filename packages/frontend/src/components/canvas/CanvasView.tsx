@@ -86,6 +86,11 @@ const Reticle = styled("img")`
   image-rendering: pixelated;
 `;
 
+const PreviewPixel = styled("div")`
+  position: absolute;
+  transform: translate(-50%, -50%);
+`;
+
 /**
  * Calculate the default scale to use for the canvas. This tries to maximise the size of the canvas
  * without it overflowing the screen.
@@ -110,9 +115,11 @@ const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
 // This is to avoid weird business with the reticle not sizing properly
+const RETICLE_ORIGINAL_SCALE = 10;
 const RETICLE_ORIGINAL_SIZE = 14;
 const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
-const RETICLE_SCALE = 0.01;
+const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
+const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
 export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
@@ -524,12 +531,11 @@ export default function CanvasView() {
     updateCanvasPreviewPixel(
       previewCanvasRef,
       coords,
-      color,
       clamp(-Math.log((zoom * 200) / imageDimensions.width) + 1, 0, 1),
     );
 
     console.debug(`Drawing pixel at (${coords.x}, ${coords.y})`);
-  }, [imageDimensions, coords, color, zoom]);
+  }, [imageDimensions, coords, zoom]);
 
   useEffect(() => {
     handleDrawingSelectedPixel();
@@ -556,6 +562,18 @@ export default function CanvasView() {
               }),
             }}
           >
+            {color && (
+              <PreviewPixel
+                style={{
+                  width: PREVIEW_PIXEL_SIZE,
+                  height: PREVIEW_PIXEL_SIZE,
+                  top: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
+                  left: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
+                  scale: RETICLE_SCALE,
+                  backgroundColor: `rgb(${color?.rgba.join()})`,
+                }}
+              />
+            )}
             <Reticle
               src="./images/reticle.png"
               alt="Reticle"
