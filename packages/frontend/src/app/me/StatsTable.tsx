@@ -1,8 +1,12 @@
 "use client";
 
-import { styled } from "@mui/material";
+import { Skeleton, styled } from "@mui/material";
 
-import { formatTimestampLocalTZ, getOrdinalSuffix } from "@/util";
+import {
+  formatTimestamp,
+  formatTimestampLocalTZ,
+  getOrdinalSuffix,
+} from "@/util";
 import { UserStats } from "@blurple-canvas-web/types";
 
 const EmptyStateMessage = styled("div")`
@@ -27,6 +31,9 @@ const Table = styled("table")`
 
   td {
     text-align: end;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 `;
 
@@ -39,39 +46,54 @@ export default function StatsTable({
   stats,
   statsAreLoading,
 }: StatsTableProps) {
-  if (!stats)
+  if (!stats && !statsAreLoading)
     return (
       <EmptyStateMessage>You don’t have any stats (yet)!</EmptyStateMessage>
     );
 
-  const { totalPixels, mostFrequentColor, mostRecentTimestamp, rank } = stats;
+  const { totalPixels, mostFrequentColor, mostRecentTimestamp, rank } =
+    stats || {};
 
   return (
     <Table>
       <tbody>
         <tr>
-          <th>{totalPixels?.toLocaleString() ?? "?"}&nbsp;pixels placed</th>
+          <th>
+            {statsAreLoading ?
+              <Skeleton width={150} />
+            : <>{totalPixels?.toLocaleString() ?? "?"}&nbsp;pixels placed</>}
+          </th>
           <td>
             {statsAreLoading ?
-              "Loading…"
+              <Skeleton width={40} />
             : rank && `${rank}${getOrdinalSuffix(rank)}`}
           </td>
         </tr>
         <tr>
-          <th>Most used color</th>
+          <th>
+            {statsAreLoading ?
+              <Skeleton width={130} />
+            : <>Most used color</>}
+          </th>
           <td>
             {statsAreLoading ?
-              "Loading…"
+              <Skeleton width={80} />
             : mostFrequentColor?.name ?? "Unknown"}
           </td>
         </tr>
         <tr>
-          <th>Most recently placed</th>
+          <th>
+            {statsAreLoading ?
+              <Skeleton width={170} />
+            : <>Most recently placed</>}
+          </th>
           <td>
             {statsAreLoading ?
-              "Loading…"
+              <Skeleton width={150} />
             : mostRecentTimestamp ?
-              formatTimestampLocalTZ(mostRecentTimestamp)
+              <span title={formatTimestamp(mostRecentTimestamp)}>
+                {formatTimestampLocalTZ(mostRecentTimestamp)}
+              </span>
             : "Unknown"}
           </td>
         </tr>
