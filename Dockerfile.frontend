@@ -1,20 +1,60 @@
-FROM node:20-alpine
+#
+# Build Stage
+#
+
+FROM node:20-alpine AS builder
+
+# Disable Husky hooks https://typicode.github.io/husky/how-to.html#ci-server-and-docker
+ENV HUSKY=0
+ENV PACKAGE_PATH=packages/frontend
+
+WORKDIR /builder
 
 RUN npm install -g pnpm@9.1.0
 
-WORKDIR /app
-
-COPY package.json pnpm-lock.yaml ./
-
-COPY . .
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY ./packages/types ./packages/types
+COPY ./${PACKAGE_PATH} ./${PACKAGE_PATH}
 
 RUN pnpm install --frozen-lockfile
 RUN pnpm -F frontend build
 
-RUN pnpm store prune
+#
+# Production Stage. This has been modified from:
+# https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
+#
+
+FROM node:20-alpine as production
+
+ENV HUSKY=0
+ENV NODE_ENV=production
+ENV PACKAGE_PATH=packages/frontend
+
+# Uncomment the following line in case you want to disable telemetry during runtime.
+ENV NEXT_TELEMETRY_DISABLED 1
+
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /builder/${PACKAGE_PATH}/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /builder/${PACKAGE_PATH}/.next/static ./${PACKAGE_PATH}/.next/static
+COPY --from=builder --chown=nextjs:nodejs /builder/${PACKAGE_PATH}/public ./${PACKAGE_PATH}/public
+
+
+USER nextjs
 
 EXPOSE 3000
 
-WORKDIR /app/packages/frontend
+ENV PORT 3000
 
-CMD ["pnpm", "start"]
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/next-config-js/output
+CMD ["node", "./packages/frontend/server.js"]
