@@ -50,14 +50,14 @@ export default function PixelHistoryListItem({
         <Username title={record?.userId}>
           {record ?
             userProfile?.username ?? record.userId
-          : <Skeleton style={{ width: "40%" }} />}
+          : <Skeleton width={80} />}
         </Username>
         <ColorName>
           {record ?
             <>
               {color.name} <ColorCodeChip color={color} />
             </>
-          : <Skeleton style={{ width: "50%" }} />}
+          : <Skeleton width={120} />}
         </ColorName>
       </div>
     </Wrapper>
