@@ -29,19 +29,9 @@ const Username = styled("p")`
   letter-spacing: 0.005em;
 `;
 
-const UsernameSkeleton = styled(Skeleton)`
-  border-radius: 0.25rem;
-  width: 40%;
-`;
-
 const ColorName = styled("p")`
   color: oklch(var(--discord-white-oklch) / 0.6);
   letter-spacing: 0.005em;
-`;
-
-const ColorNameSkeleton = styled(Skeleton)`
-  border-radius: 0.25rem;
-  width: 50%;
 `;
 
 export default function PixelHistoryListItem({
