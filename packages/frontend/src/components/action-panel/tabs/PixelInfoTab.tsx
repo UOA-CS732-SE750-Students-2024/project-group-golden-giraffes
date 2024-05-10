@@ -16,6 +16,10 @@ const PixelInfoTabBlock = styled(TabBlock)`
   grid-template-rows: auto 1fr;
 `;
 
+const PixelInfoTabBlock = styled(TabBlock)`
+  grid-template-rows: auto 1fr;
+`;
+
 const HistoryList = styled("div")`
   display: flex;
   flex-direction: column;
@@ -31,7 +35,6 @@ const PixelHistoryPast = ({ isLoading, history }: PixelHistoryProps) => {
   if (isLoading && history.length === 0) {
     return;
   }
-
   const pastPixelHistory = history.slice(1); // [] if out of index
 
   return (

@@ -519,10 +519,10 @@ export default function CanvasView() {
   );
 
   useEffect(() => {
-    canvasRef.current?.addEventListener("click", handleCanvasClick);
+    canvasRef.current?.addEventListener("mousedown", handleCanvasClick);
 
     return () =>
-      canvasRef.current?.removeEventListener("click", handleCanvasClick);
+      canvasRef.current?.removeEventListener("mousedown", handleCanvasClick);
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
