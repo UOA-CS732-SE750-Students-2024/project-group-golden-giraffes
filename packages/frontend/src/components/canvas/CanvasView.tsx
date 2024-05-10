@@ -14,9 +14,11 @@ import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
 import config from "@/config";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
+import { useCanvasList } from "@/hooks";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
+import { useSearchParams } from "next/navigation";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
@@ -122,19 +124,13 @@ const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
 export default function CanvasView() {
-  const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
-  const startTouchesRef = useRef<Touch[]>([]);
+  const searchParams = useSearchParams();
 
   const { color } = useSelectedColorContext();
-  const { canvas, coords, setCoords } = useCanvasContext();
+  const { canvas, coords, setCoords, setCanvas } = useCanvasContext();
 
-  const imageUrl = useMemo(
-    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
-    [canvas.id],
-  );
+  const { data: canvases = [], isLoading: canvasListIsLoading } =
+    useCanvasList();
 
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -146,6 +142,63 @@ export default function CanvasView() {
   const [controlledPan, setControlledPan] = useState(false);
   const [targetZoom, setTargetZoom] = useState(1);
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: If this trigger gets spammed, then coords keep getting set to null
+  useEffect(() => {
+    if (canvasListIsLoading) {
+      return;
+    }
+
+    const canvasId = searchParams?.get("canvas");
+    const x = searchParams?.get("x");
+    const y = searchParams?.get("y");
+    let newZoom = searchParams?.get("zoom") || 1;
+
+    if (
+      canvasId &&
+      Number.isInteger(Number(canvasId)) &&
+      canvases.some((c) => c.id === Number(canvasId))
+    ) {
+      setCanvas(Number(canvasId));
+    }
+
+    if (
+      !(x && y && Number.isInteger(Number(x)) && Number.isInteger(Number(y)))
+    ) {
+      return;
+    }
+    const newCoords = {
+      x: Number(x) - canvas.startCoordinates[0],
+      y: Number(y) - canvas.startCoordinates[1],
+    };
+
+    // has an issue where the new canvas doesn't load fast enough for this to recognise the new canvas boundaries
+    if (newZoom && !Number.isNaN(Number(newZoom))) {
+      newZoom = Number(newZoom);
+      let newOffset = diffPoints(
+        {
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+        },
+        newCoords,
+      );
+      const modifier = 1 + Math.log(newZoom) / newZoom;
+      newOffset = multiplyPoint(newOffset, modifier);
+      setMouseOffsetDirection(newOffset);
+      setTargetZoom(Number(newZoom));
+    }
+  }, [canvases, canvasListIsLoading, searchParams, setCoords, setCanvas]);
+
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const startTouchesRef = useRef<Touch[]>([]);
+
+  const imageUrl = useMemo(
+    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
+    [canvas.id],
+  );
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
@@ -292,6 +345,8 @@ export default function CanvasView() {
     if (zoom === targetZoom) return;
 
     const glideZoom = () => {
+      if (Math.abs(targetZoom - zoom) < 0.001) return;
+
       const diff = (targetZoom - zoom) / targetZoom;
       const scale = Math.exp(
         Math.sign(diff) * SCALE_FACTOR * Math.abs(diff) * 2,
