@@ -1,23 +1,54 @@
-FROM node:20-alpine
+#
+# Build Stage
+#
 
-RUN npm install -g pnpm
+FROM node:20-alpine AS builder
+
+# Disable Husky hooks https://typicode.github.io/husky/how-to.html#ci-server-and-docker
+ENV HUSKY=0
+ENV PACKAGE_PATH=packages/backend
+
+WORKDIR /builder
+
+RUN npm install -g pnpm@9.1.0
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY ./packages/types ./packages/types
+COPY ./${packages/backend} ./${packages/backend}
+
+RUN pnpm install --frozen-lockfile
+RUN pnpm -F backend generate
+RUN pnpm -F backend build
+
+#
+# Production Stage
+#
+
+FROM node:20-alpine as production
+
+ENV HUSKY=0
+ENV NODE_ENV=production
+ENV PACKAGE_PATH=packages/backend
+
+# We need to make sure we copy across the generated files from Prisma
+ENV PRISMA_GEN_LOCATION=node_modules/.pnpm/@prisma+client@5.12.1_prisma@5.12.1/node_modules/.prisma/client
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm@9.1.0
+
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+COPY ./${PACKAGE_PATH}/package.json ./${PACKAGE_PATH}/.env ./${PACKAGE_PATH}/
+
+COPY --from=builder /builder/${PACKAGE_PATH}/prisma ./${PACKAGE_PATH}/prisma
 
 RUN pnpm install --frozen-lockfile
 
-RUN pnpm -F backend postinstall
+COPY --from=builder /builder/${PRISMA_GEN_LOCATION} ./${PRISMA_GEN_LOCATION}
 
-COPY . .
+WORKDIR /app/${PACKAGE_PATH}}
 
-RUN pnpm run build
-
-RUN pnpm store prune
+COPY --from=builder /builder/${PACKAGE_PATH}/build ./build
 
 EXPOSE 8000
-
-WORKDIR /app/packages/backend
-
 CMD ["pnpm", "start"]

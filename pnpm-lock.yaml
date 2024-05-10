@@ -41,6 +41,9 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       express:
         specifier: ^4.19.2
         version: 4.19.2
@@ -84,9 +87,6 @@ importers:
       '@types/supertest':
         specifier: ^6.0.2
         version: 6.0.2
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
       nodemon:
         specifier: ^3.1.0
         version: 3.1.0
