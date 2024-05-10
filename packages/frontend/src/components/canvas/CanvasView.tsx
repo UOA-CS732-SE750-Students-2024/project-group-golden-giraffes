@@ -521,10 +521,19 @@ export default function CanvasView() {
   const handleDrawingSelectedPixel = useCallback(() => {
     if (!imageDimensions || !coords) return;
 
-    updateCanvasPreviewPixel(previewCanvasRef, coords, color);
+    updateCanvasPreviewPixel(
+      previewCanvasRef,
+      coords,
+      color,
+      clamp(
+        -Math.log((zoom * 200) / (canvasRef.current?.width ?? 500)) + 1,
+        0,
+        1,
+      ),
+    );
 
     console.debug(`Drawing pixel at (${coords.x}, ${coords.y})`);
-  }, [imageDimensions, coords, color]);
+  }, [imageDimensions, coords, color, zoom]);
 
   useEffect(() => {
     handleDrawingSelectedPixel();
