@@ -31,7 +31,9 @@ export const Block = styled("div")`
   }
 `;
 
-export const TabBlock = styled(Block)<{ active?: boolean }>`
+export const TabBlock = styled(Block, {
+  shouldForwardProp: (prop) => prop !== "active",
+})<{ active?: boolean }>`
   display: ${({ active }) => (active ? "grid" : "none")};
   gap: 0.5rem;
   grid-template-rows: auto 1fr auto;
