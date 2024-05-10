@@ -14,7 +14,7 @@ RUN npm install -g pnpm@9.1.0
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY ./packages/types ./packages/types
-COPY ./${packages/backend} ./${packages/backend}
+COPY ./${PACKAGE_PATH} ./${PACKAGE_PATH}
 
 RUN pnpm install --frozen-lockfile
 RUN pnpm -F backend generate
