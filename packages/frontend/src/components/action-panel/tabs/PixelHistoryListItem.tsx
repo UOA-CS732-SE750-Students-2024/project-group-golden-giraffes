@@ -31,7 +31,6 @@ const Username = styled("p")`
 
 const UsernameSkeleton = styled(Skeleton)`
   border-radius: 0.25rem;
-  height: 1.9rem;
   width: 40%;
 `;
 
@@ -42,7 +41,6 @@ const ColorName = styled("p")`
 
 const ColorNameSkeleton = styled(Skeleton)`
   border-radius: 0.25rem;
-  height: 1.5rem;
   width: 50%;
 `;
 
@@ -51,31 +49,26 @@ export default function PixelHistoryListItem({
 }: {
   record?: PixelHistoryRecord;
 }) {
-  if (!record) return null;
-  const { color, userProfile } = record;
+  const { color, userProfile } = record || {};
 
   return (
     <Wrapper>
-      <StyledSwatch key={color.code} rgba={color.rgba} />
+      {record ?
+        <StyledSwatch key={color.code} rgba={color.rgba} />
+      : <SwatchSkeleton variant="rectangular" />}
       <div>
-        <Username title={record.userId}>
-          {userProfile?.username ?? record.userId}
+        <Username title={record?.userId}>
+          {record ?
+            userProfile?.username ?? record.userId
+          : <Skeleton style={{ width: "40%" }} />}
         </Username>
         <ColorName>
-          {color.name} <ColorCodeChip color={color} />
+          {record ?
+            <>
+              {color.name} <ColorCodeChip color={color} />
+            </>
+          : <Skeleton style={{ width: "50%" }} />}
         </ColorName>
-      </div>
-    </Wrapper>
-  );
-}
-
-export function PixelHistoryListItemSkeleton() {
-  return (
-    <Wrapper>
-      <SwatchSkeleton variant="rectangular" />
-      <div>
-        <UsernameSkeleton />
-        <ColorNameSkeleton />
       </div>
     </Wrapper>
   );

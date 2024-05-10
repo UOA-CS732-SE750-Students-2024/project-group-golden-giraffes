@@ -8,9 +8,7 @@ import { Heading } from "../ActionPanel";
 import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import CoordinatesCard from "./CoordinatesCard";
-import PixelHistoryListItem, {
-  PixelHistoryListItemSkeleton,
-} from "./PixelHistoryListItem";
+import PixelHistoryListItem from "./PixelHistoryListItem";
 
 const PixelInfoTabBlock = styled(TabBlock)`
   grid-template-rows: auto 1fr;
@@ -51,7 +49,7 @@ const PixelHistoryPast = ({ isLoading, history }: PixelHistoryProps) => {
 
 const PixelHistoryCurrent = ({ isLoading, history }: PixelHistoryProps) => {
   if (isLoading) {
-    return <PixelHistoryListItemSkeleton />;
+    return <PixelHistoryListItem />;
   }
 
   if (history.length === 0) {
