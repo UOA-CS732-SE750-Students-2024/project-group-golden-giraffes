@@ -570,7 +570,7 @@ export default function CanvasView() {
                   top: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
                   left: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
                   scale: RETICLE_SCALE,
-                  backgroundColor: `rgb(${color?.rgba.join()})`,
+                  backgroundColor: `rgba(${color?.rgba.join()})`,
                 }}
               />
             )}
