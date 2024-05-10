@@ -16,10 +16,6 @@ const PixelInfoTabBlock = styled(TabBlock)`
   grid-template-rows: auto 1fr;
 `;
 
-const PixelInfoTabBlock = styled(TabBlock)`
-  grid-template-rows: auto 1fr;
-`;
-
 const HistoryList = styled("div")`
   display: flex;
   flex-direction: column;
