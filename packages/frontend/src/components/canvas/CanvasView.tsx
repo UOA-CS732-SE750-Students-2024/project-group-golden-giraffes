@@ -525,11 +525,7 @@ export default function CanvasView() {
       previewCanvasRef,
       coords,
       color,
-      clamp(
-        -Math.log((zoom * 200) / (canvasRef.current?.width ?? 500)) + 1,
-        0,
-        1,
-      ),
+      clamp(-Math.log((zoom * 200) / imageDimensions.width) + 1, 0, 1),
     );
 
     console.debug(`Drawing pixel at (${coords.x}, ${coords.y})`);
