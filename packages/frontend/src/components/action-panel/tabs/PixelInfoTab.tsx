@@ -5,9 +5,14 @@ import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 import { useCanvasContext } from "@/contexts";
 import { usePixelHistory } from "@/hooks";
 import { Heading } from "../ActionPanel";
+import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import CoordinatesCard from "./CoordinatesCard";
 import PixelHistoryListItem from "./PixelHistoryListItem";
+
+const PixelInfoTabBlock = styled(TabBlock)`
+  grid-template-rows: auto 1fr;
+`;
 
 const HistoryList = styled("div")`
   display: flex;
@@ -20,22 +25,20 @@ interface PixelHistoryProps {
   history: PixelHistoryRecord[];
 }
 
-const PixelHistory = ({ isLoading, history }: PixelHistoryProps) => {
+const PixelHistoryPast = ({ isLoading, history }: PixelHistoryProps) => {
   // TODO: Replace with skeleton
   if (isLoading) {
-    return <p>Loading...</p>;
+    return;
   }
 
   if (history.length === 0) {
-    return <p>No pixel history</p>;
+    return;
   }
 
-  const currentPixelInfo = history[0]; // undefined if out of index
   const pastPixelHistory = history.slice(1); // [] if out of index
 
   return (
     <>
-      <PixelHistoryListItem record={currentPixelInfo} />
       {pastPixelHistory.length !== 0 && (
         <>
           <Heading>Paint history</Heading>
@@ -50,9 +53,24 @@ const PixelHistory = ({ isLoading, history }: PixelHistoryProps) => {
   );
 };
 
+const PixelHistoryCurrent = ({ isLoading, history }: PixelHistoryProps) => {
+  // TODO: Replace with skeleton
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (history.length === 0) {
+    return <p>No pixel history</p>;
+  }
+
+  const currentPixelInfo = history[0]; // undefined if out of index
+
+  return <PixelHistoryListItem record={currentPixelInfo} />;
+};
+
 interface PixelInfoTabProps {
-  canvasId: number;
   active?: boolean;
+  canvasId: number;
 }
 
 export default function PixelInfoTab({
@@ -66,13 +84,24 @@ export default function PixelInfoTab({
   );
 
   return (
-    <ActionPanelTabBody active={active}>
-      {adjustedCoords ?
-        <div>
-          <CoordinatesCard coordinates={adjustedCoords} />
-          <PixelHistory history={pixelHistory} isLoading={isLoading} />
-        </div>
-      : <p>No selected pixel</p>}
-    </ActionPanelTabBody>
+    <PixelInfoTabBlock active={active}>
+      <ActionPanelTabBody>
+        {adjustedCoords ?
+          <div>
+            <CoordinatesCard coordinates={adjustedCoords} />
+            <PixelHistoryCurrent history={pixelHistory} isLoading={isLoading} />
+          </div>
+        : <p>No selected pixel</p>}
+      </ActionPanelTabBody>
+      {adjustedCoords && pixelHistory.length > 1 ?
+        <ScrollBlock>
+          <ActionPanelTabBody>
+            <div>
+              <PixelHistoryPast history={pixelHistory} isLoading={isLoading} />
+            </div>
+          </ActionPanelTabBody>
+        </ScrollBlock>
+      : <></>}
+    </PixelInfoTabBlock>
   );
 }

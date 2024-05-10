@@ -1,7 +1,7 @@
 import { styled } from "@mui/material";
 
-export const ActionPanelTabBody = styled("div")<{ active?: boolean }>`
-  display: ${({ active }) => (active ? "block flex" : "none")};
+export const ActionPanelTabBody = styled("div")`
+  display: block flex;
   flex-direction: column;
   background-color: var(--discord-legacy-not-quite-black);
   gap: 0.5rem;
@@ -21,4 +21,25 @@ export const ActionPanelTabBody = styled("div")<{ active?: boolean }>`
       }
     }
   }
+`;
+
+export const Block = styled("div")`
+  overflow-y: auto; // Fallback property, should appear before overflow-block
+  overflow-block: auto;
+  > * {
+    border-radius: inherit;
+  }
+`;
+
+export const TabBlock = styled(Block, {
+  shouldForwardProp: (prop) => prop !== "active",
+})<{ active?: boolean }>`
+  display: ${({ active }) => (active ? "grid" : "none")};
+  gap: 0.5rem;
+  grid-template-rows: auto 1fr auto;
+`;
+
+export const ScrollBlock = styled(Block)`
+  align-self: stretch;
+  grid-column: 1 / -1;
 `;
