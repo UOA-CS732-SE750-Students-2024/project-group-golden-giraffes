@@ -20,8 +20,8 @@ export default function PlacePixelButton() {
   const { canvas, coords, adjustedCoords, setCoords } = useCanvasContext();
   const { color, setColor } = useSelectedColorContext();
   const isSelected = adjustedCoords && color;
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [isPlacing, setIsPlacing] = useState<boolean>(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isPlacing, setIsPlacing] = useState(false);
   const { user, signOut } = useAuthContext();
 
   // cooldown timer
