@@ -89,7 +89,6 @@ const Reticle = styled("img")`
 
 const PreviewPixel = styled("div")`
   position: absolute;
-  transform: translate(-50%, -50%);
 `;
 
 const InviteButton = styled(Button)`
@@ -141,6 +140,14 @@ const RETICLE_ORIGINAL_SIZE = 14;
 const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
 const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
+
+function calculateReticleOffset(coords: Point | null): Point {
+  if (!coords) return { x: 0, y: 0 };
+  return {
+    x: (coords.x - (RETICLE_SIZE - 1) / 2) / RETICLE_SCALE,
+    y: (coords.y - (RETICLE_SIZE - 1) / 2) / RETICLE_SCALE,
+  };
+}
 
 export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
@@ -562,6 +569,8 @@ export default function CanvasView() {
     handleDrawingSelectedPixel();
   }, [handleDrawingSelectedPixel]);
 
+  const reticleOffset = calculateReticleOffset(coords);
+
   return (
     <>
       <CanvasContainer
@@ -583,8 +592,9 @@ export default function CanvasView() {
         >
           <ReticleContainer
             style={{
+              scale: RETICLE_SCALE,
               ...(coords && {
-                transform: `translate(${coords.x - (RETICLE_SIZE - 1) / 2}px, ${coords.y - (RETICLE_SIZE - 1) / 2}px)`,
+                transform: `translate(${reticleOffset.x}px, ${reticleOffset.y}px)`,
               }),
             }}
           >
@@ -595,7 +605,6 @@ export default function CanvasView() {
                   height: PREVIEW_PIXEL_SIZE,
                   top: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
                   left: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
-                  scale: RETICLE_SCALE,
                   backgroundColor: `rgba(${color?.rgba.join()})`,
                 }}
               />
@@ -607,7 +616,6 @@ export default function CanvasView() {
               style={{
                 width: RETICLE_SIZE,
                 height: RETICLE_SIZE,
-                scale: RETICLE_SCALE,
               }}
             />
           </ReticleContainer>
