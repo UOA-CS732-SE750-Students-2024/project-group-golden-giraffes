@@ -39,6 +39,7 @@ export const CanvasContext = createContext<CanvasContextType>({
     isLocked: false,
     eventId: null,
     webPlacingEnabled: false,
+    discordServerInvite: null,
   },
   coords: null,
   adjustedCoords: null,

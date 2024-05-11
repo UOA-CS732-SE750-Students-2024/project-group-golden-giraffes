@@ -569,7 +569,11 @@ export default function CanvasView() {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
-        <InviteButton>Project Blurple</InviteButton>
+        {canvas.discordServerInvite && (
+          <a href={canvas.discordServerInvite}>
+            <InviteButton>Project Blurple</InviteButton>
+          </a>
+        )}
         <div
           id="canvas-pan-and-zoom"
           style={{
