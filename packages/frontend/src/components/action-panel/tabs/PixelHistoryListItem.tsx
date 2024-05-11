@@ -39,7 +39,7 @@ export default function PixelHistoryListItem({
 }: {
   record?: PixelHistoryRecord;
 }) {
-  const { color, userProfile } = record || {};
+  const { color, userProfile } = record ?? {};
 
   return (
     <Wrapper>
