@@ -88,7 +88,6 @@ const Reticle = styled("img")`
 
 const PreviewPixel = styled("div")`
   position: absolute;
-  transform: translate(-50%, -50%);
 `;
 
 /**
@@ -120,6 +119,8 @@ const RETICLE_ORIGINAL_SIZE = 14;
 const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
 const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
+const PREVIEW_PIXEL_TRANSLATE =
+  (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / (0.2 * RETICLE_ORIGINAL_SIZE);
 
 export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
@@ -571,6 +572,7 @@ export default function CanvasView() {
                   left: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
                   scale: RETICLE_SCALE,
                   backgroundColor: `rgba(${color?.rgba.join()})`,
+                  transform: `translate(${PREVIEW_PIXEL_TRANSLATE}%, ${PREVIEW_PIXEL_TRANSLATE}%)`,
                 }}
               />
             )}
