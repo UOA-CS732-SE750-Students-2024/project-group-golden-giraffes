@@ -7,7 +7,6 @@ export interface CanvasInfo {
   isLocked: boolean;
   eventId: number | null;
   webPlacingEnabled: boolean;
-  discordServerInvite: string | null;
 }
 
 export type CanvasSummary = Pick<CanvasInfo, "id" | "name" | "eventId">;
