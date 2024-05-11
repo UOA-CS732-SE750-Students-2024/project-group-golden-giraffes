@@ -5,7 +5,8 @@ import { Copy as CopyIcon } from "lucide-react";
 const Wrapper = styled("div")`
   align-items: center;
   color: var(--discord-white-oklch);
-  display: flex;
+  display: grid;
+  gap: 0.5rem;
   grid-template-columns: 1fr auto;
 `;
 
