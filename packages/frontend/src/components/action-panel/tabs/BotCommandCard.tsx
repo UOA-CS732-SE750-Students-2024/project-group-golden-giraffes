@@ -6,62 +6,56 @@ const Wrapper = styled("div")`
   align-items: center;
   color: var(--discord-white-oklch);
   display: flex;
-  font-size: 0.9rem;
   grid-template-columns: 1fr auto;
 `;
 
 const Code = styled("code")`
   color: var(--discord-white-oklch);
-  flex: 1;
-  letter-spacing: 0.05em;
-  line-height: 1.1;
+  line-height: 1.45;
 `;
 
 interface CopyButtonProps {
   onClick?: () => void;
 }
 
-const StyledCopyIcon = styled(CopyIcon)`
-  height: 1.325rem;
-`;
-
 const CopyButton = styled("button")<CopyButtonProps>`
   background-color: oklch(var(--discord-white-oklch) / 12%);
-  border-radius: 0.5rem;
   border: none;
-  color: var(--discord-white-oklch);
+  border-radius: 0.5rem;
   cursor: pointer;
   display: flex;
-  font-size: 1rem;
-  padding: 0.4rem 0.3rem;
+  padding: 0.5rem;
   place-items: center;
-  transition: background-color var(--transition-duration-slow) ease;
+  transition: background-color var(--transition-duration-fast) ease;
 
-  &:hover {
+  :hover {
     background-color: oklch(var(--discord-white-oklch) / 24%);
   }
 
-  &:active {
+  :active {
     background-color: oklch(var(--discord-white-oklch) / 6%);
   }
 `;
 
+const StyledCopyIcon = styled(CopyIcon)`
+  block-size: 1.5rem;
+  inline-size: 1.5rem;
+`;
+
 export default function BotCommandCard() {
   const { adjustedCoords: coordinates } = useCanvasContext();
-  const { color } = useSelectedColorContext();
+  if (!coordinates) return null;
 
-  if (!(coordinates && color)) return null;
+  const { color } = useSelectedColorContext();
+  if (!color) return null;
+
   const { x, y } = coordinates;
   const command = `/place x:${x} y:${y} color:${color.code}`;
 
   return (
     <Wrapper>
       <Code>{command}</Code>
-      <CopyButton
-        onClick={() => {
-          navigator.clipboard.writeText(command);
-        }}
-      >
+      <CopyButton onClick={() => navigator.clipboard.writeText(command)}>
         <StyledCopyIcon />
       </CopyButton>
     </Wrapper>
