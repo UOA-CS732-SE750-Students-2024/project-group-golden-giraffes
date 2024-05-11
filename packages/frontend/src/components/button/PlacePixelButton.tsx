@@ -1,16 +1,17 @@
+import { CircularProgress, styled } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+import { Cooldown } from "@blurple-canvas-web/types";
+
 import config from "@/config";
 import {
   useAuthContext,
   useCanvasContext,
   useSelectedColorContext,
 } from "@/contexts";
-import { CircularProgress, styled } from "@mui/material";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import DynamicButton from "./DynamicButton";
-
-import { Cooldown } from "@blurple-canvas-web/types";
 
 export const CoordinateLabel = styled("span")`
   opacity: 0.6;
