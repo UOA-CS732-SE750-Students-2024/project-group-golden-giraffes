@@ -25,8 +25,10 @@ interface CanvasContextType {
   canvas: CanvasInfo;
   coords: Point | null;
   adjustedCoords: Point | null;
+  zoom: number;
   setCanvas: (canvasId: CanvasInfo["id"]) => void;
   setCoords: Dispatch<SetStateAction<Point | null>>;
+  setZoom: Dispatch<SetStateAction<number>>;
 }
 
 export const CanvasContext = createContext<CanvasContextType>({
@@ -39,11 +41,14 @@ export const CanvasContext = createContext<CanvasContextType>({
     isLocked: false,
     eventId: null,
     webPlacingEnabled: false,
+    frontEndUrl: "",
   },
   coords: null,
   adjustedCoords: null,
+  zoom: 1,
   setCoords: () => {},
   setCanvas: () => {},
+  setZoom: () => {},
 });
 
 interface CanvasProviderProps {
@@ -58,6 +63,7 @@ export const CanvasProvider = ({
   const [activeCanvas, setActiveCanvas] = useState(mainCanvasInfo);
   const [selectedCoords, setSelectedCoords] =
     useState<CanvasContextType["coords"]>(null);
+  const [zoom, setZoom] = useState(1);
 
   const adjustedCoords = useMemo(() => {
     if (selectedCoords) {
@@ -98,8 +104,10 @@ export const CanvasProvider = ({
         coords: selectedCoords,
         adjustedCoords,
         canvas: activeCanvas,
+        zoom: zoom,
         setCoords: setSelectedCoords,
         setCanvas: setCanvasById,
+        setZoom: setZoom,
       }}
     >
       {children}

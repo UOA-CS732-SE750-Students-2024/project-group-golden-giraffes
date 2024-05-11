@@ -2,16 +2,19 @@ import { styled } from "@mui/material";
 
 import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 
-import { useCanvasContext } from "@/contexts";
+import { DynamicAnchorButton, DynamicButton } from "@/components/button";
+import { CoordinateLabel } from "@/components/button/PlacePixelButton";
+import config from "@/config";
+import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { usePixelHistory } from "@/hooks";
 import { Heading } from "../ActionPanel";
-import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
+import { Block, ScrollBlock, TabBlock } from "./ActionPanelTabBody";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import CoordinatesCard from "./CoordinatesCard";
 import PixelHistoryListItem from "./PixelHistoryListItem";
 
 const PixelInfoTabBlock = styled(TabBlock)`
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
 `;
 
 const HistoryList = styled("div")`
@@ -77,11 +80,13 @@ export default function PixelInfoTab({
   active = false,
   canvasId,
 }: PixelInfoTabProps) {
-  const { coords, adjustedCoords } = useCanvasContext();
+  const { canvas, coords, adjustedCoords, zoom } = useCanvasContext();
   const { data: pixelHistory = [], isLoading } = usePixelHistory(
     canvasId,
     coords,
   );
+
+  const coordsLink = `${canvas.frontEndUrl}?canvas=${canvas.id}&x=${adjustedCoords?.x}&y=${adjustedCoords?.y}&zoom=${zoom.toFixed(3)}`;
 
   return (
     <PixelInfoTabBlock active={active}>
@@ -93,15 +98,34 @@ export default function PixelInfoTab({
           </div>
         : <p>No selected pixel</p>}
       </ActionPanelTabBody>
-      {adjustedCoords && pixelHistory.length > 1 ?
-        <ScrollBlock>
+      <ScrollBlock>
+        {adjustedCoords && pixelHistory.length > 1 ?
           <ActionPanelTabBody>
             <div>
               <PixelHistoryPast history={pixelHistory} isLoading={isLoading} />
             </div>
           </ActionPanelTabBody>
-        </ScrollBlock>
-      : <></>}
+        : <></>}
+      </ScrollBlock>
+      <ActionPanelTabBody>
+        {adjustedCoords && (
+          <DynamicButton
+            color={
+              !isLoading && pixelHistory.length > 0 ?
+                pixelHistory[0].color
+              : null
+            }
+            onAction={() => {
+              navigator.clipboard.writeText(coordsLink);
+            }}
+          >
+            {"Share pixel"}
+            <CoordinateLabel>
+              {`(${adjustedCoords.x},\u00A0${adjustedCoords.y})`}
+            </CoordinateLabel>
+          </DynamicButton>
+        )}
+      </ActionPanelTabBody>
     </PixelInfoTabBlock>
   );
 }
