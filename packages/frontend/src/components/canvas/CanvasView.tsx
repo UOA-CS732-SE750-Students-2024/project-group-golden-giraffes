@@ -188,12 +188,12 @@ export default function CanvasView() {
 
     context.drawImage(image, 0, 0);
 
-    if (containerRef.current) {
-      setZoom(getDefaultZoom(containerRef.current, image));
-    } else {
-      setZoom(1);
-    }
+    const initialZoom =
+      containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
+    setZoom(initialZoom);
+    setTargetZoom(initialZoom);
+    setVelocity(ORIGIN);
     setOffset(ORIGIN);
     setImageDimension({ width: image.width, height: image.height });
     setIsLoading(false);
