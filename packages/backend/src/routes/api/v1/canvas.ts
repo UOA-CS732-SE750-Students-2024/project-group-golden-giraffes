@@ -87,7 +87,7 @@ function sendCachedCanvas(
       res
         .status(200)
         .type("png")
-        .setHeader("Cache-Control", "no-cache no-store")
+        .setHeader("Cache-Control", "no-cache no-store max-age=0")
         .setHeader("Content-Disposition", `inline; filename="${filename}"`),
     );
 }
