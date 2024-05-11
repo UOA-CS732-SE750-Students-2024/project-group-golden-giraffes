@@ -79,7 +79,7 @@ const NoContentsMessage = styled("p")`
 `;
 
 function leaderboardRecordToTableRow(user?: LeaderboardEntry): JSX.Element {
-  const { userId, rank, profilePictureUrl, username, totalPixels } = user || {};
+  const { userId, rank, profilePictureUrl, username, totalPixels } = user ?? {};
   return (
     <tr key={userId}>
       <RankCell>
