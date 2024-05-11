@@ -87,7 +87,7 @@ export default function PlacePixelButton() {
   if (isPlacing) {
     return (
       <Button variant="contained" disabled>
-        {"Placing Pixel"}
+        Placing pixel
         <CircularProgress
           color="inherit"
           // Can't get sizing to work dynamically
