@@ -82,11 +82,7 @@ function leaderboardRecordToTableRow(user?: LeaderboardEntry): JSX.Element {
   const { userId, rank, profilePictureUrl, username, totalPixels } = user ?? {};
   return (
     <tr key={userId}>
-      <RankCell>
-        {totalPixels ?
-          <>{rank}</>
-        : <Skeleton width={20} />}
-      </RankCell>
+      <RankCell>{rank}</RankCell>
       <UserCell>
         {userId && profilePictureUrl ?
           <Avatar
@@ -98,7 +94,7 @@ function leaderboardRecordToTableRow(user?: LeaderboardEntry): JSX.Element {
         <Username>
           {userId ?
             username ?? userId
-          : <Skeleton width={Math.random() * 151 + 100} />}
+          : <Skeleton variant="rounded" width={260} />}
         </Username>
       </UserCell>
       <PixelCountCell>
@@ -111,7 +107,7 @@ function leaderboardRecordToTableRow(user?: LeaderboardEntry): JSX.Element {
           <PixelCountLabel>
             {totalPixels ?
               <>pixels placed</>
-            : <Skeleton width={95} />}
+            : <Skeleton width={90} />}
           </PixelCountLabel>
         </PixelCountCellContents>
       </PixelCountCell>
