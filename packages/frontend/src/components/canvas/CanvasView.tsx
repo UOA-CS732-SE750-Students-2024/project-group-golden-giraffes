@@ -570,7 +570,7 @@ export default function CanvasView() {
         onTouchStart={handleStartTouchPan}
       >
         {config.discordServerInvite && (
-          <a href={config.discordServerInvite}>
+          <a href={config.discordServerInvite} target="_blank" rel="noreferrer">
             <InviteButton>Project Blurple</InviteButton>
           </a>
         )}
