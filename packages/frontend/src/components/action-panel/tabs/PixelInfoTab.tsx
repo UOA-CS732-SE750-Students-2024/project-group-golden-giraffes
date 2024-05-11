@@ -1,9 +1,12 @@
-import { styled } from "@mui/material";
+import { Tooltip, styled } from "@mui/material";
 
 import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 
+import { DynamicButton } from "@/components/button";
+import { CoordinateLabel } from "@/components/button/PlacePixelButton";
 import { useCanvasContext } from "@/contexts";
 import { usePixelHistory } from "@/hooks";
+import { useState } from "react";
 import { Heading } from "../ActionPanel";
 import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
@@ -11,7 +14,7 @@ import CoordinatesCard from "./CoordinatesCard";
 import PixelHistoryListItem from "./PixelHistoryListItem";
 
 const PixelInfoTabBlock = styled(TabBlock)`
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
 `;
 
 const HistoryList = styled("div")`
@@ -77,11 +80,23 @@ export default function PixelInfoTab({
   active = false,
   canvasId,
 }: PixelInfoTabProps) {
-  const { coords, adjustedCoords } = useCanvasContext();
+  const { canvas, coords, adjustedCoords, zoom } = useCanvasContext();
   const { data: pixelHistory = [], isLoading } = usePixelHistory(
     canvasId,
     coords,
   );
+
+  const coordsLink = `${canvas.frontEndUrl}?canvas=${canvas.id}&x=${adjustedCoords?.x}&y=${adjustedCoords?.y}&zoom=${zoom.toFixed(3)}`;
+
+  const [open, setOpen] = useState(false);
+
+  const handleTooltipClose = () => {
+    setOpen(false);
+  };
+
+  const handleTooltipOpen = () => {
+    setOpen(true);
+  };
 
   return (
     <PixelInfoTabBlock active={active}>
@@ -93,15 +108,62 @@ export default function PixelInfoTab({
           </div>
         : <p>No selected pixel</p>}
       </ActionPanelTabBody>
-      {adjustedCoords && pixelHistory.length > 1 ?
-        <ScrollBlock>
+      <ScrollBlock>
+        {adjustedCoords && pixelHistory.length > 1 ?
           <ActionPanelTabBody>
             <div>
               <PixelHistoryPast history={pixelHistory} isLoading={isLoading} />
             </div>
           </ActionPanelTabBody>
-        </ScrollBlock>
-      : <></>}
+        : <></>}
+      </ScrollBlock>
+      <ActionPanelTabBody>
+        {adjustedCoords && (
+          <Tooltip
+            title="Copied!"
+            placement={"top"}
+            onClose={handleTooltipClose}
+            open={open}
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  bgcolor: "var(--discord-legacy-dark-but-not-black);",
+                  boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.25)",
+                },
+              },
+            }}
+            slotProps={{
+              popper: {
+                modifiers: [
+                  {
+                    name: "offset",
+                    options: {
+                      offset: [0, -10],
+                    },
+                  },
+                ],
+              },
+            }}
+          >
+            <DynamicButton
+              color={
+                !isLoading && pixelHistory.length > 0 ?
+                  pixelHistory[0].color
+                : null
+              }
+              onAction={() => {
+                handleTooltipOpen();
+                navigator.clipboard.writeText(coordsLink);
+              }}
+            >
+              {"Copy link to share pixel"}
+              <CoordinateLabel>
+                {`(${adjustedCoords.x},\u00A0${adjustedCoords.y})`}
+              </CoordinateLabel>
+            </DynamicButton>
+          </Tooltip>
+        )}
+      </ActionPanelTabBody>
     </PixelInfoTabBlock>
   );
 }

@@ -31,9 +31,11 @@ interface CanvasContextType {
   canvas: CanvasInfo;
   coords: Point | null;
   currentTab: string;
+  zoom: number;
   setCanvas: (canvasId: CanvasInfo["id"]) => void;
   setCoords: Dispatch<SetStateAction<Point | null>>;
   setCurrentTab: Dispatch<SetStateAction<string>>;
+  setZoom: Dispatch<SetStateAction<number>>;
 }
 
 export const CanvasContext = createContext<CanvasContextType>({
@@ -46,13 +48,16 @@ export const CanvasContext = createContext<CanvasContextType>({
     isLocked: false,
     eventId: null,
     webPlacingEnabled: false,
+    frontEndUrl: "",
   },
   adjustedCoords: null,
   coords: null,
   currentTab: TABS.PLACE,
+  zoom: 1,
   setCanvas: () => {},
   setCoords: () => {},
   setCurrentTab: () => {},
+  setZoom: () => {},
 });
 
 interface CanvasProviderProps {
@@ -68,6 +73,7 @@ export const CanvasProvider = ({
   const [selectedCoords, setSelectedCoords] =
     useState<CanvasContextType["coords"]>(null);
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
+  const [zoom, setZoom] = useState(1);
 
   const adjustedCoords = useMemo(() => {
     if (selectedCoords) {
@@ -109,9 +115,11 @@ export const CanvasProvider = ({
         canvas: activeCanvas,
         coords: selectedCoords,
         currentTab: currentTab,
+        zoom: zoom,
         setCanvas: setCanvasById,
         setCoords: setSelectedCoords,
         setCurrentTab: setCurrentTab,
+        setZoom: setZoom,
       }}
     >
       {children}

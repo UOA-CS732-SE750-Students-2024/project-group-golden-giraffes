@@ -128,14 +128,13 @@ export default function CanvasView() {
   const searchParams = useSearchParams();
 
   const { color } = useSelectedColorContext();
-  const { canvas, coords, setCoords, setCanvas, setCurrentTab } =
+  const { canvas, coords, zoom, setCoords, setCanvas, setCurrentTab, setZoom } =
     useCanvasContext();
 
   const { data: canvases = [], isLoading: canvasListIsLoading } =
     useCanvasList();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
     null,
   );
@@ -205,29 +204,32 @@ export default function CanvasView() {
     [canvas.id],
   );
 
-  const handleLoadImage = useCallback((image: HTMLImageElement): void => {
-    if (!canvasRef.current) return;
+  const handleLoadImage = useCallback(
+    (image: HTMLImageElement): void => {
+      if (!canvasRef.current) return;
 
-    const context = canvasRef.current.getContext("2d");
-    if (!context) return;
+      const context = canvasRef.current.getContext("2d");
+      if (!context) return;
 
-    // We need to set the width of the canvas first, otherwise if the image is bigger than
-    // the canvas it'll get cut off.
-    canvasRef.current.width = image.width;
-    canvasRef.current.height = image.height;
+      // We need to set the width of the canvas first, otherwise if the image is bigger than
+      // the canvas it'll get cut off.
+      canvasRef.current.width = image.width;
+      canvasRef.current.height = image.height;
 
-    context.drawImage(image, 0, 0);
+      context.drawImage(image, 0, 0);
 
-    if (containerRef.current) {
-      setZoom(getDefaultZoom(containerRef.current, image));
-    } else {
-      setZoom(1);
-    }
+      if (containerRef.current) {
+        setZoom(getDefaultZoom(containerRef.current, image));
+      } else {
+        setZoom(1);
+      }
 
-    setOffset(ORIGIN);
-    setImageDimension({ width: image.width, height: image.height });
-    setIsLoading(false);
-  }, []);
+      setOffset(ORIGIN);
+      setImageDimension({ width: image.width, height: image.height });
+      setIsLoading(false);
+    },
+    [setZoom],
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
   useEffect(() => {
@@ -388,7 +390,7 @@ export default function CanvasView() {
     const interval = setInterval(glideZoom, 8);
 
     return () => clearInterval(interval);
-  }, [zoom, targetZoom, mouseOffsetDirection]);
+  }, [zoom, targetZoom, mouseOffsetDirection, setZoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
