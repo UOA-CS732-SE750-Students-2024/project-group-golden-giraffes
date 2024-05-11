@@ -1,5 +1,6 @@
-import { PaletteColor, Point } from "@blurple-canvas-web/types";
 import { RefObject } from "react";
+
+import { Point } from "@blurple-canvas-web/types";
 
 /**
  * Generate a PNG image with a pixel at a specific location.
