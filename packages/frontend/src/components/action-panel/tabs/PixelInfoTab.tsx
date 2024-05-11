@@ -156,7 +156,7 @@ export default function PixelInfoTab({
                 navigator.clipboard.writeText(coordsLink);
               }}
             >
-              {"Share pixel"}
+              {"Copy link to share pixel"}
               <CoordinateLabel>
                 {`(${adjustedCoords.x},\u00A0${adjustedCoords.y})`}
               </CoordinateLabel>
