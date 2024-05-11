@@ -8,10 +8,6 @@ const Wrapper = styled("div")`
   display: grid;
   gap: 0.5rem;
   grid-template-columns: 1fr auto;
-`;
-
-const Code = styled("code")`
-  color: var(--discord-white-oklch);
   line-height: 1.45;
 `;
 
@@ -55,7 +51,7 @@ export default function BotCommandCard() {
 
   return (
     <Wrapper>
-      <Code>{command}</Code>
+      <code>{command}</code>
       <CopyButton onClick={() => navigator.clipboard.writeText(command)}>
         <StyledCopyIcon />
       </CopyButton>
