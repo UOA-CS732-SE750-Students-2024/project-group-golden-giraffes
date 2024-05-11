@@ -52,7 +52,7 @@ export default function StatsTable({
     );
 
   const { totalPixels, mostFrequentColor, mostRecentTimestamp, rank } =
-    stats || {};
+    stats ?? {};
 
   return (
     <Table>
