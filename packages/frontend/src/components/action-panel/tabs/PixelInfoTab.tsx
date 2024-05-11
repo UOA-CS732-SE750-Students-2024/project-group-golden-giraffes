@@ -26,15 +26,9 @@ interface PixelHistoryProps {
 }
 
 const PixelHistoryPast = ({ isLoading, history }: PixelHistoryProps) => {
-  // TODO: Replace with skeleton
-  if (isLoading) {
+  if (isLoading && history.length === 0) {
     return;
   }
-
-  if (history.length === 0) {
-    return;
-  }
-
   const pastPixelHistory = history.slice(1); // [] if out of index
 
   return (
@@ -54,9 +48,8 @@ const PixelHistoryPast = ({ isLoading, history }: PixelHistoryProps) => {
 };
 
 const PixelHistoryCurrent = ({ isLoading, history }: PixelHistoryProps) => {
-  // TODO: Replace with skeleton
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <PixelHistoryListItem />;
   }
 
   if (history.length === 0) {
