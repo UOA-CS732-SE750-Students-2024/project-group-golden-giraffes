@@ -118,14 +118,16 @@ export default function PlacePixelButton() {
     return <Button disabled>Select a pixel</Button>;
   }
 
+  const { x, y } = adjustedCoords;
+
   return (
     <DynamicButton color={color} onAction={handlePixelRequest}>
       {isSelected ? "Place pixel" : "Select a pixel"}
-      <CoordinateLabel>
-        {isSelected ?
-          `(${adjustedCoords.x},\u00A0${adjustedCoords.y})`
-        : undefined}
-      </CoordinateLabel>
+      {isSelected && (
+        <CoordinateLabel>
+          ({x},&nbsp;{y})
+        </CoordinateLabel>
+      )}
     </DynamicButton>
   );
 }
