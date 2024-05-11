@@ -20,6 +20,7 @@ import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
 import { useSearchParams } from "next/navigation";
+import { Button } from "../button";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
@@ -91,7 +92,26 @@ const Reticle = styled("img")`
 
 const PreviewPixel = styled("div")`
   position: absolute;
-  transform: translate(-50%, -50%);
+`;
+
+const InviteButton = styled(Button)`
+  background-color: oklch(var(--discord-legacy-dark-but-not-black-oklch) / 80%);
+  border-radius: 0.5rem 0.5rem 1rem 0.5rem;
+  bottom: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 1.2rem;
+  font-variation-settings: "wdth" 125;
+  font-weight: 900;
+  padding: 0.1rem 1rem;
+  position: absolute;
+  right: 0.5rem;
+  text-decoration: none;
+  z-index: 1;
+
+  :hover {
+    background-color: var(--discord-blurple);
+  }
 `;
 
 /**
@@ -123,6 +143,14 @@ const RETICLE_ORIGINAL_SIZE = 14;
 const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
 const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
+
+function calculateReticleOffset(coords: Point | null): Point {
+  if (!coords) return { x: 0, y: 0 };
+  return {
+    x: (coords.x - (RETICLE_SIZE - 1) / 2) / RETICLE_SCALE,
+    y: (coords.y - (RETICLE_SIZE - 1) / 2) / RETICLE_SCALE,
+  };
+}
 
 export default function CanvasView() {
   const searchParams = useSearchParams();
@@ -221,12 +249,12 @@ export default function CanvasView() {
 
       context.drawImage(image, 0, 0);
 
-      if (containerRef.current) {
-        setZoom(getDefaultZoom(containerRef.current, image));
-      } else {
-        setZoom(1);
-      }
+      const initialZoom =
+        containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
+      setZoom(initialZoom);
+      setTargetZoom(initialZoom);
+      setVelocity(ORIGIN);
       setOffset(ORIGIN);
       setImageDimension({ width: image.width, height: image.height });
       setIsLoading(false);
@@ -606,6 +634,8 @@ export default function CanvasView() {
     handleDrawingSelectedPixel();
   }, [handleDrawingSelectedPixel]);
 
+  const reticleOffset = calculateReticleOffset(coords);
+
   return (
     <>
       <CanvasContainer
@@ -613,6 +643,11 @@ export default function CanvasView() {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
+        {config.discordServerInvite && (
+          <a href={config.discordServerInvite} target="_blank" rel="noreferrer">
+            <InviteButton>Project Blurple</InviteButton>
+          </a>
+        )}
         <div
           id="canvas-pan-and-zoom"
           style={{
@@ -622,8 +657,9 @@ export default function CanvasView() {
         >
           <ReticleContainer
             style={{
+              scale: RETICLE_SCALE,
               ...(coords && {
-                transform: `translate(${coords.x - (RETICLE_SIZE - 1) / 2}px, ${coords.y - (RETICLE_SIZE - 1) / 2}px)`,
+                transform: `translate(${reticleOffset.x}px, ${reticleOffset.y}px)`,
               }),
             }}
           >
@@ -634,7 +670,6 @@ export default function CanvasView() {
                   height: PREVIEW_PIXEL_SIZE,
                   top: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
                   left: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
-                  scale: RETICLE_SCALE,
                   backgroundColor: `rgba(${color?.rgba.join()})`,
                 }}
               />
@@ -646,7 +681,6 @@ export default function CanvasView() {
               style={{
                 width: RETICLE_SIZE,
                 height: RETICLE_SIZE,
-                scale: RETICLE_SCALE,
               }}
             />
           </ReticleContainer>
