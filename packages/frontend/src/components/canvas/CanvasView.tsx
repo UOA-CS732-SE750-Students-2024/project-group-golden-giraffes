@@ -150,10 +150,13 @@ export default function CanvasView() {
       return;
     }
 
-    const canvasId = searchParams?.get("canvas");
+    const canvasId =
+      searchParams?.get("canvas") ??
+      searchParams?.get("c") ??
+      searchParams?.get("cvs");
     const x = searchParams?.get("x");
     const y = searchParams?.get("y");
-    let newZoom = searchParams?.get("zoom") || 1;
+    let newZoom = searchParams?.get("zoom") ?? searchParams?.get("z") ?? 1;
 
     if (
       canvasId &&

@@ -86,7 +86,7 @@ export default function PixelInfoTab({
     coords,
   );
 
-  const coordsLink = `${canvas.frontEndUrl}?canvas=${canvas.id}&x=${adjustedCoords?.x}&y=${adjustedCoords?.y}&zoom=${zoom.toFixed(3)}`;
+  const coordsLink = `${canvas.frontEndUrl}?c=${canvas.id}&x=${adjustedCoords?.x}&y=${adjustedCoords?.y}&z=${zoom.toFixed(3)}`;
 
   const [open, setOpen] = useState(false);
 
