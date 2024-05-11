@@ -14,6 +14,7 @@ import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
 import config from "@/config";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
+import { TABS } from "@/contexts/CanvasContext";
 import { useCanvasList } from "@/hooks";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
@@ -127,7 +128,8 @@ export default function CanvasView() {
   const searchParams = useSearchParams();
 
   const { color } = useSelectedColorContext();
-  const { canvas, coords, setCoords, setCanvas } = useCanvasContext();
+  const { canvas, coords, setCoords, setCanvas, setCurrentTab } =
+    useCanvasContext();
 
   const { data: canvases = [], isLoading: canvasListIsLoading } =
     useCanvasList();
@@ -167,6 +169,9 @@ export default function CanvasView() {
     ) {
       return;
     }
+
+    setCurrentTab(TABS.LOOK);
+
     const newCoords = {
       x: Number(x) - canvas.startCoordinates[0],
       y: Number(y) - canvas.startCoordinates[1],

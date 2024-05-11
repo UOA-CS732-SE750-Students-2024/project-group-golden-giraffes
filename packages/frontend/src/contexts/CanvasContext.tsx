@@ -21,12 +21,19 @@ import {
 } from "@blurple-canvas-web/types";
 import { useSelectedColorContext } from "./SelectedColorContext";
 
+export const TABS = {
+  LOOK: "Look",
+  PLACE: "Place",
+};
+
 interface CanvasContextType {
+  adjustedCoords: Point | null;
   canvas: CanvasInfo;
   coords: Point | null;
-  adjustedCoords: Point | null;
+  currentTab: string;
   setCanvas: (canvasId: CanvasInfo["id"]) => void;
   setCoords: Dispatch<SetStateAction<Point | null>>;
+  setCurrentTab: Dispatch<SetStateAction<string>>;
 }
 
 export const CanvasContext = createContext<CanvasContextType>({
@@ -40,10 +47,12 @@ export const CanvasContext = createContext<CanvasContextType>({
     eventId: null,
     webPlacingEnabled: false,
   },
-  coords: null,
   adjustedCoords: null,
-  setCoords: () => {},
+  coords: null,
+  currentTab: TABS.PLACE,
   setCanvas: () => {},
+  setCoords: () => {},
+  setCurrentTab: () => {},
 });
 
 interface CanvasProviderProps {
@@ -58,6 +67,7 @@ export const CanvasProvider = ({
   const [activeCanvas, setActiveCanvas] = useState(mainCanvasInfo);
   const [selectedCoords, setSelectedCoords] =
     useState<CanvasContextType["coords"]>(null);
+  const [currentTab, setCurrentTab] = useState(TABS.PLACE);
 
   const adjustedCoords = useMemo(() => {
     if (selectedCoords) {
@@ -95,11 +105,13 @@ export const CanvasProvider = ({
   return (
     <CanvasContext.Provider
       value={{
-        coords: selectedCoords,
         adjustedCoords,
         canvas: activeCanvas,
-        setCoords: setSelectedCoords,
+        coords: selectedCoords,
+        currentTab: currentTab,
         setCanvas: setCanvasById,
+        setCoords: setSelectedCoords,
+        setCurrentTab: setCurrentTab,
       }}
     >
       {children}
