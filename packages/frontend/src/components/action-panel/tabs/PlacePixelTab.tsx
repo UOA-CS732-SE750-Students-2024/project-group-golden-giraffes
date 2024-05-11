@@ -1,6 +1,6 @@
 import { Skeleton, styled } from "@mui/material";
 
-import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
+import { Palette } from "@blurple-canvas-web/types";
 
 import {
   useAuthContext,
@@ -47,11 +47,11 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-function userWithinServer(user: DiscordUserProfile, serverId: string) {
-  return false;
-  // const guildIds = decodeUserGuildsBase64(user);
-  // return guildIds.some((guildId) => guildId === serverId);
-}
+// function userWithinServer(user: DiscordUserProfile, serverId: string) {
+//   return false;
+//   const guildIds = decodeUserGuildsBase64(user);
+//   return guildIds.some((guildId) => guildId === serverId);
+// }
 
 interface PlacePixelTabProps {
   active?: boolean;

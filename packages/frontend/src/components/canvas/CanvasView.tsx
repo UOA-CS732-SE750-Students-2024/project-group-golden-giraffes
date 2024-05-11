@@ -17,7 +17,7 @@ import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
-import { Button, DynamicButton } from "../button";
+import { Button } from "../button";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
