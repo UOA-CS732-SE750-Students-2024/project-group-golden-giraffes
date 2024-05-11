@@ -17,6 +17,7 @@ import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
+import { Button, DynamicButton } from "../button";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
@@ -89,6 +90,26 @@ const Reticle = styled("img")`
 const PreviewPixel = styled("div")`
   position: absolute;
   transform: translate(-50%, -50%);
+`;
+
+const InviteButton = styled(Button)`
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  font-variation-settings: "wdth" 125;
+  font-weight: 900;
+  text-decoration: none;
+  font-size: 1.2rem;
+  padding: 0.1rem 1rem;
+  color: white;
+  background-color: oklch(var(--discord-legacy-dark-but-not-black-oklch) / 80%);
+  border-radius: 0.5rem 0.5rem 1rem 0.5rem;
+  z-index: 1;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+  :hover {
+    background-color: var(--discord-blurple);
+  }
 `;
 
 /**
@@ -548,6 +569,7 @@ export default function CanvasView() {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
+        <InviteButton>Project Blurple</InviteButton>
         <div
           id="canvas-pan-and-zoom"
           style={{
