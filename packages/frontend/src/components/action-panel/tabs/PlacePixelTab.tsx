@@ -1,6 +1,6 @@
 import { Skeleton, styled } from "@mui/material";
 
-import { Palette } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
 import {
   useAuthContext,
@@ -8,6 +8,7 @@ import {
   useSelectedColorContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
+import { decodeUserGuildsBase64 } from "@/util";
 import { DynamicAnchorButton, PlacePixelButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -47,11 +48,10 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-// function userWithinServer(user: DiscordUserProfile, serverId: string) {
-//   return false;
-//   const guildIds = decodeUserGuildsBase64(user);
-//   return guildIds.some((guildId) => guildId === serverId);
-// }
+function userWithinServer(user: DiscordUserProfile, serverId: string) {
+  const guildIds = decodeUserGuildsBase64(user);
+  return guildIds.some((guildId) => guildId === serverId);
+}
 
 interface PlacePixelTabProps {
   active?: boolean;
@@ -87,6 +87,12 @@ export default function PlacePixelTab({
     (!(canPlacePixel && user) || readOnly) &&
     !selectedColor?.global &&
     serverInvite;
+
+  const userInServer =
+    user &&
+    selectedColor &&
+    !selectedColor.global &&
+    userWithinServer(user, selectedColor?.guildId);
 
   return (
     <PlacePixelTabBlock active={active}>
@@ -131,7 +137,9 @@ export default function PlacePixelTab({
         {canPlacePixel && <PlacePixelButton />}
         {isJoinServerShown && (
           <DynamicAnchorButton color={selectedColor} href={serverInvite}>
-            Join {selectedColor?.guildName ?? "server"}
+            {!userInServer ?
+              `Join ${selectedColor?.guildName ?? "server"}`
+            : "You are in this server"}
           </DynamicAnchorButton>
         )}
         {!readOnly && <BotCommandCard />}
