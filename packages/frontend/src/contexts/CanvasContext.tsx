@@ -33,6 +33,7 @@ interface CanvasContextType {
   containerRef: React.RefObject<HTMLDivElement>;
   coords: Point | null;
   currentTab: string;
+  defaultCanvas: CanvasInfo;
   zoom: number;
   setCanvas: (canvasId: CanvasInfo["id"]) => void;
   setCoords: Dispatch<SetStateAction<Point | null>>;
@@ -55,6 +56,16 @@ export const CanvasContext = createContext<CanvasContextType>({
   containerRef: { current: null },
   coords: null,
   currentTab: TABS.PLACE,
+  defaultCanvas: {
+    id: -1,
+    name: "",
+    width: 0,
+    height: 0,
+    startCoordinates: [0, 0],
+    isLocked: false,
+    eventId: null,
+    webPlacingEnabled: false,
+  },
   zoom: 1,
   setCanvas: () => {},
   setCoords: () => {},
@@ -119,6 +130,7 @@ export const CanvasProvider = ({
         containerRef: containerRef,
         coords: selectedCoords,
         currentTab: currentTab,
+        defaultCanvas: mainCanvasInfo,
         zoom: zoom,
         setCanvas: setCanvasById,
         setCoords: setSelectedCoords,
