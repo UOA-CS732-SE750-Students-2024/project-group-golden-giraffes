@@ -17,7 +17,10 @@ import config from "@/config";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { TABS } from "@/contexts/CanvasContext";
 import { useCanvasList } from "@/hooks";
-import { useCanvasSearchParams } from "@/hooks/useCanvasSearchParams";
+import {
+  useCanvasSearchParams,
+  useCanvasSearchParamsController,
+} from "@/hooks/useCanvasSearchParams";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp, extractSearchParam } from "@/util";
@@ -167,7 +170,7 @@ export default function CanvasView() {
   const [targetZoom, setTargetZoom] = useState(1);
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
-  useCanvasSearchParams(setMouseOffsetDirection, setTargetZoom);
+  useCanvasSearchParamsController(setMouseOffsetDirection, setTargetZoom);
 
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);

@@ -8,14 +8,22 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useCanvasList } from ".";
 
-export function useCanvasSearchParams(
-  setMouseOffsetDirection: (offset: Point) => void,
-  setTargetZoom: (zoom: number) => void,
-) {
+interface CanvasSearchParams {
+  canvasId: number | null;
+  x: number | null;
+  y: number | null;
+  zoom: number | null;
+}
+
+const emptyCanvasSearchParams: CanvasSearchParams = {
+  canvasId: null,
+  x: null,
+  y: null,
+  zoom: null,
+};
+
+export function useCanvasSearchParams(): CanvasSearchParams {
   const searchParams = useSearchParams();
-  const { data: canvases = [], isLoading: canvasListIsLoading } =
-    useCanvasList();
-  const { canvas, setCoords, setCanvas, setCurrentTab } = useCanvasContext();
 
   const canvasId = extractSearchParam(searchParams, ["canvas", "c"]);
   const x = extractSearchParam(searchParams, ["x"]);
@@ -32,9 +40,28 @@ export function useCanvasSearchParams(
   const validCoords = !Number.isNaN(xInt) && !Number.isNaN(yInt);
   const validZoom = !Number.isNaN(zoomNumber);
 
-  if (!canvasIdInt || !validCoords) {
-    return;
+  if (!canvasIdInt || !validCoords || !validZoom) {
+    return emptyCanvasSearchParams;
   }
+
+  return {
+    canvasId: canvasIdInt,
+    x: validCoords ? xInt : null,
+    y: validCoords ? yInt : null,
+    zoom: validZoom ? zoomNumber : null,
+  };
+}
+
+export function useCanvasSearchParamsController(
+  setMouseOffsetDirection: (offset: Point) => void,
+  setTargetZoom: (zoom: number) => void,
+) {
+  const params = useCanvasSearchParams();
+  const { canvasId, x, y, zoom } = params;
+
+  const { data: canvases = [], isLoading: canvasListIsLoading } =
+    useCanvasList();
+  const { canvas, setCoords, setCanvas, setCurrentTab } = useCanvasContext();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: If this trigger gets spammed, then coords keep getting set to null
   useEffect(() => {
@@ -42,8 +69,8 @@ export function useCanvasSearchParams(
       return;
     }
 
-    if (canvases.some((c) => c.id === canvasIdInt)) {
-      setCanvas(canvasIdInt);
+    if (canvasId && canvases.some((c) => c.id === canvasId)) {
+      setCanvas(canvasId);
     }
 
     setCurrentTab(TABS.LOOK);
@@ -54,7 +81,7 @@ export function useCanvasSearchParams(
     };
 
     // has an issue where the new canvas doesn't load fast enough for this to recognise the new canvas boundaries
-    if (validZoom) {
+    if (zoom) {
       let newOffset = diffPoints(
         {
           x: canvas.width / 2,
@@ -62,10 +89,10 @@ export function useCanvasSearchParams(
         },
         newCoords,
       );
-      const modifier = 1 + 1 / zoomNumber;
+      const modifier = 1 + 1 / zoom;
       newOffset = multiplyPoint(newOffset, modifier);
       setMouseOffsetDirection(newOffset);
-      setTargetZoom(zoomNumber);
+      setTargetZoom(zoom);
     }
-  }, [canvases, canvasListIsLoading, searchParams, setCoords, setCanvas]);
+  }, [canvases, canvasListIsLoading, setCoords, setCanvas]);
 }
