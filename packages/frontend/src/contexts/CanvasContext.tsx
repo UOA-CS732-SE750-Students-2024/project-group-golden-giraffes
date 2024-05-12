@@ -22,10 +22,10 @@ import {
 } from "@blurple-canvas-web/types";
 import { useSelectedColorContext } from "./SelectedColorContext";
 
-export const TABS = {
-  LOOK: "Look",
-  PLACE: "Place",
-};
+export enum TABS {
+  LOOK = "Look",
+  PLACE = "Place",
+}
 
 interface CanvasContextType {
   adjustedCoords: Point | null;
@@ -36,7 +36,7 @@ interface CanvasContextType {
   zoom: number;
   setCanvas: (canvasId: CanvasInfo["id"]) => void;
   setCoords: Dispatch<SetStateAction<Point | null>>;
-  setCurrentTab: Dispatch<SetStateAction<string>>;
+  setCurrentTab: Dispatch<SetStateAction<TABS>>;
   setZoom: Dispatch<SetStateAction<number>>;
 }
 
