@@ -48,7 +48,6 @@ export const CanvasContext = createContext<CanvasContextType>({
     isLocked: false,
     eventId: null,
     webPlacingEnabled: false,
-    frontEndUrl: "",
   },
   adjustedCoords: null,
   coords: null,

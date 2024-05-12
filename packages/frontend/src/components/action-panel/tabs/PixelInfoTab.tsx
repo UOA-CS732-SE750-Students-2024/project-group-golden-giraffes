@@ -4,8 +4,10 @@ import { PixelHistoryRecord } from "@blurple-canvas-web/types";
 
 import { DynamicButton } from "@/components/button";
 import { CoordinateLabel } from "@/components/button/PlacePixelButton";
+import config from "@/config";
 import { useCanvasContext } from "@/contexts";
 import { usePixelHistory } from "@/hooks";
+import { createPixelURL } from "@/util";
 import { useState } from "react";
 import { Heading } from "../ActionPanel";
 import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
@@ -73,23 +75,15 @@ export default function PixelInfoTab({
   active = false,
   canvasId,
 }: PixelInfoTabProps) {
-  const { canvas, coords, adjustedCoords, zoom } = useCanvasContext();
+  const { coords, adjustedCoords, zoom } = useCanvasContext();
   const { data: pixelHistory = [], isLoading } = usePixelHistory(
     canvasId,
     coords,
   );
 
-  const coordsLink = `${canvas.frontEndUrl}?c=${canvas.id}&x=${adjustedCoords?.x}&y=${adjustedCoords?.y}&z=${zoom.toFixed(3)}`;
-
-  const [open, setOpen] = useState(false);
-
-  const handleTooltipClose = () => {
-    setOpen(false);
-  };
-
-  const handleTooltipOpen = () => {
-    setOpen(true);
-  };
+  const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
+  const closeTooltip = () => setTooltipIsOpen(false);
+  const openTooltip = () => setTooltipIsOpen(true);
 
   return (
     <PixelInfoTabBlock active={active}>
@@ -115,8 +109,8 @@ export default function PixelInfoTab({
           <Tooltip
             title="Copied!"
             placement={"top"}
-            onClose={handleTooltipClose}
-            open={open}
+            onClose={closeTooltip}
+            open={tooltipIsOpen}
             componentsProps={{
               tooltip: {
                 sx: {
@@ -145,8 +139,10 @@ export default function PixelInfoTab({
                 : null
               }
               onAction={() => {
-                handleTooltipOpen();
-                navigator.clipboard.writeText(coordsLink);
+                openTooltip();
+                navigator.clipboard.writeText(
+                  createPixelURL(canvasId, adjustedCoords, zoom),
+                );
               }}
             >
               {"Copy link to share pixel"}

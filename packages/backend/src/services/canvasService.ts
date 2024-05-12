@@ -166,7 +166,6 @@ export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
     isLocked: canvas.locked,
     eventId: canvas.event_id,
     webPlacingEnabled: config.webPlacingEnabled,
-    frontEndUrl: config.frontendUrl,
   };
 }
 

@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 
-import { DiscordUserProfile } from "@blurple-canvas-web/types";
+import config from "@/config";
+import { DiscordUserProfile, Point } from "@blurple-canvas-web/types";
 
 /**
  * Return the value clamped so that it is within the range [min, max].
@@ -67,4 +68,40 @@ export function decodeUserGuildsBase64(user: DiscordUserProfile) {
   const base64 = user.guildIdsBase64 ?? "";
   const guildIds = Buffer.from(base64, "base64").toString("utf-8");
   return guildIds.split(" ");
+}
+
+export function createPixelURL(
+  canvasId?: number,
+  coords?: Point,
+  zoom?: number,
+  pixelWidth?: number,
+  frameId?: string,
+) {
+  const parameters = new Map<string, string>();
+
+  if (canvasId) {
+    parameters.set("c", canvasId.toString());
+  }
+
+  if (coords) {
+    parameters.set("x", coords.x.toString());
+    parameters.set("y", coords.y.toString());
+  }
+
+  if (zoom) {
+    parameters.set("z", zoom.toFixed(3));
+  }
+
+  if (pixelWidth) {
+    parameters.set("w", pixelWidth.toString());
+  }
+
+  if (frameId) {
+    parameters.set("f", frameId.toUpperCase());
+  }
+
+  const paramsString = Array.from(parameters.entries())
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
+  return `${config.baseUrl}?${paramsString}`;
 }
