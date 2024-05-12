@@ -1,7 +1,6 @@
 "use client";
 
 import { CircularProgress, css, styled } from "@mui/material";
-import { useSearchParams } from "next/navigation";
 import {
   Touch,
   useCallback,
@@ -15,15 +14,10 @@ import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
 import config from "@/config";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
-import { TABS } from "@/contexts/CanvasContext";
-import { useCanvasList } from "@/hooks";
-import {
-  useCanvasSearchParams,
-  useCanvasSearchParamsController,
-} from "@/hooks/useCanvasSearchParams";
+import { useCanvasSearchParamsController } from "@/hooks/useCanvasSearchParams";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
-import { clamp, extractSearchParam } from "@/util";
+import { clamp } from "@/util";
 import { Button } from "../button";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
