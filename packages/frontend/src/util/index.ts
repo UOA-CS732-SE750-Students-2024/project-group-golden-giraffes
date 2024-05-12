@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import { DateTime, StringUnitLength } from "luxon";
 
 import config from "@/config";
 import { DiscordUserProfile, Point } from "@blurple-canvas-web/types";
@@ -104,4 +104,20 @@ export function createPixelURL(
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
   return `${config.baseUrl}?${paramsString}`;
+}
+
+export function extractSearchParam(
+  searchParams: URLSearchParams | null,
+  keys: string[],
+) {
+  if (!searchParams) {
+    return null;
+  }
+  for (const key of keys) {
+    const value = searchParams.get(key);
+    if (value) {
+      return value;
+    }
+  }
+  return null;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { CircularProgress, css, styled } from "@mui/material";
+import { useSearchParams } from "next/navigation";
 import {
   Touch,
   useCallback,
@@ -18,8 +19,7 @@ import { TABS } from "@/contexts/CanvasContext";
 import { useCanvasList } from "@/hooks";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
-import { clamp } from "@/util";
-import { useSearchParams } from "next/navigation";
+import { clamp, extractSearchParam } from "@/util";
 import { Button } from "../button";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
@@ -178,25 +178,17 @@ export default function CanvasView() {
       return;
     }
 
-    const canvasId =
-      searchParams?.get("canvas") ??
-      searchParams?.get("c") ??
-      searchParams?.get("cvs");
-    const x = searchParams?.get("x");
-    const y = searchParams?.get("y");
-    let newZoom = searchParams?.get("zoom") ?? searchParams?.get("z") ?? 1;
+    const canvasId = extractSearchParam(searchParams, ["canvas", "c"]);
+    const x = extractSearchParam(searchParams, ["x"]);
+    const y = extractSearchParam(searchParams, ["y"]);
+    let newZoom = extractSearchParam(searchParams, ["z"]) ?? 1;
 
-    if (
-      canvasId &&
-      Number.isInteger(Number(canvasId)) &&
-      canvases.some((c) => c.id === Number(canvasId))
-    ) {
-      setCanvas(Number(canvasId));
+    const canvasIdInt = Number.parseInt(canvasId ?? "");
+    if (canvasIdInt && canvases.some((c) => c.id === canvasIdInt)) {
+      setCanvas(canvasIdInt);
     }
 
-    if (
-      !(x && y && Number.isInteger(Number(x)) && Number.isInteger(Number(y)))
-    ) {
+    if (!(x && y && Number.parseInt(x) && Number.parseInt(y))) {
       return;
     }
 
@@ -383,16 +375,18 @@ export default function CanvasView() {
     if (zoom === targetZoom) return;
 
     const glideZoom = () => {
-      if (Math.abs(targetZoom - zoom) < 0.001) return;
+      const zoomDiff = targetZoom - zoom;
 
-      const diff = (targetZoom - zoom) / targetZoom;
+      if (Math.abs(zoomDiff) < 0.001) return;
+
+      const zoomDiffRatio = zoomDiff / targetZoom;
       const scale = Math.exp(
-        Math.sign(diff) * SCALE_FACTOR * Math.abs(diff) * 2,
+        Math.sign(zoomDiffRatio) * SCALE_FACTOR * Math.abs(zoomDiffRatio) * 2,
       );
       const newZoom = clamp(
         zoom * scale,
-        diff > 0 ? MIN_ZOOM : targetZoom,
-        diff < 0 ? MAX_ZOOM : targetZoom,
+        zoomDiffRatio > 0 ? MIN_ZOOM : targetZoom,
+        zoomDiffRatio < 0 ? MAX_ZOOM : targetZoom,
       );
 
       const effectiveScale = newZoom / zoom;
