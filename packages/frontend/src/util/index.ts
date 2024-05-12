@@ -75,29 +75,25 @@ export function createPixelURL(
   coords?: Point,
   zoom?: number,
   pixelWidth?: number,
+  pixelHeight?: number,
   frameId?: string,
 ) {
   const parameters = new Map<string, string>();
 
-  if (canvasId) {
-    parameters.set("c", canvasId.toString());
-  }
+  const params = [
+    { key: "c", value: canvasId?.toString() },
+    { key: "x", value: coords?.x.toString() },
+    { key: "y", value: coords?.y.toString() },
+    { key: "z", value: zoom?.toFixed(3) },
+    { key: "w", value: pixelWidth?.toString() },
+    { key: "h", value: pixelHeight?.toString() },
+    { key: "f", value: frameId?.toUpperCase() },
+  ];
 
-  if (coords) {
-    parameters.set("x", coords.x.toString());
-    parameters.set("y", coords.y.toString());
-  }
-
-  if (zoom) {
-    parameters.set("z", zoom.toFixed(3));
-  }
-
-  if (pixelWidth) {
-    parameters.set("w", pixelWidth.toString());
-  }
-
-  if (frameId) {
-    parameters.set("f", frameId.toUpperCase());
+  for (const param of params) {
+    if (param.value) {
+      parameters.set(param.key, param.value);
+    }
   }
 
   const paramsString = Array.from(parameters.entries())

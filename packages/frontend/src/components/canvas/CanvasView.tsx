@@ -170,13 +170,17 @@ export default function CanvasView() {
   const [targetZoom, setTargetZoom] = useState(1);
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
-  useCanvasSearchParamsController(setMouseOffsetDirection, setTargetZoom);
-
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
+
+  useCanvasSearchParamsController(
+    containerRef.current,
+    setMouseOffsetDirection,
+    setTargetZoom,
+  );
 
   const imageUrl = useMemo(
     () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,

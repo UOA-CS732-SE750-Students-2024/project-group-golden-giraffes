@@ -13,6 +13,8 @@ interface CanvasSearchParams {
   x: number | null;
   y: number | null;
   zoom: number | null;
+  pixelWidth: number | null;
+  pixelHeight: number | null;
 }
 
 const emptyCanvasSearchParams: CanvasSearchParams = {
@@ -20,6 +22,8 @@ const emptyCanvasSearchParams: CanvasSearchParams = {
   x: null,
   y: null,
   zoom: null,
+  pixelWidth: null,
+  pixelHeight: null,
 };
 
 export function useCanvasSearchParams(): CanvasSearchParams {
@@ -28,19 +32,28 @@ export function useCanvasSearchParams(): CanvasSearchParams {
   const canvasId = extractSearchParam(searchParams, ["canvas", "c"]);
   const x = extractSearchParam(searchParams, ["x"]);
   const y = extractSearchParam(searchParams, ["y"]);
-  const zoom = extractSearchParam(searchParams, ["z"]) ?? 1;
-  // const pixelWidth = extractSearchParam(searchParams, ["w"]);
+  const zoom = extractSearchParam(searchParams, ["z"]);
+  const pixelWidth = extractSearchParam(searchParams, ["w"]);
+  const pixelHeight = extractSearchParam(searchParams, ["h"]);
   // const frameId = extractSearchParam(searchParams, ["f"]);
 
   const canvasIdInt = Number.parseInt(canvasId ?? "");
   const xInt = Number.parseInt(x ?? "");
   const yInt = Number.parseInt(y ?? "");
-  const zoomNumber = Number(zoom ?? "");
+  const zoomNumber = Number.parseInt(zoom ?? "");
+  const pixelWidthInt = Number.parseInt(pixelWidth ?? "");
+  const pixelHeightInt = Number.parseInt(pixelHeight ?? "");
 
   const validCoords = !Number.isNaN(xInt) && !Number.isNaN(yInt);
   const validZoom = !Number.isNaN(zoomNumber);
+  const validPixelWidth = !Number.isNaN(pixelWidthInt);
+  const validPixelHeight = !Number.isNaN(pixelHeightInt);
 
-  if (!canvasIdInt || !validCoords || !validZoom) {
+  if (
+    !canvasIdInt ||
+    !validCoords ||
+    validZoom === (validPixelWidth || validPixelHeight)
+  ) {
     return emptyCanvasSearchParams;
   }
 
@@ -49,15 +62,18 @@ export function useCanvasSearchParams(): CanvasSearchParams {
     x: validCoords ? xInt : null,
     y: validCoords ? yInt : null,
     zoom: validZoom ? zoomNumber : null,
+    pixelWidth: validPixelWidth ? pixelWidthInt : null,
+    pixelHeight: validPixelHeight ? pixelHeightInt : null,
   };
 }
 
 export function useCanvasSearchParamsController(
+  containerRef: HTMLDivElement | null,
   setMouseOffsetDirection: (offset: Point) => void,
   setTargetZoom: (zoom: number) => void,
 ) {
   const params = useCanvasSearchParams();
-  const { canvasId, x, y, zoom } = params;
+  let { canvasId, x, y, zoom, pixelWidth, pixelHeight } = params;
 
   const { data: canvases = [], isLoading: canvasListIsLoading } =
     useCanvasList();
@@ -81,6 +97,20 @@ export function useCanvasSearchParamsController(
     };
 
     // has an issue where the new canvas doesn't load fast enough for this to recognise the new canvas boundaries
+
+    console.log("no", containerRef, pixelWidth || pixelHeight);
+    if (containerRef && (pixelWidth || pixelHeight)) {
+      const potentialZooms: number[] = [];
+      if (pixelWidth) {
+        potentialZooms.push(containerRef.clientWidth / pixelWidth);
+      }
+      if (pixelHeight) {
+        potentialZooms.push(containerRef.clientHeight / pixelHeight);
+      }
+      zoom = Math.min(...potentialZooms);
+      console.log(potentialZooms, zoom);
+    }
+
     if (zoom) {
       let newOffset = diffPoints(
         {
