@@ -8,6 +8,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -29,6 +30,7 @@ export const TABS = {
 interface CanvasContextType {
   adjustedCoords: Point | null;
   canvas: CanvasInfo;
+  containerRef: React.RefObject<HTMLDivElement>;
   coords: Point | null;
   currentTab: string;
   zoom: number;
@@ -50,6 +52,7 @@ export const CanvasContext = createContext<CanvasContextType>({
     webPlacingEnabled: false,
   },
   adjustedCoords: null,
+  containerRef: { current: null },
   coords: null,
   currentTab: TABS.PLACE,
   zoom: 1,
@@ -73,6 +76,7 @@ export const CanvasProvider = ({
     useState<CanvasContextType["coords"]>(null);
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
   const [zoom, setZoom] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const adjustedCoords = useMemo(() => {
     if (selectedCoords) {
@@ -112,6 +116,7 @@ export const CanvasProvider = ({
       value={{
         adjustedCoords,
         canvas: activeCanvas,
+        containerRef: containerRef,
         coords: selectedCoords,
         currentTab: currentTab,
         zoom: zoom,

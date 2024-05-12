@@ -75,7 +75,8 @@ export default function PixelInfoTab({
   active = false,
   canvasId,
 }: PixelInfoTabProps) {
-  const { coords, adjustedCoords, zoom } = useCanvasContext();
+  const { canvas, containerRef, coords, adjustedCoords, zoom } =
+    useCanvasContext();
   const { data: pixelHistory = [], isLoading } = usePixelHistory(
     canvasId,
     coords,
@@ -84,6 +85,23 @@ export default function PixelInfoTab({
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
   const closeTooltip = () => setTooltipIsOpen(false);
   const openTooltip = () => setTooltipIsOpen(true);
+
+  const pixelURL =
+    (adjustedCoords &&
+      containerRef.current &&
+      createPixelURL({
+        canvasId: canvasId,
+        coords: adjustedCoords,
+        pixelWidth: Math.min(
+          containerRef.current?.clientWidth / zoom,
+          canvas.width,
+        ),
+        pixelHeight: Math.min(
+          containerRef.current?.clientHeight / zoom,
+          canvas.height,
+        ),
+      })) ??
+    "";
 
   return (
     <PixelInfoTabBlock active={active}>
@@ -140,9 +158,7 @@ export default function PixelInfoTab({
               }
               onAction={() => {
                 openTooltip();
-                navigator.clipboard.writeText(
-                  createPixelURL(canvasId, adjustedCoords, zoom),
-                );
+                navigator.clipboard.writeText(pixelURL);
               }}
             >
               {"Copy link to share pixel"}

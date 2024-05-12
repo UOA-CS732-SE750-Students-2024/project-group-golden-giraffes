@@ -158,7 +158,8 @@ function calculateReticleOffset(coords: Point | null): Point {
 
 export default function CanvasView() {
   const { color } = useSelectedColorContext();
-  const { canvas, coords, zoom, setCoords, setZoom } = useCanvasContext();
+  const { canvas, containerRef, coords, zoom, setCoords, setZoom } =
+    useCanvasContext();
 
   const [isLoading, setIsLoading] = useState(false);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
@@ -171,7 +172,6 @@ export default function CanvasView() {
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
   const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
@@ -211,7 +211,7 @@ export default function CanvasView() {
       setImageDimension({ width: image.width, height: image.height });
       setIsLoading(false);
     },
-    [setZoom],
+    [containerRef, setZoom],
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
@@ -433,7 +433,7 @@ export default function CanvasView() {
     containerRef.current.removeEventListener("mousemove", handleMouseMove);
     containerRef.current.removeEventListener("mouseup", handleMouseUp);
     containerRef.current.removeEventListener("mouseleave", handleMouseUp);
-  }, [handleMouseMove]);
+  }, [containerRef, handleMouseMove]);
 
   /**
    * Only add the mouse move listener when you click down so that moving your mouse normally doesn't
@@ -447,7 +447,7 @@ export default function CanvasView() {
     containerRef.current.addEventListener("mousemove", handleMouseMove);
     containerRef.current.addEventListener("mouseup", handleMouseUp);
     containerRef.current.addEventListener("mouseleave", handleMouseUp);
-  }, [handleMouseMove, handleMouseUp]);
+  }, [containerRef, handleMouseMove, handleMouseUp]);
 
   const handleTouchMove = useCallback(
     (event: TouchEvent): void => {

@@ -50,9 +50,10 @@ export function useCanvasSearchParams(): CanvasSearchParams {
   const validPixelHeight = !Number.isNaN(pixelHeightInt);
 
   if (
-    !canvasIdInt ||
-    !validCoords ||
-    validZoom === (validPixelWidth || validPixelHeight)
+    !canvasIdInt || // If no canvas
+    !validCoords || // If coords are invalid
+    validZoom === // zoom and px w/h are mutually exclusive
+      (validPixelWidth || validPixelHeight) // either can be valid
   ) {
     return emptyCanvasSearchParams;
   }
@@ -98,7 +99,6 @@ export function useCanvasSearchParamsController(
 
     // has an issue where the new canvas doesn't load fast enough for this to recognise the new canvas boundaries
 
-    console.log("no", containerRef, pixelWidth || pixelHeight);
     if (containerRef && (pixelWidth || pixelHeight)) {
       const potentialZooms: number[] = [];
       if (pixelWidth) {
@@ -108,7 +108,6 @@ export function useCanvasSearchParamsController(
         potentialZooms.push(containerRef.clientHeight / pixelHeight);
       }
       zoom = Math.min(...potentialZooms);
-      console.log(potentialZooms, zoom);
     }
 
     if (zoom) {

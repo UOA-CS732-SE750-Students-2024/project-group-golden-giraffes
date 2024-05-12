@@ -70,14 +70,21 @@ export function decodeUserGuildsBase64(user: DiscordUserProfile) {
   return guildIds.split(" ");
 }
 
-export function createPixelURL(
-  canvasId?: number,
-  coords?: Point,
-  zoom?: number,
-  pixelWidth?: number,
-  pixelHeight?: number,
-  frameId?: string,
-) {
+export function createPixelURL({
+  canvasId,
+  coords,
+  zoom,
+  pixelWidth,
+  pixelHeight,
+  frameId,
+}: {
+  canvasId?: number;
+  coords?: Point;
+  zoom?: number;
+  pixelWidth?: number;
+  pixelHeight?: number;
+  frameId?: string;
+}) {
   const parameters = new Map<string, string>();
 
   const params = [
@@ -85,8 +92,8 @@ export function createPixelURL(
     { key: "x", value: coords?.x.toString() },
     { key: "y", value: coords?.y.toString() },
     { key: "z", value: zoom?.toFixed(3) },
-    { key: "w", value: pixelWidth?.toString() },
-    { key: "h", value: pixelHeight?.toString() },
+    { key: "w", value: pixelWidth?.toFixed(0) },
+    { key: "h", value: pixelHeight?.toFixed(0) },
     { key: "f", value: frameId?.toUpperCase() },
   ];
 
