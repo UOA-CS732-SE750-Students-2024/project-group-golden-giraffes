@@ -36,9 +36,11 @@ const Code = styled("code")`
 export default function ColorInfoCard({
   color,
   invite,
+  userInServer = false,
 }: {
   color?: PaletteColor | null;
   invite?: string;
+  userInServer?: boolean;
 }) {
   if (!color) return <Wrapper>No color selected</Wrapper>;
 
@@ -54,7 +56,9 @@ export default function ColorInfoCard({
       <Code>{colorCode}</Code>
       {!color.global && (
         <Subtitle>
-          This color can be used in{" "}
+          {!userInServer ?
+            "This color can be used in"
+          : "You can use this color in"}{" "}
           {invite ?
             <a href={invite}>{guildName}</a>
           : guildName}

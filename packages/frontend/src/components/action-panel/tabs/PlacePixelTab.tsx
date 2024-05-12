@@ -89,10 +89,11 @@ export default function PlacePixelTab({
     serverInvite;
 
   const userInServer =
-    user &&
-    selectedColor &&
-    !selectedColor.global &&
-    userWithinServer(user, selectedColor?.guildId);
+    (user &&
+      selectedColor &&
+      !selectedColor.global &&
+      userWithinServer(user, selectedColor?.guildId)) ??
+    false;
 
   return (
     <PlacePixelTabBlock active={active}>
@@ -133,13 +134,16 @@ export default function PlacePixelTab({
         </ActionPanelTabBody>
       </ScrollBlock>
       <ActionPanelTabBody>
-        <ColorInfoCard color={selectedColor} invite={serverInvite} />
+        <ColorInfoCard
+          color={selectedColor}
+          invite={serverInvite}
+          userInServer={userInServer}
+        />
         {canPlacePixel && <PlacePixelButton />}
         {isJoinServerShown && (
           <DynamicAnchorButton color={selectedColor} href={serverInvite}>
-            {!userInServer ?
-              `Join ${selectedColor?.guildName ?? "server"}`
-            : "You are in this server"}
+            {!userInServer ? "Join" : "Open"}{" "}
+            {selectedColor?.guildName ?? "server"}
           </DynamicAnchorButton>
         )}
         {!readOnly && <BotCommandCard />}
