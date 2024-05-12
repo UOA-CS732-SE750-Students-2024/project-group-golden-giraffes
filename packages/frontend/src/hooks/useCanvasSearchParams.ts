@@ -90,8 +90,6 @@ export function useCanvasSearchParamsController(
       setCanvas(canvasId);
     }
 
-    setCurrentTab(TABS.LOOK);
-
     const newCoords = {
       x: Number(x) - canvas.startCoordinates[0],
       y: Number(y) - canvas.startCoordinates[1],
@@ -111,6 +109,8 @@ export function useCanvasSearchParamsController(
     }
 
     if (zoom) {
+      setCurrentTab(TABS.LOOK);
+
       let newOffset = diffPoints(
         {
           x: canvas.width / 2,
