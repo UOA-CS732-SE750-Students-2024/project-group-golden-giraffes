@@ -17,6 +17,7 @@ import config from "@/config";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { TABS } from "@/contexts/CanvasContext";
 import { useCanvasList } from "@/hooks";
+import { useCanvasSearchParams } from "@/hooks/useCanvasSearchParams";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp, extractSearchParam } from "@/util";
@@ -153,14 +154,8 @@ function calculateReticleOffset(coords: Point | null): Point {
 }
 
 export default function CanvasView() {
-  const searchParams = useSearchParams();
-
   const { color } = useSelectedColorContext();
-  const { canvas, coords, zoom, setCoords, setCanvas, setCurrentTab, setZoom } =
-    useCanvasContext();
-
-  const { data: canvases = [], isLoading: canvasListIsLoading } =
-    useCanvasList();
+  const { canvas, coords, zoom, setCoords, setZoom } = useCanvasContext();
 
   const [isLoading, setIsLoading] = useState(false);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
@@ -172,49 +167,7 @@ export default function CanvasView() {
   const [targetZoom, setTargetZoom] = useState(1);
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: If this trigger gets spammed, then coords keep getting set to null
-  useEffect(() => {
-    if (canvasListIsLoading) {
-      return;
-    }
-
-    const canvasId = extractSearchParam(searchParams, ["canvas", "c"]);
-    const x = extractSearchParam(searchParams, ["x"]);
-    const y = extractSearchParam(searchParams, ["y"]);
-    let newZoom = extractSearchParam(searchParams, ["z"]) ?? 1;
-
-    const canvasIdInt = Number.parseInt(canvasId ?? "");
-    if (canvasIdInt && canvases.some((c) => c.id === canvasIdInt)) {
-      setCanvas(canvasIdInt);
-    }
-
-    if (!(x && y && Number.parseInt(x) && Number.parseInt(y))) {
-      return;
-    }
-
-    setCurrentTab(TABS.LOOK);
-
-    const newCoords = {
-      x: Number(x) - canvas.startCoordinates[0],
-      y: Number(y) - canvas.startCoordinates[1],
-    };
-
-    // has an issue where the new canvas doesn't load fast enough for this to recognise the new canvas boundaries
-    if (newZoom && !Number.isNaN(Number(newZoom))) {
-      newZoom = Number(newZoom);
-      let newOffset = diffPoints(
-        {
-          x: canvas.width / 2,
-          y: canvas.height / 2,
-        },
-        newCoords,
-      );
-      const modifier = 1 + Math.log(newZoom) / newZoom;
-      newOffset = multiplyPoint(newOffset, modifier);
-      setMouseOffsetDirection(newOffset);
-      setTargetZoom(Number(newZoom));
-    }
-  }, [canvases, canvasListIsLoading, searchParams, setCoords, setCanvas]);
+  useCanvasSearchParams(setMouseOffsetDirection, setTargetZoom);
 
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
