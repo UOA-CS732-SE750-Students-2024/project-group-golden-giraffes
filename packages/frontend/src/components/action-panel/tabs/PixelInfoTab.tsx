@@ -96,18 +96,18 @@ export default function PixelInfoTab({
         : <p>No selected pixel</p>}
       </ActionPanelTabBody>
       <ScrollBlock>
-        {adjustedCoords && pixelHistory.length > 1 ?
+        {adjustedCoords && pixelHistory.length > 1 && (
           <ActionPanelTabBody>
             <div>
               <PixelHistoryPast history={pixelHistory} isLoading={isLoading} />
             </div>
           </ActionPanelTabBody>
-        : <></>}
+        )}
       </ScrollBlock>
       <ActionPanelTabBody>
         {adjustedCoords && (
           <Tooltip
-            title="Copied!"
+            title="Copied"
             placement={"top"}
             onClose={closeTooltip}
             open={tooltipIsOpen}
@@ -147,7 +147,7 @@ export default function PixelInfoTab({
             >
               {"Copy link to share pixel"}
               <CoordinateLabel>
-                {`(${adjustedCoords.x},\u00A0${adjustedCoords.y})`}
+                ({adjustedCoords.x},&nbsp;{adjustedCoords.y})
               </CoordinateLabel>
             </DynamicButton>
           </Tooltip>
