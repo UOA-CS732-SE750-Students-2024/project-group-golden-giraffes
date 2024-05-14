@@ -28,7 +28,7 @@ const TabBar = styled("ul")`
   border-radius: .5rem;
   display: grid;
   gap: .5rem;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   list-style-type: none;
 
 
@@ -92,10 +92,11 @@ export const Heading = styled("h2")`
   text-transform: uppercase;
 `;
 
-const TABS = {
-  LOOK: "Look",
-  PLACE: "Place",
-};
+enum TABS {
+  LOOK = "Look",
+  PLACE = "Place",
+  FRAMES = "Frames",
+}
 
 export default function ActionPanel() {
   const [currentTab, setCurrentTab] = useState(TABS.PLACE);
@@ -104,15 +105,14 @@ export default function ActionPanel() {
   const { color, setColor } = useSelectedColorContext();
   const { canvas } = useCanvasContext();
 
-  const onSwitchTab = (isTabLook: boolean) => {
+  const onSwitchTab = (newTab: TABS) => {
     // switching tabs
     // hiding colour from reticle if we are on look tab
-    if (isTabLook) {
-      setCurrentTab(TABS.LOOK);
+    setCurrentTab(newTab);
+    if (newTab === TABS.LOOK) {
       setTempColor(color);
       setColor(null);
     } else {
-      setCurrentTab(TABS.PLACE);
       setColor(tempColor);
     }
   };
@@ -122,9 +122,10 @@ export default function ActionPanel() {
       <TabBar>
         <Tab
           active={currentTab === TABS.PLACE}
-          onClick={() => onSwitchTab(false)}
+          onClick={() => onSwitchTab(TABS.PLACE)}
           onKeyUp={(event) => {
-            if (event.key === "Enter" || event.key === " ") onSwitchTab(false);
+            if (event.key === "Enter" || event.key === " ")
+              onSwitchTab(TABS.PLACE);
           }}
           tabIndex={0}
         >
@@ -132,13 +133,25 @@ export default function ActionPanel() {
         </Tab>
         <Tab
           active={currentTab === TABS.LOOK}
-          onClick={() => onSwitchTab(true)}
+          onClick={() => onSwitchTab(TABS.LOOK)}
           onKeyUp={(event) => {
-            if (event.key === "Enter" || event.key === " ") onSwitchTab(true);
+            if (event.key === "Enter" || event.key === " ")
+              onSwitchTab(TABS.LOOK);
           }}
           tabIndex={0}
         >
           Look
+        </Tab>
+        <Tab
+          active={currentTab === TABS.FRAMES}
+          onClick={() => onSwitchTab(TABS.FRAMES)}
+          onKeyUp={(event) => {
+            if (event.key === "Enter" || event.key === " ")
+              onSwitchTab(TABS.FRAMES);
+          }}
+          tabIndex={0}
+        >
+          Frames
         </Tab>
       </TabBar>
       <PlacePixelTab
