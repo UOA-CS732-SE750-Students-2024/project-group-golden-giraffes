@@ -4,9 +4,6 @@ import { Frame } from "@blurple-canvas-web/types";
 
 // biome-ignore lint/suspicious/noExplicitAny: extracting from below
 function frameFromDb(frame: any): Frame {
-  console.log(frame);
-  console.log(frame.owner_id);
-  console.log(frame.owner_id.toString());
   return {
     id: frame.id,
     canvas_id: frame.canvas_id,
