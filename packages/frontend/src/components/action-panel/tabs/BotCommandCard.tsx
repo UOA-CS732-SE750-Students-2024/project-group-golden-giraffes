@@ -46,14 +46,7 @@ const CopyButton = styled("button")<CopyButtonProps>`
   }
 `;
 
-export default function BotCommandCard() {
-  const { adjustedCoords: coordinates } = useCanvasContext();
-  const { color } = useSelectedColorContext();
-
-  if (!(coordinates && color)) return null;
-  const { x, y } = coordinates;
-  const command = `/place x:${x} y:${y} color:${color.code}`;
-
+export default function BotCommandCard({ command }: { command: string }) {
   return (
     <Wrapper>
       <Code>{command}</Code>
@@ -66,4 +59,15 @@ export default function BotCommandCard() {
       </CopyButton>
     </Wrapper>
   );
+}
+
+export function PlaceBotCommandCard() {
+  const { adjustedCoords: coordinates } = useCanvasContext();
+  const { color } = useSelectedColorContext();
+
+  if (!(coordinates && color)) return null;
+  const { x, y } = coordinates;
+  const command = `/place x:${x} y:${y} color:${color.code}`;
+
+  return <BotCommandCard command={command} />;
 }

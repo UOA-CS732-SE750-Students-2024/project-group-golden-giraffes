@@ -13,7 +13,7 @@ import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
 import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
-import BotCommandCard from "./BotCommandCard";
+import BotCommandCard, { PlaceBotCommandCard } from "./BotCommandCard";
 import ColorInfoCard from "./SelectedColorInfoCard";
 
 const ColorPicker = styled("div")`
@@ -134,7 +134,7 @@ export default function PlacePixelTab({
             Join {selectedColor?.guildName ?? "server"}
           </DynamicAnchorButton>
         )}
-        {!readOnly && <BotCommandCard />}
+        {!readOnly && <PlaceBotCommandCard />}
       </ActionPanelTabBody>
     </PlacePixelTabBlock>
   );

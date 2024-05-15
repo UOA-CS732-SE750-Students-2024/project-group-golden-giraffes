@@ -4,7 +4,13 @@ import { decodeUserGuildsBase64 } from "@/util";
 import { Frame } from "@blurple-canvas-web/types";
 import { styled } from "@mui/material";
 import { Heading } from "../ActionPanel";
-import { ActionPanelTabBody, TabBlock } from "./ActionPanelTabBody";
+import {
+  ActionPanelTabBody,
+  ScrollBlock,
+  TabBlock,
+} from "./ActionPanelTabBody";
+import BotCommandCard from "./BotCommandCard";
+import FrameInfoCard from "./SelectedFrameInfoCard";
 
 const FramesTabBlock = styled(TabBlock)`
   grid-template-rows: 1fr auto;
@@ -52,28 +58,35 @@ export default function FramesTab({ active, canvasId }: FramesTabProps) {
 
     return (
       <FramesTabBlock active={active}>
-        <ActionPanelTabBody>
-          <div>
-            <Heading>Your Frames</Heading>
-            {userFrames.map((frame) => (
-              <div key={frame.id}>
-                <p>{frame.name}</p>
-              </div>
-            ))}
+        <ScrollBlock>
+          <ActionPanelTabBody>
+            <div>
+              <Heading>Your Frames</Heading>
+              {userFrames.map((frame) => (
+                <div key={frame.id}>
+                  <p>{frame.name}</p>
+                </div>
+              ))}
 
-            {sortedGuildFrameMap.map(([ownerId, frames]) => (
-              <div key={ownerId}>
-                <Heading>{frames[0]?.ownerGuild?.name}</Heading>
-                {frames
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((frame) => (
-                    <div key={frame.id}>
-                      <p>{frame.name}</p>
-                    </div>
-                  ))}
-              </div>
-            ))}
-          </div>
+              {sortedGuildFrameMap.map(([ownerId, frames]) => (
+                <div key={ownerId}>
+                  <Heading>{frames[0]?.ownerGuild?.name}</Heading>
+                  {frames
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((frame) => (
+                      <div key={frame.id}>
+                        <p>{frame.name}</p>
+                      </div>
+                    ))}
+                </div>
+              ))}
+            </div>
+          </ActionPanelTabBody>
+        </ScrollBlock>
+        <ActionPanelTabBody>
+          <FrameInfoCard frame={userFrames[0] ?? null} />
+          {/* need to add select */}
+          <BotCommandCard command={"/frame create"} />
         </ActionPanelTabBody>
       </FramesTabBlock>
     );
