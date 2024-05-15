@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { PaletteColor } from "@blurple-canvas-web/types";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
+import FramesTab from "./tabs/FramesTab";
 
 const Wrapper = styled("div")`
   --padding-width: 1rem;
@@ -159,6 +160,7 @@ export default function ActionPanel() {
         eventId={canvas.eventId}
       />
       <PixelInfoTab active={currentTab === TABS.LOOK} canvasId={canvas.id} />
+      <FramesTab active={currentTab === TABS.FRAMES} canvasId={canvas.id} />
     </Wrapper>
   );
 }

@@ -6,10 +6,10 @@ import { Frame } from "@blurple-canvas-web/types";
 function frameFromDb(frame: any): Frame {
   return {
     id: frame.id,
-    canvas_id: frame.canvas_id,
-    owner_id: frame.owner_id.toString(),
-    is_guild_owned: frame.is_guild_owned,
-    owner_user:
+    canvasId: frame.canvas_id,
+    ownerId: frame.owner_id.toString(),
+    isGuildOwned: frame.is_guild_owned,
+    ownerUser:
       frame.owner_user ?
         {
           id: frame.owner_user?.user_id.toString(),
@@ -17,7 +17,7 @@ function frameFromDb(frame: any): Frame {
           profilePictureUrl: frame.owner_user?.profile_picture_url,
         }
       : undefined,
-    owner_guild:
+    ownerGuild:
       frame.owner_guild ?
         {
           guild_id: frame.owner_guild?.guild_id.toString(),

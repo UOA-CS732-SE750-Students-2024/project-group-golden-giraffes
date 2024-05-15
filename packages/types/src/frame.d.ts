@@ -3,11 +3,11 @@ import { DiscordUserProfile } from "./discordUserProfile";
 
 export interface Frame {
   id: string;
-  canvas_id: number;
-  owner_id: string;
-  is_guild_owned: boolean;
-  owner_user?: DiscordUserProfile;
-  owner_guild?: DiscordGuildRecord;
+  canvasId: number;
+  ownerId: string;
+  isGuildOwned: boolean;
+  ownerUser?: DiscordUserProfile;
+  ownerGuild?: DiscordGuildRecord;
   name: string;
   x_0: number;
   y_0: number;

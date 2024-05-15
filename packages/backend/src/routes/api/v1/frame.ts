@@ -31,7 +31,7 @@ frameRouter.get("/user/:userId/:canvasId", async (req, res) => {
 
 frameRouter.get("/guilds/:canvasId", async (req, res) => {
   try {
-    const guildIds: string[] = (req.body.guildIds as string[]) ?? [];
+    const guildIds: string[] = (req.query.guildIds as string[]) ?? [];
     const frame = await getFramesByGuildIds(
       guildIds,
       Number.parseInt(req.params.canvasId),

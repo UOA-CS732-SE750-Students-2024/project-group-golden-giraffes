@@ -17,11 +17,12 @@ export function useFrame({
   guildIds,
 }: {
   frameId?: Frame["id"];
-  canvasId?: Frame["canvas_id"];
+  canvasId?: Frame["canvasId"];
   userId?: DiscordUserProfile["id"];
   guildIds?: DiscordGuildRecord["guild_id"][];
 }) {
   const getFrame = async (): Promise<Frame[]> => {
+    console.log(frameId, canvasId, userId, guildIds);
     if (frameId) {
       if (canvasId || userId || guildIds) {
         throw new Error(
@@ -54,7 +55,12 @@ export function useFrame({
 
     if (guildIds) {
       const response = await axios.get<FrameRequest.ResBody>(
-        `${config.apiUrl}/api/v1/frame/guild/${canvasId}`,
+        `${config.apiUrl}/api/v1/frame/guilds/${canvasId}`,
+        {
+          params: {
+            guildIds: guildIds,
+          },
+        },
       );
       return response.data;
     }
@@ -63,7 +69,7 @@ export function useFrame({
   };
 
   return useQuery({
-    queryKey: ["frame", frameId],
+    queryKey: ["frame", frameId, canvasId, userId, guildIds],
     queryFn: getFrame,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
