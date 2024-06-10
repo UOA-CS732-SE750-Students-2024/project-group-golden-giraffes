@@ -27,6 +27,7 @@ const SwatchSkeleton = styled(Skeleton)`
 const Username = styled("p")`
   font-size: 1.125rem;
   letter-spacing: 0.005em;
+  word-break: break-word;
 `;
 
 const ColorName = styled("p")`
