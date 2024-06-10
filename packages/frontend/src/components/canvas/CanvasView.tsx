@@ -616,7 +616,7 @@ export default function CanvasView() {
               style={{
                 width: RETICLE_SIZE,
                 height: RETICLE_SIZE,
-                // These min sizes are to fix: https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues/240
+                // These min sizes prevent the reticle being squished which causes it to be misalignment.
                 minWidth: RETICLE_SIZE,
                 minHeight: RETICLE_SIZE,
               }}
