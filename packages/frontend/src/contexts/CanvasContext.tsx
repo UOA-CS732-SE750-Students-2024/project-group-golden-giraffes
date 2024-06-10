@@ -8,6 +8,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -21,12 +22,23 @@ import {
 } from "@blurple-canvas-web/types";
 import { useSelectedColorContext } from "./SelectedColorContext";
 
+export enum TABS {
+  LOOK = "Look",
+  PLACE = "Place",
+}
+
 interface CanvasContextType {
-  canvas: CanvasInfo;
-  coords: Point | null;
   adjustedCoords: Point | null;
+  canvas: CanvasInfo;
+  containerRef: React.RefObject<HTMLDivElement>;
+  coords: Point | null;
+  currentTab: string;
+  defaultCanvas: CanvasInfo;
+  zoom: number;
   setCanvas: (canvasId: CanvasInfo["id"]) => void;
   setCoords: Dispatch<SetStateAction<Point | null>>;
+  setCurrentTab: Dispatch<SetStateAction<TABS>>;
+  setZoom: Dispatch<SetStateAction<number>>;
 }
 
 export const CanvasContext = createContext<CanvasContextType>({
@@ -40,10 +52,25 @@ export const CanvasContext = createContext<CanvasContextType>({
     eventId: null,
     webPlacingEnabled: false,
   },
-  coords: null,
   adjustedCoords: null,
-  setCoords: () => {},
+  containerRef: { current: null },
+  coords: null,
+  currentTab: TABS.PLACE,
+  defaultCanvas: {
+    id: -1,
+    name: "",
+    width: 0,
+    height: 0,
+    startCoordinates: [0, 0],
+    isLocked: false,
+    eventId: null,
+    webPlacingEnabled: false,
+  },
+  zoom: 1,
   setCanvas: () => {},
+  setCoords: () => {},
+  setCurrentTab: () => {},
+  setZoom: () => {},
 });
 
 interface CanvasProviderProps {
@@ -58,6 +85,9 @@ export const CanvasProvider = ({
   const [activeCanvas, setActiveCanvas] = useState(mainCanvasInfo);
   const [selectedCoords, setSelectedCoords] =
     useState<CanvasContextType["coords"]>(null);
+  const [currentTab, setCurrentTab] = useState(TABS.PLACE);
+  const [zoom, setZoom] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const adjustedCoords = useMemo(() => {
     if (selectedCoords) {
@@ -95,11 +125,17 @@ export const CanvasProvider = ({
   return (
     <CanvasContext.Provider
       value={{
-        coords: selectedCoords,
         adjustedCoords,
         canvas: activeCanvas,
-        setCoords: setSelectedCoords,
+        containerRef: containerRef,
+        coords: selectedCoords,
+        currentTab: currentTab,
+        defaultCanvas: mainCanvasInfo,
+        zoom: zoom,
         setCanvas: setCanvasById,
+        setCoords: setSelectedCoords,
+        setCurrentTab: setCurrentTab,
+        setZoom: setZoom,
       }}
     >
       {children}
