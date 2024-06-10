@@ -1,16 +1,17 @@
+import { CircularProgress, styled } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+import { Cooldown } from "@blurple-canvas-web/types";
+
 import config from "@/config";
 import {
   useAuthContext,
   useCanvasContext,
   useSelectedColorContext,
 } from "@/contexts";
-import { CircularProgress, styled } from "@mui/material";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import DynamicButton from "./DynamicButton";
-
-import { Cooldown } from "@blurple-canvas-web/types";
 
 export const CoordinateLabel = styled("span")`
   opacity: 0.6;
@@ -20,8 +21,8 @@ export default function PlacePixelButton() {
   const { canvas, coords, adjustedCoords, setCoords } = useCanvasContext();
   const { color, setColor } = useSelectedColorContext();
   const isSelected = adjustedCoords && color;
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [isPlacing, setIsPlacing] = useState<boolean>(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isPlacing, setIsPlacing] = useState(false);
   const { user, signOut } = useAuthContext();
 
   // cooldown timer
@@ -77,7 +78,7 @@ export default function PlacePixelButton() {
   // Both these buttons never show as the logic is hoisted at the level above this
   // My issues with having it above is that the user has no indication of why they can't place pixels
   if (canvas.isLocked) {
-    return <Button disabled>Canvas can't be modified</Button>;
+    return <Button disabled>Canvas can’t be modified</Button>;
   }
   if (!user) {
     return <Button disabled>Sign in to place pixels</Button>;
@@ -86,7 +87,7 @@ export default function PlacePixelButton() {
   if (isPlacing) {
     return (
       <Button variant="contained" disabled>
-        {"Placing Pixel"}
+        Placing pixel
         <CircularProgress
           color="inherit"
           // Can't get sizing to work dynamically
@@ -117,14 +118,16 @@ export default function PlacePixelButton() {
     return <Button disabled>Select a pixel</Button>;
   }
 
+  const { x, y } = adjustedCoords;
+
   return (
     <DynamicButton color={color} onAction={handlePixelRequest}>
       {isSelected ? "Place pixel" : "Select a pixel"}
-      <CoordinateLabel>
-        {isSelected ?
-          `(${adjustedCoords.x},\u00A0${adjustedCoords.y})`
-        : undefined}
-      </CoordinateLabel>
+      {isSelected && (
+        <CoordinateLabel>
+          ({x},&nbsp;{y})
+        </CoordinateLabel>
+      )}
     </DynamicButton>
   );
 }

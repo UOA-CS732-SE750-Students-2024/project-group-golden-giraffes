@@ -1,12 +1,12 @@
 import cors from "cors";
 import express from "express";
 
-import { prisma } from "@/client";
 import config from "@/config";
 import { apiRouter } from "@/routes";
 import "@/utils"; // Make BigInt JSON serializable
 import { createServer } from "node:http";
 import { initializeAuth } from "@/middleware/auth";
+import { initializeCache } from "@/services/canvasService";
 import { Server } from "socket.io";
 import { SocketHandler } from "./SockerHandler";
 
@@ -28,6 +28,8 @@ export function createApp(): App {
 
   initializeAuth(app);
   app.use(apiRouter);
+
+  initializeCache();
 
   const server = createServer(app);
   const io = new Server(server, {

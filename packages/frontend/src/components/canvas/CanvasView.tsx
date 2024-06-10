@@ -17,6 +17,7 @@ import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
+import { Button } from "../button";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
@@ -76,6 +77,40 @@ const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
   pointer-events: none;
 `;
 
+const ReticleContainer = styled("div")`
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+`;
+
+const Reticle = styled("img")`
+  image-rendering: pixelated;
+`;
+
+const PreviewPixel = styled("div")`
+  position: absolute;
+`;
+
+const InviteButton = styled(Button)`
+  background-color: oklch(var(--discord-legacy-dark-but-not-black-oklch) / 80%);
+  border-radius: 0.5rem 0.5rem 1rem 0.5rem;
+  bottom: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 1.2rem;
+  font-variation-settings: "wdth" 125;
+  font-weight: 900;
+  padding: 0.1rem 1rem;
+  position: absolute;
+  right: 0.5rem;
+  text-decoration: none;
+  z-index: 1;
+
+  :hover {
+    background-color: var(--discord-blurple);
+  }
+`;
+
 /**
  * Calculate the default scale to use for the canvas. This tries to maximise the size of the canvas
  * without it overflowing the screen.
@@ -98,6 +133,21 @@ function getDefaultZoom(
 const SCALE_FACTOR = 0.2;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
+
+// This is to avoid weird business with the reticle not sizing properly
+const RETICLE_ORIGINAL_SCALE = 10;
+const RETICLE_ORIGINAL_SIZE = 14;
+const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
+const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
+const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
+
+function calculateReticleOffset(coords: Point | null): Point {
+  if (!coords) return { x: 0, y: 0 };
+  return {
+    x: (coords.x - (RETICLE_SIZE - 1) / 2) / RETICLE_SCALE,
+    y: (coords.y - (RETICLE_SIZE - 1) / 2) / RETICLE_SCALE,
+  };
+}
 
 export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
@@ -138,12 +188,12 @@ export default function CanvasView() {
 
     context.drawImage(image, 0, 0);
 
-    if (containerRef.current) {
-      setZoom(getDefaultZoom(containerRef.current, image));
-    } else {
-      setZoom(1);
-    }
+    const initialZoom =
+      containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
+    setZoom(initialZoom);
+    setTargetZoom(initialZoom);
+    setVelocity(ORIGIN);
     setOffset(ORIGIN);
     setImageDimension({ width: image.width, height: image.height });
     setIsLoading(false);
@@ -171,10 +221,6 @@ export default function CanvasView() {
 
     // If the canvas is locked, we don't need to listen for updates.
     if (canvas.isLocked) {
-      if (socket.connected) {
-        onDisconnect();
-        socket.disconnect();
-      }
       return;
     }
 
@@ -189,8 +235,17 @@ export default function CanvasView() {
       );
     };
 
-    const onPixelPlaced = (payload: PlacePixelSocket.Payload) => {
-      console.debug("[Live Updating]: Received pixel update");
+    const onPixelPlaced = (
+      payload: PlacePixelSocket.Payload,
+      pixelTimestamp: string,
+    ) => {
+      console.debug("[Live Updating]: Received pixel update", payload);
+
+      // If we disconnect and reconnect this tells the server we've received pixels up to this point
+      socket.auth = {
+        ...socket.auth,
+        pixelTimestamp,
+      };
 
       if (!canvasRef.current) return;
 
@@ -212,6 +267,7 @@ export default function CanvasView() {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off(pixelPlaceEvent, onPixelPlaced);
+      socket.disconnect();
     };
   }, [canvas.id, canvas.isLocked]);
 
@@ -491,23 +547,29 @@ export default function CanvasView() {
   );
 
   useEffect(() => {
-    canvasRef.current?.addEventListener("click", handleCanvasClick);
+    canvasRef.current?.addEventListener("mousedown", handleCanvasClick);
 
     return () =>
-      canvasRef.current?.removeEventListener("click", handleCanvasClick);
+      canvasRef.current?.removeEventListener("mousedown", handleCanvasClick);
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
     if (!imageDimensions || !coords) return;
 
-    updateCanvasPreviewPixel(previewCanvasRef, coords, color);
+    updateCanvasPreviewPixel(
+      previewCanvasRef,
+      coords,
+      clamp(-Math.log((zoom * 200) / imageDimensions.width) + 1, 0, 1),
+    );
 
     console.debug(`Drawing pixel at (${coords.x}, ${coords.y})`);
-  }, [imageDimensions, coords, color]);
+  }, [imageDimensions, coords, zoom]);
 
   useEffect(() => {
     handleDrawingSelectedPixel();
   }, [handleDrawingSelectedPixel]);
+
+  const reticleOffset = calculateReticleOffset(coords);
 
   return (
     <>
@@ -516,6 +578,11 @@ export default function CanvasView() {
         onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
+        {config.discordServerInvite && (
+          <a href={config.discordServerInvite} target="_blank" rel="noreferrer">
+            <InviteButton>Project Blurple</InviteButton>
+          </a>
+        )}
         <div
           id="canvas-pan-and-zoom"
           style={{
@@ -523,6 +590,38 @@ export default function CanvasView() {
             scale: zoom,
           }}
         >
+          <ReticleContainer
+            style={{
+              scale: RETICLE_SCALE,
+              ...(coords && {
+                transform: `translate(${reticleOffset.x}px, ${reticleOffset.y}px)`,
+              }),
+            }}
+          >
+            {color && (
+              <PreviewPixel
+                style={{
+                  width: PREVIEW_PIXEL_SIZE,
+                  height: PREVIEW_PIXEL_SIZE,
+                  top: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
+                  left: (RETICLE_SIZE - PREVIEW_PIXEL_SIZE) / 2,
+                  backgroundColor: `rgba(${color?.rgba.join()})`,
+                }}
+              />
+            )}
+            <Reticle
+              src="./images/reticle.png"
+              alt="Reticle"
+              className="reticle"
+              style={{
+                width: RETICLE_SIZE,
+                height: RETICLE_SIZE,
+                // These min sizes prevent the reticle being squished which causes it to be misalignment.
+                minWidth: RETICLE_SIZE,
+                minHeight: RETICLE_SIZE,
+              }}
+            />
+          </ReticleContainer>
           <PreviewCanvas
             isLoading={isLoading}
             ref={previewCanvasRef}

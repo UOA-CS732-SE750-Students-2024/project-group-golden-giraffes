@@ -3,7 +3,8 @@
 import Avatar from "@/components/Avatar";
 import { useCanvasContext } from "@/contexts";
 import { useLeaderboard } from "@/hooks/queries/useLeaderboard";
-import { styled } from "@mui/material";
+import { LeaderboardEntry } from "@blurple-canvas-web/types";
+import { Skeleton, styled } from "@mui/material";
 
 const Wrapper = styled("div")`
   display: flex;
@@ -53,24 +54,71 @@ const PixelCountCell = styled("td")`
 
 const PixelCountCellContents = styled("div")`
   display: grid;
+  place-items: center;
 `;
 
 const PixelCount = styled("span")`
-  font-weight: 900;
   font-stretch: 125%;
+  font-weight: 900;
 `;
 
 const PixelCountLabel = styled("span")`
+  color: oklch(var(--discord-white-oklch) / 55%);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: oklch(var(--discord-white-oklch) / 55%);
 `;
+
+const NoContentsMessage = styled("p")`
+  color: oklch(var(--discord-white-oklch) / 55%);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+`;
+
+function leaderboardRecordToTableRow(user?: LeaderboardEntry): JSX.Element {
+  const { userId, rank, profilePictureUrl, username, totalPixels } = user ?? {};
+  return (
+    <tr key={userId}>
+      <RankCell>{rank}</RankCell>
+      <UserCell>
+        {userId && profilePictureUrl ?
+          <Avatar
+            username={username ?? userId}
+            profilePictureUrl={profilePictureUrl}
+            size={60}
+          />
+        : <Skeleton variant="circular" width={60} height={60} />}
+        <Username>
+          {userId ?
+            username ?? userId
+          : <Skeleton variant="rounded" width={260} />}
+        </Username>
+      </UserCell>
+      <PixelCountCell>
+        <PixelCountCellContents>
+          <PixelCount>
+            {totalPixels ?
+              totalPixels.toLocaleString()
+            : <Skeleton width={90} />}
+          </PixelCount>
+          <PixelCountLabel>
+            {totalPixels ?
+              <>pixels placed</>
+            : <Skeleton width={90} />}
+          </PixelCountLabel>
+        </PixelCountCellContents>
+      </PixelCountCell>
+    </tr>
+  );
+}
 
 export default function Leaderboard() {
   const { canvas } = useCanvasContext();
-  const { data: leaderboard = [] } = useLeaderboard(canvas.id);
+  const { data: leaderboard = [], isLoading: leaderboardIsLoading } =
+    useLeaderboard(canvas.id);
 
   return (
     <Wrapper>
@@ -87,29 +135,11 @@ export default function Leaderboard() {
           </tr>
         </thead>
         <tbody>
-          {leaderboard.map((user) => {
-            const { userId, rank, profilePictureUrl, username, totalPixels } =
-              user;
-            return (
-              <tr key={userId}>
-                <RankCell>{rank}</RankCell>
-                <UserCell>
-                  <Avatar
-                    username={username ?? userId}
-                    profilePictureUrl={profilePictureUrl}
-                    size={60}
-                  />
-                  <Username>{username ?? userId}</Username>
-                </UserCell>
-                <PixelCountCell>
-                  <PixelCountCellContents>
-                    <PixelCount>{totalPixels.toLocaleString()}</PixelCount>
-                    <PixelCountLabel>pixels placed</PixelCountLabel>
-                  </PixelCountCellContents>
-                </PixelCountCell>
-              </tr>
-            );
-          })}
+          {leaderboardIsLoading ?
+            Array.from({ length: 10 }, () => leaderboardRecordToTableRow())
+          : leaderboard.length > 0 ?
+            leaderboard.map(leaderboardRecordToTableRow)
+          : <NoContentsMessage>No leaderboard found</NoContentsMessage>}
         </tbody>
       </Table>
     </Wrapper>

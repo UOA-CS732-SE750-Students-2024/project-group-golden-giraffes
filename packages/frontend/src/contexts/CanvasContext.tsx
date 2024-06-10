@@ -13,6 +13,7 @@ import {
 
 import { addPoints, tupleToPoint } from "@/components/canvas/point";
 import config from "@/config";
+import { socket } from "@/socket";
 import {
   CanvasInfo,
   CanvasInfoRequest,
@@ -79,6 +80,14 @@ export const CanvasProvider = ({
       setActiveCanvas(response.data);
       setSelectedColor(null);
       setSelectedCoords(null);
+
+      // When we load an image, we want to make sure any pixels placed since now get included in the
+      // response. This is because in the time it takes for the image to load some pixels may have
+      // already been placed.
+      socket.auth = {
+        canvasId,
+        pixelTimestamp: new Date().toISOString(),
+      };
     },
     [setSelectedColor],
   );

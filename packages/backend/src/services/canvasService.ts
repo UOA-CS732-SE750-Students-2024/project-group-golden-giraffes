@@ -39,6 +39,27 @@ export type CachedCanvas = LockedCanvas | UnlockedCanvas;
  */
 const CANVAS_CACHE: Record<number, CachedCanvas> = {};
 
+export function initializeCache(): void {
+  // look through the files in the canvas directory and build the locked cache object from them
+  for (const filename of fs.readdirSync(config.paths.canvases)) {
+    const match = filename.match(/^blurple-canvas__(\d+)__locked.png$/);
+
+    if (!match) {
+      return;
+    }
+
+    const canvasId = Number.parseInt(match[1], 10);
+    const canvasPath = `${config.paths.canvases}/${filename}`;
+
+    console.log(`Loaded cached canvas ${canvasPath}`);
+
+    CANVAS_CACHE[canvasId] = {
+      isLocked: true,
+      canvasPath: `${config.paths.canvases}/${filename}`,
+    };
+  }
+}
+
 /**
  * Generates a filename for a canvas image. If the canvas is not locked (And therefore, can change)
  * the filename will include the current timestamp.
