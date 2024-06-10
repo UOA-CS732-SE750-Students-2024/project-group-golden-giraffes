@@ -616,6 +616,9 @@ export default function CanvasView() {
               style={{
                 width: RETICLE_SIZE,
                 height: RETICLE_SIZE,
+                // These min sizes prevent the reticle being squished which causes it to be misalignment.
+                minWidth: RETICLE_SIZE,
+                minHeight: RETICLE_SIZE,
               }}
             />
           </ReticleContainer>
