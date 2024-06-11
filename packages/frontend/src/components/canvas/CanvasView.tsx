@@ -17,6 +17,7 @@ import { useCanvasContext, useSelectedColorContext } from "@/contexts";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
+import { motion } from "framer-motion";
 import { Button } from "../button";
 import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
@@ -170,10 +171,6 @@ export default function CanvasView() {
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
-  const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
-  const [controlledPan, setControlledPan] = useState(false);
-  const [targetZoom, setTargetZoom] = useState(1);
-  const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     if (!canvasRef.current) return;
@@ -192,8 +189,6 @@ export default function CanvasView() {
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
     setZoom(initialZoom);
-    setTargetZoom(initialZoom);
-    setVelocity(ORIGIN);
     setOffset(ORIGIN);
     setImageDimension({ width: image.width, height: image.height });
     setIsLoading(false);
@@ -293,42 +288,16 @@ export default function CanvasView() {
 
       // The mouse position's origin is in the top left of the canvas. The offset's origin is the
       // center of the canvas so we do this to convert between the two.
-      setMouseOffsetDirection(
-        diffPoints(
-          {
-            x: imageDimensions.width / 2,
-            y: imageDimensions.height / 2,
-          },
-          mousePositionOnCanvas,
-        ),
+      const mouseOffsetDirection = diffPoints(
+        {
+          x: imageDimensions.width / 2,
+          y: imageDimensions.height / 2,
+        },
+        mousePositionOnCanvas,
       );
 
       const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
-      const newZoom = clamp(targetZoom * scale, MIN_ZOOM, MAX_ZOOM);
-
-      setTargetZoom(newZoom);
-    };
-
-    canvasRef.current?.addEventListener("wheel", handleWheel, {
-      passive: false,
-    });
-
-    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
-  }, [imageDimensions, targetZoom]);
-
-  useEffect(() => {
-    if (zoom === targetZoom) return;
-
-    const glideZoom = () => {
-      const diff = (targetZoom - zoom) / targetZoom;
-      const scale = Math.exp(
-        Math.sign(diff) * SCALE_FACTOR * Math.abs(diff) * 2,
-      );
-      const newZoom = clamp(
-        zoom * scale,
-        diff > 0 ? MIN_ZOOM : targetZoom,
-        diff < 0 ? MAX_ZOOM : targetZoom,
-      );
+      const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
 
       const effectiveScale = newZoom / zoom;
 
@@ -353,10 +322,54 @@ export default function CanvasView() {
       setZoom(newZoom);
     };
 
-    const interval = setInterval(glideZoom, 8);
+    canvasRef.current?.addEventListener("wheel", handleWheel, {
+      passive: false,
+    });
 
-    return () => clearInterval(interval);
-  }, [zoom, targetZoom, mouseOffsetDirection]);
+    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
+  }, [imageDimensions, zoom]);
+
+  // useEffect(() => {
+  //   if (zoom === targetZoom) return;
+
+  //   const glideZoom = () => {
+  //     const diff = (targetZoom - zoom) / targetZoom;
+  //     const scale = Math.exp(
+  //       Math.sign(diff) * SCALE_FACTOR * Math.abs(diff) * 2,
+  //     );
+  //     const newZoom = clamp(
+  //       zoom * scale,
+  //       diff > 0 ? MIN_ZOOM : targetZoom,
+  //       diff < 0 ? MAX_ZOOM : targetZoom,
+  //     );
+
+  //     const effectiveScale = newZoom / zoom;
+
+  //     setOffset((prevOffset) => {
+  //       // The direction we need to shift the offset to keep the pixel in the same place
+  //       const offsetDif = diffPoints(mouseOffsetDirection, prevOffset);
+
+  //       // The amount we shift is scaled based on the amount we've zoomed in.
+  //       const scaledOffsetDiff = multiplyPoint(
+  //         offsetDif,
+  //         // If the scale is 1, we've not zoomed in at all and so this multiplier becomes 0
+  //         // (causing no offset). If the scale is greater than 1, we're zooming in. A larger scale
+  //         // corresponds to a larger step (as 1/effectiveScale approaches 0). If the scale is less
+  //         // than 1, we're zooming out. In this case, 1 / effective scale becomes greater than 1,
+  //         // causing a negative offset. Thanks Henry for figuring out this equation 🙏.
+  //         1 - 1 / effectiveScale,
+  //       );
+
+  //       return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
+  //     });
+
+  //     setZoom(newZoom);
+  //   };
+
+  //   const interval = setInterval(glideZoom, 8);
+
+  //   return () => clearInterval(interval);
+  // }, [zoom, targetZoom, mouseOffsetDirection]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -397,7 +410,6 @@ export default function CanvasView() {
   const handleMouseMove = useCallback(
     (event: MouseEvent): void => {
       const diff = { x: event.movementX, y: event.movementY };
-      setVelocity({ x: diff.x, y: diff.y });
       updateOffset(diff);
     },
     [updateOffset],
@@ -408,8 +420,6 @@ export default function CanvasView() {
    */
   const handleMouseUp = useCallback((): void => {
     if (!containerRef.current) return;
-
-    setControlledPan(false);
 
     containerRef.current.removeEventListener("mousemove", handleMouseMove);
     containerRef.current.removeEventListener("mouseup", handleMouseUp);
@@ -422,8 +432,6 @@ export default function CanvasView() {
    */
   const handleStartMousePan = useCallback((): void => {
     if (!containerRef.current) return;
-
-    setControlledPan(true);
 
     containerRef.current.addEventListener("mousemove", handleMouseMove);
     containerRef.current.addEventListener("mouseup", handleMouseUp);
@@ -449,8 +457,6 @@ export default function CanvasView() {
         x: touch.pageX - startTouch.pageX,
         y: touch.pageY - startTouch.pageY,
       };
-
-      setVelocity(touchDiff);
 
       updateOffset({ x: touchDiff.x, y: touchDiff.y });
       startTouchesRef.current = [touch];
@@ -488,25 +494,6 @@ export default function CanvasView() {
     },
     [handleTouchMove, handleTouchEnd],
   );
-
-  useEffect(() => {
-    const decayVelocity = () => {
-      if (velocity.x === 0 && velocity.y === 0) return;
-      if (controlledPan) return;
-      updateOffset(velocity);
-      const decay = 0.75;
-      setVelocity((prevVelocity) => ({
-        x: prevVelocity.x * decay,
-        y: prevVelocity.y * decay,
-      }));
-    };
-
-    const interval = setInterval(decayVelocity, 16); // Run every 16 milliseconds (60 FPS)
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [velocity, controlledPan, updateOffset]);
 
   /***********************************
    * SELECTING PIXEL FUNCTIONALITY.  *
@@ -575,7 +562,7 @@ export default function CanvasView() {
     <>
       <CanvasContainer
         ref={containerRef}
-        onMouseDown={handleStartMousePan}
+        // onMouseDown={handleStartMousePan}
         onTouchStart={handleStartTouchPan}
       >
         {config.discordServerInvite && (
@@ -583,11 +570,13 @@ export default function CanvasView() {
             <InviteButton>Project Blurple</InviteButton>
           </a>
         )}
-        <div
+        <motion.div
           id="canvas-pan-and-zoom"
-          style={{
-            transform: `translate(${offset.x}px, ${offset.y}px)`,
-            scale: zoom,
+          drag
+          animate={{ scale: zoom }}
+          dragTransition={{
+            power: 0.05,
+            timeConstant: 150,
           }}
         >
           <ReticleContainer
@@ -629,7 +618,7 @@ export default function CanvasView() {
             height={imageDimensions?.height}
           />
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} />
-        </div>
+        </motion.div>
         {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
       <img
