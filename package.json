@@ -30,7 +30,7 @@
     "format:fix": "pnpm --recursive format:fix",
     "check": "pnpm --recursive check",
     "check:fix": "pnpm --recursive check:fix",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "clean": "pnpm --recursive clean && rm -rf node_modules/"
   },
   "lint-staged": {
