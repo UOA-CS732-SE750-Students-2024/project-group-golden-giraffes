@@ -93,7 +93,7 @@ function leaderboardRecordToTableRow(user?: LeaderboardEntry): JSX.Element {
         : <Skeleton variant="circular" width={60} height={60} />}
         <Username>
           {userId ?
-            username ?? userId
+            (username ?? userId)
           : <Skeleton variant="rounded" width={260} />}
         </Username>
       </UserCell>
