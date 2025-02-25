@@ -21,10 +21,8 @@ const Nav = styled("nav")`
     color: var(--discord-white);
     padding: 0.5rem 1rem;
     text-decoration: none;
-    transition:
-      background-color var(--transition-duration-fast) ease,
-      opacity var(--transition-duration-fast) ease,
-      outline-width var(--transition-duration-fast) ease;
+    transition: var(--transition-duration-fast) ease;
+    transition-property: background-color opacity outline-width;
 
     :hover {
       opacity: 55%;
