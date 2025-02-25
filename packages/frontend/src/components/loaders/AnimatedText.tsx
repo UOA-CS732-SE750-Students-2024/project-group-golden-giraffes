@@ -1,6 +1,6 @@
 import { Typography, styled } from "@mui/material";
 
-import { startsWith$ } from "@/util";
+import { doesNotStartWith$ } from "@/util";
 
 const LoadingText = styled(Typography)`
   font-size: 11vw;
@@ -16,7 +16,7 @@ interface AnimatedCharacterProps {
 }
 
 const AnimatedCharacter = styled("span", {
-  shouldForwardProp: startsWith$,
+  shouldForwardProp: doesNotStartWith$,
 })<AnimatedCharacterProps>((props) => ({
   animation: `breathe ${(props.$charCount + 1) * 400}ms infinite both`,
   animationDelay: `${(props.$index + 1) * 400}ms`,

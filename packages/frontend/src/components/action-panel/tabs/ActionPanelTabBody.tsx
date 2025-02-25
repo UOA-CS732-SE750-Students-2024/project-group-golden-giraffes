@@ -1,6 +1,6 @@
 import { styled } from "@mui/material";
 
-import { startsWith$ } from "@/util";
+import { doesNotStartWith$ } from "@/util";
 
 export const ActionPanelTabBody = styled("div")`
   display: block flex;
@@ -34,7 +34,7 @@ export const Block = styled("div")`
 `;
 
 export const TabBlock = styled(Block, {
-  shouldForwardProp: startsWith$,
+  shouldForwardProp: doesNotStartWith$,
 })<{
   $active?: boolean;
 }>`

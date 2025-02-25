@@ -69,6 +69,6 @@ export function decodeUserGuildsBase64(user: DiscordUserProfile) {
   return guildIds.split(" ");
 }
 
-export function startsWith$(str: string) {
-  return str.startsWith("$");
+export function doesNotStartWith$(str: string) {
+  return !str.startsWith("$");
 }

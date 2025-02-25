@@ -5,14 +5,14 @@ import { buttonClasses, css, styled } from "@mui/material";
 import { PaletteColor } from "@blurple-canvas-web/types";
 
 import { Button as ButtonBase } from "@/components/button";
-import { startsWith$ } from "@/util";
+import { doesNotStartWith$ } from "@/util";
 
 const StyledAnchor = styled("a")`
   display: contents;
 `;
 
 const StyledButton = styled(ButtonBase, {
-  shouldForwardProp: startsWith$,
+  shouldForwardProp: doesNotStartWith$,
 })<{ $backgroundColorStr?: string }>`
   :not(.${buttonClasses.disabled}) {
     --dynamic-bg-color: var(--discord-blurple);
