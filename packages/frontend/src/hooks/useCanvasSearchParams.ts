@@ -44,27 +44,26 @@ export function useCanvasSearchParams(): CanvasSearchParams {
   const pixelWidthInt = Number.parseInt(pixelWidth ?? "");
   const pixelHeightInt = Number.parseInt(pixelHeight ?? "");
 
-  const validCoords = !Number.isNaN(xInt) && !Number.isNaN(yInt);
-  const validZoom = !Number.isNaN(zoomNumber);
-  const validPixelWidth = !Number.isNaN(pixelWidthInt);
-  const validPixelHeight = !Number.isNaN(pixelHeightInt);
+  const isValidCoords = Number.isInteger(xInt) && Number.isInteger(yInt);
+  const isValidZoom = !Number.isNaN(zoomNumber);
+  const isValidPixelWidth = !Number.isNaN(pixelWidthInt);
+  const isValidPixelHeight = !Number.isNaN(pixelHeightInt);
 
   if (
-    !canvasIdInt || // If no canvas
-    !validCoords || // If coords are invalid
-    validZoom === // zoom and px w/h are mutually exclusive
-      (validPixelWidth || validPixelHeight) // either can be valid
+    !canvasIdInt ||
+    !isValidCoords ||
+    isValidZoom === (isValidPixelWidth || isValidPixelHeight)
   ) {
     return emptyCanvasSearchParams;
   }
 
   return {
     canvasId: canvasIdInt,
-    x: validCoords ? xInt : null,
-    y: validCoords ? yInt : null,
-    zoom: validZoom ? zoomNumber : null,
-    pixelWidth: validPixelWidth ? pixelWidthInt : null,
-    pixelHeight: validPixelHeight ? pixelHeightInt : null,
+    x: isValidCoords ? xInt : null,
+    y: isValidCoords ? yInt : null,
+    zoom: isValidZoom ? zoomNumber : null,
+    pixelWidth: isValidPixelWidth ? pixelWidthInt : null,
+    pixelHeight: isValidPixelHeight ? pixelHeightInt : null,
   };
 }
 
@@ -73,8 +72,9 @@ export function useCanvasSearchParamsController(
   setMouseOffsetDirection: (offset: Point) => void,
   setTargetZoom: (zoom: number) => void,
 ) {
-  const params = useCanvasSearchParams();
-  let { canvasId, x, y, zoom, pixelWidth, pixelHeight } = params;
+  const { canvasId, x, y, zoom, pixelWidth, pixelHeight } =
+    useCanvasSearchParams();
+  let newZoom = zoom;
 
   const { data: canvases = [], isLoading: canvasListIsLoading } =
     useCanvasList();
@@ -105,10 +105,10 @@ export function useCanvasSearchParamsController(
       if (pixelHeight) {
         potentialZooms.push(containerRef.clientHeight / pixelHeight);
       }
-      zoom = Math.min(...potentialZooms);
+      newZoom = Math.min(...potentialZooms);
     }
 
-    if (zoom) {
+    if (newZoom) {
       setCurrentTab(TABS.LOOK);
 
       let newOffset = diffPoints(
@@ -118,10 +118,10 @@ export function useCanvasSearchParamsController(
         },
         newCoords,
       );
-      const modifier = 1 + 1 / zoom;
+      const modifier = 1 + 1 / newZoom;
       newOffset = multiplyPoint(newOffset, modifier);
       setMouseOffsetDirection(newOffset);
-      setTargetZoom(zoom);
+      setTargetZoom(newZoom);
     }
   }, [canvases, canvasListIsLoading, setCoords, setCanvas]);
 }

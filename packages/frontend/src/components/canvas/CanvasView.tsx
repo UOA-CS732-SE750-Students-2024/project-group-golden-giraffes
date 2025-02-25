@@ -156,7 +156,7 @@ export default function CanvasView() {
     useCanvasContext();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
+  const [imageDimensions, setImageDimensions] = useState<Dimensions | null>(
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
@@ -176,10 +176,7 @@ export default function CanvasView() {
     setTargetZoom,
   );
 
-  const imageUrl = useMemo(
-    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
-    [canvas.id],
-  );
+  const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
 
   const handleLoadImage = useCallback(
     (image: HTMLImageElement): void => {
@@ -202,7 +199,7 @@ export default function CanvasView() {
       setTargetZoom(initialZoom);
       setVelocity(ORIGIN);
       setOffset(ORIGIN);
-      setImageDimension({ width: image.width, height: image.height });
+      setImageDimensions({ width: image.width, height: image.height });
       setIsLoading(false);
     },
     [containerRef, setZoom],

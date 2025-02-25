@@ -7,7 +7,7 @@ import { CoordinateLabel } from "@/components/button/PlacePixelButton";
 import config from "@/config";
 import { useCanvasContext } from "@/contexts";
 import { usePixelHistory } from "@/hooks";
-import { createPixelURL } from "@/util";
+import { createPixelUrl } from "@/util";
 import { useState } from "react";
 import { Heading } from "../ActionPanel";
 import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
@@ -89,7 +89,7 @@ export default function PixelInfoTab({
   const pixelURL =
     (adjustedCoords &&
       containerRef.current &&
-      createPixelURL({
+      createPixelUrl({
         canvasId: canvasId,
         coords: adjustedCoords,
         pixelWidth: Math.min(
@@ -127,7 +127,7 @@ export default function PixelInfoTab({
           canvas.id === defaultCanvas.id && ( // Enabling only on default canvas
             <Tooltip
               title="Copied"
-              placement={"top"}
+              placement="top"
               onClose={closeTooltip}
               open={tooltipIsOpen}
               componentsProps={{
@@ -162,7 +162,7 @@ export default function PixelInfoTab({
                   navigator.clipboard.writeText(pixelURL);
                 }}
               >
-                {"Copy link to share pixel"}
+                Copy link to share pixel
                 <CoordinateLabel>
                   ({adjustedCoords.x},&nbsp;{adjustedCoords.y})
                 </CoordinateLabel>

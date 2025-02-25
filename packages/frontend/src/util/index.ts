@@ -70,7 +70,7 @@ export function decodeUserGuildsBase64(user: DiscordUserProfile) {
   return guildIds.split(" ");
 }
 
-export function createPixelURL({
+export function createPixelUrl({
   canvasId,
   coords,
   zoom,
