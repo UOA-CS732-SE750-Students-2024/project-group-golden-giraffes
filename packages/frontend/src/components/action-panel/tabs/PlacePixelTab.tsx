@@ -48,9 +48,9 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-function userWithinServer(user: DiscordUserProfile, serverId: string) {
+function isUserInServer(user: DiscordUserProfile, serverId: string) {
   const guildIds = decodeUserGuildsBase64(user);
-  return guildIds.some((guildId) => guildId === serverId);
+  return guildIds.includes(serverId);
 }
 
 interface PlacePixelTabProps {
@@ -92,7 +92,7 @@ export default function PlacePixelTab({
     (user &&
       selectedColor &&
       !selectedColor.global &&
-      userWithinServer(user, selectedColor?.guildId)) ??
+      isUserInServer(user, selectedColor?.guildId)) ??
     false;
 
   return (
@@ -137,7 +137,7 @@ export default function PlacePixelTab({
         <ColorInfoCard
           color={selectedColor}
           invite={serverInvite}
-          userInServer={userInServer}
+          isUserInServer={userInServer}
         />
         {canPlacePixel && <PlacePixelButton />}
         {isJoinServerShown && (

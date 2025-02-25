@@ -36,11 +36,11 @@ const Code = styled("code")`
 export default function ColorInfoCard({
   color,
   invite,
-  userInServer = false,
+  isUserInServer: userInServer = false,
 }: {
   color?: PaletteColor | null;
   invite?: string;
-  userInServer?: boolean;
+  isUserInServer?: boolean;
 }) {
   if (!color) return <Wrapper>No color selected</Wrapper>;
 
