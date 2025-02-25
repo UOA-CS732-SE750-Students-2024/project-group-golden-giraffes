@@ -4,9 +4,7 @@ import { styled } from "@mui/material";
 
 import { PaletteColor } from "@blurple-canvas-web/types";
 
-const Container = styled("code", {
-  shouldForwardProp: (prop) => prop !== "backgroundColor",
-})<ColorCodeChipProps>`
+const Container = styled("code")<ColorCodeChipProps>`
   background-color: oklch(from var(--discord-white) l c h / 12%);
   border-radius: 0.25rem;
   cursor: pointer;

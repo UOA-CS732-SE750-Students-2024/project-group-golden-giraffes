@@ -1,11 +1,13 @@
 import { css, styled } from "@mui/material";
 
+import { startsWith$ } from "@/util";
+
 export const SwatchBase = styled("div", {
-  shouldForwardProp: (prop) => prop !== "colorString",
-})<{ colorString: string }>(
-  ({ colorString }) => css`
+  shouldForwardProp: startsWith$,
+})<{ $colorString: string }>(
+  (props) => css`
     aspect-ratio: 1;
-    background-color: ${colorString};
+    background-color: ${props.$colorString};
     border-radius: 0.5rem;
   `,
 );

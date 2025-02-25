@@ -5,14 +5,15 @@ import { buttonClasses, css, styled } from "@mui/material";
 import { PaletteColor } from "@blurple-canvas-web/types";
 
 import { Button as ButtonBase } from "@/components/button";
+import { startsWith$ } from "@/util";
 
 const StyledAnchor = styled("a")`
   display: contents;
 `;
 
 const StyledButton = styled(ButtonBase, {
-  shouldForwardProp: (prop) => prop !== "backgroundColorStr",
-})<{ backgroundColorStr?: string }>`
+  shouldForwardProp: startsWith$,
+})<{ $backgroundColorStr?: string }>`
   :not(.${buttonClasses.disabled}) {
     --dynamic-bg-color: var(--discord-blurple);
     background-color: var(--dynamic-bg-color);
@@ -20,10 +21,10 @@ const StyledButton = styled(ButtonBase, {
     :hover,
     :focus,
     :focus-visible {
-      ${({ backgroundColorStr }) =>
-        backgroundColorStr &&
+      ${(props) =>
+        props.$backgroundColorStr &&
         css`
-          --dynamic-bg-color: ${backgroundColorStr};
+          --dynamic-bg-color: ${props.$backgroundColorStr};
         `}
       border-color: oklch(from var(--discord-white) l c h / 36%);
       font-weight: 600;
@@ -73,7 +74,7 @@ export default function DynamicButton({
   const rgba = color?.rgba;
   const rgb = rgba?.slice(0, 3).join(" ");
 
-  const backgroundColorStr = color ? `rgb(${rgb})` : undefined;
+  const $backgroundColorStr = color ? `rgb(${rgb})` : undefined;
 
   const clickHandler = onAction;
   const keyUpHandler = (event: React.KeyboardEvent) => {
@@ -84,7 +85,7 @@ export default function DynamicButton({
 
   return (
     <StyledButton
-      backgroundColorStr={backgroundColorStr}
+      $backgroundColorStr={$backgroundColorStr}
       onClick={clickHandler}
       onKeyUp={keyUpHandler}
       {...props}

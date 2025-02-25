@@ -1,5 +1,7 @@
 import { styled } from "@mui/material";
 
+import { startsWith$ } from "@/util";
+
 export const ActionPanelTabBody = styled("div")`
   display: block flex;
   flex-direction: column;
@@ -32,9 +34,11 @@ export const Block = styled("div")`
 `;
 
 export const TabBlock = styled(Block, {
-  shouldForwardProp: (prop) => prop !== "active",
-})<{ active?: boolean }>`
-  display: ${({ active }) => (active ? "grid" : "none")};
+  shouldForwardProp: startsWith$,
+})<{
+  $active?: boolean;
+}>`
+  display: ${(props) => (props.$active ? "grid" : "none")};
   gap: 0.5rem;
   grid-template-rows: auto 1fr auto;
 `;
