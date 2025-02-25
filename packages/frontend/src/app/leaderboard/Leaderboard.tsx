@@ -32,7 +32,7 @@ const Table = styled("table")`
 `;
 
 const RankCell = styled("td")`
-  color: oklch(var(--discord-white-oklch) / 45%);
+  color: oklch(from var(--discord-white) l c h / 45%);
   text-align: center;
 `;
 
@@ -63,7 +63,7 @@ const PixelCount = styled("span")`
 `;
 
 const PixelCountLabel = styled("span")`
-  color: oklch(var(--discord-white-oklch) / 55%);
+  color: oklch(from var(--discord-white) l c h / 55%);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -71,7 +71,7 @@ const PixelCountLabel = styled("span")`
 `;
 
 const NoContentsMessage = styled("p")`
-  color: oklch(var(--discord-white-oklch) / 55%);
+  color: oklch(from var(--discord-white) l c h / 55%);
   font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -93,7 +93,7 @@ function leaderboardRecordToTableRow(user?: LeaderboardEntry): JSX.Element {
         : <Skeleton variant="circular" width={60} height={60} />}
         <Username>
           {userId ?
-            username ?? userId
+            (username ?? userId)
           : <Skeleton variant="rounded" width={260} />}
         </Username>
       </UserCell>

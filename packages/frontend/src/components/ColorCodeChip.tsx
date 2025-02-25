@@ -7,7 +7,7 @@ import { PaletteColor } from "@blurple-canvas-web/types";
 const Container = styled("code", {
   shouldForwardProp: (prop) => prop !== "backgroundColor",
 })<ColorCodeChipProps>`
-  background-color: oklch(var(--discord-white-oklch) / 12%);
+  background-color: oklch(from var(--discord-white) l c h / 12%);
   border-radius: 0.25rem;
   cursor: pointer;
   font-size: 0.9rem;
@@ -17,7 +17,7 @@ const Container = styled("code", {
   :focus,
   :focus-visible,
   :hover {
-    background-color: oklch(var(--discord-white-oklch) / 20%);
+    background-color: oklch(from var(--discord-white) l c h / 20%);
   }
 
   :focus,
@@ -26,7 +26,7 @@ const Container = styled("code", {
   }
 
   :active {
-    background-color: oklch(var(--discord-white-oklch) / 6%);
+    background-color: oklch(from var(--discord-white) l c h / 6%);
   }
 `;
 
