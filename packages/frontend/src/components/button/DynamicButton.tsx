@@ -7,10 +7,6 @@ import { PaletteColor } from "@blurple-canvas-web/types";
 import { Button as ButtonBase } from "@/components/button";
 import { doesNotStartWith$ } from "@/util";
 
-const StyledAnchor = styled("a")`
-  display: contents;
-`;
-
 const StyledButton = styled(ButtonBase, {
   shouldForwardProp: doesNotStartWith$,
 })<{ $backgroundColorStr?: string }>`
@@ -41,10 +37,8 @@ const DynamicButtonContent = styled("span")`
   display: block flex;
   gap: 0.25rem;
   opacity: 95%;
-  transition:
-    color var(--transition-duration-fast) ease,
-    filter var(--transition-duration-fast) ease,
-    font-weight var(--transition-duration-fast) ease;
+  transition: var(--transition-duration-fast) ease;
+  transition-property: color filter font-weight;
 
   /*
    * Ensure contrast of button label against background. The color property
@@ -74,7 +68,7 @@ export default function DynamicButton({
   const rgba = color?.rgba;
   const rgb = rgba?.slice(0, 3).join(" ");
 
-  const $backgroundColorStr = color ? `rgb(${rgb})` : undefined;
+  const backgroundColorStr = color ? `rgb(${rgb})` : undefined;
 
   const clickHandler = onAction;
   const keyUpHandler = (event: React.KeyboardEvent) => {
@@ -85,7 +79,7 @@ export default function DynamicButton({
 
   return (
     <StyledButton
-      $backgroundColorStr={$backgroundColorStr}
+      $backgroundColorStr={backgroundColorStr}
       onClick={clickHandler}
       onKeyUp={keyUpHandler}
       {...props}
@@ -101,8 +95,8 @@ export function DynamicAnchorButton({
   ...props
 }: DynamicButtonProps & { href: string }) {
   return (
-    <StyledAnchor href={href} target="_blank" rel="noreferrer">
+    <a href={href} target="_blank" rel="noreferrer">
       <DynamicButton {...props}>{children}</DynamicButton>
-    </StyledAnchor>
+    </a>
   );
 }
