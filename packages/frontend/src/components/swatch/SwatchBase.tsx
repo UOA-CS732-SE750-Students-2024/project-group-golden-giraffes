@@ -4,10 +4,10 @@ import { doesNotStartWith$ } from "@/util";
 
 export const SwatchBase = styled("div", {
   shouldForwardProp: doesNotStartWith$,
-})<{ $colorString: string }>(
+})<{ $backgroundColor: string }>(
   (props) => css`
     aspect-ratio: 1;
-    background-color: ${props.$colorString};
+    background-color: ${props.$backgroundColor};
     border-radius: 0.5rem;
   `,
 );

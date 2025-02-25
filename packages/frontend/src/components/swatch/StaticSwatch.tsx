@@ -10,5 +10,7 @@ export function StaticSwatch({ rgba, ...props }: StaticSwatchProps) {
   const rgb = rgba.slice(0, 3).join(" ");
   const alphaFloat = rgba[3] / 255;
 
-  return <SwatchBase colorString={`rgb(${rgb} / ${alphaFloat})`} {...props} />;
+  return (
+    <SwatchBase $backgroundColor={`rgb(${rgb} / ${alphaFloat})`} {...props} />
+  );
 }
