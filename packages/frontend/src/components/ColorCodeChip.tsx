@@ -14,13 +14,11 @@ const Container = styled("code", {
   padding: 0.25rem 0.5rem;
   transition: background-color var(--transition-duration-fast) ease;
 
-  :focus,
   :focus-visible,
   :hover {
     background-color: oklch(from var(--discord-white) l c h / 20%);
   }
 
-  :focus,
   :focus-visible {
     outline: var(--focus-outline);
   }

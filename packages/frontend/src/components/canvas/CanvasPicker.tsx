@@ -25,7 +25,6 @@ const Select = styled(NativeSelect)`
   .${nativeSelectClasses.select} {
     padding: 0.25rem 1rem;
 
-    :focus,
     :focus-visible {
       background-color: unset;
       outline: 0;
@@ -51,7 +50,6 @@ const Select = styled(NativeSelect)`
     content: unset;
   }
 
-  :has(:focus),
   :has(:focus-visible) {
     outline: var(--focus-outline);
   }

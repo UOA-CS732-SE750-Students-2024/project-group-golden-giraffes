@@ -15,7 +15,6 @@ const StyledSwatchBase = styled(SwatchBase)`
     opacity: 85%;
   }
 
-  :focus,
   :focus-visible {
     outline: var(--focus-outline);
   }

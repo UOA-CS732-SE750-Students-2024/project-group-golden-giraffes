@@ -18,7 +18,6 @@ const StyledButton = styled(ButtonBase, {
     background-color: var(--dynamic-bg-color);
 
     :hover,
-    :focus,
     :focus-visible {
       ${({ backgroundColorStr }) =>
         backgroundColorStr &&
