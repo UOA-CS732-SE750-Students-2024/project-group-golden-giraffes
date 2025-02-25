@@ -39,7 +39,7 @@
     "clean": "rm -rf node_modules/ build/"
   },
   "dependencies": {
-    "@prisma/client": "^5.12.1",
+    "@prisma/client": "^5.22.0",
     "@quixo3/prisma-session-store": "^3.1.13",
     "@types/express-session": "^1.18.1",
     "@types/passport": "^1.0.17",
@@ -65,7 +65,7 @@
     "dotenv": "^16.4.7",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.2",
-    "prisma": "^5.12.1",
+    "prisma": "^5.22.0",
     "prismock": "^1.35.3",
     "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
