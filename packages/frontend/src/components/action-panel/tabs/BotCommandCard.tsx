@@ -25,11 +25,13 @@ const CopyButton = styled("button")<CopyButtonProps>`
   place-items: center;
   transition: background-color var(--transition-duration-fast) ease;
 
-  :hover {
-    background-color: oklch(from var(--discord-white) l c h / 24%);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: oklch(from var(--discord-white) l c h / 24%);
+    }
   }
 
-  :active {
+  &:active {
     background-color: oklch(from var(--discord-white) l c h / 6%);
   }
 `;

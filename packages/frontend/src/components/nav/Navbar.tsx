@@ -26,12 +26,14 @@ const Nav = styled("nav")`
     transition: var(--transition-duration-fast) ease;
     transition-property: background-color opacity outline-width;
 
-    :hover {
-      opacity: 55%;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        opacity: 55%;
+      }
     }
 
-    :focus-visible {
-      background-color: oklch(100% 0 0 / 6%);
+    &:focus-visible {
+      background-color: oklch(from var(--discord-white) l c h / 6%);
       outline: var(--focus-outline);
     }
   }

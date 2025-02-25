@@ -9,11 +9,13 @@ const StyledSwatchBase = styled(SwatchBase)`
   transition: var(--transition-duration-fast) ease;
   transition-property: opacity outline-width border-color;
 
-  :hover:not(.disabled, .selected) {
-    opacity: 85%;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.disabled, .selected) {
+      opacity: 85%;
+    }
   }
 
-  :focus-visible {
+  &:focus-visible {
     outline: var(--focus-outline);
   }
 

@@ -108,8 +108,10 @@ const InviteButton = styled(Button)`
   text-decoration: none;
   z-index: 1;
 
-  :hover {
-    background-color: var(--discord-blurple);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--discord-blurple);
+    }
   }
 `;
 

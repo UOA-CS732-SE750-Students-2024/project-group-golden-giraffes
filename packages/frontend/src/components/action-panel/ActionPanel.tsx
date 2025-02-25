@@ -64,17 +64,18 @@ const Tab = styled("li")<{ active?: boolean }>`
       `
     : ""}
 
-  :hover,
-
-  :focus-visible {
-    background-color: var(--discord-legacy-dark-but-not-black);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--discord-legacy-dark-but-not-black);
+    }
   }
 
-  :focus-visible {
+  &:focus-visible {
+    background-color: var(--discord-legacy-dark-but-not-black);
     outline: var(--focus-outline);
   }
 
-  :active {
+  &:active {
     background-color: var(--discord-legacy-greyple);
   }
 `;

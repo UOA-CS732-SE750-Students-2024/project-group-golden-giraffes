@@ -40,17 +40,21 @@ const Select = styled(NativeSelect)`
     cursor: wait;
   }
 
-  :hover:not(.${nativeSelectClasses.disabled}) {
-    background-color: var(--discord-legacy-greyple);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      content: unset;
+    }
+    &:hover:not(.${nativeSelectClasses.disabled}) {
+      background-color: var(--discord-legacy-greyple);
+    }
   }
 
-  :hover,
-  ::before,
-  ::after {
+  &::before,
+  &::after {
     content: unset;
   }
 
-  :has(:focus-visible) {
+  &:has(:focus-visible) {
     outline: var(--focus-outline);
   }
 `;
