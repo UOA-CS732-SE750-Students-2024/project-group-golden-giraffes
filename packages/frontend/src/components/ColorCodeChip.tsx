@@ -15,7 +15,7 @@ const Container = styled("code", {
   transition: background-color var(--transition-duration-fast) ease;
 
   @media (hover: hover) and (pointer: fine) {
-    :hover {
+    &:hover {
       background-color: oklch(from var(--discord-white) l c h / 20%);
     }
   }

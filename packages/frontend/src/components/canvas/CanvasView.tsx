@@ -38,7 +38,7 @@ const CanvasContainer = styled("div")`
   place-content: center;
   place-items: center;
 
-  :active {
+  &:active {
     cursor: grabbing;
   }
 
