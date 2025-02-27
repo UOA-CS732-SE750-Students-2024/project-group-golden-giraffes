@@ -40,7 +40,7 @@ const DynamicButtonContent = styled("span")`
   gap: 0.25rem;
   opacity: 95%;
   transition: var(--transition-duration-fast) ease;
-  transition-property: color filter font-weight;
+  transition-property: color, filter, font-weight;
 
   /*
    * Ensure contrast of button label against background. The color property

@@ -24,7 +24,7 @@ const Nav = styled("nav")`
     padding-inline: 1rem;
     text-decoration: none;
     transition: var(--transition-duration-fast) ease;
-    transition-property: background-color opacity outline-width;
+    transition-property: background-color, opacity, outline-width;
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {

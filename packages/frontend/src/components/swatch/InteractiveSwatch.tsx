@@ -7,7 +7,7 @@ const StyledSwatchBase = styled(SwatchBase)`
   cursor: pointer;
   border: 0.25rem solid oklch(from var(--discord-white) l c h / 15%);
   transition: var(--transition-duration-fast) ease;
-  transition-property: opacity outline-width border-color;
+  transition-property: opacity, outline-width, border-color;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(.disabled, .selected) {

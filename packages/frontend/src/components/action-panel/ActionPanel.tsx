@@ -54,7 +54,7 @@ const Tab = styled("li")<{ active?: boolean }>`
   text-align: center;
   touch-action: manipulation;
   transition: var(--transition-duration-fast) ease;
-  transition-property: background-color color outline;
+  transition-property: background-color, color, outline;
   user-select: none;
 
   ${({ active }) =>
