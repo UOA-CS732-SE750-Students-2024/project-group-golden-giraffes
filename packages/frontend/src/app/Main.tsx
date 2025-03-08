@@ -15,6 +15,7 @@ const Wrapper = styled("main")`
   }
 
   display: grid;
+  grid-template-rows: 1fr 1fr;
   gap: 0.5rem 2rem;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
@@ -22,6 +23,7 @@ const Wrapper = styled("main")`
 
     grid-auto-flow: column;
     grid-template-columns: 1fr 23rem;
+    grid-template-rows: 1fr;
     padding: var(--padding-y) 4rem;
   }
 `;
