@@ -2,6 +2,7 @@
 
 import { useAuthContext } from "@/contexts";
 import { styled } from "@mui/material";
+import Image from "next/image";
 import Link from "next/link";
 import { CanvasPicker } from "../canvas";
 
@@ -13,8 +14,12 @@ const Nav = styled("nav")`
   gap: 1rem;
   grid-template-columns: auto 1fr auto;
   justify-content: flex-end;
-  padding: 0.5rem 4rem;
+  padding-block: 0.5rem;
   place-items: center;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    padding-inline: 4rem;
+  }
 
   a {
     border-radius: 0.5rem;
@@ -48,9 +53,19 @@ const CompositeLogo = styled(Link)`
 `;
 
 const Wordmark = styled("div")`
+  display: none;
   font-variation-settings: "wdth" 125;
   font-weight: 900;
   text-decoration: none;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    display: block;
+  }
+`;
+
+const Logo = styled(Image)`
+  min-width: ${(props) => props.width}px;
+  min-height: ${(props) => props.height}px;
 `;
 
 const Links = styled("ul")`
@@ -75,7 +90,7 @@ export default function Navbar() {
   return (
     <Nav>
       <CompositeLogo href="/">
-        <img
+        <Logo
           alt="Blurple Canvas logo"
           src="/images/blurple-canvas-logo~dark.svg"
           width={28}
