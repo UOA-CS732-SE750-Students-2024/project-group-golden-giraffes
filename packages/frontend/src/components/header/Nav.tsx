@@ -74,7 +74,7 @@ interface LinkInfo {
   label: string;
 }
 
-export default function NavLinks() {
+export default function Nav() {
   const { user } = useAuthContext();
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const isOpen = anchorElement !== null;
@@ -95,7 +95,7 @@ export default function NavLinks() {
   };
 
   return (
-    <>
+    <nav>
       <MenuButton
         id="navigation-menu-button"
         aria-controls={isOpen ? "navigation-menu" : undefined}
@@ -128,6 +128,6 @@ export default function NavLinks() {
           </li>
         ))}
       </Links>
-    </>
+    </nav>
   );
 }

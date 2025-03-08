@@ -3,9 +3,9 @@
 import { styled } from "@mui/material";
 import Image from "next/image";
 import { CanvasPicker } from "../canvas";
-import NavLinks, { NavLink } from "./NavLinks";
+import Nav, { NavLink } from "./Nav";
 
-const Nav = styled("nav")`
+const Wrapper = styled("header")`
   background-color: var(--discord-legacy-dark-but-not-black);
   border-block-end: var(--card-border);
   display: grid;
@@ -45,9 +45,9 @@ const Logo = styled(Image)`
   min-height: ${(props) => props.height}px;
 `;
 
-export default function Navbar() {
+export default function Header() {
   return (
-    <Nav>
+    <Wrapper>
       <CompositeLogo href="/">
         <Logo
           alt="Blurple Canvas logo"
@@ -58,7 +58,7 @@ export default function Navbar() {
         <Wordmark>Blurple Canvas</Wordmark>
       </CompositeLogo>
       <CanvasPicker />
-      <NavLinks />
-    </Nav>
+      <Nav />
+    </Wrapper>
   );
 }
