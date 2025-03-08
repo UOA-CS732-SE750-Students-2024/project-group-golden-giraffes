@@ -50,7 +50,7 @@ export default function PixelHistoryListItem({
       <div>
         <Username title={record?.userId}>
           {record ?
-            userProfile?.username ?? record.userId
+            (userProfile?.username ?? record.userId)
           : <Skeleton width={80} />}
         </Username>
         <ColorName>
