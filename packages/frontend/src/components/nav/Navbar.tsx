@@ -1,11 +1,10 @@
 "use client";
 
-import { useAuthContext } from "@/contexts";
-import { IconButton, styled } from "@mui/material";
-import { MenuIcon } from "lucide-react";
+import { styled } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { CanvasPicker } from "../canvas";
+import NavLinks from "./NavLinks";
 
 const Nav = styled("nav")`
   background-color: var(--discord-legacy-dark-but-not-black);
@@ -70,42 +69,7 @@ const Logo = styled(Image)`
   min-height: ${(props) => props.height}px;
 `;
 
-const Links = styled("ul")`
-  display: none;
-
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    display: flex;
-  }
-
-  li {
-    display: inline-flex;
-  }
-
-  /*
-   * Workaround for accessibility issue with VoiceOver.
-   * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
-   */
-  li::before {
-    content: "\\200B"; /* zero-width space */
-  }
-`;
-
-const MenuButton = styled(IconButton)`
-  display: block;
-
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    display: none;
-  }
-
-  & > svg {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
-`;
-
 export default function Navbar() {
-  const { user } = useAuthContext();
-
   return (
     <Nav>
       <CompositeLogo href="/">
@@ -118,19 +82,7 @@ export default function Navbar() {
         <Wordmark>Blurple Canvas</Wordmark>
       </CompositeLogo>
       <CanvasPicker />
-      <MenuButton aria-label="Open menu">
-        <MenuIcon />
-      </MenuButton>
-      <Links>
-        <li>
-          <Link href="/leaderboard">Leaderboard</Link>
-        </li>
-        <li>
-          {user ?
-            <Link href="/me">{user.username}</Link>
-          : <Link href="/signin">Sign in</Link>}
-        </li>
-      </Links>
+      <NavLinks />
     </Nav>
   );
 }
