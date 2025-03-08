@@ -4,12 +4,11 @@ import { StaticSwatchProps } from "./StaticSwatch";
 import { SwatchBase } from "./SwatchBase";
 
 const StyledSwatchBase = styled(SwatchBase)`
+  background-color: ${(props) => props.$backgroundColor}
   cursor: pointer;
   border: 0.25rem solid oklch(from var(--discord-white) l c h / 15%);
-  transition:
-    opacity var(--transition-duration-fast) ease,
-    outline-width var(--transition-duration-fast) ease,
-    border-color var(--transition-duration-fast) ease;
+  transition: var(--transition-duration-fast) ease;
+  transition-property: opacity outline-width border-color;
 
   :hover:not(.disabled, .selected) {
     opacity: 85%;
@@ -53,7 +52,7 @@ export function InteractiveSwatch({
     <StyledSwatchBase
       aria-disabled={disabled}
       className={selected ? "selected" : undefined}
-      colorString={`rgb(${rgb} / ${alphaFloat})`}
+      $backgroundColor={`rgb(${rgb} / ${alphaFloat})`}
       onClick={clickHandler}
       onKeyUp={keyUpHandler}
       tabIndex={0}

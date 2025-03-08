@@ -5,14 +5,11 @@ import { buttonClasses, css, styled } from "@mui/material";
 import { PaletteColor } from "@blurple-canvas-web/types";
 
 import { Button as ButtonBase } from "@/components/button";
-
-const StyledAnchor = styled("a")`
-  display: contents;
-`;
+import { doesNotStartWith$ } from "@/util";
 
 const StyledButton = styled(ButtonBase, {
-  shouldForwardProp: (prop) => prop !== "backgroundColorStr",
-})<{ backgroundColorStr?: string }>`
+  shouldForwardProp: doesNotStartWith$,
+})<{ $backgroundColorStr?: string }>`
   :not(.${buttonClasses.disabled}) {
     --dynamic-bg-color: var(--discord-blurple);
     background-color: var(--dynamic-bg-color);
@@ -20,10 +17,10 @@ const StyledButton = styled(ButtonBase, {
     :hover,
     :focus,
     :focus-visible {
-      ${({ backgroundColorStr }) =>
-        backgroundColorStr &&
+      ${(props) =>
+        props.$backgroundColorStr &&
         css`
-          --dynamic-bg-color: ${backgroundColorStr};
+          --dynamic-bg-color: ${props.$backgroundColorStr};
         `}
       border-color: oklch(from var(--discord-white) l c h / 36%);
       font-weight: 600;
@@ -40,10 +37,8 @@ const DynamicButtonContent = styled("span")`
   display: block flex;
   gap: 0.25rem;
   opacity: 95%;
-  transition:
-    color var(--transition-duration-fast) ease,
-    filter var(--transition-duration-fast) ease,
-    font-weight var(--transition-duration-fast) ease;
+  transition: var(--transition-duration-fast) ease;
+  transition-property: color filter font-weight;
 
   /*
    * Ensure contrast of button label against background. The color property
@@ -84,7 +79,7 @@ export default function DynamicButton({
 
   return (
     <StyledButton
-      backgroundColorStr={backgroundColorStr}
+      $backgroundColorStr={backgroundColorStr}
       onClick={clickHandler}
       onKeyUp={keyUpHandler}
       {...props}
@@ -100,8 +95,8 @@ export function DynamicAnchorButton({
   ...props
 }: DynamicButtonProps & { href: string }) {
   return (
-    <StyledAnchor href={href} target="_blank" rel="noreferrer">
+    <a href={href} target="_blank" rel="noreferrer">
       <DynamicButton {...props}>{children}</DynamicButton>
-    </StyledAnchor>
+    </a>
   );
 }

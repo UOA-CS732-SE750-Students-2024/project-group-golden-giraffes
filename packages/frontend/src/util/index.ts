@@ -68,3 +68,7 @@ export function decodeUserGuildsBase64(user: DiscordUserProfile) {
   const guildIds = Buffer.from(base64, "base64").toString("utf-8");
   return guildIds.split(" ");
 }
+
+export function doesNotStartWith$(str: string) {
+  return !str.startsWith("$");
+}

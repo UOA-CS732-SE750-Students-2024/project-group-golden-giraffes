@@ -1,5 +1,7 @@
 import { Typography, styled } from "@mui/material";
 
+import { doesNotStartWith$ } from "@/util";
+
 const LoadingText = styled(Typography)`
   font-size: 11vw;
   padding-block: 2rem;
@@ -7,19 +9,17 @@ const LoadingText = styled(Typography)`
     "wght" 100,
     "wdth" 85;
 `;
-const CHARACTER_DELAY_MS = 400;
 
 interface AnimatedCharacterProps {
-  index: number;
-  totalCharacters: number;
+  $index: number;
+  $charCount: number;
 }
 
 const AnimatedCharacter = styled("span", {
-  shouldForwardProp: (prop: string) =>
-    !["index", "totalCharacters"].includes(prop),
-})<AnimatedCharacterProps>(({ index, totalCharacters }) => ({
-  animation: `breathe ${(totalCharacters + 1) * CHARACTER_DELAY_MS}ms infinite both`,
-  animationDelay: `${(index + 1) * CHARACTER_DELAY_MS}ms`,
+  shouldForwardProp: doesNotStartWith$,
+})<AnimatedCharacterProps>((props) => ({
+  animation: `breathe ${(props.$charCount + 1) * 400}ms infinite both`,
+  animationDelay: `${(props.$index + 1) * 400}ms`,
 }));
 
 export interface AnimatedTextProps {
@@ -35,8 +35,8 @@ export default function AnimatedText({ children }: AnimatedTextProps) {
       {text.split("").map((char, index) => (
         <AnimatedCharacter
           key={`${index}-${char}`}
-          index={index}
-          totalCharacters={totalCharacters}
+          $index={index}
+          $charCount={totalCharacters}
         >
           {char}
         </AnimatedCharacter>
