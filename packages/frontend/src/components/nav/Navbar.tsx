@@ -2,7 +2,6 @@
 
 import { styled } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
 import { CanvasPicker } from "../canvas";
 import NavLinks, { NavLink } from "./NavLinks";
 
