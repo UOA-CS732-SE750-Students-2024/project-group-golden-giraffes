@@ -1,7 +1,8 @@
 "use client";
 
 import { useAuthContext } from "@/contexts";
-import { styled } from "@mui/material";
+import { IconButton, styled } from "@mui/material";
+import { MenuIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { CanvasPicker } from "../canvas";
@@ -11,13 +12,14 @@ const Nav = styled("nav")`
   border-block-end: var(--card-border);
   display: grid;
   font-size: 1.35rem;
-  gap: 1rem;
+  gap: 0.5rem;
   grid-template-columns: auto 1fr auto;
   justify-content: flex-end;
   padding-block: 0.5rem;
   place-items: center;
 
   ${({ theme }) => theme.breakpoints.up("md")} {
+    gap: 1rem;
     padding-inline: 4rem;
   }
 
@@ -69,7 +71,11 @@ const Logo = styled(Image)`
 `;
 
 const Links = styled("ul")`
-  display: flex;
+  display: none;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    display: flex;
+  }
 
   li {
     display: inline-flex;
@@ -81,6 +87,19 @@ const Links = styled("ul")`
    */
   li::before {
     content: "\\200B"; /* zero-width space */
+  }
+`;
+
+const MenuButton = styled(IconButton)`
+  display: block;
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    display: none;
+  }
+
+  & > svg {
+    width: 1.75rem;
+    height: 1.75rem;
   }
 `;
 
@@ -99,6 +118,9 @@ export default function Navbar() {
         <Wordmark>Blurple Canvas</Wordmark>
       </CompositeLogo>
       <CanvasPicker />
+      <MenuButton aria-label="Open menu">
+        <MenuIcon />
+      </MenuButton>
       <Links>
         <li>
           <Link href="/leaderboard">Leaderboard</Link>
