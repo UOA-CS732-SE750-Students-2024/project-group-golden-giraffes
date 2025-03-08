@@ -4,7 +4,7 @@ import { styled } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { CanvasPicker } from "../canvas";
-import NavLinks from "./NavLinks";
+import NavLinks, { NavLink } from "./NavLinks";
 
 const Nav = styled("nav")`
   background-color: var(--discord-legacy-dark-but-not-black);
@@ -21,35 +21,12 @@ const Nav = styled("nav")`
     gap: 1rem;
     padding-inline: 4rem;
   }
-
-  a {
-    border-radius: 0.5rem;
-    color: var(--discord-white);
-    padding: 0.5rem 1rem;
-    text-decoration: none;
-    transition:
-      background-color var(--transition-duration-fast) ease,
-      opacity var(--transition-duration-fast) ease,
-      outline-width var(--transition-duration-fast) ease;
-
-    :hover {
-      opacity: 55%;
-    }
-
-    :focus,
-    :focus-visible {
-      background-color: oklch(100% 0 0 / 6%);
-      outline: var(--focus-outline);
-    }
-  }
 `;
 
-const CompositeLogo = styled(Link)`
+const CompositeLogo = styled(NavLink)`
   align-items: center;
-  color: var(--discord-white);
   display: block flex;
   gap: 1.5rem;
-  text-decoration: none;
   user-select: none;
 `;
 
