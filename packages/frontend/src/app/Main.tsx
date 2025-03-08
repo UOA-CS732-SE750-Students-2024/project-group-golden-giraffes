@@ -23,7 +23,7 @@ const Wrapper = styled("main")`
 
     grid-auto-flow: column;
     grid-template-columns: 1fr 23rem;
-    grid-template-rows: 1fr;
+    grid-template-rows: initial;
     padding: var(--padding-y) 4rem;
   }
 `;

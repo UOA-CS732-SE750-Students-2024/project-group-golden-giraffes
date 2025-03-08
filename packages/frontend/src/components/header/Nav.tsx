@@ -40,7 +40,6 @@ export const NavLink = styled(Link)`
     opacity: 55%;
   }
 
-  :focus,
   :focus-visible {
     background-color: oklch(100% 0 0 / 6%);
     outline: var(--focus-outline);
