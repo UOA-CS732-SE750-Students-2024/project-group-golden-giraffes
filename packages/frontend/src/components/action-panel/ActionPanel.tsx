@@ -83,7 +83,7 @@ const Tab = styled("li")<{ active?: boolean }>`
 `;
 
 export const Heading = styled("h2")`
-  color: oklch(var(--discord-white-oklch) / 60%);
+  color: oklch(from var(--discord-white) l c h / 60%);
   font-weight: 600;
   font-size: 1rem;
   grid-column: 1 / -1;

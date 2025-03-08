@@ -31,7 +31,7 @@ const Username = styled("p")`
 `;
 
 const ColorName = styled("p")`
-  color: oklch(var(--discord-white-oklch) / 0.6);
+  color: oklch(from var(--discord-white) l c h / 60%);
   letter-spacing: 0.005em;
 `;
 

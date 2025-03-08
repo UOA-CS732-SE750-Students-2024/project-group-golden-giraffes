@@ -4,7 +4,7 @@ import { Copy as CopyIcon } from "lucide-react";
 
 const Wrapper = styled("div")`
   align-items: center;
-  color: var(--discord-white-oklch);
+  color: var(--discord-white);
   display: grid;
   gap: 0.5rem;
   grid-template-columns: 1fr auto;
@@ -16,7 +16,7 @@ interface CopyButtonProps {
 }
 
 const CopyButton = styled("button")<CopyButtonProps>`
-  background-color: oklch(var(--discord-white-oklch) / 12%);
+  background-color: oklch(from var(--discord-white) l c h / 12%);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -26,11 +26,11 @@ const CopyButton = styled("button")<CopyButtonProps>`
   transition: background-color var(--transition-duration-fast) ease;
 
   :hover {
-    background-color: oklch(var(--discord-white-oklch) / 24%);
+    background-color: oklch(from var(--discord-white) l c h / 24%);
   }
 
   :active {
-    background-color: oklch(var(--discord-white-oklch) / 6%);
+    background-color: oklch(from var(--discord-white) l c h / 6%);
   }
 `;
 

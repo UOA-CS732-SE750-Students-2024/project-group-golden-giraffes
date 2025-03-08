@@ -33,7 +33,7 @@ const Select = styled(NativeSelect)`
   }
 
   .${nativeSelectClasses.icon} {
-    color: oklch(var(--discord-white-oklch) / 45%);
+    color: oklch(from var(--discord-white) l c h / 45%);
     margin-inline: 0.25rem;
   }
 

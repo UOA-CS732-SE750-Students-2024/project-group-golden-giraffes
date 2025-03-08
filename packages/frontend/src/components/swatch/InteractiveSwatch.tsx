@@ -5,7 +5,7 @@ import { SwatchBase } from "./SwatchBase";
 
 const StyledSwatchBase = styled(SwatchBase)`
   cursor: pointer;
-  border: 0.25rem solid oklch(var(--discord-white-oklch) / 15%);
+  border: 0.25rem solid oklch(from var(--discord-white) l c h / 15%);
   transition:
     opacity var(--transition-duration-fast) ease,
     outline-width var(--transition-duration-fast) ease,

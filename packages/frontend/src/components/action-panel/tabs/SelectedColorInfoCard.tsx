@@ -4,7 +4,7 @@ import { PaletteColor } from "@blurple-canvas-web/types";
 
 const Wrapper = styled("div")`
   align-items: baseline;
-  color: oklch(var(--discord-white-oklch) / 60%);
+  color: oklch(from var(--discord-white) l c h / 60%);
   display: grid;
   font-size: 1.375rem;
   grid-template-columns: 1fr auto;
@@ -24,12 +24,12 @@ const Subtitle = styled("p")`
 
   &,
   a {
-    color: oklch(var(--discord-white-oklch) / 60%);
+    color: oklch(from var(--discord-white) l c h / 60%);
   }
 `;
 
 const Code = styled("code")`
-  color: oklch(var(--discord-white-oklch) / 60%);
+  color: oklch(from var(--discord-white) l c h / 60%);
   line-height: 1.1;
 `;
 

@@ -14,7 +14,8 @@ const StyledObject = styled("object")`
   --stroke-width: max(0.125rem, 1px);
 
   border-radius: calc(infinity * 1px);
-  outline: oklch(var(--discord-white-oklch) / 12%) var(--stroke-width) solid;
+  outline: oklch(from var(--discord-white) l c h / 12%) var(--stroke-width)
+    solid;
   outline-offset: calc(-1 * var(--stroke-width));
 `;
 
