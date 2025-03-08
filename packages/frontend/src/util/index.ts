@@ -1,6 +1,7 @@
-import { DateTime } from "luxon";
+import { DateTime, StringUnitLength } from "luxon";
 
-import { DiscordUserProfile } from "@blurple-canvas-web/types";
+import config from "@/config";
+import { DiscordUserProfile, Point } from "@blurple-canvas-web/types";
 
 /**
  * Return the value clamped so that it is within the range [min, max].
@@ -67,4 +68,59 @@ export function decodeUserGuildsBase64(user: DiscordUserProfile) {
   const base64 = user.guildIdsBase64 ?? "";
   const guildIds = Buffer.from(base64, "base64").toString("utf-8");
   return guildIds.split(" ");
+}
+
+export function createPixelUrl({
+  canvasId,
+  coords,
+  zoom,
+  pixelWidth,
+  pixelHeight,
+  frameId,
+}: {
+  canvasId?: number;
+  coords?: Point;
+  zoom?: number;
+  pixelWidth?: number;
+  pixelHeight?: number;
+  frameId?: string;
+}) {
+  const parameters = new Map<string, string>();
+
+  const params = [
+    { key: "c", value: canvasId?.toString() },
+    { key: "x", value: coords?.x.toString() },
+    { key: "y", value: coords?.y.toString() },
+    { key: "z", value: zoom?.toFixed(3) },
+    { key: "w", value: pixelWidth?.toFixed(0) },
+    { key: "h", value: pixelHeight?.toFixed(0) },
+    { key: "f", value: frameId?.toUpperCase() },
+  ];
+
+  for (const param of params) {
+    if (param.value) {
+      parameters.set(param.key, param.value);
+    }
+  }
+
+  const paramsString = Array.from(parameters.entries())
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
+  return `${config.baseUrl}?${paramsString}`;
+}
+
+export function extractSearchParam(
+  searchParams: URLSearchParams | null,
+  keys: string[],
+) {
+  if (!searchParams) {
+    return null;
+  }
+  for (const key of keys) {
+    const value = searchParams.get(key);
+    if (value) {
+      return value;
+    }
+  }
+  return null;
 }

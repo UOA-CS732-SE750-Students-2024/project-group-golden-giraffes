@@ -14,6 +14,7 @@ import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
 import config from "@/config";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
+import { useCanvasSearchParamsController } from "@/hooks/useCanvasSearchParams";
 import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
@@ -150,23 +151,12 @@ function calculateReticleOffset(coords: Point | null): Point {
 }
 
 export default function CanvasView() {
-  const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
-  const startTouchesRef = useRef<Touch[]>([]);
-
   const { color } = useSelectedColorContext();
-  const { canvas, coords, setCoords } = useCanvasContext();
-
-  const imageUrl = useMemo(
-    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
-    [canvas.id],
-  );
+  const { canvas, containerRef, coords, zoom, setCoords, setZoom } =
+    useCanvasContext();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [zoom, setZoom] = useState(1);
-  const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
+  const [imageDimensions, setImageDimensions] = useState<Dimensions | null>(
     null,
   );
   const [offset, setOffset] = useState(ORIGIN);
@@ -175,29 +165,45 @@ export default function CanvasView() {
   const [targetZoom, setTargetZoom] = useState(1);
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
-  const handleLoadImage = useCallback((image: HTMLImageElement): void => {
-    if (!canvasRef.current) return;
+  const imageRef = useRef<HTMLImageElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const startTouchesRef = useRef<Touch[]>([]);
 
-    const context = canvasRef.current.getContext("2d");
-    if (!context) return;
+  useCanvasSearchParamsController(
+    containerRef.current,
+    setMouseOffsetDirection,
+    setTargetZoom,
+  );
 
-    // We need to set the width of the canvas first, otherwise if the image is bigger than
-    // the canvas it'll get cut off.
-    canvasRef.current.width = image.width;
-    canvasRef.current.height = image.height;
+  const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
 
-    context.drawImage(image, 0, 0);
+  const handleLoadImage = useCallback(
+    (image: HTMLImageElement): void => {
+      if (!canvasRef.current) return;
 
-    const initialZoom =
-      containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
+      const context = canvasRef.current.getContext("2d");
+      if (!context) return;
 
-    setZoom(initialZoom);
-    setTargetZoom(initialZoom);
-    setVelocity(ORIGIN);
-    setOffset(ORIGIN);
-    setImageDimension({ width: image.width, height: image.height });
-    setIsLoading(false);
-  }, []);
+      // We need to set the width of the canvas first, otherwise if the image is bigger than
+      // the canvas it'll get cut off.
+      canvasRef.current.width = image.width;
+      canvasRef.current.height = image.height;
+
+      context.drawImage(image, 0, 0);
+
+      const initialZoom =
+        containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
+
+      setZoom(initialZoom);
+      setTargetZoom(initialZoom);
+      setVelocity(ORIGIN);
+      setOffset(ORIGIN);
+      setImageDimensions({ width: image.width, height: image.height });
+      setIsLoading(false);
+    },
+    [containerRef, setZoom],
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
   useEffect(() => {
@@ -320,14 +326,18 @@ export default function CanvasView() {
     if (zoom === targetZoom) return;
 
     const glideZoom = () => {
-      const diff = (targetZoom - zoom) / targetZoom;
+      const zoomDiff = targetZoom - zoom;
+
+      if (Math.abs(zoomDiff) < 0.001) return;
+
+      const zoomDiffRatio = zoomDiff / targetZoom;
       const scale = Math.exp(
-        Math.sign(diff) * SCALE_FACTOR * Math.abs(diff) * 2,
+        Math.sign(zoomDiffRatio) * SCALE_FACTOR * Math.abs(zoomDiffRatio) * 2,
       );
       const newZoom = clamp(
         zoom * scale,
-        diff > 0 ? MIN_ZOOM : targetZoom,
-        diff < 0 ? MAX_ZOOM : targetZoom,
+        zoomDiffRatio > 0 ? MIN_ZOOM : targetZoom,
+        zoomDiffRatio < 0 ? MAX_ZOOM : targetZoom,
       );
 
       const effectiveScale = newZoom / zoom;
@@ -356,7 +366,7 @@ export default function CanvasView() {
     const interval = setInterval(glideZoom, 8);
 
     return () => clearInterval(interval);
-  }, [zoom, targetZoom, mouseOffsetDirection]);
+  }, [zoom, targetZoom, mouseOffsetDirection, setZoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -414,7 +424,7 @@ export default function CanvasView() {
     containerRef.current.removeEventListener("mousemove", handleMouseMove);
     containerRef.current.removeEventListener("mouseup", handleMouseUp);
     containerRef.current.removeEventListener("mouseleave", handleMouseUp);
-  }, [handleMouseMove]);
+  }, [containerRef, handleMouseMove]);
 
   /**
    * Only add the mouse move listener when you click down so that moving your mouse normally doesn't
@@ -428,7 +438,7 @@ export default function CanvasView() {
     containerRef.current.addEventListener("mousemove", handleMouseMove);
     containerRef.current.addEventListener("mouseup", handleMouseUp);
     containerRef.current.addEventListener("mouseleave", handleMouseUp);
-  }, [handleMouseMove, handleMouseUp]);
+  }, [containerRef, handleMouseMove, handleMouseUp]);
 
   const handleTouchMove = useCallback(
     (event: TouchEvent): void => {

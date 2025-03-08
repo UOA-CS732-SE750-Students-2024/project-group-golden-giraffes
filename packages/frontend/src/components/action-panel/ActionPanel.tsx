@@ -4,6 +4,7 @@ import { css, styled } from "@mui/material";
 import { useState } from "react";
 
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
+import { TABS } from "@/contexts/CanvasContext";
 import { PaletteColor } from "@blurple-canvas-web/types";
 import { PixelInfoTab, PlacePixelTab } from "./tabs";
 
@@ -92,17 +93,11 @@ export const Heading = styled("h2")`
   text-transform: uppercase;
 `;
 
-const TABS = {
-  LOOK: "Look",
-  PLACE: "Place",
-};
-
 export default function ActionPanel() {
-  const [currentTab, setCurrentTab] = useState(TABS.PLACE);
   const [tempColor, setTempColor] = useState<PaletteColor | null>(null);
 
   const { color, setColor } = useSelectedColorContext();
-  const { canvas } = useCanvasContext();
+  const { canvas, currentTab, setCurrentTab } = useCanvasContext();
 
   const onSwitchTab = (isTabLook: boolean) => {
     // switching tabs
