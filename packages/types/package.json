@@ -38,10 +38,10 @@
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
-    "prettier": "^3.2.5",
-    "typescript": "^5.4.2"
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@types/passport-discord": "^0.1.13"
+    "@types/passport-discord": "^0.1.14"
   }
 }

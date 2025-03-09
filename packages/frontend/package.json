@@ -42,7 +42,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^5.16.14",
     "@mui/material-nextjs": "^5.16.14",
-    "@tanstack/react-query": "^5.66.9",
+    "@tanstack/react-query": "^5.67.2",
     "axios": "^1.8.2",
     "colorjs.io": "^0.5.2",
     "js-cookie": "^3.0.5",
@@ -57,10 +57,10 @@
     "@blurple-canvas-web/types": "workspace:*",
     "@types/js-cookie": "^3.0.6",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^20.17.19",
+    "@types/node": "^20.17.24",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-    "prettier": "^3.5.2",
-    "typescript": "^5.7.3"
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
   }
 }
