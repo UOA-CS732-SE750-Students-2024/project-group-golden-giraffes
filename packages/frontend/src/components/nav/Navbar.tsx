@@ -13,26 +13,27 @@ const Nav = styled("nav")`
   gap: 1rem;
   grid-template-columns: auto 1fr auto;
   justify-content: flex-end;
-  padding: 0.5rem 4rem;
+  padding-block: 0.5rem;
+  padding-inline: 4rem;
   place-items: center;
 
   a {
     border-radius: 0.5rem;
     color: var(--discord-white);
-    padding: 0.5rem 1rem;
+    padding-block: 0.5rem;
+    padding-inline: 1rem;
     text-decoration: none;
-    transition:
-      background-color var(--transition-duration-fast) ease,
-      opacity var(--transition-duration-fast) ease,
-      outline-width var(--transition-duration-fast) ease;
+    transition: var(--transition-duration-fast) ease;
+    transition-property: background-color, opacity, outline-width;
 
-    :hover {
-      opacity: 55%;
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        opacity: 55%;
+      }
     }
 
-    :focus,
-    :focus-visible {
-      background-color: oklch(100% 0 0 / 6%);
+    &:focus-visible {
+      background-color: oklch(from var(--discord-white) l c h / 6%);
       outline: var(--focus-outline);
     }
   }
