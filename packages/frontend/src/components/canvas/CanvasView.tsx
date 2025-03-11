@@ -74,7 +74,6 @@ const PreviewCanvas = styled("canvas") <{ isLoading: boolean }>`
       display: none;
     `}
   position: absolute;
-  pointer-events: none;
 `;
 
 const ReticleContainer = styled("div")`
@@ -317,11 +316,11 @@ export default function CanvasView() {
       setTargetZoom(newZoom);
     };
 
-    canvasRef.current?.addEventListener("wheel", handleWheel, {
+    previewCanvasRef.current?.addEventListener("wheel", handleWheel, {
       passive: false,
     });
 
-    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
+    return () => previewCanvasRef.current?.removeEventListener("wheel", handleWheel);
   }, [imageDimensions, targetZoom]);
 
   useEffect(() => {
@@ -467,11 +466,11 @@ export default function CanvasView() {
   );
 
   const handleTouchEnd = useCallback((): void => {
-    if (!canvasRef.current) return;
+    if (!previewCanvasRef.current) return;
 
-    canvasRef.current.removeEventListener("touchmove", handleTouchMove);
-    canvasRef.current.removeEventListener("touchend", handleTouchEnd);
-    canvasRef.current.removeEventListener("touchcancel", handleTouchEnd);
+    previewCanvasRef.current.removeEventListener("touchmove", handleTouchMove);
+    previewCanvasRef.current.removeEventListener("touchend", handleTouchEnd);
+    previewCanvasRef.current.removeEventListener("touchcancel", handleTouchEnd);
   }, [handleTouchMove]);
 
   /**
@@ -480,18 +479,18 @@ export default function CanvasView() {
    */
   const handleStartTouchPan = useCallback(
     (event: React.TouchEvent<HTMLDivElement>): void => {
-      if (!canvasRef.current) return;
+      if (!previewCanvasRef.current) return;
 
       const touchCount = event.touches.length;
 
       // TODO: Implement multi-touch zooming
       if (touchCount !== 1) return;
 
-      canvasRef.current.addEventListener("touchmove", handleTouchMove, {
+      previewCanvasRef.current.addEventListener("touchmove", handleTouchMove, {
         passive: false,
       });
-      canvasRef.current.addEventListener("touchend", handleTouchEnd);
-      canvasRef.current.addEventListener("touchcancel", handleTouchEnd);
+      previewCanvasRef.current.addEventListener("touchend", handleTouchEnd);
+      previewCanvasRef.current.addEventListener("touchcancel", handleTouchEnd);
       startTouchesRef.current = Array.from(event.touches);
     },
     [handleTouchMove, handleTouchEnd],
@@ -525,9 +524,9 @@ export default function CanvasView() {
    */
   const handleCanvasClick = useCallback(
     (event: MouseEvent): void => {
-      if (!canvasRef.current) return;
+      if (!previewCanvasRef.current) return;
 
-      const canvasRect = canvasRef.current.getBoundingClientRect();
+      const canvasRect = previewCanvasRef.current.getBoundingClientRect();
       const mouseX = event.clientX - canvasRect.left;
       const mouseY = event.clientY - canvasRect.top;
 
@@ -537,12 +536,12 @@ export default function CanvasView() {
       const boundedX = clamp(
         Math.floor(imageX),
         0,
-        canvasRef.current.width - 1,
+        previewCanvasRef.current.width - 1,
       );
       const boundedY = clamp(
         Math.floor(imageY),
         0,
-        canvasRef.current.height - 1,
+        previewCanvasRef.current.height - 1,
       );
 
       // we only care about updating the location
@@ -555,10 +554,10 @@ export default function CanvasView() {
   );
 
   useEffect(() => {
-    canvasRef.current?.addEventListener("mousedown", handleCanvasClick);
+    previewCanvasRef.current?.addEventListener("mousedown", handleCanvasClick);
 
     return () =>
-      canvasRef.current?.removeEventListener("mousedown", handleCanvasClick);
+      previewCanvasRef.current?.removeEventListener("mousedown", handleCanvasClick);
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
@@ -596,7 +595,6 @@ export default function CanvasView() {
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale: zoom,
-            // transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x * 8.8}, ${offset.y * 8.8})`,
           }}
         >
           <ReticleContainer
@@ -638,7 +636,12 @@ export default function CanvasView() {
             height={imageDimensions?.height}
           />
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
-          {canvasImageUrl && (<img src={canvasImageUrl} alt="Active Canvas" style={{ imageRendering: "pixelated", pointerEvents: "none" }} />)}
+          {canvasImageUrl && (<img src={canvasImageUrl} alt="Active Canvas"
+            style={{
+              imageRendering: "pixelated",
+              pointerEvents: "none",
+            }}
+          />)}
         </div>
         {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
