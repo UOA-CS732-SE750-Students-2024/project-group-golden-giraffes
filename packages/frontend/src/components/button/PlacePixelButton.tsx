@@ -119,7 +119,7 @@ export default function PlacePixelButton() {
   }
 
   const { x, y } = adjustedCoords;
-  const nbsp = "\u00A0"
+  const nbsp = "\u00A0";
 
   return (
     <DynamicButton color={color} onAction={handlePixelRequest}>
