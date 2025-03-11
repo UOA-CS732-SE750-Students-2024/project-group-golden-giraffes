@@ -57,7 +57,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -67,7 +67,7 @@ const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
     `}
 `;
 
-const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
+const PreviewCanvas = styled("canvas") <{ isLoading: boolean }>`
   ${({ isLoading }) =>
     isLoading &&
     css`
@@ -163,7 +163,7 @@ export default function CanvasView() {
     () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
     [canvas.id],
   );
-
+  const [canvasImageUrl, setCanvasImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
@@ -187,6 +187,14 @@ export default function CanvasView() {
     canvasRef.current.height = image.height;
 
     context.drawImage(image, 0, 0);
+
+    canvasRef.current.toBlob((blob) => {
+      // Shouldn't have null blob
+      if (!blob) {
+        return;
+      }
+      setCanvasImageUrl(URL.createObjectURL(blob));
+    })
 
     const initialZoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
@@ -588,6 +596,7 @@ export default function CanvasView() {
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale: zoom,
+            // transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x * 8.8}, ${offset.y * 8.8})`,
           }}
         >
           <ReticleContainer
@@ -628,7 +637,8 @@ export default function CanvasView() {
             width={imageDimensions?.width}
             height={imageDimensions?.height}
           />
-          <DisplayCanvas ref={canvasRef} isLoading={isLoading} />
+          <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
+          {canvasImageUrl && (<img src={canvasImageUrl} alt="Active Canvas" style={{ imageRendering: "pixelated", pointerEvents: "none" }} />)}
         </div>
         {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
