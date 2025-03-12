@@ -57,7 +57,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -67,7 +67,7 @@ const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
     `}
 `;
 
-const PreviewCanvas = styled("canvas") <{ isLoading: boolean }>`
+const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
   ${({ isLoading }) =>
     isLoading &&
     css`
@@ -152,6 +152,7 @@ export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasImageWrapperRef = useRef<HTMLImageElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
@@ -193,7 +194,7 @@ export default function CanvasView() {
         return;
       }
       setCanvasImageUrl(URL.createObjectURL(blob));
-    })
+    });
 
     const initialZoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
@@ -316,11 +317,12 @@ export default function CanvasView() {
       setTargetZoom(newZoom);
     };
 
-    previewCanvasRef.current?.addEventListener("wheel", handleWheel, {
+    canvasImageWrapperRef.current?.addEventListener("wheel", handleWheel, {
       passive: false,
     });
 
-    return () => previewCanvasRef.current?.removeEventListener("wheel", handleWheel);
+    return () =>
+      canvasImageWrapperRef.current?.removeEventListener("wheel", handleWheel);
   }, [imageDimensions, targetZoom]);
 
   useEffect(() => {
@@ -557,7 +559,10 @@ export default function CanvasView() {
     previewCanvasRef.current?.addEventListener("mousedown", handleCanvasClick);
 
     return () =>
-      previewCanvasRef.current?.removeEventListener("mousedown", handleCanvasClick);
+      previewCanvasRef.current?.removeEventListener(
+        "mousedown",
+        handleCanvasClick,
+      );
   }, [handleCanvasClick]);
 
   const handleDrawingSelectedPixel = useCallback(() => {
@@ -636,12 +641,18 @@ export default function CanvasView() {
             height={imageDimensions?.height}
           />
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
-          {canvasImageUrl && (<img src={canvasImageUrl} alt="Active Canvas"
-            style={{
-              imageRendering: "pixelated",
-              pointerEvents: "none",
-            }}
-          />)}
+          {canvasImageUrl && (
+            <div ref={canvasImageWrapperRef}>
+              <img
+                src={canvasImageUrl}
+                alt="Active Canvas"
+                style={{
+                  imageRendering: "pixelated",
+                  pointerEvents: "none",
+                }}
+              />
+            </div>
+          )}
         </div>
         {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
