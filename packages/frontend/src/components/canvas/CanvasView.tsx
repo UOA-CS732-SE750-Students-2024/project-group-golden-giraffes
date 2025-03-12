@@ -56,7 +56,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -642,11 +642,16 @@ export default function CanvasView() {
     </>
   );
 
-
-  function updateCanvasImg(payload: PlacePixelSocket.Payload, imageDimensions: Dimensions | null) {
+  function updateCanvasImg(
+    payload: PlacePixelSocket.Payload,
+    imageDimensions: Dimensions | null,
+  ) {
     if (!imageDimensions) return;
-    const offscreenCanvas = new OffscreenCanvas(imageDimensions.width, imageDimensions.height);
-    const ctx = offscreenCanvas.getContext('2d');
+    const offscreenCanvas = new OffscreenCanvas(
+      imageDimensions.width,
+      imageDimensions.height,
+    );
+    const ctx = offscreenCanvas.getContext("2d");
     if (!ctx) return;
     const [r, g, b, a] = payload.rgba;
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
@@ -656,7 +661,7 @@ export default function CanvasView() {
       pixelImage.src = URL.createObjectURL(blob);
       pixelImage.onload = () => {
         canvasImageWrapperRef.current?.appendChild(pixelImage);
-      }
-    })
+      };
+    });
   }
 }
