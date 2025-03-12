@@ -57,7 +57,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -67,7 +67,7 @@ const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
     `}
 `;
 
-const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
+const PreviewCanvas = styled("canvas") <{ isLoading: boolean }>`
   ${({ isLoading }) =>
     isLoading &&
     css`
@@ -468,11 +468,11 @@ export default function CanvasView() {
   );
 
   const handleTouchEnd = useCallback((): void => {
-    if (!previewCanvasRef.current) return;
+    if (!containerRef.current) return;
 
-    previewCanvasRef.current.removeEventListener("touchmove", handleTouchMove);
-    previewCanvasRef.current.removeEventListener("touchend", handleTouchEnd);
-    previewCanvasRef.current.removeEventListener("touchcancel", handleTouchEnd);
+    containerRef.current.removeEventListener("touchmove", handleTouchMove);
+    containerRef.current.removeEventListener("touchend", handleTouchEnd);
+    containerRef.current.removeEventListener("touchcancel", handleTouchEnd);
   }, [handleTouchMove]);
 
   /**
@@ -481,18 +481,18 @@ export default function CanvasView() {
    */
   const handleStartTouchPan = useCallback(
     (event: React.TouchEvent<HTMLDivElement>): void => {
-      if (!previewCanvasRef.current) return;
+      if (!containerRef.current) return;
 
       const touchCount = event.touches.length;
 
       // TODO: Implement multi-touch zooming
       if (touchCount !== 1) return;
 
-      previewCanvasRef.current.addEventListener("touchmove", handleTouchMove, {
+      containerRef.current.addEventListener("touchmove", handleTouchMove, {
         passive: false,
       });
-      previewCanvasRef.current.addEventListener("touchend", handleTouchEnd);
-      previewCanvasRef.current.addEventListener("touchcancel", handleTouchEnd);
+      containerRef.current.addEventListener("touchend", handleTouchEnd);
+      containerRef.current.addEventListener("touchcancel", handleTouchEnd);
       startTouchesRef.current = Array.from(event.touches);
     },
     [handleTouchMove, handleTouchEnd],
