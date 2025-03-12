@@ -625,20 +625,18 @@ export default function CanvasView() {
               ref={canvasImageWrapperRef}
               id="canvas-image-wrapper"
             >
-              <img src={imageUrl} alt="Active Canvas" />
+              <img
+                alt="Active Blurple Canvas"
+                onLoad={(event) => handleLoadImage(event.currentTarget)}
+                ref={imageRef}
+                src={imageUrl}
+                crossOrigin="anonymous"
+              />
             </CanvasImageWrapper>
           )}
         </div>
         {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
-      <img
-        alt="Blurple Canvas 2023"
-        hidden
-        onLoad={(event) => handleLoadImage(event.currentTarget)}
-        ref={imageRef}
-        src={imageUrl}
-        crossOrigin="anonymous"
-      />
     </>
   );
 
