@@ -56,7 +56,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -97,6 +97,24 @@ const InviteButton = styled(Button)`
 
   :hover {
     background-color: var(--discord-blurple);
+  }
+`;
+
+const CanvasImageWrapper = styled("div")`
+  position: relative;
+
+  img {
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
+  img:not(:first-child) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    rotate: 90deg;
   }
 `;
 
@@ -600,16 +618,9 @@ export default function CanvasView() {
           {/* Hidden canvas to be used as a source for the canvasImage, ideally shouldn't need Canvases*/}
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
           {canvasImageUrl && (
-            <div ref={canvasImageWrapperRef}>
-              <img
-                src={canvasImageUrl}
-                alt="Active Canvas"
-                style={{
-                  imageRendering: "pixelated",
-                  pointerEvents: "none",
-                }}
-              />
-            </div>
+            <CanvasImageWrapper ref={canvasImageWrapperRef}>
+              <img src={canvasImageUrl} alt="Active Canvas" />
+            </CanvasImageWrapper>
           )}
         </div>
         {isLoading && <CircularProgress className="loader" />}
