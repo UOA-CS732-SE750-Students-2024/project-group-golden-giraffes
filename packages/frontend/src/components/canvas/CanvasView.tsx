@@ -56,7 +56,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -114,7 +114,6 @@ const CanvasImageWrapper = styled("div")`
     left: 0;
     width: 100%;
     height: 100%;
-    rotate: 90deg;
   }
 `;
 
@@ -171,7 +170,6 @@ export default function CanvasView() {
     () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
     [canvas.id],
   );
-  const [canvasImageUrl, setCanvasImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
@@ -195,8 +193,6 @@ export default function CanvasView() {
     canvasRef.current.height = image.height;
 
     context.drawImage(image, 0, 0);
-    updateCanvasImgUrl();
-
     const initialZoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
@@ -264,7 +260,7 @@ export default function CanvasView() {
       const [r, g, b, a] = payload.rgba;
       context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
       context.fillRect(payload.x, payload.y, 1, 1);
-      updateCanvasImgUrl();
+      updateCanvasImg(payload, imageDimensions);
     };
 
     const pixelPlaceEvent = `place pixel ${canvas.id}`;
@@ -279,7 +275,7 @@ export default function CanvasView() {
       socket.off(pixelPlaceEvent, onPixelPlaced);
       socket.disconnect();
     };
-  }, [canvas.id, canvas.isLocked]);
+  }, [canvas.id, canvas.isLocked, imageDimensions]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
@@ -624,12 +620,12 @@ export default function CanvasView() {
           </ReticleContainer>
           {/* Hidden canvas to be used as a source for the canvasImage, ideally shouldn't need Canvases*/}
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
-          {canvasImageUrl && (
+          {imageUrl && (
             <CanvasImageWrapper
               ref={canvasImageWrapperRef}
               id="canvas-image-wrapper"
             >
-              <img src={canvasImageUrl} alt="Active Canvas" />
+              <img src={imageUrl} alt="Active Canvas" />
             </CanvasImageWrapper>
           )}
         </div>
@@ -646,16 +642,21 @@ export default function CanvasView() {
     </>
   );
 
-  // Function to update the canvas image URL to the latest drawn canvas
-  function updateCanvasImgUrl() {
-    if (!canvasRef.current) return;
-    canvasRef.current.toBlob((blob) => {
-      if (canvasImageUrl) {
-        URL.revokeObjectURL(canvasImageUrl);
+
+  function updateCanvasImg(payload: PlacePixelSocket.Payload, imageDimensions: Dimensions | null) {
+    if (!imageDimensions) return;
+    const offscreenCanvas = new OffscreenCanvas(imageDimensions.width, imageDimensions.height);
+    const ctx = offscreenCanvas.getContext('2d');
+    if (!ctx) return;
+    const [r, g, b, a] = payload.rgba;
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+    ctx.fillRect(payload.x, payload.y, 1, 1);
+    offscreenCanvas.convertToBlob().then((blob) => {
+      const pixelImage = new Image();
+      pixelImage.src = URL.createObjectURL(blob);
+      pixelImage.onload = () => {
+        canvasImageWrapperRef.current?.appendChild(pixelImage);
       }
-      if (blob) {
-        setCanvasImageUrl(URL.createObjectURL(blob));
-      }
-    });
+    })
   }
 }
