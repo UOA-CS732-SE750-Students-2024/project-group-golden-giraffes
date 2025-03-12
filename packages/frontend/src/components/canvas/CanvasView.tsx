@@ -56,7 +56,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -303,7 +303,7 @@ export default function CanvasView() {
       // Ensures that the handler can be added to a parent element but only operates on the canvas image wrapper.
       // Applying the handler to lower elements for some isn't consistently picked up in certain (Firefox and Chrome).
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
-      const elem = event.target
+      const elem = event.target;
       if (!(elem instanceof HTMLElement)) return;
       if (elem.id !== "canvas-image-wrapper") return;
 
@@ -625,7 +625,10 @@ export default function CanvasView() {
           {/* Hidden canvas to be used as a source for the canvasImage, ideally shouldn't need Canvases*/}
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
           {canvasImageUrl && (
-            <CanvasImageWrapper ref={canvasImageWrapperRef} id="canvas-image-wrapper">
+            <CanvasImageWrapper
+              ref={canvasImageWrapperRef}
+              id="canvas-image-wrapper"
+            >
               <img src={canvasImageUrl} alt="Active Canvas" />
             </CanvasImageWrapper>
           )}
