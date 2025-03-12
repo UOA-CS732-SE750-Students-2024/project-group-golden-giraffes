@@ -18,7 +18,6 @@ import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
 import { Button } from "../button";
-import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
   addPoints,
@@ -65,15 +64,6 @@ const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
       cursor: wait;
       filter: grayscale(80%);
     `}
-`;
-
-const PreviewCanvas = styled("canvas") <{ isLoading: boolean }>`
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      display: none;
-    `}
-  position: absolute;
 `;
 
 const ReticleContainer = styled("div")`
@@ -153,7 +143,6 @@ export default function CanvasView() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasImageWrapperRef = useRef<HTMLImageElement>(null);
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
@@ -555,22 +544,6 @@ export default function CanvasView() {
       );
   }, [handleCanvasClick]);
 
-  const handleDrawingSelectedPixel = useCallback(() => {
-    if (!imageDimensions || !coords) return;
-
-    updateCanvasPreviewPixel(
-      previewCanvasRef,
-      coords,
-      clamp(-Math.log((zoom * 200) / imageDimensions.width) + 1, 0, 1),
-    );
-
-    console.debug(`Drawing pixel at (${coords.x}, ${coords.y})`);
-  }, [imageDimensions, coords, zoom]);
-
-  useEffect(() => {
-    handleDrawingSelectedPixel();
-  }, [handleDrawingSelectedPixel]);
-
   const reticleOffset = calculateReticleOffset(coords);
 
   return (
@@ -624,12 +597,6 @@ export default function CanvasView() {
               }}
             />
           </ReticleContainer>
-          <PreviewCanvas
-            isLoading={isLoading}
-            ref={previewCanvasRef}
-            width={imageDimensions?.width}
-            height={imageDimensions?.height}
-          />
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
           {canvasImageUrl && (
             <div ref={canvasImageWrapperRef}>
