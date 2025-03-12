@@ -187,14 +187,7 @@ export default function CanvasView() {
     canvasRef.current.height = image.height;
 
     context.drawImage(image, 0, 0);
-
-    canvasRef.current.toBlob((blob) => {
-      // Shouldn't have null blob
-      if (!blob) {
-        return;
-      }
-      setCanvasImageUrl(URL.createObjectURL(blob));
-    });
+    updateCanvasImgUrl();
 
     const initialZoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
@@ -263,6 +256,7 @@ export default function CanvasView() {
       const [r, g, b, a] = payload.rgba;
       context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
       context.fillRect(payload.x, payload.y, 1, 1);
+      updateCanvasImgUrl();
     };
 
     const pixelPlaceEvent = `place pixel ${canvas.id}`;
@@ -662,4 +656,16 @@ export default function CanvasView() {
       />
     </>
   );
+
+  function updateCanvasImgUrl() {
+    if (!canvasRef.current) return;
+    canvasRef.current.toBlob((blob) => {
+      if (canvasImageUrl) {
+        URL.revokeObjectURL(canvasImageUrl);
+      }
+      if (blob) {
+        setCanvasImageUrl(URL.createObjectURL(blob));
+      }
+    });
+  }
 }
