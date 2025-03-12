@@ -597,6 +597,7 @@ export default function CanvasView() {
               }}
             />
           </ReticleContainer>
+          {/* Hidden canvas to be used as a source for the canvasImage, ideally shouldn't need Canvases*/}
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
           {canvasImageUrl && (
             <div ref={canvasImageWrapperRef}>
@@ -624,6 +625,7 @@ export default function CanvasView() {
     </>
   );
 
+  // Function to update the canvas image URL to the latest drawn canvas
   function updateCanvasImgUrl() {
     if (!canvasRef.current) return;
     canvasRef.current.toBlob((blob) => {
