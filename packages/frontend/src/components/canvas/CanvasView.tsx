@@ -56,7 +56,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -161,6 +161,7 @@ export default function CanvasView() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasImageWrapperRef = useRef<HTMLImageElement>(null);
+  const canvasPanAndZoomRef = useRef<HTMLDivElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
@@ -299,14 +300,20 @@ export default function CanvasView() {
         x: event.offsetX,
         y: event.offsetY,
       };
+      // Ensures that the handler can be added to a parent element but only operates on the canvas image wrapper.
+      // Applying the handler to lower elements for some isn't consistently picked up in certain (Firefox and Chrome).
+      // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
+      const elem = event.target
+      if (!(elem instanceof HTMLElement)) return;
+      if (elem.id !== "canvas-image-wrapper") return;
 
       // The mouse position's origin is in the top left of the canvas. The offset's origin is the
       // center of the canvas so we do this to convert between the two.
       setMouseOffsetDirection(
         diffPoints(
           {
-            x: imageDimensions.width / 2,
-            y: imageDimensions.height / 2,
+            x: elem.offsetWidth / 2,
+            y: elem.offsetHeight / 2,
           },
           mousePositionOnCanvas,
         ),
@@ -318,12 +325,12 @@ export default function CanvasView() {
       setTargetZoom(newZoom);
     };
 
-    canvasImageWrapperRef.current?.addEventListener("wheel", handleWheel, {
+    containerRef.current?.addEventListener("wheel", handleWheel, {
       passive: false,
     });
 
     return () =>
-      canvasImageWrapperRef.current?.removeEventListener("wheel", handleWheel);
+      containerRef.current?.removeEventListener("wheel", handleWheel);
   }, [imageDimensions, targetZoom]);
 
   useEffect(() => {
@@ -578,6 +585,7 @@ export default function CanvasView() {
         )}
         <div
           id="canvas-pan-and-zoom"
+          ref={canvasPanAndZoomRef}
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale: zoom,
@@ -618,7 +626,7 @@ export default function CanvasView() {
           {/* Hidden canvas to be used as a source for the canvasImage, ideally shouldn't need Canvases*/}
           <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
           {canvasImageUrl && (
-            <CanvasImageWrapper ref={canvasImageWrapperRef}>
+            <CanvasImageWrapper ref={canvasImageWrapperRef} id="canvas-image-wrapper">
               <img src={canvasImageUrl} alt="Active Canvas" />
             </CanvasImageWrapper>
           )}
