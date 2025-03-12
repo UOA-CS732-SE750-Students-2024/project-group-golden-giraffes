@@ -526,40 +526,36 @@ export default function CanvasView() {
    */
   const handleCanvasClick = useCallback(
     (event: MouseEvent): void => {
-      if (!previewCanvasRef.current) return;
+      if (event.target instanceof HTMLElement) {
+        const canvas = event.target;
+        const canvasRect = canvas.getBoundingClientRect();
 
-      const canvasRect = previewCanvasRef.current.getBoundingClientRect();
-      const mouseX = event.clientX - canvasRect.left;
-      const mouseY = event.clientY - canvasRect.top;
+        const mouseX = event.clientX - canvasRect.left;
+        const mouseY = event.clientY - canvasRect.top;
 
-      const imageX = mouseX / zoom;
-      const imageY = mouseY / zoom;
+        const imageX = mouseX / zoom;
+        const imageY = mouseY / zoom;
 
-      const boundedX = clamp(
-        Math.floor(imageX),
-        0,
-        previewCanvasRef.current.width - 1,
-      );
-      const boundedY = clamp(
-        Math.floor(imageY),
-        0,
-        previewCanvasRef.current.height - 1,
-      );
-
-      // we only care about updating the location
-      setCoords({
-        x: boundedX,
-        y: boundedY,
-      });
+        const boundedX = clamp(Math.floor(imageX), 0, canvas.offsetWidth - 1);
+        const boundedY = clamp(Math.floor(imageY), 0, canvas.offsetHeight - 1);
+        // we only care about updating the location
+        setCoords({
+          x: boundedX,
+          y: boundedY,
+        });
+      }
     },
     [zoom, setCoords],
   );
 
   useEffect(() => {
-    previewCanvasRef.current?.addEventListener("mousedown", handleCanvasClick);
+    canvasImageWrapperRef.current?.addEventListener(
+      "mousedown",
+      handleCanvasClick,
+    );
 
     return () =>
-      previewCanvasRef.current?.removeEventListener(
+      canvasImageWrapperRef.current?.removeEventListener(
         "mousedown",
         handleCanvasClick,
       );
