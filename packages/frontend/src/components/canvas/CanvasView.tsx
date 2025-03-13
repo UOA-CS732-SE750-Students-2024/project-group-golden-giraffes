@@ -56,7 +56,7 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
+const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -640,6 +640,10 @@ export default function CanvasView() {
     </>
   );
 
+  /**
+   * Creates a single pixel png using `OffscreenCanvas` based on the payload,
+   * and overlays it over the canvas as a child node.
+   */
   function updateCanvasImg(
     payload: PlacePixelSocket.Payload,
     imageDimensions: Dimensions | null,
