@@ -119,13 +119,15 @@ export default function PlacePixelButton() {
   }
 
   const { x, y } = adjustedCoords;
+  const nbsp = "\u00A0";
 
   return (
     <DynamicButton color={color} onAction={handlePixelRequest}>
       {isSelected ? "Place pixel" : "Select a pixel"}
       {isSelected && (
         <CoordinateLabel>
-          ({x},&nbsp;{y})
+          {/* String interpolation is required to prevent https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues/255 */}
+          {`(${x},${nbsp}${y})`}
         </CoordinateLabel>
       )}
     </DynamicButton>
