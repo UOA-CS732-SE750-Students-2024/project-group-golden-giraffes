@@ -168,15 +168,12 @@ export default function CanvasView() {
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
   const [controlledPan, setControlledPan] = useState(false);
-  const [targetZoom, setTargetZoom] = useState(1);
-  const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     const initialZoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
     setZoom(initialZoom);
-    setTargetZoom(initialZoom);
     setVelocity(ORIGIN);
     setOffset(ORIGIN);
     setIsLoading(false);
@@ -278,6 +275,7 @@ export default function CanvasView() {
         x: event.offsetX,
         y: event.offsetY,
       };
+
       // Ensures that the handler can be added to a parent element but only operates on the canvas image wrapper.
       // Applying the handler to lower elements for some isn't consistently picked up in certain browsers (Firefox and Chrome).
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
@@ -287,44 +285,15 @@ export default function CanvasView() {
 
       // The mouse position's origin is in the top left of the canvas. The offset's origin is the
       // center of the canvas so we do this to convert between the two.
-      setMouseOffsetDirection(
-        diffPoints(
-          {
-            x: elem.offsetWidth / 2,
-            y: elem.offsetHeight / 2,
-          },
-          mousePositionOnCanvas,
-        ),
+      const mouseOffsetDirection = diffPoints(
+        { x: elem.offsetWidth / 2, y: elem.offsetHeight / 2 },
+        mousePositionOnCanvas,
       );
 
       const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
-      const newZoom = clamp(targetZoom * scale, MIN_ZOOM, MAX_ZOOM);
+      const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
 
-      setTargetZoom(newZoom);
-    };
-
-    containerRef.current?.addEventListener("wheel", handleWheel, {
-      passive: false,
-    });
-
-    return () =>
-      containerRef.current?.removeEventListener("wheel", handleWheel);
-  }, [targetZoom]);
-
-  useEffect(() => {
-    if (zoom === targetZoom) return;
-
-    const glideZoom = () => {
-      const diff = (targetZoom - zoom) / targetZoom;
-      const scale = Math.exp(
-        Math.sign(diff) * SCALE_FACTOR * Math.abs(diff) * 2,
-      );
-      const newZoom = clamp(
-        zoom * scale,
-        diff > 0 ? MIN_ZOOM : targetZoom,
-        diff < 0 ? MAX_ZOOM : targetZoom,
-      );
-
+      // Clamping the zoom means the actual scale may be different.
       const effectiveScale = newZoom / zoom;
 
       setOffset((prevOffset) => {
@@ -348,10 +317,13 @@ export default function CanvasView() {
       setZoom(newZoom);
     };
 
-    const interval = setInterval(glideZoom, 8);
+    containerRef.current?.addEventListener("wheel", handleWheel, {
+      passive: false,
+    });
 
-    return () => clearInterval(interval);
-  }, [zoom, targetZoom, mouseOffsetDirection]);
+    return () =>
+      containerRef.current?.removeEventListener("wheel", handleWheel);
+  }, [zoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -562,8 +534,8 @@ export default function CanvasView() {
           id="canvas-pan-and-zoom"
           ref={canvasPanAndZoomRef}
           style={{
-            transform: `translate(${offset.x}px, ${offset.y}px)`,
-            scale: zoom,
+            transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x * zoom}, ${offset.y * zoom})`,
+            transition: "transform 0.1s ease-out",
           }}
         >
           <ReticleContainer
