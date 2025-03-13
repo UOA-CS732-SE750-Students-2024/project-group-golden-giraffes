@@ -237,7 +237,26 @@ export default function CanvasView() {
         ...socket.auth,
         pixelTimestamp,
       };
-      updateCanvasImg(payload, imageDimensions);
+
+      // Creates a single pixel png using `OffscreenCanvas` based on the payload,
+      // and overlays it over the canvas as a child node.
+      if (!imageDimensions) return;
+      const offscreenCanvas = new OffscreenCanvas(
+        imageDimensions.width,
+        imageDimensions.height,
+      );
+      const ctx = offscreenCanvas.getContext("2d");
+      if (!ctx) return;
+      const [r, g, b, a] = payload.rgba;
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+      ctx.fillRect(payload.x, payload.y, 1, 1);
+      offscreenCanvas.convertToBlob().then((blob) => {
+        const pixelImage = new Image();
+        pixelImage.src = URL.createObjectURL(blob);
+        pixelImage.onload = () => {
+          canvasImageWrapperRef.current?.appendChild(pixelImage);
+        };
+      });
     };
 
     const pixelPlaceEvent = `place pixel ${canvas.id}`;
@@ -613,31 +632,4 @@ export default function CanvasView() {
       </CanvasContainer>
     </>
   );
-
-  /**
-   * Creates a single pixel png using `OffscreenCanvas` based on the payload,
-   * and overlays it over the canvas as a child node.
-   */
-  function updateCanvasImg(
-    payload: PlacePixelSocket.Payload,
-    imageDimensions: Dimensions | null,
-  ) {
-    if (!imageDimensions) return;
-    const offscreenCanvas = new OffscreenCanvas(
-      imageDimensions.width,
-      imageDimensions.height,
-    );
-    const ctx = offscreenCanvas.getContext("2d");
-    if (!ctx) return;
-    const [r, g, b, a] = payload.rgba;
-    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
-    ctx.fillRect(payload.x, payload.y, 1, 1);
-    offscreenCanvas.convertToBlob().then((blob) => {
-      const pixelImage = new Image();
-      pixelImage.src = URL.createObjectURL(blob);
-      pixelImage.onload = () => {
-        canvasImageWrapperRef.current?.appendChild(pixelImage);
-      };
-    });
-  }
 }
