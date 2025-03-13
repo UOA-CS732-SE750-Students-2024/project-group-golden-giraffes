@@ -56,16 +56,6 @@ const CanvasContainer = styled("div")`
   }
 `;
 
-const DisplayCanvas = styled("canvas") <{ isLoading: boolean }>`
-  transition: filter var(--transition-duration-medium) ease;
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      cursor: wait;
-      filter: grayscale(80%);
-    `}
-`;
-
 const ReticleContainer = styled("div")`
   pointer-events: none;
   position: absolute;
@@ -100,7 +90,15 @@ const InviteButton = styled(Button)`
   }
 `;
 
-const CanvasImageWrapper = styled("div")`
+const CanvasImageWrapper = styled("div") <{ isLoading: boolean }>`
+  transition: filter var(--transition-duration-medium) ease;
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      cursor: wait;
+      filter: grayscale(80%);
+    `}
+
   position: relative;
 
   img {
@@ -158,7 +156,6 @@ function calculateReticleOffset(coords: Point | null): Point {
 export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasImageWrapperRef = useRef<HTMLImageElement>(null);
   const canvasPanAndZoomRef = useRef<HTMLDivElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
@@ -182,17 +179,6 @@ export default function CanvasView() {
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
-    if (!canvasRef.current) return;
-
-    const context = canvasRef.current.getContext("2d");
-    if (!context) return;
-
-    // We need to set the width of the canvas first, otherwise if the image is bigger than
-    // the canvas it'll get cut off.
-    canvasRef.current.width = image.width;
-    canvasRef.current.height = image.height;
-
-    context.drawImage(image, 0, 0);
     const initialZoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
@@ -251,15 +237,6 @@ export default function CanvasView() {
         ...socket.auth,
         pixelTimestamp,
       };
-
-      if (!canvasRef.current) return;
-
-      const context = canvasRef.current.getContext("2d");
-      if (!context) return;
-
-      const [r, g, b, a] = payload.rgba;
-      context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
-      context.fillRect(payload.x, payload.y, 1, 1);
       updateCanvasImg(payload, imageDimensions);
     };
 
@@ -618,22 +595,19 @@ export default function CanvasView() {
               }}
             />
           </ReticleContainer>
-          {/* Hidden canvas to be used as a source for the canvasImage, ideally shouldn't need Canvases*/}
-          <DisplayCanvas ref={canvasRef} isLoading={isLoading} hidden />
-          {imageUrl && (
-            <CanvasImageWrapper
-              ref={canvasImageWrapperRef}
-              id="canvas-image-wrapper"
-            >
-              <img
-                alt="Active Blurple Canvas"
-                onLoad={(event) => handleLoadImage(event.currentTarget)}
-                ref={imageRef}
-                src={imageUrl}
-                crossOrigin="anonymous"
-              />
-            </CanvasImageWrapper>
-          )}
+          <CanvasImageWrapper
+            ref={canvasImageWrapperRef}
+            isLoading={isLoading}
+            id="canvas-image-wrapper"
+          >
+            <img
+              alt="Active Blurple Canvas"
+              onLoad={(event) => handleLoadImage(event.currentTarget)}
+              ref={imageRef}
+              src={imageUrl}
+              crossOrigin="anonymous"
+            />
+          </CanvasImageWrapper>
         </div>
         {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
