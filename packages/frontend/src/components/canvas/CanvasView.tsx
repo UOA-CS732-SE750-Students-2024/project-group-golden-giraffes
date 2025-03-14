@@ -35,6 +35,8 @@ const CanvasContainer = styled("div")`
   overflow: hidden;
   place-content: center;
   place-items: center;
+  /* Fixes blurry canvas in Safari when canvasImage overlaps with overflow, don't ask why */
+  -webkit-transform: translate3d(0, 0, 0);
 
   :active {
     cursor: grabbing;
