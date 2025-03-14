@@ -19,7 +19,7 @@ export const CoordinateLabel = styled("span")`
 
 export default function PlacePixelButton() {
   const { canvas, coords, adjustedCoords, setCoords } = useCanvasContext();
-  const { color, setColor } = useSelectedColorContext();
+  const { color } = useSelectedColorContext();
   const isSelected = adjustedCoords && color;
   const [timeLeft, setTimeLeft] = useState(0);
   const [isPlacing, setIsPlacing] = useState(false);
@@ -71,7 +71,6 @@ export default function PlacePixelButton() {
         alert("Failed to place pixel, please refresh the page");
       });
 
-    setColor(null);
     setCoords(null);
   };
 
