@@ -12,7 +12,7 @@
   },
   "javascript": {
     "formatter": {
-      "trailingCommas": "all"
+      "trailingComma": "all"
     }
   },
   "vcs": {
