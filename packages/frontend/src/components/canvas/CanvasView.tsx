@@ -50,11 +50,6 @@ const CanvasContainer = styled("div")`
   .loader {
     position: absolute;
   }
-
-  canvas {
-    image-rendering: pixelated;
-    max-width: inherit;
-  }
 `;
 
 const ReticleContainer = styled("div")`
