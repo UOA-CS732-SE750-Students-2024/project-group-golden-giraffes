@@ -14,7 +14,6 @@ import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
 import config from "@/config";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
-import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
 import { Button } from "../button";
@@ -169,9 +168,6 @@ export default function CanvasView() {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
-  const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
-    null,
-  );
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
   const [controlledPan, setControlledPan] = useState(false);
@@ -186,7 +182,6 @@ export default function CanvasView() {
     setTargetZoom(initialZoom);
     setVelocity(ORIGIN);
     setOffset(ORIGIN);
-    setImageDimension({ width: image.width, height: image.height });
     setIsLoading(false);
   }, []);
 
@@ -240,11 +235,7 @@ export default function CanvasView() {
 
       // Creates a single pixel png using `OffscreenCanvas` based on the payload,
       // and overlays it over the canvas as a child node.
-      if (!imageDimensions) return;
-      const offscreenCanvas = new OffscreenCanvas(
-        imageDimensions.width,
-        imageDimensions.height,
-      );
+      const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
       const ctx = offscreenCanvas.getContext("2d");
       if (!ctx) return;
       const [r, g, b, a] = payload.rgba;
@@ -271,15 +262,13 @@ export default function CanvasView() {
       socket.off(pixelPlaceEvent, onPixelPlaced);
       socket.disconnect();
     };
-  }, [canvas.id, canvas.isLocked, imageDimensions]);
+  }, [canvas]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
    ********************************/
 
   useEffect(() => {
-    if (!imageDimensions) return;
-
     /**
      * When we zoom, not only do we need to scale the image, but to give the appearing of zooming
      * in on a specific pixel, we need to offset the image so that the pixel we're zooming in on
@@ -323,7 +312,7 @@ export default function CanvasView() {
 
     return () =>
       containerRef.current?.removeEventListener("wheel", handleWheel);
-  }, [imageDimensions, targetZoom]);
+  }, [targetZoom]);
 
   useEffect(() => {
     if (zoom === targetZoom) return;
@@ -377,17 +366,15 @@ export default function CanvasView() {
    */
   const clampOffset = useCallback(
     (offset: Point): Point => {
-      if (imageDimensions == null) return offset;
-
-      const widthLimit = imageDimensions.width / 2;
-      const heightLimit = imageDimensions.height / 2;
+      const widthLimit = canvas.width / 2;
+      const heightLimit = canvas.height / 2;
 
       return {
         x: clamp(offset.x, -widthLimit, widthLimit),
         y: clamp(offset.y, -heightLimit, heightLimit),
       };
     },
-    [imageDimensions],
+    [canvas],
   );
 
   const updateOffset = useCallback(
