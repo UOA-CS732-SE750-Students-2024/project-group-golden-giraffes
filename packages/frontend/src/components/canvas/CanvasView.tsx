@@ -135,6 +135,13 @@ const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
 const ZOOM_DURATION = 0.1;
+// Transition animation on canvas pan and zoom is blurred on Safari and needs to be disabled.
+// If the user spoof their user agent, this is not my problem.
+// Bug in question https://bugs.webkit.org/show_bug.cgi?id=27684
+const IS_SAFARI =
+  navigator.userAgent.includes("Safari/") &&
+  !navigator.userAgent.includes("Chrome/") &&
+  !navigator.userAgent.includes("Chromium/");
 
 // This is to avoid weird business with the reticle not sizing properly
 const RETICLE_ORIGINAL_SCALE = 10;
@@ -543,7 +550,8 @@ export default function CanvasView() {
           ref={canvasPanAndZoomRef}
           style={{
             transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x * zoom}, ${offset.y * zoom})`,
-            transition: `transform ${transitionDuration}s ease-out`,
+            transition:
+              IS_SAFARI ? "" : `transform ${transitionDuration}s ease-out`,
           }}
         >
           <ReticleContainer
