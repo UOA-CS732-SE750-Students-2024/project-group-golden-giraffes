@@ -14,11 +14,9 @@ import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
 import config from "@/config";
 import { useCanvasContext, useSelectedColorContext } from "@/contexts";
-import { Dimensions } from "@/hooks/useScreenDimensions";
 import { socket } from "@/socket";
 import { clamp } from "@/util";
 import { Button } from "../button";
-import updateCanvasPreviewPixel from "./generatePreviewPixel";
 import {
   ORIGIN,
   addPoints,
@@ -37,6 +35,8 @@ const CanvasContainer = styled("div")`
   overflow: hidden;
   place-content: center;
   place-items: center;
+  /* Fixes blurry canvas in Safari when canvasImage overlaps with overflow, don't ask why */
+  -webkit-transform: translate3d(0, 0, 0);
 
   :active {
     cursor: grabbing;
@@ -50,31 +50,6 @@ const CanvasContainer = styled("div")`
   .loader {
     position: absolute;
   }
-
-  canvas {
-    image-rendering: pixelated;
-    max-width: inherit;
-  }
-`;
-
-const DisplayCanvas = styled("canvas")<{ isLoading: boolean }>`
-  transition: filter var(--transition-duration-medium) ease;
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      cursor: wait;
-      filter: grayscale(80%);
-    `}
-`;
-
-const PreviewCanvas = styled("canvas")<{ isLoading: boolean }>`
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      display: none;
-    `}
-  position: absolute;
-  pointer-events: none;
 `;
 
 const ReticleContainer = styled("div")`
@@ -108,6 +83,31 @@ const InviteButton = styled(Button)`
 
   :hover {
     background-color: var(--discord-blurple);
+  }
+`;
+
+const CanvasImageWrapper = styled("div")<{ isLoading: boolean }>`
+  transition: filter var(--transition-duration-medium) ease;
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      cursor: wait;
+      filter: grayscale(80%);
+    `}
+
+  position: relative;
+
+  img {
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
+  img:not(:first-child) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -152,8 +152,8 @@ function calculateReticleOffset(coords: Point | null): Point {
 export default function CanvasView() {
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasImageWrapperRef = useRef<HTMLImageElement>(null);
+  const canvasPanAndZoomRef = useRef<HTMLDivElement>(null);
   const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
@@ -163,12 +163,8 @@ export default function CanvasView() {
     () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
     [canvas.id],
   );
-
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
-  const [imageDimensions, setImageDimension] = useState<Dimensions | null>(
-    null,
-  );
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
   const [controlledPan, setControlledPan] = useState(false);
@@ -176,18 +172,6 @@ export default function CanvasView() {
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
-    if (!canvasRef.current) return;
-
-    const context = canvasRef.current.getContext("2d");
-    if (!context) return;
-
-    // We need to set the width of the canvas first, otherwise if the image is bigger than
-    // the canvas it'll get cut off.
-    canvasRef.current.width = image.width;
-    canvasRef.current.height = image.height;
-
-    context.drawImage(image, 0, 0);
-
     const initialZoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
@@ -195,7 +179,6 @@ export default function CanvasView() {
     setTargetZoom(initialZoom);
     setVelocity(ORIGIN);
     setOffset(ORIGIN);
-    setImageDimension({ width: image.width, height: image.height });
     setIsLoading(false);
   }, []);
 
@@ -247,14 +230,21 @@ export default function CanvasView() {
         pixelTimestamp,
       };
 
-      if (!canvasRef.current) return;
-
-      const context = canvasRef.current.getContext("2d");
-      if (!context) return;
-
+      // Creates a single pixel png using `OffscreenCanvas` based on the payload,
+      // and overlays it over the canvas as a child node.
+      const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+      const ctx = offscreenCanvas.getContext("2d");
+      if (!ctx) return;
       const [r, g, b, a] = payload.rgba;
-      context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
-      context.fillRect(payload.x, payload.y, 1, 1);
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+      ctx.fillRect(payload.x, payload.y, 1, 1);
+      offscreenCanvas.convertToBlob().then((blob) => {
+        const pixelImage = new Image();
+        pixelImage.src = URL.createObjectURL(blob);
+        pixelImage.onload = () => {
+          canvasImageWrapperRef.current?.appendChild(pixelImage);
+        };
+      });
     };
 
     const pixelPlaceEvent = `place pixel ${canvas.id}`;
@@ -269,15 +259,13 @@ export default function CanvasView() {
       socket.off(pixelPlaceEvent, onPixelPlaced);
       socket.disconnect();
     };
-  }, [canvas.id, canvas.isLocked]);
+  }, [canvas]);
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
    ********************************/
 
   useEffect(() => {
-    if (!imageDimensions) return;
-
     /**
      * When we zoom, not only do we need to scale the image, but to give the appearing of zooming
      * in on a specific pixel, we need to offset the image so that the pixel we're zooming in on
@@ -290,14 +278,20 @@ export default function CanvasView() {
         x: event.offsetX,
         y: event.offsetY,
       };
+      // Ensures that the handler can be added to a parent element but only operates on the canvas image wrapper.
+      // Applying the handler to lower elements for some isn't consistently picked up in certain browsers (Firefox and Chrome).
+      // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
+      const elem = event.target;
+      if (!(elem instanceof HTMLElement)) return;
+      if (elem.id !== "canvas-image-wrapper") return;
 
       // The mouse position's origin is in the top left of the canvas. The offset's origin is the
       // center of the canvas so we do this to convert between the two.
       setMouseOffsetDirection(
         diffPoints(
           {
-            x: imageDimensions.width / 2,
-            y: imageDimensions.height / 2,
+            x: elem.offsetWidth / 2,
+            y: elem.offsetHeight / 2,
           },
           mousePositionOnCanvas,
         ),
@@ -309,12 +303,13 @@ export default function CanvasView() {
       setTargetZoom(newZoom);
     };
 
-    canvasRef.current?.addEventListener("wheel", handleWheel, {
+    containerRef.current?.addEventListener("wheel", handleWheel, {
       passive: false,
     });
 
-    return () => canvasRef.current?.removeEventListener("wheel", handleWheel);
-  }, [imageDimensions, targetZoom]);
+    return () =>
+      containerRef.current?.removeEventListener("wheel", handleWheel);
+  }, [targetZoom]);
 
   useEffect(() => {
     if (zoom === targetZoom) return;
@@ -368,17 +363,15 @@ export default function CanvasView() {
    */
   const clampOffset = useCallback(
     (offset: Point): Point => {
-      if (imageDimensions == null) return offset;
-
-      const widthLimit = imageDimensions.width / 2;
-      const heightLimit = imageDimensions.height / 2;
+      const widthLimit = canvas.width / 2;
+      const heightLimit = canvas.height / 2;
 
       return {
         x: clamp(offset.x, -widthLimit, widthLimit),
         y: clamp(offset.y, -heightLimit, heightLimit),
       };
     },
-    [imageDimensions],
+    [canvas],
   );
 
   const updateOffset = useCallback(
@@ -459,11 +452,11 @@ export default function CanvasView() {
   );
 
   const handleTouchEnd = useCallback((): void => {
-    if (!canvasRef.current) return;
+    if (!containerRef.current) return;
 
-    canvasRef.current.removeEventListener("touchmove", handleTouchMove);
-    canvasRef.current.removeEventListener("touchend", handleTouchEnd);
-    canvasRef.current.removeEventListener("touchcancel", handleTouchEnd);
+    containerRef.current.removeEventListener("touchmove", handleTouchMove);
+    containerRef.current.removeEventListener("touchend", handleTouchEnd);
+    containerRef.current.removeEventListener("touchcancel", handleTouchEnd);
   }, [handleTouchMove]);
 
   /**
@@ -472,18 +465,18 @@ export default function CanvasView() {
    */
   const handleStartTouchPan = useCallback(
     (event: React.TouchEvent<HTMLDivElement>): void => {
-      if (!canvasRef.current) return;
+      if (!containerRef.current) return;
 
       const touchCount = event.touches.length;
 
       // TODO: Implement multi-touch zooming
       if (touchCount !== 1) return;
 
-      canvasRef.current.addEventListener("touchmove", handleTouchMove, {
+      containerRef.current.addEventListener("touchmove", handleTouchMove, {
         passive: false,
       });
-      canvasRef.current.addEventListener("touchend", handleTouchEnd);
-      canvasRef.current.addEventListener("touchcancel", handleTouchEnd);
+      containerRef.current.addEventListener("touchend", handleTouchEnd);
+      containerRef.current.addEventListener("touchcancel", handleTouchEnd);
       startTouchesRef.current = Array.from(event.touches);
     },
     [handleTouchMove, handleTouchEnd],
@@ -517,26 +510,18 @@ export default function CanvasView() {
    */
   const handleCanvasClick = useCallback(
     (event: MouseEvent): void => {
-      if (!canvasRef.current) return;
+      if (!(event.target instanceof HTMLElement)) return;
+      const canvas = event.target;
+      const canvasRect = canvas.getBoundingClientRect();
 
-      const canvasRect = canvasRef.current.getBoundingClientRect();
       const mouseX = event.clientX - canvasRect.left;
       const mouseY = event.clientY - canvasRect.top;
 
       const imageX = mouseX / zoom;
       const imageY = mouseY / zoom;
 
-      const boundedX = clamp(
-        Math.floor(imageX),
-        0,
-        canvasRef.current.width - 1,
-      );
-      const boundedY = clamp(
-        Math.floor(imageY),
-        0,
-        canvasRef.current.height - 1,
-      );
-
+      const boundedX = clamp(Math.floor(imageX), 0, canvas.offsetWidth - 1);
+      const boundedY = clamp(Math.floor(imageY), 0, canvas.offsetHeight - 1);
       // we only care about updating the location
       setCoords({
         x: boundedX,
@@ -547,27 +532,17 @@ export default function CanvasView() {
   );
 
   useEffect(() => {
-    canvasRef.current?.addEventListener("mousedown", handleCanvasClick);
-
-    return () =>
-      canvasRef.current?.removeEventListener("mousedown", handleCanvasClick);
-  }, [handleCanvasClick]);
-
-  const handleDrawingSelectedPixel = useCallback(() => {
-    if (!imageDimensions || !coords) return;
-
-    updateCanvasPreviewPixel(
-      previewCanvasRef,
-      coords,
-      clamp(-Math.log((zoom * 200) / imageDimensions.width) + 1, 0, 1),
+    canvasImageWrapperRef.current?.addEventListener(
+      "mousedown",
+      handleCanvasClick,
     );
 
-    console.debug(`Drawing pixel at (${coords.x}, ${coords.y})`);
-  }, [imageDimensions, coords, zoom]);
-
-  useEffect(() => {
-    handleDrawingSelectedPixel();
-  }, [handleDrawingSelectedPixel]);
+    return () =>
+      canvasImageWrapperRef.current?.removeEventListener(
+        "mousedown",
+        handleCanvasClick,
+      );
+  }, [handleCanvasClick]);
 
   const reticleOffset = calculateReticleOffset(coords);
 
@@ -585,6 +560,7 @@ export default function CanvasView() {
         )}
         <div
           id="canvas-pan-and-zoom"
+          ref={canvasPanAndZoomRef}
           style={{
             transform: `translate(${offset.x}px, ${offset.y}px)`,
             scale: zoom,
@@ -622,24 +598,22 @@ export default function CanvasView() {
               }}
             />
           </ReticleContainer>
-          <PreviewCanvas
+          <CanvasImageWrapper
+            ref={canvasImageWrapperRef}
             isLoading={isLoading}
-            ref={previewCanvasRef}
-            width={imageDimensions?.width}
-            height={imageDimensions?.height}
-          />
-          <DisplayCanvas ref={canvasRef} isLoading={isLoading} />
+            id="canvas-image-wrapper"
+          >
+            <img
+              alt="Active Blurple Canvas"
+              onLoad={(event) => handleLoadImage(event.currentTarget)}
+              ref={imageRef}
+              src={imageUrl}
+              crossOrigin="anonymous"
+            />
+          </CanvasImageWrapper>
         </div>
         {isLoading && <CircularProgress className="loader" />}
       </CanvasContainer>
-      <img
-        alt="Blurple Canvas 2023"
-        hidden
-        onLoad={(event) => handleLoadImage(event.currentTarget)}
-        ref={imageRef}
-        src={imageUrl}
-        crossOrigin="anonymous"
-      />
     </>
   );
 }
