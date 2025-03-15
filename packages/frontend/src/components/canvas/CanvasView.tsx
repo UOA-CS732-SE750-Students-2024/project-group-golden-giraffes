@@ -496,9 +496,11 @@ export default function CanvasView() {
    * When the canvas is clicked, we want to know which pixel was clicked on.
    */
   const handleCanvasClick = useCallback(
-    (event: MouseEvent): void => {
-      if (!(event.target instanceof HTMLElement)) return;
-      const canvas = event.target;
+    (event: PointerEvent): void => {
+      if (!(event.currentTarget instanceof HTMLElement) || !event.isPrimary)
+        return;
+      const canvas = event.currentTarget;
+      // Use boundingClientRect for more accurate pixel positioning
       const canvasRect = canvas.getBoundingClientRect();
 
       const mouseX = event.clientX - canvasRect.left;
@@ -520,13 +522,13 @@ export default function CanvasView() {
 
   useEffect(() => {
     canvasImageWrapperRef.current?.addEventListener(
-      "mousedown",
+      "pointerdown",
       handleCanvasClick,
     );
 
     return () =>
       canvasImageWrapperRef.current?.removeEventListener(
-        "mousedown",
+        "pointerdown",
         handleCanvasClick,
       );
   }, [handleCanvasClick]);
