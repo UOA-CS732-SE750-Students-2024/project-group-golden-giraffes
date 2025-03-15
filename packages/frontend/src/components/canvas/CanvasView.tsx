@@ -279,7 +279,7 @@ export default function CanvasView() {
         y: event.offsetY,
       };
       // Ensures that the handler can be added to a parent element but only operates on the canvas image wrapper.
-      // Applying the handler to lower elements for some isn't consistently picked up in certain (Firefox and Chrome).
+      // Applying the handler to lower elements for some isn't consistently picked up in certain browsers (Firefox and Chrome).
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
       const elem = event.target;
       if (!(elem instanceof HTMLElement)) return;
