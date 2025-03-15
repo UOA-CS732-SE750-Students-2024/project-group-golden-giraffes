@@ -134,6 +134,8 @@ const SCALE_FACTOR = 0.2;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
+const ZOOM_DURATION = 0.1;
+
 // This is to avoid weird business with the reticle not sizing properly
 const RETICLE_ORIGINAL_SCALE = 10;
 const RETICLE_ORIGINAL_SIZE = 14;
@@ -168,6 +170,7 @@ export default function CanvasView() {
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
   const [controlledPan, setControlledPan] = useState(false);
+  const [transitionDuration, setTransitionDuration] = useState(0);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     const initialZoom =
@@ -314,6 +317,7 @@ export default function CanvasView() {
         return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
       });
 
+      setTransitionDuration(ZOOM_DURATION);
       setZoom(newZoom);
     };
 
@@ -361,6 +365,9 @@ export default function CanvasView() {
 
   const handleMouseMove = useCallback(
     (event: MouseEvent): void => {
+      // Disable transitions while panning
+      setTransitionDuration(0);
+
       const diff = { x: event.movementX, y: event.movementY };
       setVelocity({ x: diff.x, y: diff.y });
       updateOffset(diff);
@@ -399,6 +406,7 @@ export default function CanvasView() {
     (event: TouchEvent): void => {
       const touchCount = event.touches.length;
       event.preventDefault();
+      setTransitionDuration(0);
 
       // TODO: Implement multi-touch zooming
       if (touchCount !== 1) return;
@@ -535,7 +543,7 @@ export default function CanvasView() {
           ref={canvasPanAndZoomRef}
           style={{
             transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x * zoom}, ${offset.y * zoom})`,
-            transition: "transform 0.1s ease-out",
+            transition: `transform ${transitionDuration}s ease-out`,
           }}
         >
           <ReticleContainer
