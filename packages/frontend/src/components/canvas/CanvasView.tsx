@@ -268,6 +268,14 @@ export default function CanvasView() {
    * ZOOMING FUNCTIONALITY.       *
    ********************************/
 
+  const getRelativeMousePosition = useCallback(
+    (element: HTMLElement, event: MouseEvent) => {
+      const rect = element.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    },
+    [],
+  );
+
   useEffect(() => {
     /**
      * When we zoom, not only do we need to scale the image, but to give the appearing of zooming
@@ -316,6 +324,7 @@ export default function CanvasView() {
           // causing a negative offset. Thanks Henry for figuring out this equation 🙏.
           1 - 1 / effectiveScale,
         );
+        return prevOffset;
 
         return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
       });
@@ -456,23 +465,17 @@ export default function CanvasView() {
         return;
       const canvas = event.currentTarget;
       // Use boundingClientRect for more accurate pixel positioning
-      const canvasRect = canvas.getBoundingClientRect();
+      const relativeMousePos = getRelativeMousePosition(canvas, event);
+      const canvasPos = dividePoint(relativeMousePos, zoom);
 
-      const mouseX = event.clientX - canvasRect.left;
-      const mouseY = event.clientY - canvasRect.top;
-
-      const imageX = mouseX / zoom;
-      const imageY = mouseY / zoom;
-
-      const boundedX = clamp(Math.floor(imageX), 0, canvas.offsetWidth - 1);
-      const boundedY = clamp(Math.floor(imageY), 0, canvas.offsetHeight - 1);
+      const boundedCanvasPos = {
+        x: clamp(Math.floor(canvasPos.x), 0, canvas.offsetWidth - 1),
+        y: clamp(Math.floor(canvasPos.y), 0, canvas.offsetHeight - 1),
+      };
       // we only care about updating the location
-      setCoords({
-        x: boundedX,
-        y: boundedY,
-      });
+      setCoords(boundedCanvasPos);
     },
-    [zoom, setCoords],
+    [zoom, setCoords, getRelativeMousePosition],
   );
 
   useEffect(() => {
