@@ -1,14 +1,7 @@
 "use client";
 
 import { CircularProgress, css, styled } from "@mui/material";
-import {
-  Touch,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
@@ -37,6 +30,8 @@ const CanvasContainer = styled("div")`
   place-items: center;
   /* Fixes blurry canvas in Safari when canvasImage overlaps with overflow, don't ask why */
   transform: translate3d(0, 0, 0);
+  /* Don't handle panning and zooming with browser */
+  touch-action: none;
 
   :active {
     cursor: grabbing;
@@ -163,7 +158,7 @@ export default function CanvasView() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasImageWrapperRef = useRef<HTMLImageElement>(null);
   const canvasPanAndZoomRef = useRef<HTMLDivElement>(null);
-  const startTouchesRef = useRef<Touch[]>([]);
+  // const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
   const { canvas, coords, setCoords } = useCanvasContext();
@@ -371,7 +366,7 @@ export default function CanvasView() {
   );
 
   const handleMouseMove = useCallback(
-    (event: MouseEvent): void => {
+    (event: PointerEvent): void => {
       // Disable transitions while panning
       setTransitionDuration(0);
 
@@ -390,9 +385,9 @@ export default function CanvasView() {
 
     setControlledPan(false);
 
-    containerRef.current.removeEventListener("mousemove", handleMouseMove);
-    containerRef.current.removeEventListener("mouseup", handleMouseUp);
-    containerRef.current.removeEventListener("mouseleave", handleMouseUp);
+    containerRef.current.removeEventListener("pointermove", handleMouseMove);
+    containerRef.current.removeEventListener("pointerup", handleMouseUp);
+    containerRef.current.removeEventListener("pointerleave", handleMouseUp);
   }, [handleMouseMove]);
 
   /**
@@ -404,70 +399,10 @@ export default function CanvasView() {
 
     setControlledPan(true);
 
-    containerRef.current.addEventListener("mousemove", handleMouseMove);
-    containerRef.current.addEventListener("mouseup", handleMouseUp);
-    containerRef.current.addEventListener("mouseleave", handleMouseUp);
+    containerRef.current.addEventListener("pointermove", handleMouseMove);
+    containerRef.current.addEventListener("pointerup", handleMouseUp);
+    containerRef.current.addEventListener("pointerleave", handleMouseUp);
   }, [handleMouseMove, handleMouseUp]);
-
-  const handleTouchMove = useCallback(
-    (event: TouchEvent): void => {
-      const touchCount = event.touches.length;
-      event.preventDefault();
-      setTransitionDuration(0);
-
-      // TODO: Implement multi-touch zooming
-      if (touchCount !== 1) return;
-
-      // Check that the touch event is the same as the one that started the pan
-      if (event.touches[0].identifier !== startTouchesRef.current[0].identifier)
-        return;
-
-      const startTouch = startTouchesRef.current[0];
-      const touch = event.touches[0];
-
-      const touchDiff: Point = {
-        x: touch.pageX - startTouch.pageX,
-        y: touch.pageY - startTouch.pageY,
-      };
-
-      setVelocity(touchDiff);
-
-      updateOffset({ x: touchDiff.x, y: touchDiff.y });
-      startTouchesRef.current = [touch];
-    },
-    [updateOffset],
-  );
-
-  const handleTouchEnd = useCallback((): void => {
-    if (!containerRef.current) return;
-
-    containerRef.current.removeEventListener("touchmove", handleTouchMove);
-    containerRef.current.removeEventListener("touchend", handleTouchEnd);
-    containerRef.current.removeEventListener("touchcancel", handleTouchEnd);
-  }, [handleTouchMove]);
-
-  /**
-   * Note: The `React` prefix to `TouchEvent` is necessary to distinguish it from the non-react
-   * version used by handleTouchMove.
-   */
-  const handleStartTouchPan = useCallback(
-    (event: React.TouchEvent<HTMLDivElement>): void => {
-      if (!containerRef.current) return;
-
-      const touchCount = event.touches.length;
-
-      // TODO: Implement multi-touch zooming
-      if (touchCount !== 1) return;
-
-      containerRef.current.addEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
-      containerRef.current.addEventListener("touchend", handleTouchEnd);
-      containerRef.current.addEventListener("touchcancel", handleTouchEnd);
-      startTouchesRef.current = Array.from(event.touches);
-    },
-    [handleTouchMove, handleTouchEnd],
-  );
 
   useEffect(() => {
     const decayVelocity = () => {
@@ -537,11 +472,7 @@ export default function CanvasView() {
 
   return (
     <>
-      <CanvasContainer
-        ref={containerRef}
-        onMouseDown={handleStartMousePan}
-        onTouchStart={handleStartTouchPan}
-      >
+      <CanvasContainer ref={containerRef} onPointerDown={handleStartMousePan}>
         {config.discordServerInvite && (
           <a href={config.discordServerInvite} target="_blank" rel="noreferrer">
             <InviteButton>Project Blurple</InviteButton>
