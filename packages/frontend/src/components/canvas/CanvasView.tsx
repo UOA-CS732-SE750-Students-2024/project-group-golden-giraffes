@@ -320,6 +320,7 @@ export default function CanvasView() {
         return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
       });
 
+      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
       setTransitionDuration(ZOOM_DURATION);
       setZoom(newZoom);
     };
@@ -423,6 +424,7 @@ export default function CanvasView() {
     [handlePan, handlePointerUp, changeGlobalSelectStyle],
   );
 
+  // Could potentially get replaced by a transition animation with ease, however this will work on Safari
   useEffect(() => {
     const decayVelocity = () => {
       if (velocity.x < 0.1 && velocity.y < 0.1) return;
