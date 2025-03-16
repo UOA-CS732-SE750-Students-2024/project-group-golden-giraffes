@@ -284,17 +284,12 @@ export default function CanvasView() {
      */
     const handleWheel = (event: WheelEvent): void => {
       event.preventDefault();
-
-      const mousePositionOnCanvas: Point = {
-        x: event.offsetX,
-        y: event.offsetY,
-      };
-
       // Ensures that the handler can be added to a parent element but only operates on the canvas image wrapper.
       // Applying the handler to lower elements for some isn't consistently picked up in certain browsers (Firefox and Chrome).
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
-      const elem = event.target;
+      const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
+      const mousePositionOnCanvas = getRelativeMousePosition(elem, event);
 
       // The mouse position's origin is in the top left of the container.
       // Converts this to the offset from the center of the visual container
@@ -307,31 +302,22 @@ export default function CanvasView() {
       const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
 
       // Clamping the zoom means the actual scale may be different.
-      const effectiveScale = newZoom / zoom;
+      const clampedScale = newZoom / zoom;
 
       setOffset((prevOffset) => {
         // Calculate the of the mouse position relative to the center of the canvas in the container
-        const trueOffset = diffPoints(mouseOffset, prevOffset);
-        console.log(mousePositionOnCanvas, mouseOffset, prevOffset, trueOffset);
+        const trueOffset = addPoints(prevOffset, mouseOffset);
 
         // The amount we shift is scaled based on the amount we've zoomed in.
-        const scaledOffsetDiff = multiplyPoint(
-          trueOffset,
-          // If the scale is 1, we've not zoomed in at all and so this multiplier becomes 0
-          // (causing no offset). If the scale is greater than 1, we're zooming in. A larger scale
-          // corresponds to a larger step (as 1/effectiveScale approaches 0). If the scale is less
-          // than 1, we're zooming out. In this case, 1 / effective scale becomes greater than 1,
-          // causing a negative offset. Thanks Henry for figuring out this equation 🙏.
-          1 - 1 / effectiveScale,
-        );
-        return prevOffset;
-
-        return clampOffset(addPoints(scaledOffsetDiff, prevOffset));
+        // Adds an extra shift based on the new scale of the canvas and the true offset
+        // Goodbye old comment with old implementation
+        const scaledOffsetDiff = multiplyPoint(trueOffset, clampedScale - 1);
+        return clampOffset(addPoints(scaledOffsetDiff, prevOffset), newZoom);
       });
 
       // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
       setTransitionDuration(ZOOM_DURATION);
-      // setZoom(newZoom);
+      setZoom(newZoom);
     };
 
     containerRef.current?.addEventListener("wheel", handleWheel, {
@@ -340,7 +326,7 @@ export default function CanvasView() {
 
     return () =>
       containerRef.current?.removeEventListener("wheel", handleWheel);
-  }, [zoom]);
+  }, [zoom, getRelativeMousePosition]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -351,13 +337,13 @@ export default function CanvasView() {
    * screen along an axis.
    */
   const clampOffset = useCallback(
-    (offset: Point): Point => {
+    (offset: Point, zoom: number): Point => {
       const widthLimit = canvas.width / 2;
       const heightLimit = canvas.height / 2;
 
       return {
-        x: clamp(offset.x, -widthLimit, widthLimit),
-        y: clamp(offset.y, -heightLimit, heightLimit),
+        x: clamp(offset.x, -widthLimit * zoom, widthLimit * zoom),
+        y: clamp(offset.y, -heightLimit * zoom, heightLimit * zoom),
       };
     },
     [canvas],
@@ -370,7 +356,7 @@ export default function CanvasView() {
 
       setOffset((prevOffset) => {
         const newOffset = addPoints(prevOffset, scaledDiff);
-        return clampOffset(newOffset);
+        return clampOffset(newOffset, zoom);
       });
     },
     [zoom, clampOffset],
@@ -381,11 +367,12 @@ export default function CanvasView() {
       // Disable transitions while panning
       setTransitionDuration(0);
 
-      const diff = { x: event.movementX, y: event.movementY };
-      setVelocity({ x: diff.x, y: diff.y });
-      updateOffset(diff);
+      const offset = { x: event.movementX, y: event.movementY };
+      const scaledOffset = multiplyPoint(offset, zoom);
+      setVelocity({ x: scaledOffset.x, y: scaledOffset.y });
+      updateOffset(scaledOffset);
     },
-    [updateOffset],
+    [updateOffset, zoom],
   );
 
   /* A bit heavy handed, but it prevents elements outside of the canvas from being selected during panning */
@@ -505,7 +492,7 @@ export default function CanvasView() {
           id="canvas-pan-and-zoom"
           ref={canvasPanAndZoomRef}
           style={{
-            transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x * zoom}, ${offset.y * zoom})`,
+            transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x}, ${offset.y})`,
             transition:
               IS_SAFARI ? "" : `transform ${transitionDuration}s ease-out`,
           }}
