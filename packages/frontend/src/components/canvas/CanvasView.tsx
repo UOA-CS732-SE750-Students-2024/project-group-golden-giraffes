@@ -365,7 +365,7 @@ export default function CanvasView() {
     [zoom, clampOffset],
   );
 
-  const handleMouseMove = useCallback(
+  const handlePan = useCallback(
     (event: PointerEvent): void => {
       // Disable transitions while panning
       setTransitionDuration(0);
@@ -380,29 +380,29 @@ export default function CanvasView() {
   /**
    * Remove the listeners when the mouse is released to stop panning.
    */
-  const handleMouseUp = useCallback((): void => {
+  const handlePointerUp = useCallback((): void => {
     if (!containerRef.current) return;
 
     setControlledPan(false);
 
-    containerRef.current.removeEventListener("pointermove", handleMouseMove);
-    containerRef.current.removeEventListener("pointerup", handleMouseUp);
-    containerRef.current.removeEventListener("pointerleave", handleMouseUp);
-  }, [handleMouseMove]);
+    containerRef.current.removeEventListener("pointermove", handlePan);
+    containerRef.current.removeEventListener("pointerup", handlePointerUp);
+    containerRef.current.removeEventListener("pointerleave", handlePointerUp);
+  }, [handlePan]);
 
   /**
    * Only add the mouse move listener when you click down so that moving your mouse normally doesn't
    * cause the canvas to pan.
    */
-  const handleStartMousePan = useCallback((): void => {
+  const handlePointerDown = useCallback((): void => {
     if (!containerRef.current) return;
 
     setControlledPan(true);
 
-    containerRef.current.addEventListener("pointermove", handleMouseMove);
-    containerRef.current.addEventListener("pointerup", handleMouseUp);
-    containerRef.current.addEventListener("pointerleave", handleMouseUp);
-  }, [handleMouseMove, handleMouseUp]);
+    containerRef.current.addEventListener("pointermove", handlePan);
+    containerRef.current.addEventListener("pointerup", handlePointerUp);
+    containerRef.current.addEventListener("pointerleave", handlePointerUp);
+  }, [handlePan, handlePointerUp]);
 
   useEffect(() => {
     const decayVelocity = () => {
@@ -472,7 +472,7 @@ export default function CanvasView() {
 
   return (
     <>
-      <CanvasContainer ref={containerRef} onPointerDown={handleStartMousePan}>
+      <CanvasContainer ref={containerRef} onPointerDown={handlePointerDown}>
         {config.discordServerInvite && (
           <a href={config.discordServerInvite} target="_blank" rel="noreferrer">
             <InviteButton>Project Blurple</InviteButton>
