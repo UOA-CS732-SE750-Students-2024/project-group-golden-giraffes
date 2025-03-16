@@ -130,6 +130,7 @@ const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
 const ZOOM_DURATION = 0.1;
+const PAN_DECAY = 0.75;
 // Transition animation on canvas pan and zoom is blurred on Safari and needs to be disabled.
 // If the user spoof their user agent, this is not my problem.
 // Bug in question https://bugs.webkit.org/show_bug.cgi?id=27684
@@ -427,10 +428,9 @@ export default function CanvasView() {
       if (velocity.x < 0.1 && velocity.y < 0.1) return;
       if (controlledPan) return;
       updateOffset(velocity);
-      const decay = 0.75;
       setVelocity((prevVelocity) => ({
-        x: prevVelocity.x * decay,
-        y: prevVelocity.y * decay,
+        x: prevVelocity.x * PAN_DECAY,
+        y: prevVelocity.y * PAN_DECAY,
       }));
     };
 
