@@ -380,29 +380,34 @@ export default function CanvasView() {
   /**
    * Remove the listeners when the mouse is released to stop panning.
    */
-  const handlePointerUp = useCallback((): void => {
-    if (!containerRef.current) return;
+  const handlePointerUp = useCallback(
+    (event: PointerEvent): void => {
+      const elem = event.currentTarget;
+      if (!(elem instanceof HTMLElement)) return;
+      setControlledPan(false);
 
-    setControlledPan(false);
-
-    containerRef.current.removeEventListener("pointermove", handlePan);
-    containerRef.current.removeEventListener("pointerup", handlePointerUp);
-    containerRef.current.removeEventListener("pointerleave", handlePointerUp);
-  }, [handlePan]);
+      elem.removeEventListener("pointermove", handlePan);
+      elem.removeEventListener("pointerup", handlePointerUp);
+      elem.removeEventListener("pointerleave", handlePointerUp);
+    },
+    [handlePan],
+  );
 
   /**
    * Only add the mouse move listener when you click down so that moving your mouse normally doesn't
    * cause the canvas to pan.
    */
-  const handlePointerDown = useCallback((): void => {
-    if (!containerRef.current) return;
+  const handlePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      const elem = event.currentTarget;
+      setControlledPan(true);
 
-    setControlledPan(true);
-
-    containerRef.current.addEventListener("pointermove", handlePan);
-    containerRef.current.addEventListener("pointerup", handlePointerUp);
-    containerRef.current.addEventListener("pointerleave", handlePointerUp);
-  }, [handlePan, handlePointerUp]);
+      elem.addEventListener("pointermove", handlePan);
+      elem.addEventListener("pointerup", handlePointerUp);
+      elem.addEventListener("pointerleave", handlePointerUp);
+    },
+    [handlePan, handlePointerUp],
+  );
 
   useEffect(() => {
     const decayVelocity = () => {
