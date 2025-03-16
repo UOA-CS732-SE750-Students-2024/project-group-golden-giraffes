@@ -424,7 +424,7 @@ export default function CanvasView() {
 
   useEffect(() => {
     const decayVelocity = () => {
-      if (velocity.x === 0 && velocity.y === 0) return;
+      if (velocity.x < 0.1 && velocity.y < 0.1) return;
       if (controlledPan) return;
       updateOffset(velocity);
       const decay = 0.75;
