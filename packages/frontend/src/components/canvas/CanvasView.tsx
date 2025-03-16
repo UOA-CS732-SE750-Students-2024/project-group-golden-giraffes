@@ -377,6 +377,13 @@ export default function CanvasView() {
     [updateOffset],
   );
 
+  /* A bit heavy handed, but it prevents elements outside of the canvas from being selected during panning */
+  const changeGlobalSelectStyle = useCallback((style: "none" | "auto") => {
+    document.body.style.userSelect = style;
+    // only -webkit-user-select style exists on Safari: https://caniuse.com/mdn-css_properties_user-select
+    document.body.style.webkitUserSelect = style;
+  }, []);
+
   /**
    * Remove the listeners when the mouse is released to stop panning.
    */
@@ -384,13 +391,16 @@ export default function CanvasView() {
     (event: PointerEvent): void => {
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
+      elem.releasePointerCapture(event.pointerId);
+
+      changeGlobalSelectStyle("auto");
       setControlledPan(false);
 
       elem.removeEventListener("pointermove", handlePan);
       elem.removeEventListener("pointerup", handlePointerUp);
-      elem.removeEventListener("pointerleave", handlePointerUp);
+      elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePan],
+    [handlePan, changeGlobalSelectStyle],
   );
 
   /**
@@ -400,13 +410,16 @@ export default function CanvasView() {
   const handlePointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       const elem = event.currentTarget;
+      elem.setPointerCapture(event.pointerId);
+
+      changeGlobalSelectStyle("none");
       setControlledPan(true);
 
       elem.addEventListener("pointermove", handlePan);
       elem.addEventListener("pointerup", handlePointerUp);
-      elem.addEventListener("pointerleave", handlePointerUp);
+      elem.addEventListener("pointercancel", handlePointerUp);
     },
-    [handlePan, handlePointerUp],
+    [handlePan, handlePointerUp, changeGlobalSelectStyle],
   );
 
   useEffect(() => {
