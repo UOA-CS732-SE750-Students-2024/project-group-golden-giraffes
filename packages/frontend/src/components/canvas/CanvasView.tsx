@@ -287,11 +287,10 @@ export default function CanvasView() {
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
       const elem = event.target;
       if (!(elem instanceof HTMLElement)) return;
-      if (elem.id !== "canvas-image-wrapper") return;
 
-      // The mouse position's origin is in the top left of the canvas. The offset's origin is the
-      // center of the canvas so we do this to convert between the two.
-      const mouseOffsetDirection = diffPoints(
+      // The mouse position's origin is in the top left of the container.
+      // Converts this to the offset from the center of the visual container
+      const mouseOffset = diffPoints(
         { x: elem.offsetWidth / 2, y: elem.offsetHeight / 2 },
         mousePositionOnCanvas,
       );
@@ -303,12 +302,13 @@ export default function CanvasView() {
       const effectiveScale = newZoom / zoom;
 
       setOffset((prevOffset) => {
-        // The direction we need to shift the offset to keep the pixel in the same place
-        const offsetDif = diffPoints(mouseOffsetDirection, prevOffset);
+        // Calculate the of the mouse position relative to the center of the canvas in the container
+        const trueOffset = diffPoints(mouseOffset, prevOffset);
+        console.log(mousePositionOnCanvas, mouseOffset, prevOffset, trueOffset);
 
         // The amount we shift is scaled based on the amount we've zoomed in.
         const scaledOffsetDiff = multiplyPoint(
-          offsetDif,
+          trueOffset,
           // If the scale is 1, we've not zoomed in at all and so this multiplier becomes 0
           // (causing no offset). If the scale is greater than 1, we're zooming in. A larger scale
           // corresponds to a larger step (as 1/effectiveScale approaches 0). If the scale is less
@@ -322,7 +322,7 @@ export default function CanvasView() {
 
       // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
       setTransitionDuration(ZOOM_DURATION);
-      setZoom(newZoom);
+      // setZoom(newZoom);
     };
 
     containerRef.current?.addEventListener("wheel", handleWheel, {
