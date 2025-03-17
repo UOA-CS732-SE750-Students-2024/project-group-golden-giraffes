@@ -381,7 +381,7 @@ export default function CanvasView() {
   );
 
   /* A bit heavy handed, but it prevents elements outside of the canvas from being selected during panning */
-  const changeGlobalSelectStyle = useCallback((style: "none" | "auto") => {
+  const changeGlobalSelectStyle = useCallback((style: "none" | "initial") => {
     document.body.style.userSelect = style;
     // only -webkit-user-select style exists on Safari: https://caniuse.com/mdn-css_properties_user-select
     document.body.style.webkitUserSelect = style;
@@ -396,7 +396,7 @@ export default function CanvasView() {
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
 
-      changeGlobalSelectStyle("auto");
+      changeGlobalSelectStyle("initial");
       setControlledPan(false);
 
       elem.removeEventListener("pointermove", handlePan);
