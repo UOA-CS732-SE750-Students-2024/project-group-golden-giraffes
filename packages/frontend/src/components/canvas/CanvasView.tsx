@@ -300,12 +300,15 @@ export default function CanvasView() {
         mousePositionOnCanvas,
       );
 
+      if (event.deltaY === 0) return;
       // Inclusion of deltaY in calculation to account for different polling rate devices
-      const scale = zoom * (1 + SCALE_FACTOR * -event.deltaY);
-      const newZoom = clamp(scale, MIN_ZOOM * initialZoom, MAX_ZOOM);
+      // Could try logarithmic scale for smoother increments
+      const scale = 1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
+      const newZoom = event.deltaY > 0 ? zoom / scale : zoom * scale;
+      const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
 
       // Clamping the zoom means the actual scale may be different.
-      const clampedScale = newZoom / zoom;
+      const clampedScale = clampedZoom / zoom;
 
       setOffset((prevOffset) => {
         // Calculate the of the mouse position relative to the center of the canvas in the container
@@ -320,7 +323,7 @@ export default function CanvasView() {
 
       // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
       setTransitionDuration(ZOOM_DURATION);
-      setZoom(newZoom);
+      setZoom(clampedZoom);
     };
 
     containerRef.current?.addEventListener("wheel", handleWheel, {
