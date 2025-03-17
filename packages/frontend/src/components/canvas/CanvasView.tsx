@@ -125,6 +125,14 @@ function getDefaultZoom(
   return scale;
 }
 
+/**
+ * Calculate the position of the mouse relative to the given element
+ **/
+function getRelativeMousePosition(element: HTMLElement, event: MouseEvent) {
+  const rect = element.getBoundingClientRect();
+  return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+}
+
 const SCALE_FACTOR = 0.002;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.9;
@@ -268,14 +276,6 @@ export default function CanvasView() {
   /********************************
    * ZOOMING FUNCTIONALITY.       *
    ********************************/
-
-  const getRelativeMousePosition = useCallback(
-    (element: HTMLElement, event: MouseEvent) => {
-      const rect = element.getBoundingClientRect();
-      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-    },
-    [],
-  );
 
   useEffect(() => {
     /**
