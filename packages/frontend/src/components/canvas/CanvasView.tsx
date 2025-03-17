@@ -499,7 +499,9 @@ export default function CanvasView() {
           style={{
             transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x}, ${offset.y})`,
             transition:
-              IS_SAFARI ? "" : `transform ${transitionDuration}s ease-out`,
+              IS_SAFARI ? undefined : (
+                `transform ${transitionDuration}s ease-out`
+              ),
           }}
         >
           <ReticleContainer
