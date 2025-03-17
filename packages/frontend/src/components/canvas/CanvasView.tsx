@@ -71,15 +71,16 @@ const InviteButton = styled(Button)`
     from var(--discord-legacy-dark-but-not-black) l c h / 80%
   );
   border-radius: 0.5rem 0.5rem 1rem 0.5rem;
-  bottom: 0.5rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.2);
   color: white;
   font-size: 1.2rem;
   font-variation-settings: "wdth" 125;
   font-weight: 900;
-  padding: 0.1rem 1rem;
+  inset-block-end: 0.5rem;
+  inset-inline-end: 0.5rem;
+  padding-block: 0.1rem;
+  padding-inline: 1rem;
   position: absolute;
-  right: 0.5rem;
   text-decoration: none;
   z-index: 1;
 
