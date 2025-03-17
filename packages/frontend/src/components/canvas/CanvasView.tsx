@@ -42,8 +42,7 @@ const CanvasContainer = styled("div")`
     cursor: grabbing;
   }
 
-  &,
-  * & {
+  & {
     user-select: none;
   }
 
