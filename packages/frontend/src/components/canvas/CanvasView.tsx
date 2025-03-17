@@ -154,6 +154,8 @@ const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
 const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
+const pointerEvents: Map<number, PointerEvent> = new Map();
+
 function calculateReticleOffset(coords: Point | null): Point {
   if (!coords) return { x: 0, y: 0 };
   return {
@@ -392,9 +394,13 @@ export default function CanvasView() {
    */
   const handlePointerUp = useCallback(
     (event: PointerEvent): void => {
+      pointerEvents.delete(event.pointerId);
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
+
+      // Don't disable handlers if there are still pointers down
+      if (pointerEvents.size > 0) return;
 
       changeGlobalSelectStyle("initial");
       setControlledPan(false);
@@ -414,6 +420,11 @@ export default function CanvasView() {
     (event: React.PointerEvent<HTMLDivElement>) => {
       const elem = event.currentTarget;
       elem.setPointerCapture(event.pointerId);
+      // Don't store more than 2 pointers for pinch handling
+      if (pointerEvents.size < 2) {
+        // No idea if this is the right way to define the pointerEvents
+        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
+      }
 
       changeGlobalSelectStyle("none");
       setControlledPan(true);
