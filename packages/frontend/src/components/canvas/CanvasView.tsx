@@ -33,6 +33,12 @@ const CanvasContainer = styled("div")`
   /* Don't handle panning and zooming with browser */
   touch-action: none;
 
+  /* A bit heavy handed, but it prevents elements outside of the canvas from being selected during panning */
+  body:has(&:active) {
+    --webkit-user-select: none;
+    user-select: none;
+  }
+
   :active {
     cursor: grabbing;
   }
@@ -380,13 +386,6 @@ export default function CanvasView() {
     [updateOffset, zoom],
   );
 
-  /* A bit heavy handed, but it prevents elements outside of the canvas from being selected during panning */
-  const changeGlobalSelectStyle = useCallback((style: "none" | "initial") => {
-    document.body.style.userSelect = style;
-    // only -webkit-user-select style exists on Safari: https://caniuse.com/mdn-css_properties_user-select
-    document.body.style.webkitUserSelect = style;
-  }, []);
-
   /**
    * Remove the listeners when the mouse is released to stop panning.
    */
@@ -396,14 +395,13 @@ export default function CanvasView() {
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
 
-      changeGlobalSelectStyle("initial");
       setControlledPan(false);
 
       elem.removeEventListener("pointermove", handlePan);
       elem.removeEventListener("pointerup", handlePointerUp);
       elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePan, changeGlobalSelectStyle],
+    [handlePan],
   );
 
   /**
@@ -414,15 +412,13 @@ export default function CanvasView() {
     (event: React.PointerEvent<HTMLDivElement>) => {
       const elem = event.currentTarget;
       elem.setPointerCapture(event.pointerId);
-
-      changeGlobalSelectStyle("none");
       setControlledPan(true);
 
       elem.addEventListener("pointermove", handlePan);
       elem.addEventListener("pointerup", handlePointerUp);
       elem.addEventListener("pointercancel", handlePointerUp);
     },
-    [handlePan, handlePointerUp, changeGlobalSelectStyle],
+    [handlePan, handlePointerUp],
   );
 
   // Could potentially get replaced by a transition animation with ease, however this will work on Safari
