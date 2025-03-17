@@ -67,7 +67,9 @@ const PreviewPixel = styled("div")`
 `;
 
 const InviteButton = styled(Button)`
-  background-color: oklch(var(--discord-legacy-dark-but-not-black-oklch) / 80%);
+  background-color: oklch(
+    from var(--discord-legacy-dark-but-not-black) l c h / 80%
+  );
   border-radius: 0.5rem 0.5rem 1rem 0.5rem;
   bottom: 0.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
