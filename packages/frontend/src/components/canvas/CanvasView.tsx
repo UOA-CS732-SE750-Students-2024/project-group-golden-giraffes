@@ -125,7 +125,7 @@ function getDefaultZoom(
   return scale;
 }
 
-const SCALE_FACTOR = 0.2;
+const SCALE_FACTOR = 0.002;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.5;
 
@@ -298,8 +298,9 @@ export default function CanvasView() {
         mousePositionOnCanvas,
       );
 
-      const scale = Math.exp(Math.sign(-event.deltaY) * SCALE_FACTOR);
-      const newZoom = clamp(zoom * scale, MIN_ZOOM, MAX_ZOOM);
+      // Inclusion of deltaY in calculation to account for different polling rate devices
+      const scale = zoom * (1 + SCALE_FACTOR * -event.deltaY);
+      const newZoom = clamp(scale, MIN_ZOOM, MAX_ZOOM);
 
       // Clamping the zoom means the actual scale may be different.
       const clampedScale = newZoom / zoom;
