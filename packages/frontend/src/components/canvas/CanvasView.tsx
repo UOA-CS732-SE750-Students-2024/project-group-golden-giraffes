@@ -91,7 +91,9 @@ const InviteButton = styled(Button)`
   }
 `;
 
-const CanvasImageWrapper = styled("div")<{ isLoading: boolean }>`
+const CanvasImageWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "isLoading",
+})<{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
