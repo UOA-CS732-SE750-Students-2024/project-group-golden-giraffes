@@ -406,13 +406,14 @@ export default function CanvasView() {
    * Remove the listeners when the mouse is released to stop panning.
    */
   const handleMouseUp = useCallback((): void => {
-    if (!containerRef.current) return;
+    const elem = containerRef.current;
+    if (elem === null) return;
 
     setControlledPan(false);
 
-    containerRef.current.removeEventListener("mousemove", handleMouseMove);
-    containerRef.current.removeEventListener("mouseup", handleMouseUp);
-    containerRef.current.removeEventListener("mouseleave", handleMouseUp);
+    elem.removeEventListener("mousemove", handleMouseMove);
+    elem.removeEventListener("mouseup", handleMouseUp);
+    elem.removeEventListener("mouseleave", handleMouseUp);
   }, [handleMouseMove]);
 
   /**
@@ -420,13 +421,14 @@ export default function CanvasView() {
    * cause the canvas to pan.
    */
   const handleStartMousePan = useCallback((): void => {
-    if (!containerRef.current) return;
+    const elem = containerRef.current;
+    if (elem === null) return;
 
     setControlledPan(true);
 
-    containerRef.current.addEventListener("mousemove", handleMouseMove);
-    containerRef.current.addEventListener("mouseup", handleMouseUp);
-    containerRef.current.addEventListener("mouseleave", handleMouseUp);
+    elem.addEventListener("mousemove", handleMouseMove);
+    elem.addEventListener("mouseup", handleMouseUp);
+    elem.addEventListener("mouseleave", handleMouseUp);
   }, [handleMouseMove, handleMouseUp]);
 
   const handleTouchMove = useCallback(
