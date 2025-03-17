@@ -331,7 +331,7 @@ export default function CanvasView() {
 
     return () =>
       containerRef.current?.removeEventListener("wheel", handleWheel);
-  }, [initialZoom, zoom, getRelativeMousePosition]);
+  }, [initialZoom, zoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -467,7 +467,7 @@ export default function CanvasView() {
       // we only care about updating the location
       setCoords(boundedCanvasPos);
     },
-    [zoom, setCoords, getRelativeMousePosition],
+    [zoom, setCoords],
   );
 
   useEffect(() => {
