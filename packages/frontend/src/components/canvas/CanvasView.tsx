@@ -159,7 +159,6 @@ export default function CanvasView() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasImageWrapperRef = useRef<HTMLImageElement>(null);
   const canvasPanAndZoomRef = useRef<HTMLDivElement>(null);
-  // const startTouchesRef = useRef<Touch[]>([]);
 
   const { color } = useSelectedColorContext();
   const { canvas, coords, setCoords } = useCanvasContext();
