@@ -127,7 +127,7 @@ function getDefaultZoom(
 
 const SCALE_FACTOR = 0.002;
 const MAX_ZOOM = 100;
-const MIN_ZOOM = 0.5;
+const MIN_ZOOM = 0.9;
 
 const ZOOM_DURATION = 0.1;
 const PAN_DECAY = 0.75;
@@ -170,16 +170,18 @@ export default function CanvasView() {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [initialZoom, setInitialZoom] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
   const [controlledPan, setControlledPan] = useState(false);
   const [transitionDuration, setTransitionDuration] = useState(0);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
-    const initialZoom =
+    const zoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
-    setZoom(initialZoom);
+    setInitialZoom(zoom);
+    setZoom(zoom);
     setVelocity(ORIGIN);
     setOffset(ORIGIN);
     setIsLoading(false);
@@ -300,7 +302,7 @@ export default function CanvasView() {
 
       // Inclusion of deltaY in calculation to account for different polling rate devices
       const scale = zoom * (1 + SCALE_FACTOR * -event.deltaY);
-      const newZoom = clamp(scale, MIN_ZOOM, MAX_ZOOM);
+      const newZoom = clamp(scale, MIN_ZOOM * initialZoom, MAX_ZOOM);
 
       // Clamping the zoom means the actual scale may be different.
       const clampedScale = newZoom / zoom;
@@ -327,7 +329,7 @@ export default function CanvasView() {
 
     return () =>
       containerRef.current?.removeEventListener("wheel", handleWheel);
-  }, [zoom, getRelativeMousePosition]);
+  }, [initialZoom, zoom, getRelativeMousePosition]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
