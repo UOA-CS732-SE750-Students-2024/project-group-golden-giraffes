@@ -92,7 +92,10 @@ const InviteButton = styled(Button)`
   }
 `;
 
-const CanvasImageWrapper = styled("div")<{ isLoading: boolean }>`
+const CanvasImageWrapper = styled("div")<{
+  isLoading: boolean;
+  isLaunching: boolean;
+}>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -104,6 +107,11 @@ const CanvasImageWrapper = styled("div")<{ isLoading: boolean }>`
   position: relative;
 
   img {
+    ${({ isLaunching }) =>
+      isLaunching &&
+      css`
+        visibility: hidden;
+      `}
     image-rendering: pixelated;
     pointer-events: none;
   }
@@ -184,7 +192,8 @@ export default function CanvasView() {
   const { color } = useSelectedColorContext();
   const { canvas, coords, setCoords } = useCanvasContext();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLaunching, setIsLaunching] = useState(true);
   const [zoom, setZoom] = useState(1);
   const [initialZoom, setInitialZoom] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
@@ -203,6 +212,7 @@ export default function CanvasView() {
     setVelocity(ORIGIN);
     setOffset(ORIGIN);
     setIsLoading(false);
+    setIsLaunching(false);
   }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
@@ -544,6 +554,7 @@ export default function CanvasView() {
           <CanvasImageWrapper
             ref={canvasImageWrapperRef}
             isLoading={isLoading}
+            isLaunching={isLaunching}
             id="canvas-image-wrapper"
           >
             <img
