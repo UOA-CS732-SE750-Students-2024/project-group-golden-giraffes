@@ -87,7 +87,9 @@ function sendCachedCanvas(
       res
         .status(200)
         .type("png")
-        .setHeader("Cache-Control", "no-cache no-store")
+        .setHeader("Cache-Control", ["no-cache", "no-store"])
+        // Needed to force Safari to not cache the image
+        .setHeader("Vary", "*")
         .setHeader("Content-Disposition", `inline; filename="${filename}"`),
     );
 }

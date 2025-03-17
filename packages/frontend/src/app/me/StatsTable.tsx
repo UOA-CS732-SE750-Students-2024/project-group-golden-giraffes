@@ -78,7 +78,7 @@ export default function StatsTable({
           <td>
             {statsAreLoading ?
               <Skeleton width={80} />
-            : mostFrequentColor?.name ?? "Unknown"}
+            : (mostFrequentColor?.name ?? "Unknown")}
           </td>
         </tr>
         <tr>
