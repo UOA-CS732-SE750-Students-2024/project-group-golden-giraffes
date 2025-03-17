@@ -144,14 +144,14 @@
     --discord-yellow: oklch(92.18% 0.157 99.87);
     --discord-fuchsia: oklch(65.34% 0.217 351.92);
     --discord-red: oklch(63.18% 0.207 24.57);
-    --discord-white: oklch(100% 0 0);
-    --discord-black: oklch(0% 0 0);
+    --discord-white: white;
+    --discord-black: black;
     --discord-legacy-blurple: oklch(64.74% 0.124 270.62);
     --discord-legacy-full-white: oklch(100% 0 0);
     --discord-legacy-greyple: oklch(72.83% 0.025 236.13);
     --discord-legacy-dark-but-not-black: oklch(30.38% 0.008 255.56);
     --discord-legacy-not-quite-black: oklch(26.99% 0.008 240.16);
-    --discord-legacy-actually-black: oklch(0% 0 0);
+    --discord-legacy-actually-black: black;
 
     --font-body:
       "Mona Sans", system-ui, -apple-system, BlinkMacSystemFont, "Inter",
