@@ -137,15 +137,14 @@ function getRelativePointerPosition(element: HTMLElement, event: MouseEvent) {
  * Calculates the various variables required to get pan pinch working
  */
 function calculateTouchOffsetDelta(
-  value1: [PointerEvent, HTMLElement] | undefined,
-  value2: [PointerEvent, HTMLElement] | undefined,
+  event1: PointerEvent | undefined,
+  event2: PointerEvent | undefined,
+  elem: HTMLElement,
 ) {
-  if (value1 === undefined || value2 === undefined)
+  if (event1 === undefined || event2 === undefined)
     return { offset: undefined, scale: undefined, centerOffset: undefined };
-  const [event1, elem1] = value1;
-  const [event2, elem2] = value2;
-  const oldPosition1 = getRelativePointerPosition(elem1, event1);
-  const oldPosition2 = getRelativePointerPosition(elem2, event2);
+  const oldPosition1 = getRelativePointerPosition(elem, event1);
+  const oldPosition2 = getRelativePointerPosition(elem, event2);
   const newPosition1 = addPoints(oldPosition1, {
     x: event1.movementX,
     y: event1.movementY,
@@ -189,7 +188,7 @@ const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
 const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
-const pointerEvents: Map<number, [PointerEvent, HTMLElement]> = new Map();
+const pointerEvents: Map<number, PointerEvent> = new Map();
 // Used to handle pointer events when there are multiple pointers down
 let pointerSyncCounter = 0;
 
@@ -449,10 +448,7 @@ export default function CanvasView() {
 
       if (pointerEvents.size === 2) {
         pointerSyncCounter++;
-        pointerEvents.set(event.pointerId, [
-          event as unknown as PointerEvent,
-          elem,
-        ]);
+        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
         // Only checks every second pointerEvent to ensure both pointermove events are fired
         if (pointerSyncCounter === 2) {
           const pointerEventValues = pointerEvents.values();
@@ -460,6 +456,7 @@ export default function CanvasView() {
             calculateTouchOffsetDelta(
               pointerEventValues.next().value,
               pointerEventValues.next().value,
+              elem,
             );
           pointerSyncCounter = 0;
           if (!offsetDelta || !scale || !centerOffset) return;
@@ -507,10 +504,7 @@ export default function CanvasView() {
       // Don't store more than 2 pointers for pinch handling
       if (pointerEvents.size < 2) {
         // No idea if this is the right way to define the pointerEvents
-        pointerEvents.set(event.pointerId, [
-          event as unknown as PointerEvent,
-          elem,
-        ]);
+        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
       }
 
       changeGlobalSelectStyle("none");
