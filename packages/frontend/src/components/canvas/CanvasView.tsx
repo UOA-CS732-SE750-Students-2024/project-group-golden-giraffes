@@ -156,13 +156,16 @@ function calculateTouchOffsetDelta(
   });
   const oldMagitude = Math.abs(diffPoints(oldPosition1, oldPosition2).x);
   const newMagitude = Math.abs(diffPoints(newPosition1, newPosition2).x);
-  const centerOffset = dividePoint(addPoints(newPosition1, newPosition2), 2);
+  const relativePosition = dividePoint(
+    addPoints(newPosition1, newPosition2),
+    2,
+  );
   const offsetDelta = {
     x: (event1.movementX + event2.movementX) / 2,
     y: (event1.movementY + event2.movementY) / 2,
   };
   const scale = newMagitude / oldMagitude;
-  return { offsetDelta, scale, centerOffset };
+  return { offsetDelta, scale, centerOffset: relativePosition };
 }
 
 const SCALE_FACTOR = 0.002;
@@ -320,9 +323,16 @@ export default function CanvasView() {
    * @param pointerOffset The offset of the `Point` from the visual center of the wrapping container
    */
   const handleZoom = useCallback(
-    (scale: number, pointerOffset: Point) => {
+    (scale: number, pointerPosition: Point, elem: HTMLElement) => {
       const newZoom = scale * zoom;
       const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
+
+      // The mouse position's origin is in the top left of the container.
+      // Converts this to the offset from the center of the **visual** container
+      const pointerOffset = diffPoints(
+        { x: elem.offsetWidth / 2, y: elem.offsetHeight / 2 },
+        pointerPosition,
+      );
 
       // Clamping the zoom means the actual scale may be different.
       const clampedScale = clampedZoom / zoom;
@@ -360,14 +370,7 @@ export default function CanvasView() {
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
-      const pointerPositionOnCanvas = getRelativePointerPosition(elem, event);
-
-      // The mouse position's origin is in the top left of the container.
-      // Converts this to the offset from the center of the **visual** container
-      const pointerOffset = diffPoints(
-        { x: elem.offsetWidth / 2, y: elem.offsetHeight / 2 },
-        pointerPositionOnCanvas,
-      );
+      const pointerPosition = getRelativePointerPosition(elem, event);
 
       if (event.deltaY === 0) return;
       // Inclusion of deltaY in calculation to account for different polling rate devices
@@ -375,7 +378,7 @@ export default function CanvasView() {
       const scaleMagnitude =
         1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
       const scale = event.deltaY > 0 ? 1 / scaleMagnitude : 1 * scaleMagnitude;
-      handleZoom(scale, pointerOffset);
+      handleZoom(scale, pointerPosition, elem);
     };
 
     containerRef.current?.addEventListener("wheel", handleWheel, {
@@ -384,7 +387,7 @@ export default function CanvasView() {
 
     return () =>
       containerRef.current?.removeEventListener("wheel", handleWheel);
-  }, [zoom, handleZoom]);
+  }, [handleZoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -461,7 +464,7 @@ export default function CanvasView() {
           pointerSyncCounter = 0;
           if (!offsetDelta || !scale || !centerOffset) return;
           handlePan(offsetDelta);
-          handleZoom(scale, centerOffset);
+          handleZoom(scale, centerOffset, elem);
         }
       } else {
         handlePan({ x: event.movementX, y: event.movementY });
