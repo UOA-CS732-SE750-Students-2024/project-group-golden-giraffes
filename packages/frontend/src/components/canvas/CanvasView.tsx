@@ -134,14 +134,31 @@ function getRelativePointerPosition(element: HTMLElement, event: MouseEvent) {
 }
 
 function calculateTouchOffset(
-  pointer1: PointerEvent | undefined,
-  pointer2: PointerEvent | undefined,
+  value1: [PointerEvent, HTMLElement] | undefined,
+  value2: [PointerEvent, HTMLElement] | undefined,
 ) {
-  if (pointer1 === undefined || pointer2 === undefined) return undefined;
-  return {
-    x: (pointer1.movementX + pointer2.movementX) / 2,
-    y: (pointer1.movementY + pointer2.movementY) / 2,
+  if (value1 === undefined || value2 === undefined)
+    return { offset: undefined, scale: undefined };
+  const [event1, elem1] = value1;
+  const [event2, elem2] = value2;
+  const oldPosition1 = getRelativePointerPosition(elem1, event1);
+  const oldPosition2 = getRelativePointerPosition(elem2, event2);
+  const newPosition1 = addPoints(oldPosition1, {
+    x: event1.movementX,
+    y: event1.movementY,
+  });
+  const newPosition2 = addPoints(oldPosition2, {
+    x: event2.movementX,
+    y: event2.movementY,
+  });
+  const oldMagitude = Math.abs(diffPoints(oldPosition1, oldPosition2).x);
+  const newMagitude = Math.abs(diffPoints(newPosition1, newPosition2).x);
+  const offset = {
+    x: (event1.movementX + event2.movementX) / 2,
+    y: (event1.movementY + event2.movementY) / 2,
   };
+  const scale = newMagitude / oldMagitude;
+  return { offset, scale };
 }
 
 const SCALE_FACTOR = 0.002;
@@ -165,7 +182,7 @@ const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
 const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
-const pointerEvents: Map<number, PointerEvent> = new Map();
+const pointerEvents: Map<number, [PointerEvent, HTMLElement]> = new Map();
 // Used to handle pointer events when there are multiple pointers down
 let pointerSyncCounter = 0;
 
@@ -408,11 +425,14 @@ export default function CanvasView() {
 
       if (pointerEvents.size === 2) {
         pointerSyncCounter++;
-        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
+        pointerEvents.set(event.pointerId, [
+          event as unknown as PointerEvent,
+          elem,
+        ]);
         // Only checks every second pointerEvent to ensure both pointermove events are fired
         if (pointerSyncCounter === 2) {
           const pointerEventValues = pointerEvents.values();
-          const offset = calculateTouchOffset(
+          const { offset, scale } = calculateTouchOffset(
             pointerEventValues.next().value,
             pointerEventValues.next().value,
           );
@@ -461,7 +481,10 @@ export default function CanvasView() {
       // Don't store more than 2 pointers for pinch handling
       if (pointerEvents.size < 2) {
         // No idea if this is the right way to define the pointerEvents
-        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
+        pointerEvents.set(event.pointerId, [
+          event as unknown as PointerEvent,
+          elem,
+        ]);
       }
 
       changeGlobalSelectStyle("none");
