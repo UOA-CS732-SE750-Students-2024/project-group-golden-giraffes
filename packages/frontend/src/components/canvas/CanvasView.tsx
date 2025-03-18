@@ -370,12 +370,10 @@ export default function CanvasView() {
   );
 
   const handlePan = useCallback(
-    (event: PointerEvent): void => {
+    (offsetDelta: { x: number; y: number }): void => {
       // Disable transitions while panning
       setTransitionDuration(0);
-
-      const offset = { x: event.movementX, y: event.movementY };
-      const scaledOffset = multiplyPoint(offset, zoom);
+      const scaledOffset = multiplyPoint(offsetDelta, zoom);
       setVelocity({ x: scaledOffset.x, y: scaledOffset.y });
       updateOffset(scaledOffset);
     },
@@ -388,6 +386,15 @@ export default function CanvasView() {
     // only -webkit-user-select style exists on Safari: https://caniuse.com/mdn-css_properties_user-select
     document.body.style.webkitUserSelect = style;
   }, []);
+
+  const handlePointerMove = useCallback(
+    (event: PointerEvent): void => {
+      const elem = event.currentTarget;
+      if (!(elem instanceof HTMLElement)) return;
+      handlePan({ x: event.movementX, y: event.movementY });
+    },
+    [handlePan],
+  );
 
   /**
    * Remove the listeners when the mouse is released to stop panning.
@@ -405,11 +412,11 @@ export default function CanvasView() {
       changeGlobalSelectStyle("initial");
       setControlledPan(false);
 
-      elem.removeEventListener("pointermove", handlePan);
+      elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
       elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePan, changeGlobalSelectStyle],
+    [handlePointerMove, changeGlobalSelectStyle],
   );
 
   /**
@@ -429,11 +436,11 @@ export default function CanvasView() {
       changeGlobalSelectStyle("none");
       setControlledPan(true);
 
-      elem.addEventListener("pointermove", handlePan);
+      elem.addEventListener("pointermove", handlePointerMove);
       elem.addEventListener("pointerup", handlePointerUp);
       elem.addEventListener("pointercancel", handlePointerUp);
     },
-    [handlePan, handlePointerUp, changeGlobalSelectStyle],
+    [handlePointerMove, handlePointerUp, changeGlobalSelectStyle],
   );
 
   // Could potentially get replaced by a transition animation with ease, however this will work on Safari
