@@ -128,7 +128,7 @@ function getDefaultZoom(
 /**
  * Calculate the position of the mouse relative to the given element
  **/
-function getRelativeMousePosition(element: HTMLElement, event: MouseEvent) {
+function getRelativePointerPosition(element: HTMLElement, event: MouseEvent) {
   const rect = element.getBoundingClientRect();
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
@@ -305,7 +305,7 @@ export default function CanvasView() {
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
-      const mousePositionOnCanvas = getRelativeMousePosition(elem, event);
+      const mousePositionOnCanvas = getRelativePointerPosition(elem, event);
 
       // The mouse position's origin is in the top left of the container.
       // Converts this to the offset from the center of the visual container
@@ -506,7 +506,7 @@ export default function CanvasView() {
         return;
       const canvas = event.currentTarget;
       // Use boundingClientRect for more accurate pixel positioning
-      const relativeMousePos = getRelativeMousePosition(canvas, event);
+      const relativeMousePos = getRelativePointerPosition(canvas, event);
       const canvasPos = dividePoint(relativeMousePos, zoom);
 
       const boundedCanvasPos = {
