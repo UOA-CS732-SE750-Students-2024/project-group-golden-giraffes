@@ -320,7 +320,8 @@ export default function CanvasView() {
    * @param pointerOffset The offset of the `Point` from the visual center of the wrapping container
    */
   const handleZoom = useCallback(
-    (newZoom: number, pointerOffset: Point) => {
+    (scale: number, pointerOffset: Point) => {
+      const newZoom = scale * zoom;
       const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
 
       // Clamping the zoom means the actual scale may be different.
@@ -371,9 +372,10 @@ export default function CanvasView() {
       if (event.deltaY === 0) return;
       // Inclusion of deltaY in calculation to account for different polling rate devices
       // Could try logarithmic scale for smoother increments
-      const scale = 1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
-      const newZoom = event.deltaY > 0 ? zoom / scale : zoom * scale;
-      handleZoom(newZoom, pointerOffset);
+      const scaleMagnitude =
+        1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
+      const scale = event.deltaY > 0 ? 1 / scaleMagnitude : 1 * scaleMagnitude;
+      handleZoom(scale, pointerOffset);
     };
 
     containerRef.current?.addEventListener("wheel", handleWheel, {
@@ -459,14 +461,13 @@ export default function CanvasView() {
           pointerSyncCounter = 0;
           if (!offsetDelta || !scale || !centerOffset) return;
           handlePan(offsetDelta);
-          const newZoom = scale * zoom;
-          handleZoom(newZoom, centerOffset);
+          handleZoom(scale, centerOffset);
         }
       } else {
         handlePan({ x: event.movementX, y: event.movementY });
       }
     },
-    [handlePan, handleZoom, zoom],
+    [handlePan, handleZoom],
   );
 
   /**
