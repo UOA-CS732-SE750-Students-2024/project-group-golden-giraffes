@@ -441,6 +441,9 @@ export default function CanvasView() {
     document.body.style.webkitUserSelect = style;
   }, []);
 
+  /**
+   * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
+   */
   const handlePointerMove = useCallback(
     (event: PointerEvent): void => {
       const elem = event.currentTarget;
