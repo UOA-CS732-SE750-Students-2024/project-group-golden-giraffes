@@ -324,6 +324,7 @@ export default function CanvasView() {
    */
   const handleZoom = useCallback(
     (scale: number, pointerPosition: Point, elem: HTMLElement) => {
+      // Zoom here may not have been updated yet if it is pinch zoom
       const newZoom = scale * zoom;
       const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
 
@@ -352,6 +353,9 @@ export default function CanvasView() {
       setTransitionDuration(ZOOM_DURATION);
       // Now believe it or not the `setZoom(clampedZoom)` refuses to work for some reason.
       // Explain this John React. (Do tell me why though)
+      // Update: hello I'm not John React, but I suspect it is something to do with React batching state
+      // updates together in an event handler, causing the previous zoom to not correctly update.
+      // This is especially for the case when the pointermove event is constantly firing in pinch zooming.
       setZoom((prevZoom) => clampedScale * prevZoom);
     },
     [initialZoom, zoom],
