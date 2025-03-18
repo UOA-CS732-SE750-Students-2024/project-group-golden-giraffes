@@ -133,6 +133,17 @@ function getRelativeMousePosition(element: HTMLElement, event: MouseEvent) {
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 
+function calculateTouchOffset(
+  pointer1: PointerEvent | undefined,
+  pointer2: PointerEvent | undefined,
+) {
+  if (pointer1 === undefined || pointer2 === undefined) return undefined;
+  return {
+    x: (pointer1.movementX + pointer2.movementX) / 2,
+    y: (pointer1.movementY + pointer2.movementY) / 2,
+  };
+}
+
 const SCALE_FACTOR = 0.002;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.9;
@@ -155,6 +166,8 @@ const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
 const pointerEvents: Map<number, PointerEvent> = new Map();
+// Used to handle pointer events when there are multiple pointers down
+let pointerSyncCounter = 0;
 
 function calculateReticleOffset(coords: Point | null): Point {
   if (!coords) return { x: 0, y: 0 };
@@ -390,8 +403,26 @@ export default function CanvasView() {
   const handlePointerMove = useCallback(
     (event: PointerEvent): void => {
       const elem = event.currentTarget;
+      // Only handle primary pointers to prevent duplicate handling
       if (!(elem instanceof HTMLElement)) return;
-      handlePan({ x: event.movementX, y: event.movementY });
+
+      if (pointerEvents.size === 2) {
+        pointerSyncCounter++;
+        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
+        // Only checks every second pointerEvent to ensure both pointermove events are fired
+        if (pointerSyncCounter === 2) {
+          const pointerEventValues = pointerEvents.values();
+          const offset = calculateTouchOffset(
+            pointerEventValues.next().value,
+            pointerEventValues.next().value,
+          );
+          pointerSyncCounter = 0;
+          if (!offset) return;
+          handlePan(offset);
+        }
+      } else {
+        handlePan({ x: event.movementX, y: event.movementY });
+      }
     },
     [handlePan],
   );
