@@ -309,6 +309,31 @@ export default function CanvasView() {
    * ZOOMING FUNCTIONALITY.       *
    ********************************/
 
+  const handleZoom = useCallback(
+    (newZoom: number, mouseOffset: Point) => {
+      const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
+
+      // Clamping the zoom means the actual scale may be different.
+      const clampedScale = clampedZoom / zoom;
+
+      setOffset((prevOffset) => {
+        // Calculate the of the mouse position relative to the center of the canvas in the container
+        const trueOffset = addPoints(prevOffset, mouseOffset);
+
+        // The amount we shift is scaled based on the amount we've zoomed in.
+        // Adds an extra shift based on the new scale of the canvas and the true offset
+        // Goodbye old comment with old implementation
+        const scaledOffsetDiff = multiplyPoint(trueOffset, clampedScale - 1);
+        return clampOffset(addPoints(scaledOffsetDiff, prevOffset), newZoom);
+      });
+
+      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
+      setTransitionDuration(ZOOM_DURATION);
+      setZoom(clampedZoom);
+    },
+    [initialZoom, zoom],
+  );
+
   useEffect(() => {
     /**
      * When we zoom, not only do we need to scale the image, but to give the appearing of zooming
@@ -336,25 +361,7 @@ export default function CanvasView() {
       // Could try logarithmic scale for smoother increments
       const scale = 1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
       const newZoom = event.deltaY > 0 ? zoom / scale : zoom * scale;
-      const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
-
-      // Clamping the zoom means the actual scale may be different.
-      const clampedScale = clampedZoom / zoom;
-
-      setOffset((prevOffset) => {
-        // Calculate the of the mouse position relative to the center of the canvas in the container
-        const trueOffset = addPoints(prevOffset, mouseOffset);
-
-        // The amount we shift is scaled based on the amount we've zoomed in.
-        // Adds an extra shift based on the new scale of the canvas and the true offset
-        // Goodbye old comment with old implementation
-        const scaledOffsetDiff = multiplyPoint(trueOffset, clampedScale - 1);
-        return clampOffset(addPoints(scaledOffsetDiff, prevOffset), newZoom);
-      });
-
-      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
-      setTransitionDuration(ZOOM_DURATION);
-      setZoom(clampedZoom);
+      handleZoom(newZoom, mouseOffset);
     };
 
     containerRef.current?.addEventListener("wheel", handleWheel, {
@@ -363,7 +370,7 @@ export default function CanvasView() {
 
     return () =>
       containerRef.current?.removeEventListener("wheel", handleWheel);
-  }, [initialZoom, zoom]);
+  }, [zoom, handleZoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
