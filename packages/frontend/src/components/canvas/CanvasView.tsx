@@ -133,12 +133,15 @@ function getRelativePointerPosition(element: HTMLElement, event: MouseEvent) {
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 
+/**
+ * Calculates the various variables required to get pan pinch working
+ */
 function calculateTouchOffsetDelta(
   value1: [PointerEvent, HTMLElement] | undefined,
   value2: [PointerEvent, HTMLElement] | undefined,
 ) {
   if (value1 === undefined || value2 === undefined)
-    return { offset: undefined, scale: undefined };
+    return { offset: undefined, scale: undefined, centerOffset: undefined };
   const [event1, elem1] = value1;
   const [event2, elem2] = value2;
   const oldPosition1 = getRelativePointerPosition(elem1, event1);
@@ -153,12 +156,13 @@ function calculateTouchOffsetDelta(
   });
   const oldMagitude = Math.abs(diffPoints(oldPosition1, oldPosition2).x);
   const newMagitude = Math.abs(diffPoints(newPosition1, newPosition2).x);
+  const centerOffset = dividePoint(addPoints(newPosition1, newPosition2), 2);
   const offsetDelta = {
     x: (event1.movementX + event2.movementX) / 2,
     y: (event1.movementY + event2.movementY) / 2,
   };
   const scale = newMagitude / oldMagitude;
-  return { offsetDelta, scale };
+  return { offsetDelta, scale, centerOffset };
 }
 
 const SCALE_FACTOR = 0.002;
@@ -335,7 +339,9 @@ export default function CanvasView() {
 
       // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
       setTransitionDuration(ZOOM_DURATION);
-      setZoom(clampedZoom);
+      // Now believe it or not the `setZoom(clampedZoom)` refuses to work for some reason.
+      // Explain this John React. (Do tell me why though)
+      setZoom((prevZoom) => clampedScale * prevZoom);
     },
     [initialZoom, zoom],
   );
@@ -445,19 +451,22 @@ export default function CanvasView() {
         // Only checks every second pointerEvent to ensure both pointermove events are fired
         if (pointerSyncCounter === 2) {
           const pointerEventValues = pointerEvents.values();
-          const { offsetDelta, scale } = calculateTouchOffsetDelta(
-            pointerEventValues.next().value,
-            pointerEventValues.next().value,
-          );
+          const { offsetDelta, scale, centerOffset } =
+            calculateTouchOffsetDelta(
+              pointerEventValues.next().value,
+              pointerEventValues.next().value,
+            );
           pointerSyncCounter = 0;
-          if (!offsetDelta || !scale) return;
+          if (!offsetDelta || !scale || !centerOffset) return;
           handlePan(offsetDelta);
+          const newZoom = scale * zoom;
+          handleZoom(newZoom, centerOffset);
         }
       } else {
         handlePan({ x: event.movementX, y: event.movementY });
       }
     },
-    [handlePan],
+    [handlePan, handleZoom, zoom],
   );
 
   /**
