@@ -33,3 +33,7 @@ export function multiplyPoint(p1: Point, scale: number): Point {
 export function tupleToPoint([x, y]: [number, number]): Point {
   return { x, y };
 }
+
+export function distanceBetweenPoints(p1: Point, p2: Point): number {
+  return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y)** 2);
+}

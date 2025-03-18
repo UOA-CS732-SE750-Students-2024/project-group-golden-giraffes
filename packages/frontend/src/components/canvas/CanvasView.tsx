@@ -14,6 +14,7 @@ import {
   ORIGIN,
   addPoints,
   diffPoints,
+  distanceBetweenPoints,
   dividePoint,
   multiplyPoint,
 } from "./point";
@@ -153,8 +154,8 @@ function calculateTouchOffsetDelta(
     x: event2.movementX,
     y: event2.movementY,
   });
-  const oldMagitude = Math.abs(diffPoints(oldPosition1, oldPosition2).x);
-  const newMagitude = Math.abs(diffPoints(newPosition1, newPosition2).x);
+  const oldMagitude = distanceBetweenPoints(oldPosition1, oldPosition2);
+  const newMagitude = distanceBetweenPoints(newPosition1, newPosition2);
   const relativePosition = dividePoint(
     addPoints(newPosition1, newPosition2),
     2,
