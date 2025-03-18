@@ -133,7 +133,7 @@ function getRelativePointerPosition(element: HTMLElement, event: MouseEvent) {
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 
-function calculateTouchOffset(
+function calculateTouchOffsetDelta(
   value1: [PointerEvent, HTMLElement] | undefined,
   value2: [PointerEvent, HTMLElement] | undefined,
 ) {
@@ -153,12 +153,12 @@ function calculateTouchOffset(
   });
   const oldMagitude = Math.abs(diffPoints(oldPosition1, oldPosition2).x);
   const newMagitude = Math.abs(diffPoints(newPosition1, newPosition2).x);
-  const offset = {
+  const offsetDelta = {
     x: (event1.movementX + event2.movementX) / 2,
     y: (event1.movementY + event2.movementY) / 2,
   };
   const scale = newMagitude / oldMagitude;
-  return { offset, scale };
+  return { offsetDelta, scale };
 }
 
 const SCALE_FACTOR = 0.002;
@@ -309,16 +309,22 @@ export default function CanvasView() {
    * ZOOMING FUNCTIONALITY.       *
    ********************************/
 
+  /**
+   * Performs zoom for both WheelEvent and PointerEvent pinching
+   *
+   * @param newZoom The new zoom level as a value from `initialZoom * MIN_ZOOM` to `MAX_ZOOM`
+   * @param pointerOffset The offset of the `Point` from the visual center of the wrapping container
+   */
   const handleZoom = useCallback(
-    (newZoom: number, mouseOffset: Point) => {
+    (newZoom: number, pointerOffset: Point) => {
       const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
 
       // Clamping the zoom means the actual scale may be different.
       const clampedScale = clampedZoom / zoom;
 
       setOffset((prevOffset) => {
-        // Calculate the of the mouse position relative to the center of the canvas in the container
-        const trueOffset = addPoints(prevOffset, mouseOffset);
+        // Calculate the of the mouse position relative to the center of where the canvas is positioned.
+        const trueOffset = addPoints(prevOffset, pointerOffset);
 
         // The amount we shift is scaled based on the amount we've zoomed in.
         // Adds an extra shift based on the new scale of the canvas and the true offset
@@ -347,13 +353,13 @@ export default function CanvasView() {
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
-      const mousePositionOnCanvas = getRelativePointerPosition(elem, event);
+      const pointerPositionOnCanvas = getRelativePointerPosition(elem, event);
 
       // The mouse position's origin is in the top left of the container.
-      // Converts this to the offset from the center of the visual container
-      const mouseOffset = diffPoints(
+      // Converts this to the offset from the center of the **visual** container
+      const pointerOffset = diffPoints(
         { x: elem.offsetWidth / 2, y: elem.offsetHeight / 2 },
-        mousePositionOnCanvas,
+        pointerPositionOnCanvas,
       );
 
       if (event.deltaY === 0) return;
@@ -361,7 +367,7 @@ export default function CanvasView() {
       // Could try logarithmic scale for smoother increments
       const scale = 1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
       const newZoom = event.deltaY > 0 ? zoom / scale : zoom * scale;
-      handleZoom(newZoom, mouseOffset);
+      handleZoom(newZoom, pointerOffset);
     };
 
     containerRef.current?.addEventListener("wheel", handleWheel, {
@@ -410,9 +416,9 @@ export default function CanvasView() {
     (offsetDelta: { x: number; y: number }): void => {
       // Disable transitions while panning
       setTransitionDuration(0);
-      const scaledOffset = multiplyPoint(offsetDelta, zoom);
-      setVelocity({ x: scaledOffset.x, y: scaledOffset.y });
-      updateOffset(scaledOffset);
+      const scaledOffsetDelta = multiplyPoint(offsetDelta, zoom);
+      setVelocity({ x: scaledOffsetDelta.x, y: scaledOffsetDelta.y });
+      updateOffset(scaledOffsetDelta);
     },
     [updateOffset, zoom],
   );
@@ -439,13 +445,13 @@ export default function CanvasView() {
         // Only checks every second pointerEvent to ensure both pointermove events are fired
         if (pointerSyncCounter === 2) {
           const pointerEventValues = pointerEvents.values();
-          const { offset, scale } = calculateTouchOffset(
+          const { offsetDelta, scale } = calculateTouchOffsetDelta(
             pointerEventValues.next().value,
             pointerEventValues.next().value,
           );
           pointerSyncCounter = 0;
-          if (!offset) return;
-          handlePan(offset);
+          if (!offsetDelta || !scale) return;
+          handlePan(offsetDelta);
         }
       } else {
         handlePan({ x: event.movementX, y: event.movementY });
