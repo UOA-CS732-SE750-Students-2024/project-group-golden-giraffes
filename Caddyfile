@@ -2,6 +2,7 @@
 	local_certs
 }
 
+# you should replace the localhost with your actual domain
 localhost {
 	handle_path /api/* {
 		reverse_proxy blurple_canvas_server:8000
