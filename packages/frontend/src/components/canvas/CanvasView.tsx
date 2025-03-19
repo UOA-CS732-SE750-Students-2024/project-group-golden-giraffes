@@ -419,14 +419,14 @@ export default function CanvasView() {
   const updateOffset = useCallback(
     (diff: Point): void => {
       // The more we're zoomed in, the less we've actually moved on the canvas
-      const scaledDiff = dividePoint(diff, zoom);
+      const scaledDiff = dividePoint(diff, zoomRef.current);
 
       setOffset((prevOffset) => {
         const newOffset = addPoints(prevOffset, scaledDiff);
-        return clampOffset(newOffset, zoom);
+        return clampOffset(newOffset, zoomRef.current);
       });
     },
-    [zoom, clampOffset],
+    [clampOffset],
   );
 
   const handlePan = useCallback(
