@@ -216,6 +216,10 @@ export default function CanvasView() {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(0);
+  // Always have access to the most up to date zoom value
+  zoomRef.current = zoom;
+
   const [initialZoom, setInitialZoom] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
@@ -324,10 +328,6 @@ export default function CanvasView() {
    */
   const handleZoom = useCallback(
     (scale: number, pointerPosition: Point, elem: HTMLElement) => {
-      // Zoom here may not have been updated yet if it is pinch zoom
-      const newZoom = scale * zoom;
-      const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
-
       // The mouse position's origin is in the top left of the container.
       // Converts this to the offset from the center of the **visual** container
       const pointerOffset = diffPoints(
@@ -335,8 +335,15 @@ export default function CanvasView() {
         pointerPosition,
       );
 
+      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
+      setTransitionDuration(ZOOM_DURATION);
+
+      // Zoom here may not have been updated yet if it is pinch zoom
+      const newZoom = scale * zoomRef.current;
+      const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
+
       // Clamping the zoom means the actual scale may be different.
-      const clampedScale = clampedZoom / zoom;
+      const clampedScale = clampedZoom / zoomRef.current;
 
       setOffset((prevOffset) => {
         // Calculate the of the mouse position relative to the center of where the canvas is positioned.
@@ -346,19 +353,14 @@ export default function CanvasView() {
         // Adds an extra shift based on the new scale of the canvas and the true offset
         // Goodbye old comment with old implementation
         const scaledOffsetDiff = multiplyPoint(trueOffset, clampedScale - 1);
-        return clampOffset(addPoints(scaledOffsetDiff, prevOffset), newZoom);
+        return clampOffset(
+          addPoints(scaledOffsetDiff, prevOffset),
+          clampedZoom,
+        );
       });
-
-      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
-      setTransitionDuration(ZOOM_DURATION);
-      // Now believe it or not the `setZoom(clampedZoom)` refuses to work for some reason.
-      // Explain this John React. (Do tell me why though)
-      // Update: hello I'm not John React, but I suspect it is something to do with React batching state
-      // updates together in an event handler, causing the previous zoom to not correctly update.
-      // This is especially for the case when the pointermove event is constantly firing in pinch zooming.
-      setZoom((prevZoom) => clampedScale * prevZoom);
+      setZoom(clampedZoom);
     },
-    [initialZoom, zoom],
+    [initialZoom],
   );
 
   useEffect(() => {
