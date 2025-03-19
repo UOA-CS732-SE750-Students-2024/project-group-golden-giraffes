@@ -433,11 +433,11 @@ export default function CanvasView() {
     (offsetDelta: { x: number; y: number }): void => {
       // Disable transitions while panning
       setTransitionDuration(0);
-      const scaledOffsetDelta = multiplyPoint(offsetDelta, zoom);
+      const scaledOffsetDelta = multiplyPoint(offsetDelta, zoomRef.current);
       setVelocity({ x: scaledOffsetDelta.x, y: scaledOffsetDelta.y });
       updateOffset(scaledOffsetDelta);
     },
-    [updateOffset, zoom],
+    [updateOffset],
   );
 
   /* A bit heavy handed, but it prevents elements outside of the canvas from being selected during panning */
