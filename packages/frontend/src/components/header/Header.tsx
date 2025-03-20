@@ -1,6 +1,6 @@
 "use client";
 
-import { styled } from "@mui/material";
+import { css, styled } from "@mui/material";
 import Image from "next/image";
 import { CanvasPicker } from "../canvas";
 import Nav, { NavLink } from "./Nav";
@@ -40,10 +40,12 @@ const Wordmark = styled("div")`
   }
 `;
 
-const Logo = styled(Image)`
-  min-width: ${(props) => props.width}px;
-  min-height: ${(props) => props.height}px;
-`;
+const Logo = styled(Image)(
+  (props) => css`
+    min-width: ${props.width}px;
+    min-height: ${props.height}px;
+  `,
+);
 
 export default function Header() {
   return (
