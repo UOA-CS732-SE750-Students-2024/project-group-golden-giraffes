@@ -25,6 +25,7 @@ const CanvasContainer = styled("div")`
   border-radius: var(--card-border-radius);
   border: var(--card-border);
   display: flex;
+  grid-row: 1 / -1;
   overflow: hidden;
   place-content: center;
   place-items: center;
@@ -33,8 +34,8 @@ const CanvasContainer = styled("div")`
   /* Don't handle panning and zooming with browser */
   touch-action: none;
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    grid-row: 1 / -1;
+  ${({ theme }) => theme.breakpoints.down("md")} {
+    border-radius: 0;
   }
 
   :active {

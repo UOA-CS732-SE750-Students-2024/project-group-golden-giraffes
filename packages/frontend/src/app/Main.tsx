@@ -4,6 +4,7 @@ import { styled } from "@mui/material";
 
 import { ActionPanel } from "@/components/action-panel";
 import { CanvasView } from "@/components/canvas";
+import { SlideableDrawer } from "@/components/slideable-drawer";
 
 const Wrapper = styled("main")`
   body:has(&) {
@@ -32,7 +33,9 @@ export default function Main() {
   return (
     <Wrapper>
       <CanvasView />
-      <ActionPanel />
+      <SlideableDrawer>
+        <ActionPanel />
+      </SlideableDrawer>
     </Wrapper>
   );
 }
