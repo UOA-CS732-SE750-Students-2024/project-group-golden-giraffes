@@ -1,7 +1,7 @@
 "use client";
 
 import { styled } from "@mui/material";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 const Wrapper = styled("div")`
   ${({ theme }) => theme.breakpoints.down("md")} {
@@ -9,7 +9,7 @@ const Wrapper = styled("div")`
   }
 `;
 
-const DrawerWrapper = styled("div")`
+const DrawerWrapper = styled("div")<{ drawerHeight: number }>`
   ${({ theme }) => theme.breakpoints.up("md")} {
     display: none;
   }
@@ -22,7 +22,6 @@ const DrawerWrapper = styled("div")`
 
     position: absolute;
     width: 100%;
-    height: 50%;
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -30,6 +29,7 @@ const DrawerWrapper = styled("div")`
   }
   & > * {
     flex-grow: 1;
+    touch-action: none;
   }
 `;
 
@@ -39,7 +39,8 @@ const HandleWrapper = styled("div")`
   padding-inline: auto;
   display: flex;
   place-content: center;
-  flex-grow: 0;
+  /* Hacky, overwrites the flex-grow from DrawerWrapper */
+  flex-grow: 0 !important;
 `;
 
 const Handle = styled("div")`
@@ -54,6 +55,8 @@ interface SlideableDrawerProps {
 }
 
 export default function SlideableDrawer({ children }: SlideableDrawerProps) {
+  const [drawerHeight, setDrawerHeight] = useState(0);
+
   /**
    * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
    */
@@ -61,7 +64,7 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
     const elem = event.currentTarget;
     // Only handle primary pointers to prevent duplicate handling
     if (!(elem instanceof HTMLElement)) return;
-    console.log(event.movementX);
+    setDrawerHeight((prevHeight) => prevHeight + event.movementY);
   }, []);
 
   /**
@@ -86,6 +89,10 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
    */
   const handlePointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
+      // Only handle primary pointers
+      if (!event.isPrimary) return;
+      // const elemTarget = event.target;
+
       const elem = event.currentTarget;
       elem.setPointerCapture(event.pointerId);
       elem.addEventListener("pointermove", handlePointerMove);
@@ -98,7 +105,11 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   return (
     <>
       {/* Doing it this way as handlers are directly applied to DrawerWrapper (though it could also be possible to dynamically disable them through code) */}
-      <DrawerWrapper onPointerDown={handlePointerDown}>
+      <DrawerWrapper
+        onPointerDown={handlePointerDown}
+        drawerHeight={drawerHeight}
+        style={{ height: `calc(50% - ${drawerHeight}px)` }}
+      >
         <HandleWrapper>
           <Handle />
         </HandleWrapper>
