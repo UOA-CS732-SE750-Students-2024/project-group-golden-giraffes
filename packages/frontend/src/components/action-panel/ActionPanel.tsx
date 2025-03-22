@@ -10,7 +10,8 @@ import { PixelInfoTab, PlacePixelTab } from "./tabs";
 const Wrapper = styled("div")`
   --padding-width: 1rem;
   background-color: var(--discord-legacy-not-quite-black);
-  border-radius: var(--card-border-radius);
+  border-start-start-radius: var(--card-border-radius);
+  border-start-end-radius: var(--card-border-radius);
   border: var(--card-border);
   display: grid;
   gap: 0.5rem;
@@ -22,25 +23,18 @@ const Wrapper = styled("div")`
   > * {
     border-radius: calc(var(--card-border-radius) - var(--padding-width));
   }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    border-radius: var(--card-border-radius);
+  }
 `;
 
 const TabBar = styled("ul")`
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   display: grid;
-  gap: .5rem;
+  gap: 0.5rem;
   grid-template-columns: repeat(2, 1fr);
   list-style-type: none;
-
-
-
-    /*
-     * Workaround for accessibility issue with VoiceOver.
-     * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
-     */
-    li::before {
-      content: "\\200B"; /* zero-width space */
-    }
-  }
 `;
 
 const Tab = styled("li")<{ active?: boolean }>`
@@ -65,6 +59,14 @@ const Tab = styled("li")<{ active?: boolean }>`
         background-color: var(--discord-legacy-dark-but-not-black);
       `
     : ""}
+
+  /*
+  * Workaround for accessibility issue with VoiceOver.
+  * See https://gerardkcohen.me/writing/2017/voiceover-list-style-type.html
+  */
+  &::before {
+    content: "\\200B"; /* zero-width space */
+  }
 
   :hover,
   :focus,
