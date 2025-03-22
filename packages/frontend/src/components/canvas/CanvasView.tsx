@@ -1,14 +1,7 @@
 "use client";
 
 import { CircularProgress, css, styled } from "@mui/material";
-import {
-  Touch,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Touch, useCallback, useEffect, useRef, useState } from "react";
 
 import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
@@ -161,10 +154,6 @@ export default function CanvasView() {
   const { color } = useSelectedColorContext();
   const { canvas, coords, setCoords } = useCanvasContext();
 
-  const imageUrl = useMemo(
-    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
-    [canvas.id],
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
@@ -173,6 +162,7 @@ export default function CanvasView() {
   const [targetZoom, setTargetZoom] = useState(1);
   const [mouseOffsetDirection, setMouseOffsetDirection] = useState(ORIGIN);
 
+  const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     const initialZoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
