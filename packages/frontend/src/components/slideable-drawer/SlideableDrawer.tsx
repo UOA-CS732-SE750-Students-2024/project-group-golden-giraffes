@@ -1,7 +1,7 @@
 "use client";
 
 import { styled } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const Wrapper = styled("div")`
   ${({ theme }) => theme.breakpoints.down("md")} {
@@ -59,7 +59,16 @@ interface SlideableDrawerProps {
 }
 
 export default function SlideableDrawer({ children }: SlideableDrawerProps) {
+  const drawerWrapperRef = useRef<HTMLDivElement>(null);
   const [drawerHeight, setDrawerHeight] = useState(0);
+
+  // Set the height of the drawer to half the canvas height
+  useEffect(() => {
+    if (drawerWrapperRef.current?.parentElement) {
+      console.log(drawerWrapperRef.current.parentElement.clientHeight);
+      setDrawerHeight(drawerWrapperRef.current.parentElement?.clientHeight / 2);
+    }
+  }, []);
 
   /**
    * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
@@ -67,7 +76,7 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   const handlePointerMove = useCallback((event: PointerEvent): void => {
     // Shouldn't occur, but don't handle non-primary pointers
     if (!event.isPrimary) return;
-    setDrawerHeight((prevHeight) => prevHeight + event.movementY);
+    setDrawerHeight((prevHeight) => prevHeight - event.movementY);
   }, []);
 
   /**
@@ -78,7 +87,6 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
-      setDrawerHeight(0);
 
       elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
@@ -111,7 +119,8 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       {/* Doing it this way as handlers are directly applied to DrawerWrapper (though it could also be possible to dynamically disable them through code) */}
       <DrawerWrapper
         drawerHeight={drawerHeight}
-        style={{ height: `calc(50% - ${drawerHeight}px)` }}
+        style={{ height: `${drawerHeight}px` }}
+        ref={drawerWrapperRef}
       >
         {/* Looked at drawers from both Apple and Google, and they both work on the entire drawer instead of just the handle, but the overflow behaviour is a bit weird to get right */}
         <HandleWrapper onPointerDown={handlePointerDown}>
