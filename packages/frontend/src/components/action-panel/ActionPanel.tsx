@@ -53,10 +53,8 @@ const Tab = styled("li")<{ active?: boolean }>`
   place-items: center;
   text-align: center;
   touch-action: manipulation;
-  transition:
-    background-color var(--transition-duration-fast) ease,
-    color var(--transition-duration-fast) ease,
-    outline var(--transition-duration-fast) ease;
+  transition: var(--transition-duration-fast) ease;
+  transition-property: background-color, color, outline;
   user-select: none;
 
   ${({ active }) =>
@@ -66,18 +64,18 @@ const Tab = styled("li")<{ active?: boolean }>`
       `
     : ""}
 
-  :hover,
-  :focus,
-  :focus-visible {
-    background-color: var(--discord-legacy-dark-but-not-black);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--discord-legacy-dark-but-not-black);
+    }
   }
 
-  :focus,
-  :focus-visible {
+  &:focus-visible {
+    background-color: var(--discord-legacy-dark-but-not-black);
     outline: var(--focus-outline);
   }
 
-  :active {
+  &:active {
     background-color: var(--discord-legacy-greyple);
   }
 `;

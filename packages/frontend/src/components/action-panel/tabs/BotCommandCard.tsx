@@ -25,11 +25,13 @@ const CopyButton = styled("button")<CopyButtonProps>`
   place-items: center;
   transition: background-color var(--transition-duration-fast) ease;
 
-  :hover {
-    background-color: oklch(from var(--discord-white) l c h / 24%);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: oklch(from var(--discord-white) l c h / 24%);
+    }
   }
 
-  :active {
+  &:active {
     background-color: oklch(from var(--discord-white) l c h / 6%);
   }
 `;
@@ -41,9 +43,10 @@ const StyledCopyIcon = styled(CopyIcon)`
 
 export default function BotCommandCard() {
   const { adjustedCoords: coordinates } = useCanvasContext();
-  const { color } = useSelectedColorContext();
+  if (!coordinates) return null;
 
-  if (!coordinates || !color) return null;
+  const { color } = useSelectedColorContext();
+  if (!color) return null;
 
   const { x, y } = coordinates;
   const command = `/place x:${x} y:${y} color:${color.code}`;

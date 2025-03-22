@@ -31,12 +31,11 @@ const CanvasContainer = styled("div")`
   /* Fixes blurry canvas in Safari when canvasImage overlaps with overflow, don't ask why */
   -webkit-transform: translate3d(0, 0, 0);
 
-  :active {
+  &:active {
     cursor: grabbing;
   }
 
-  &,
-  * & {
+  & {
     user-select: none;
   }
 
@@ -64,24 +63,29 @@ const InviteButton = styled(Button)`
     from var(--discord-legacy-dark-but-not-black) l c h / 80%
   );
   border-radius: 0.5rem 0.5rem 1rem 0.5rem;
-  bottom: 0.5rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.2);
   color: white;
   font-size: 1.2rem;
   font-variation-settings: "wdth" 125;
   font-weight: 900;
-  padding: 0.1rem 1rem;
+  inset-block-end: 0.5rem;
+  inset-inline-end: 0.5rem;
+  padding-block: 0.1rem;
+  padding-inline: 1rem;
   position: absolute;
-  right: 0.5rem;
   text-decoration: none;
   z-index: 1;
 
-  :hover {
-    background-color: var(--discord-blurple);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--discord-blurple);
+    }
   }
 `;
 
-const CanvasImageWrapper = styled("div")<{ isLoading: boolean }>`
+const CanvasImageWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "isLoading",
+})<{ isLoading: boolean }>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -392,13 +396,14 @@ export default function CanvasView() {
    * Remove the listeners when the mouse is released to stop panning.
    */
   const handleMouseUp = useCallback((): void => {
-    if (!containerRef.current) return;
+    const elem = containerRef.current;
+    if (elem === null) return;
 
     setControlledPan(false);
 
-    containerRef.current.removeEventListener("mousemove", handleMouseMove);
-    containerRef.current.removeEventListener("mouseup", handleMouseUp);
-    containerRef.current.removeEventListener("mouseleave", handleMouseUp);
+    elem.removeEventListener("mousemove", handleMouseMove);
+    elem.removeEventListener("mouseup", handleMouseUp);
+    elem.removeEventListener("mouseleave", handleMouseUp);
   }, [handleMouseMove]);
 
   /**
@@ -406,13 +411,14 @@ export default function CanvasView() {
    * cause the canvas to pan.
    */
   const handleStartMousePan = useCallback((): void => {
-    if (!containerRef.current) return;
+    const elem = containerRef.current;
+    if (elem === null) return;
 
     setControlledPan(true);
 
-    containerRef.current.addEventListener("mousemove", handleMouseMove);
-    containerRef.current.addEventListener("mouseup", handleMouseUp);
-    containerRef.current.addEventListener("mouseleave", handleMouseUp);
+    elem.addEventListener("mousemove", handleMouseMove);
+    elem.addEventListener("mouseup", handleMouseUp);
+    elem.addEventListener("mouseleave", handleMouseUp);
   }, [handleMouseMove, handleMouseUp]);
 
   const handleTouchMove = useCallback(
