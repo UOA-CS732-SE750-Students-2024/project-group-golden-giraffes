@@ -35,7 +35,7 @@ const DrawerWrapper = styled("div")<{ drawerHeight: number }>`
 
 const HandleWrapper = styled("div")`
   cursor: grab;
-  padding-block: 0.4rem 0;
+  padding-block: 0.8rem 0;
   padding-inline: auto;
   display: flex;
   place-content: center;
@@ -61,9 +61,8 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
    * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
    */
   const handlePointerMove = useCallback((event: PointerEvent): void => {
-    const elem = event.currentTarget;
-    // Only handle primary pointers to prevent duplicate handling
-    if (!(elem instanceof HTMLElement)) return;
+    // Shouldn't occur, but don't handle non-primary pointers
+    if (!event.isPrimary) return;
     setDrawerHeight((prevHeight) => prevHeight + event.movementY);
   }, []);
 
@@ -106,11 +105,11 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
     <>
       {/* Doing it this way as handlers are directly applied to DrawerWrapper (though it could also be possible to dynamically disable them through code) */}
       <DrawerWrapper
-        onPointerDown={handlePointerDown}
         drawerHeight={drawerHeight}
         style={{ height: `calc(50% - ${drawerHeight}px)` }}
       >
-        <HandleWrapper>
+        {/* Looked at drawers from both Apple and Google, and they both work on the entire drawer instead of just the handle, but the overflow behaviour is a bit weird to get right */}
+        <HandleWrapper onPointerDown={handlePointerDown}>
           <Handle />
         </HandleWrapper>
         {children}
