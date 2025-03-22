@@ -26,6 +26,10 @@ const DrawerWrapper = styled("div")<{ drawerHeight: number }>`
     flex-direction: column;
     gap: 0;
     bottom: 0;
+    transition: height 0.5s ease;
+    &:active {
+      transition: none;
+    }
   }
   & > * {
     flex-grow: 1;
@@ -74,6 +78,7 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
+      setDrawerHeight(0);
 
       elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
