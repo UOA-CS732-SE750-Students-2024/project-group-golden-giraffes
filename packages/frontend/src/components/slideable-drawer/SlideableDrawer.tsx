@@ -79,45 +79,45 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
     getComputedStyle(document.documentElement).fontSize,
   );
   // Kinda just eyeballed the 6 rem to be the smallest as it looked ok.
-  const pointerBoundaries: CssValue[] = [
+  const pointerBounds: CssValue[] = [
     { type: "Rem", value: 6 },
     { type: "Percentage", value: 50 },
     { type: "Percentage", value: 90 },
   ];
 
-  const convertBoundaryToPixels = useCallback(
-    (boundary: CssValue, maxHeight: number) => {
-      switch (boundary.type) {
+  const convertBoundToPixels = useCallback(
+    (bound: CssValue, maxHeight: number) => {
+      switch (bound.type) {
         case "Rem":
-          return boundary.value * remPixels;
+          return bound.value * remPixels;
         case "Percentage":
-          return (boundary.value * maxHeight) / 100;
+          return (bound.value * maxHeight) / 100;
       }
     },
     [remPixels],
   );
 
-  const snapToBoundaries = useCallback(
+  const snapToBounds = useCallback(
     (height: number) => {
       // Convert boundary values to pixel values
-      const boundaryPixels = pointerBoundaries.map((boundary) =>
-        convertBoundaryToPixels(boundary, maxHeight),
+      const boundsPixels = pointerBounds.map((bound) =>
+        convertBoundToPixels(bound, maxHeight),
       );
       // End loop at one before the last element. Returns the nearest boundary
-      for (let i = 0; i < boundaryPixels.length - 1; i++) {
-        if (height < (boundaryPixels[i] + boundaryPixels[i + 1]) / 2) {
-          return boundaryPixels[i];
+      for (let i = 0; i < boundsPixels.length - 1; i++) {
+        if (height < (boundsPixels[i] + boundsPixels[i + 1]) / 2) {
+          return boundsPixels[i];
         }
       }
-      return boundaryPixels[boundaryPixels.length - 1];
+      return boundsPixels[boundsPixels.length - 1];
     },
-    [maxHeight, convertBoundaryToPixels],
+    [maxHeight, convertBoundToPixels],
   );
 
   // Set the initial height
   useEffect(() => {
-    setDrawerHeight((prevHeight) => snapToBoundaries(prevHeight));
-  }, [snapToBoundaries]);
+    setDrawerHeight((prevHeight) => snapToBounds(prevHeight));
+  }, [snapToBounds]);
 
   /**
    * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
@@ -138,14 +138,14 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       elem.releasePointerCapture(event.pointerId);
 
       setDrawerHeight((prevHeight) => {
-        return snapToBoundaries(prevHeight);
+        return snapToBounds(prevHeight);
       });
 
       elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
       elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePointerMove, snapToBoundaries],
+    [handlePointerMove, snapToBounds],
   );
 
   /**
