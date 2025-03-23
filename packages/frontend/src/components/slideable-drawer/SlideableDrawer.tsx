@@ -54,6 +54,10 @@ const Handle = styled("div")`
   height: 0.4rem;
 `;
 
+type CssValue =
+  | { type: "Rem"; value: number }
+  | { type: "Percentage"; value: number };
+
 interface SlideableDrawerProps {
   children: React.ReactNode;
 }
@@ -61,6 +65,28 @@ interface SlideableDrawerProps {
 export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   const drawerWrapperRef = useRef<HTMLDivElement>(null);
   const [drawerHeight, setDrawerHeight] = useState(0);
+  // Get value of rem in pixels
+  const remPixels = Number.parseFloat(
+    getComputedStyle(document.documentElement).fontSize,
+  );
+  // Kinda just eyeballed the 6 rem to be the smallest as it looked ok.
+  const pointerBoundaries: CssValue[] = [
+    { type: "Rem", value: 6 },
+    { type: "Percentage", value: 50 },
+    { type: "Percentage", value: 90 },
+  ];
+
+  const convertBoundaryToPixels = useCallback(
+    (boundary: CssValue, maxHeight: number) => {
+      switch (boundary.type) {
+        case "Rem":
+          return boundary.value * remPixels;
+        case "Percentage":
+          return (boundary.value * maxHeight) / 100;
+      }
+    },
+    [remPixels],
+  );
 
   // Can't use useMemo since the useEffect to set initial height doesn't fire correctly
   const getMaxHeight = useCallback(() => {
@@ -73,9 +99,9 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   useEffect(() => {
     const maxHeight = getMaxHeight();
     if (maxHeight) {
-      setDrawerHeight(maxHeight / 2);
+      setDrawerHeight(convertBoundaryToPixels(pointerBoundaries[0], maxHeight));
     }
-  }, [getMaxHeight]);
+  }, [getMaxHeight, convertBoundaryToPixels]);
 
   /**
    * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
@@ -98,17 +124,24 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       setDrawerHeight((prevHeight) => {
         const maxHeight = getMaxHeight();
         if (!maxHeight) return prevHeight;
-        const heightPercentage = prevHeight / maxHeight;
-        if (heightPercentage < 0.325) return 0.15 * maxHeight;
-        if (heightPercentage < 0.7) return 0.5 * maxHeight;
-        return 0.9 * maxHeight;
+        // Convert boundary values to pixel values
+        const boundaryPixels = pointerBoundaries.map((boundary) =>
+          convertBoundaryToPixels(boundary, maxHeight),
+        );
+        // End loop at one before the last element. Returns the nearest boundary
+        for (let i = 0; i < boundaryPixels.length - 1; i++) {
+          if (prevHeight < (boundaryPixels[i] + boundaryPixels[i + 1]) / 2) {
+            return boundaryPixels[i];
+          }
+        }
+        return boundaryPixels[boundaryPixels.length - 1];
       });
 
       elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
       elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePointerMove, getMaxHeight],
+    [handlePointerMove, getMaxHeight, convertBoundaryToPixels],
   );
 
   /**
