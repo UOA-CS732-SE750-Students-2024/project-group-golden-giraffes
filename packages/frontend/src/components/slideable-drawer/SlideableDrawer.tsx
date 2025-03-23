@@ -1,7 +1,7 @@
 "use client";
 
 import { styled } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const Wrapper = styled("div")`
   ${({ theme }) => theme.breakpoints.down("md")} {
@@ -63,7 +63,16 @@ interface SlideableDrawerProps {
 }
 
 export default function SlideableDrawer({ children }: SlideableDrawerProps) {
-  const drawerWrapperRef = useRef<HTMLDivElement>(null);
+  const [maxHeight, setMaxHeight] = useState(0);
+  const drawerWrapperRef = useCallback((elem: HTMLDivElement | null) => {
+    if (!elem || !elem.parentElement) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      const height = entries[0].target.clientHeight;
+      setMaxHeight(height);
+    });
+    resizeObserver.observe(elem.parentElement);
+  }, []);
+
   const [drawerHeight, setDrawerHeight] = useState(0);
   // Get value of rem in pixels
   const remPixels = Number.parseFloat(
@@ -88,20 +97,27 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
     [remPixels],
   );
 
-  // Can't use useMemo since the useEffect to set initial height doesn't fire correctly
-  const getMaxHeight = useCallback(() => {
-    if (drawerWrapperRef.current?.parentElement) {
-      return drawerWrapperRef.current.parentElement.clientHeight;
-    }
-  }, []);
+  const snapToBoundaries = useCallback(
+    (height: number) => {
+      // Convert boundary values to pixel values
+      const boundaryPixels = pointerBoundaries.map((boundary) =>
+        convertBoundaryToPixels(boundary, maxHeight),
+      );
+      // End loop at one before the last element. Returns the nearest boundary
+      for (let i = 0; i < boundaryPixels.length - 1; i++) {
+        if (height < (boundaryPixels[i] + boundaryPixels[i + 1]) / 2) {
+          return boundaryPixels[i];
+        }
+      }
+      return boundaryPixels[boundaryPixels.length - 1];
+    },
+    [maxHeight, convertBoundaryToPixels],
+  );
 
   // Set the initial height
   useEffect(() => {
-    const maxHeight = getMaxHeight();
-    if (maxHeight) {
-      setDrawerHeight(convertBoundaryToPixels(pointerBoundaries[0], maxHeight));
-    }
-  }, [getMaxHeight, convertBoundaryToPixels]);
+    setDrawerHeight((prevHeight) => snapToBoundaries(prevHeight));
+  }, [snapToBoundaries]);
 
   /**
    * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
@@ -122,26 +138,14 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       elem.releasePointerCapture(event.pointerId);
 
       setDrawerHeight((prevHeight) => {
-        const maxHeight = getMaxHeight();
-        if (!maxHeight) return prevHeight;
-        // Convert boundary values to pixel values
-        const boundaryPixels = pointerBoundaries.map((boundary) =>
-          convertBoundaryToPixels(boundary, maxHeight),
-        );
-        // End loop at one before the last element. Returns the nearest boundary
-        for (let i = 0; i < boundaryPixels.length - 1; i++) {
-          if (prevHeight < (boundaryPixels[i] + boundaryPixels[i + 1]) / 2) {
-            return boundaryPixels[i];
-          }
-        }
-        return boundaryPixels[boundaryPixels.length - 1];
+        return snapToBoundaries(prevHeight);
       });
 
       elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
       elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePointerMove, getMaxHeight, convertBoundaryToPixels],
+    [handlePointerMove, snapToBoundaries],
   );
 
   /**
