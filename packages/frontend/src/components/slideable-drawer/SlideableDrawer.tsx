@@ -86,13 +86,15 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   ];
 
   const convertBoundToPixels = useCallback(
-    (bound: CssValue, maxHeight: number) => {
-      switch (bound.type) {
-        case "Rem":
-          return bound.value * remPixels;
-        case "Percentage":
-          return (bound.value * maxHeight) / 100;
-      }
+    (maxHeight: number) => {
+      return pointerBounds.map((bound) => {
+        switch (bound.type) {
+          case "Rem":
+            return bound.value * remPixels;
+          case "Percentage":
+            return (bound.value * maxHeight) / 100;
+        }
+      });
     },
     [remPixels],
   );
@@ -100,9 +102,7 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   const snapToBounds = useCallback(
     (height: number) => {
       // Convert boundary values to pixel values
-      const boundsPixels = pointerBounds.map((bound) =>
-        convertBoundToPixels(bound, maxHeight),
-      );
+      const boundsPixels = convertBoundToPixels(maxHeight);
       // End loop at one before the last element. Returns the nearest boundary
       for (let i = 0; i < boundsPixels.length - 1; i++) {
         if (height < (boundsPixels[i] + boundsPixels[i + 1]) / 2) {
