@@ -78,11 +78,11 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   const remPixels = Number.parseFloat(
     getComputedStyle(document.documentElement).fontSize,
   );
-  // Kinda just eyeballed the 6 rem to be the smallest as it looked ok.
+  // Kinda just eyeballed the 6 and 3.75 rem and it looked ok.
   const pointerBounds: CssValue[] = [
     { type: "Rem", value: 6 },
     { type: "Percentage", value: 50 },
-    { type: "Percentage", value: 90 },
+    { type: "Rem", value: -3.75 },
   ];
 
   const convertBoundToPixels = useCallback(
@@ -90,6 +90,9 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       return pointerBounds.map((bound) => {
         switch (bound.type) {
           case "Rem":
+            if (bound.value < 0) {
+              return maxHeight + bound.value * remPixels;
+            }
             return bound.value * remPixels;
           case "Percentage":
             return (bound.value * maxHeight) / 100;
