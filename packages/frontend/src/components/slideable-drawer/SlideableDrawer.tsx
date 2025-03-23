@@ -62,13 +62,20 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   const drawerWrapperRef = useRef<HTMLDivElement>(null);
   const [drawerHeight, setDrawerHeight] = useState(0);
 
-  // Set the height of the drawer to half the canvas height
-  useEffect(() => {
+  // Can't use useMemo since the useEffect to set initial height doesn't fire correctly
+  const getMaxHeight = useCallback(() => {
     if (drawerWrapperRef.current?.parentElement) {
-      console.log(drawerWrapperRef.current.parentElement.clientHeight);
-      setDrawerHeight(drawerWrapperRef.current.parentElement?.clientHeight / 2);
+      return drawerWrapperRef.current.parentElement.clientHeight;
     }
   }, []);
+
+  // Set the initial height
+  useEffect(() => {
+    const maxHeight = getMaxHeight();
+    if (maxHeight) {
+      setDrawerHeight(maxHeight / 2);
+    }
+  }, [getMaxHeight]);
 
   /**
    * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
@@ -88,11 +95,20 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
 
+      setDrawerHeight((prevHeight) => {
+        const maxHeight = getMaxHeight();
+        if (!maxHeight) return prevHeight;
+        const heightPercentage = prevHeight / maxHeight;
+        if (heightPercentage < 0.325) return 0.15 * maxHeight;
+        if (heightPercentage < 0.7) return 0.5 * maxHeight;
+        return 0.9 * maxHeight;
+      });
+
       elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
       elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePointerMove],
+    [handlePointerMove, getMaxHeight],
   );
 
   /**
