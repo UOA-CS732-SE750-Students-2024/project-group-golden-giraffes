@@ -17,7 +17,11 @@ export const CoordinateLabel = styled("span")`
   opacity: 0.6;
 `;
 
-export default function PlacePixelButton() {
+interface PlacePixelButtonProps {
+  isVerbose: boolean;
+}
+
+export default function PlacePixelButton({ isVerbose }: PlacePixelButtonProps) {
   const { canvas, coords, adjustedCoords, setCoords } = useCanvasContext();
   const { color } = useSelectedColorContext();
   const isSelected = adjustedCoords && color;
@@ -120,9 +124,12 @@ export default function PlacePixelButton() {
   const { x, y } = adjustedCoords;
   const nbsp = "\u00A0";
 
+  const placePixelMessege =
+    isVerbose ? `Place ${color.code} at` : "Place pixel";
+
   return (
     <DynamicButton color={color} onAction={handlePixelRequest}>
-      {isSelected ? "Place pixel" : "Select a pixel"}
+      {isSelected ? placePixelMessege : "Select a pixel"}
       {isSelected && (
         <CoordinateLabel>
           {/* String interpolation is required to prevent https://github.com/UOA-CS732-SE750-Students-2024/project-group-golden-giraffes/issues/255 */}
