@@ -159,7 +159,20 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
     (event: React.PointerEvent<HTMLDivElement>) => {
       // Only handle primary pointers
       if (!event.isPrimary) return;
-      // const elemTarget = event.target;
+      const currentTarget = event.currentTarget;
+      let elemTarget: EventTarget | null = event.target;
+      if (!(currentTarget instanceof HTMLElement)) {
+        return;
+      }
+      // Loop through all parents of the target until until current target to find if target is scrollable
+      while (currentTarget !== elemTarget) {
+        if (!(elemTarget instanceof HTMLElement)) return;
+        // If target is scrollable past an arbitrary threshold, then don't resize drawer
+        if (elemTarget.scrollHeight - elemTarget.clientHeight > 5) {
+          return;
+        }
+        elemTarget = elemTarget.parentElement;
+      }
 
       const elem = event.currentTarget;
       elem.setPointerCapture(event.pointerId);
@@ -177,9 +190,9 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
         drawerHeight={drawerHeight}
         style={{ height: `${drawerHeight}px` }}
         ref={drawerWrapperRef}
+        onPointerDown={handlePointerDown}
       >
-        {/* Looked at drawers from both Apple and Google, and they both work on the entire drawer instead of just the handle, but the overflow behaviour is a bit weird to get right */}
-        <HandleWrapper onPointerDown={handlePointerDown}>
+        <HandleWrapper>
           <Handle />
         </HandleWrapper>
         {children}
