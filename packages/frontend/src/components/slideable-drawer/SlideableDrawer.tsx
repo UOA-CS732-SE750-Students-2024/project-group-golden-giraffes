@@ -33,6 +33,8 @@ const DrawerWrapper = styled("div")<{ drawerHeight: number }>`
   }
   & > * {
     flex-grow: 1;
+    /* Only applied to the top level elements that aren't scrollable */
+    /* I can envision a more hacky way to apply it to all children if desired*/
     touch-action: none;
   }
 `;
@@ -185,7 +187,7 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
 
   return (
     <>
-      {/* Doing it this way as handlers are directly applied to DrawerWrapper (though it could also be possible to dynamically disable them through code) */}
+      {/* Duplicating DrawerWrapper and Wrapper as handlers are directly applied to DrawerWrapper (though it could also be possible to dynamically disable them through code) */}
       <DrawerWrapper
         drawerHeight={drawerHeight}
         style={{ height: `${drawerHeight}px` }}
