@@ -15,11 +15,12 @@ import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import BotCommandCard from "./BotCommandCard";
 import ColorInfoCard from "./SelectedColorInfoCard";
+import { useCallback, useState } from "react";
 
 const ColorPicker = styled("div")`
   display: grid;
   gap: 0.25rem;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
 `;
 
 const PlacePixelTabBlock = styled(TabBlock)`
@@ -64,6 +65,20 @@ export default function PlacePixelTab({
 }: PlacePixelTabProps) {
   const { data: palette = [] } = usePalette(eventId ?? undefined);
   const [mainColors, partnerColors] = partitionPalette(palette);
+  // Boolean to hide certain elements when the tab is too small
+  // Current implementation is a bit jarring when things pop in and out
+  const [isLarge, setIsLarge] = useState(true);
+  const PlacePixelTabBlockRef = useCallback((elem: HTMLDivElement | null) => {
+    const remPixels = Number.parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
+    if (!elem) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      const height = entries[0].target.clientHeight;
+      setIsLarge(height > remPixels * 20);
+    });
+    resizeObserver.observe(elem);
+  }, []);
 
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
@@ -89,7 +104,7 @@ export default function PlacePixelTab({
     serverInvite;
 
   return (
-    <PlacePixelTabBlock active={active}>
+    <PlacePixelTabBlock active={active} ref={PlacePixelTabBlockRef}>
       <ScrollBlock>
         <ActionPanelTabBody>
           <ColorPicker>
@@ -127,14 +142,16 @@ export default function PlacePixelTab({
         </ActionPanelTabBody>
       </ScrollBlock>
       <ActionPanelTabBody>
-        <ColorInfoCard color={selectedColor} invite={serverInvite} />
-        {canPlacePixel && <PlacePixelButton />}
+        {isLarge && (
+          <ColorInfoCard color={selectedColor} invite={serverInvite} />
+        )}
+        {canPlacePixel && <PlacePixelButton isVerbose={!isLarge} />}
         {isJoinServerShown && (
           <DynamicAnchorButton color={selectedColor} href={serverInvite}>
             Join {selectedColor?.guildName ?? "server"}
           </DynamicAnchorButton>
         )}
-        {!readOnly && <BotCommandCard />}
+        {!readOnly && isLarge && <BotCommandCard />}
       </ActionPanelTabBody>
     </PlacePixelTabBlock>
   );
