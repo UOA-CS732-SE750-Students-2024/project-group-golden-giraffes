@@ -1,7 +1,7 @@
 "use client";
 
 import { CircularProgress, css, styled } from "@mui/material";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
@@ -34,6 +34,12 @@ const CanvasContainer = styled("div")`
   /* Don't handle panning and zooming with browser */
   touch-action: none;
 
+  /* A bit heavy handed, but it prevents elements outside of the canvas from being selected during panning */
+  body:has(&:active) {
+    --webkit-user-select: none;
+    user-select: none;
+  }
+
   :active {
     cursor: grabbing;
   }
@@ -63,7 +69,9 @@ const PreviewPixel = styled("div")`
 `;
 
 const InviteButton = styled(Button)`
-  background-color: oklch(var(--discord-legacy-dark-but-not-black-oklch) / 80%);
+  background-color: oklch(
+    from var(--discord-legacy-dark-but-not-black) l c h / 80%
+  );
   border-radius: 0.5rem 0.5rem 1rem 0.5rem;
   bottom: 0.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -168,11 +176,13 @@ function calculateTouchOffsetDelta(
   return { offsetDelta, scale, centerOffset: relativePosition };
 }
 
+// Arbitrary value applied to the deltaY of the wheel zoom function to make it feel right
 const SCALE_FACTOR = 0.002;
+// MAX ZOOM is the absolute maximum scaling that can be applied to the image element
 const MAX_ZOOM = 100;
-const MIN_ZOOM = 0.9;
+// MIN ZOOM_FACTOR is relative to the initalZoom. i.e. MIN_ZOOM_FACTOR = 0.9 -> minimumCssScale = 0.9 * initialZoom
+const MIN_ZOOM_FACTOR = 0.9;
 
-const ZOOM_DURATION = 0.1;
 const PAN_DECAY = 0.75;
 // Transition animation on canvas pan and zoom is blurred on Safari and needs to be disabled.
 // If the user spoof their user agent, this is not my problem.
@@ -210,10 +220,6 @@ export default function CanvasView() {
   const { color } = useSelectedColorContext();
   const { canvas, coords, setCoords } = useCanvasContext();
 
-  const imageUrl = useMemo(
-    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
-    [canvas.id],
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const zoomRef = useRef(0);
@@ -224,8 +230,10 @@ export default function CanvasView() {
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
   const [controlledPan, setControlledPan] = useState(false);
-  const [transitionDuration, setTransitionDuration] = useState(0);
+  // Only applies to when zooming is triggered by wheel event
+  const [isZooming, setIsZooming] = useState(false);
 
+  const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     const zoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
@@ -335,12 +343,13 @@ export default function CanvasView() {
         pointerPosition,
       );
 
-      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
-      setTransitionDuration(ZOOM_DURATION);
-
       // Zoom here may not have been updated yet if it is pinch zoom
       const newZoom = scale * zoomRef.current;
-      const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
+      const clampedZoom = clamp(
+        newZoom,
+        MIN_ZOOM_FACTOR * initialZoom,
+        MAX_ZOOM,
+      );
 
       // Clamping the zoom means the actual scale may be different.
       const clampedScale = clampedZoom / zoomRef.current;
@@ -376,9 +385,13 @@ export default function CanvasView() {
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
+      if (!(elem instanceof HTMLElement) || event.deltaY === 0) return;
       const pointerPosition = getRelativePointerPosition(elem, event);
 
-      if (event.deltaY === 0) return;
+      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
+      // Only apply zoom transition on wheel event
+      setIsZooming(true);
+
       // Inclusion of deltaY in calculation to account for different polling rate devices
       // Could try logarithmic scale for smoother increments
       const scaleMagnitude =
@@ -432,20 +445,13 @@ export default function CanvasView() {
   const handlePan = useCallback(
     (offsetDelta: { x: number; y: number }): void => {
       // Disable transitions while panning
-      setTransitionDuration(0);
+      setIsZooming(false);
       const scaledOffsetDelta = multiplyPoint(offsetDelta, zoomRef.current);
       setVelocity({ x: scaledOffsetDelta.x, y: scaledOffsetDelta.y });
       updateOffset(scaledOffsetDelta);
     },
     [updateOffset],
   );
-
-  /* A bit heavy handed, but it prevents elements outside of the canvas from being selected during panning */
-  const changeGlobalSelectStyle = useCallback((style: "none" | "initial") => {
-    document.body.style.userSelect = style;
-    // only -webkit-user-select style exists on Safari: https://caniuse.com/mdn-css_properties_user-select
-    document.body.style.webkitUserSelect = style;
-  }, []);
 
   /**
    * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
@@ -492,15 +498,13 @@ export default function CanvasView() {
 
       // Don't disable handlers if there are still pointers down
       if (pointerEvents.size > 0) return;
-
-      changeGlobalSelectStyle("initial");
       setControlledPan(false);
 
       elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
       elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePointerMove, changeGlobalSelectStyle],
+    [handlePointerMove],
   );
 
   /**
@@ -516,15 +520,13 @@ export default function CanvasView() {
         // No idea if this is the right way to define the pointerEvents
         pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
       }
-
-      changeGlobalSelectStyle("none");
       setControlledPan(true);
 
       elem.addEventListener("pointermove", handlePointerMove);
       elem.addEventListener("pointerup", handlePointerUp);
       elem.addEventListener("pointercancel", handlePointerUp);
     },
-    [handlePointerMove, handlePointerUp, changeGlobalSelectStyle],
+    [handlePointerMove, handlePointerUp],
   );
 
   // Could potentially get replaced by a transition animation with ease, however this will work on Safari
@@ -600,10 +602,11 @@ export default function CanvasView() {
           ref={canvasPanAndZoomRef}
           style={{
             transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x}, ${offset.y})`,
+            // Only apply transition when zooming is triggered by wheel event
             transition:
-              IS_SAFARI ? undefined : (
-                `transform ${transitionDuration}s ease-out`
-              ),
+              !IS_SAFARI && isZooming ?
+                "transform var(--transition-duration-fast) ease-out"
+              : undefined,
           }}
         >
           <ReticleContainer
