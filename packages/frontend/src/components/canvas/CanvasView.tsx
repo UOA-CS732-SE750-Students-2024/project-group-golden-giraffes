@@ -143,7 +143,6 @@ const SCALE_FACTOR = 0.002;
 const MAX_ZOOM = 100;
 const MIN_ZOOM = 0.9;
 
-const ZOOM_DURATION = 0.1;
 const PAN_DECAY = 0.75;
 // Transition animation on canvas pan and zoom is blurred on Safari and needs to be disabled.
 // If the user spoof their user agent, this is not my problem.
@@ -187,7 +186,8 @@ export default function CanvasView() {
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
   const [controlledPan, setControlledPan] = useState(false);
-  const [transitionDuration, setTransitionDuration] = useState(0);
+  // Only applies to when zooming is triggered by wheel event
+  const [isZooming, setIsZooming] = useState(false);
 
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     const zoom =
@@ -326,7 +326,7 @@ export default function CanvasView() {
       });
 
       // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
-      setTransitionDuration(ZOOM_DURATION);
+      setIsZooming(true);
       setZoom(clampedZoom);
     };
 
@@ -375,7 +375,7 @@ export default function CanvasView() {
   const handlePan = useCallback(
     (event: PointerEvent): void => {
       // Disable transitions while panning
-      setTransitionDuration(0);
+      setIsZooming(false);
 
       const offset = { x: event.movementX, y: event.movementY };
       const scaledOffset = multiplyPoint(offset, zoom);
@@ -493,10 +493,11 @@ export default function CanvasView() {
           ref={canvasPanAndZoomRef}
           style={{
             transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x}, ${offset.y})`,
+            // Only apply transition when zooming is triggered by wheel event
             transition:
-              IS_SAFARI ? undefined : (
-                `transform ${transitionDuration}s ease-out`
-              ),
+              !IS_SAFARI && isZooming ?
+                "transform var(--transition-duration-fast) ease-out"
+              : undefined,
           }}
         >
           <ReticleContainer
