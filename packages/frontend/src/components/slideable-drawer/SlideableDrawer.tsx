@@ -32,7 +32,6 @@ const DrawerWrapper = styled("div")<{ drawerHeight: number }>`
     }
   }
   & > * {
-    flex-grow: 1;
     /* Only applied to the top level elements that aren't scrollable */
     /* I can envision a more hacky way to apply it to all children if desired*/
     touch-action: none;
@@ -45,8 +44,6 @@ const HandleWrapper = styled("div")`
   padding-inline: auto;
   display: flex;
   place-content: center;
-  /* Hacky, overwrites the flex-grow from DrawerWrapper */
-  flex-grow: 0 !important;
 `;
 
 const Handle = styled("div")`
