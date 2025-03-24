@@ -139,9 +139,12 @@ function getRelativeMousePosition(element: HTMLElement, event: MouseEvent) {
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 
+// Arbitrary value applied to the deltaY of the wheel zoom function to make it feel right
 const SCALE_FACTOR = 0.002;
+// MAX ZOOM is the absolute maximum scaling that can be applied to the image element
 const MAX_ZOOM = 100;
-const MIN_ZOOM = 0.9;
+// MIN ZOOM_FACTOR is relative to the initalZoom. i.e. MIN_ZOOM_FACTOR = 0.9 -> minimumCssScale = 0.9 * initialZoom
+const MIN_ZOOM_FACTOR = 0.9;
 
 const PAN_DECAY = 0.75;
 // Transition animation on canvas pan and zoom is blurred on Safari and needs to be disabled.
@@ -309,7 +312,11 @@ export default function CanvasView() {
       // Could try logarithmic scale for smoother increments
       const scale = 1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
       const newZoom = event.deltaY > 0 ? zoom / scale : zoom * scale;
-      const clampedZoom = clamp(newZoom, MIN_ZOOM * initialZoom, MAX_ZOOM);
+      const clampedZoom = clamp(
+        newZoom,
+        MIN_ZOOM_FACTOR * initialZoom,
+        MAX_ZOOM,
+      );
 
       // Clamping the zoom means the actual scale may be different.
       const clampedScale = clampedZoom / zoom;
