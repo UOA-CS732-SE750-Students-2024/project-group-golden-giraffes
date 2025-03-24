@@ -1,7 +1,7 @@
 "use client";
 
 import { CircularProgress, css, styled } from "@mui/material";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { PlacePixelSocket, Point } from "@blurple-canvas-web/types";
 
@@ -68,7 +68,9 @@ const PreviewPixel = styled("div")`
 `;
 
 const InviteButton = styled(Button)`
-  background-color: oklch(var(--discord-legacy-dark-but-not-black-oklch) / 80%);
+  background-color: oklch(
+    from var(--discord-legacy-dark-but-not-black) l c h / 80%
+  );
   border-radius: 0.5rem 0.5rem 1rem 0.5rem;
   bottom: 0.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -179,10 +181,6 @@ export default function CanvasView() {
   const { color } = useSelectedColorContext();
   const { canvas, coords, setCoords } = useCanvasContext();
 
-  const imageUrl = useMemo(
-    () => `${config.apiUrl}/api/v1/canvas/${canvas.id}`,
-    [canvas.id],
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [initialZoom, setInitialZoom] = useState(1);
@@ -192,6 +190,7 @@ export default function CanvasView() {
   // Only applies to when zooming is triggered by wheel event
   const [isZooming, setIsZooming] = useState(false);
 
+  const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
   const handleLoadImage = useCallback((image: HTMLImageElement): void => {
     const zoom =
       containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
