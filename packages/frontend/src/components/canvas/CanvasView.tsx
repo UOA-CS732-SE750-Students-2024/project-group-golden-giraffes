@@ -295,7 +295,7 @@ export default function CanvasView() {
       // Applying the handler to lower elements for some isn't consistently picked up in certain browsers (Firefox and Chrome).
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
       const elem = event.currentTarget;
-      if (!(elem instanceof HTMLElement)) return;
+      if (!(elem instanceof HTMLElement) || event.deltaY === 0) return;
       const mousePositionOnCanvas = getRelativeMousePosition(elem, event);
 
       // The mouse position's origin is in the top left of the container.
@@ -305,7 +305,6 @@ export default function CanvasView() {
         mousePositionOnCanvas,
       );
 
-      if (event.deltaY === 0) return;
       // Inclusion of deltaY in calculation to account for different polling rate devices
       // Could try logarithmic scale for smoother increments
       const scale = 1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
