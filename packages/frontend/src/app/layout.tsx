@@ -64,6 +64,7 @@ async function getServerSideCanvasInfo(): Promise<CanvasInfo> {
       startCoordinates: [1, 1],
       eventId: 1,
       webPlacingEnabled: false,
+      allColorsGlobal: false,
     };
   }
 }

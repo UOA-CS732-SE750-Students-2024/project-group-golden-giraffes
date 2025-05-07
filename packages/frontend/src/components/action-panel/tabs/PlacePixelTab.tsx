@@ -77,9 +77,11 @@ export default function PlacePixelTab({
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
   const webPlacingEnabled = canvas.webPlacingEnabled;
+  const allColorsGlobal = canvas.allColorsGlobal;
 
   const canPlacePixel =
-    webPlacingEnabled && (!selectedColor || selectedColor.global);
+    webPlacingEnabled &&
+    (!selectedColor || selectedColor.global || allColorsGlobal);
 
   const readOnly = canvas.isLocked;
 

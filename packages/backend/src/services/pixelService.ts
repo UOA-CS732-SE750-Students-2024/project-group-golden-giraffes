@@ -114,7 +114,7 @@ export async function validateColor(colorId: number): Promise<color> {
     throw new NotFoundError(`There is no color with ID ${colorId}`);
   }
 
-  if (!color.global) {
+  if (!color.global && !config.allColorsGlobal) {
     throw new ForbiddenError(
       `Partnered color with ID ${colorId} is not allowed from web client`,
     );
