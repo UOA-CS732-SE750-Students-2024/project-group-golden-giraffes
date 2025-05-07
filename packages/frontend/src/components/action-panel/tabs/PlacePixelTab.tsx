@@ -1,6 +1,6 @@
 import { Skeleton, styled } from "@mui/material";
 
-import { Palette } from "@blurple-canvas-web/types";
+import { DiscordUserProfile, Palette } from "@blurple-canvas-web/types";
 
 import {
   useAuthContext,
@@ -8,6 +8,7 @@ import {
   useSelectedColorContext,
 } from "@/contexts";
 import { usePalette } from "@/hooks";
+import { decodeUserGuildsBase64 } from "@/util";
 import { DynamicAnchorButton, PlacePixelButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -19,7 +20,7 @@ import ColorInfoCard from "./SelectedColorInfoCard";
 const ColorPicker = styled("div")`
   display: grid;
   gap: 0.25rem;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
 `;
 
 const PlacePixelTabBlock = styled(TabBlock)`
@@ -47,11 +48,10 @@ export const partitionPalette = (palette: Palette) => {
   return [mainColors, partnerColors];
 };
 
-// function userWithinServer(user: DiscordUserProfile, serverId: string) {
-//   return false;
-//   const guildIds = decodeUserGuildsBase64(user);
-//   return guildIds.some((guildId) => guildId === serverId);
-// }
+function isUserInServer(user: DiscordUserProfile, serverId: string) {
+  const guildIds = decodeUserGuildsBase64(user);
+  return guildIds.includes(serverId);
+}
 
 interface PlacePixelTabProps {
   active?: boolean;
@@ -77,9 +77,11 @@ export default function PlacePixelTab({
     hasInvite ? `https://discord.gg/${inviteSlug}` : undefined;
 
   const webPlacingEnabled = canvas.webPlacingEnabled;
+  const allColorsGlobal = canvas.allColorsGlobal;
 
   const canPlacePixel =
-    webPlacingEnabled && (!selectedColor || selectedColor.global);
+    webPlacingEnabled &&
+    (!selectedColor || selectedColor.global || allColorsGlobal);
 
   const readOnly = canvas.isLocked;
 
@@ -87,6 +89,13 @@ export default function PlacePixelTab({
     (!(canPlacePixel && user) || readOnly) &&
     !selectedColor?.global &&
     serverInvite;
+
+  const userInServer =
+    (user &&
+      selectedColor &&
+      !selectedColor.global &&
+      isUserInServer(user, selectedColor?.guildId)) ??
+    false;
 
   return (
     <PlacePixelTabBlock active={active}>
@@ -127,11 +136,16 @@ export default function PlacePixelTab({
         </ActionPanelTabBody>
       </ScrollBlock>
       <ActionPanelTabBody>
-        <ColorInfoCard color={selectedColor} invite={serverInvite} />
+        <ColorInfoCard
+          color={selectedColor}
+          invite={serverInvite}
+          isUserInServer={userInServer}
+        />
         {canPlacePixel && <PlacePixelButton />}
         {isJoinServerShown && (
           <DynamicAnchorButton color={selectedColor} href={serverInvite}>
-            Join {selectedColor?.guildName ?? "server"}
+            {!userInServer ? "Join" : "Open"}{" "}
+            {selectedColor?.guildName ?? "server"}
           </DynamicAnchorButton>
         )}
         {!readOnly && <BotCommandCard />}

@@ -8,7 +8,7 @@ import Link from "next/link";
 
 const Background = styled("div")`
   align-items: center;
-  block-size: 100vh;
+  block-size: 100dvh;
   display: grid;
   gap: 4rem;
   grid-template-rows: 1fr min-content;

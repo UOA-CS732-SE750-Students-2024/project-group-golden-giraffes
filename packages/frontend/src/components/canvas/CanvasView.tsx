@@ -25,7 +25,6 @@ const CanvasContainer = styled("div")`
   border-radius: var(--card-border-radius);
   border: var(--card-border);
   display: flex;
-  grid-row: 1 / -1;
   overflow: hidden;
   place-content: center;
   place-items: center;
@@ -38,6 +37,10 @@ const CanvasContainer = styled("div")`
   body:has(&:active) {
     --webkit-user-select: none;
     user-select: none;
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    grid-row: 1 / -1;
   }
 
   :active {
@@ -90,7 +93,13 @@ const InviteButton = styled(Button)`
   }
 `;
 
-const CanvasImageWrapper = styled("div")<{ isLoading: boolean }>`
+const CanvasImageWrapper = styled("div", {
+  shouldForwardProp: (prop: string) =>
+    !["isLaunching", "isLoading"].includes(prop),
+})<{
+  isLoading: boolean;
+  isLaunching: boolean;
+}>`
   transition: filter var(--transition-duration-medium) ease;
   ${({ isLoading }) =>
     isLoading &&
@@ -102,6 +111,11 @@ const CanvasImageWrapper = styled("div")<{ isLoading: boolean }>`
   position: relative;
 
   img {
+    ${({ isLaunching }) =>
+      isLaunching &&
+      css`
+        visibility: hidden;
+      `}
     image-rendering: pixelated;
     pointer-events: none;
   }
@@ -220,7 +234,8 @@ export default function CanvasView() {
   const { color } = useSelectedColorContext();
   const { canvas, coords, setCoords } = useCanvasContext();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLaunching, setIsLaunching] = useState(true);
   const [zoom, setZoom] = useState(1);
   const zoomRef = useRef(0);
   // Always have access to the most up to date zoom value
@@ -243,6 +258,7 @@ export default function CanvasView() {
     setVelocity(ORIGIN);
     setOffset(ORIGIN);
     setIsLoading(false);
+    setIsLaunching(false);
   }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
@@ -450,7 +466,7 @@ export default function CanvasView() {
       setVelocity({ x: scaledOffsetDelta.x, y: scaledOffsetDelta.y });
       updateOffset(scaledOffsetDelta);
     },
-    [updateOffset],
+    [updateOffset, zoom],
   );
 
   /**
@@ -562,7 +578,6 @@ export default function CanvasView() {
       const canvas = event.currentTarget;
       // Use boundingClientRect for more accurate pixel positioning
       const relativeMousePos = getRelativePointerPosition(canvas, event);
-      const canvasPos = dividePoint(relativeMousePos, zoom);
 
       const boundedCanvasPos = {
         x: clamp(Math.floor(canvasPos.x), 0, canvas.offsetWidth - 1),
@@ -644,6 +659,7 @@ export default function CanvasView() {
           <CanvasImageWrapper
             ref={canvasImageWrapperRef}
             isLoading={isLoading}
+            isLaunching={isLaunching}
             id="canvas-image-wrapper"
           >
             <img
