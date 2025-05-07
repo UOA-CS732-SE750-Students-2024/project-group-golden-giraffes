@@ -73,10 +73,16 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   }, []);
 
   const [drawerHeight, setDrawerHeight] = useState(0);
-  // Get value of rem in pixels
-  const remPixels = Number.parseFloat(
-    getComputedStyle(document.documentElement).fontSize,
-  );
+
+  // Get value of the rem in pixels (and only run it client-side)
+  const [remPixels, setRemPixels] = useState<number>(16);
+  useEffect(() => {
+    // This runs only in the browser after hydration
+    setRemPixels(
+      Number.parseFloat(getComputedStyle(document.documentElement).fontSize),
+    );
+  }, []);
+
   // Kinda just eyeballed the 6 and 3.75 rem and it looked ok.
   const pointerBounds: CssValue[] = [
     { type: "Rem", value: 6 },

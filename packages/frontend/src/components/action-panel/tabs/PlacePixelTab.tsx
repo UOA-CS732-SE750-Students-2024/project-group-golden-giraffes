@@ -16,7 +16,7 @@ import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import BotCommandCard from "./BotCommandCard";
 import ColorInfoCard from "./SelectedColorInfoCard";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const ColorPicker = styled("div")`
   display: grid;
@@ -68,17 +68,27 @@ export default function PlacePixelTab({
   // Boolean to hide certain elements when the tab is too small
   // Current implementation is a bit jarring when things pop in and out
   const [isLarge, setIsLarge] = useState(true);
-  const PlacePixelTabBlockRef = useCallback((elem: HTMLDivElement | null) => {
-    const remPixels = Number.parseFloat(
-      getComputedStyle(document.documentElement).fontSize,
+
+  // Get value of the rem in pixels (and only run it client-side)
+  const [remPixels, setRemPixels] = useState<number>(16);
+  useEffect(() => {
+    // This runs only in the browser after hydration
+    setRemPixels(
+      Number.parseFloat(getComputedStyle(document.documentElement).fontSize),
     );
-    if (!elem) return;
-    const resizeObserver = new ResizeObserver((entries) => {
-      const height = entries[0].target.clientHeight;
-      setIsLarge(height > remPixels * 20);
-    });
-    resizeObserver.observe(elem);
   }, []);
+
+  const PlacePixelTabBlockRef = useCallback(
+    (elem: HTMLDivElement | null) => {
+      if (!elem) return;
+      const resizeObserver = new ResizeObserver((entries) => {
+        const height = entries[0].target.clientHeight;
+        setIsLarge(height > remPixels * 20);
+      });
+      resizeObserver.observe(elem);
+    },
+    [remPixels],
+  );
 
   const { color: selectedColor, setColor: setSelectedColor } =
     useSelectedColorContext();
