@@ -9,6 +9,7 @@ import {
 } from "@/contexts";
 import { usePalette } from "@/hooks";
 import { decodeUserGuildsBase64 } from "@/util";
+import { useCallback, useEffect, useState } from "react";
 import { DynamicAnchorButton, PlacePixelButton } from "../../button";
 import { InteractiveSwatch } from "../../swatch";
 import { Heading } from "../ActionPanel";
@@ -16,7 +17,6 @@ import { ScrollBlock, TabBlock } from "./ActionPanelTabBody";
 import { ActionPanelTabBody } from "./ActionPanelTabBody";
 import BotCommandCard from "./BotCommandCard";
 import ColorInfoCard from "./SelectedColorInfoCard";
-import { useCallback, useEffect, useState } from "react";
 
 const ColorPicker = styled("div")`
   display: grid;
