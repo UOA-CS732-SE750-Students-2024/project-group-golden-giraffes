@@ -14,6 +14,7 @@ import {
   ORIGIN,
   addPoints,
   diffPoints,
+  distanceBetweenPoints,
   dividePoint,
   multiplyPoint,
 } from "./point";
@@ -150,9 +151,43 @@ function getDefaultZoom(
 /**
  * Calculate the position of the mouse relative to the given element
  **/
-function getRelativeMousePosition(element: HTMLElement, event: MouseEvent) {
+function getRelativePointerPosition(element: HTMLElement, event: MouseEvent) {
   const rect = element.getBoundingClientRect();
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+}
+
+/**
+ * Calculates the various variables required to get pan pinch working
+ */
+function calculateTouchOffsetDelta(
+  event1: PointerEvent | undefined,
+  event2: PointerEvent | undefined,
+  elem: HTMLElement,
+) {
+  if (event1 === undefined || event2 === undefined)
+    return { offset: undefined, scale: undefined, centerOffset: undefined };
+  const oldPosition1 = getRelativePointerPosition(elem, event1);
+  const oldPosition2 = getRelativePointerPosition(elem, event2);
+  const newPosition1 = addPoints(oldPosition1, {
+    x: event1.movementX,
+    y: event1.movementY,
+  });
+  const newPosition2 = addPoints(oldPosition2, {
+    x: event2.movementX,
+    y: event2.movementY,
+  });
+  const oldMagitude = distanceBetweenPoints(oldPosition1, oldPosition2);
+  const newMagitude = distanceBetweenPoints(newPosition1, newPosition2);
+  const relativePosition = dividePoint(
+    addPoints(newPosition1, newPosition2),
+    2,
+  );
+  const offsetDelta = {
+    x: (event1.movementX + event2.movementX) / 2,
+    y: (event1.movementY + event2.movementY) / 2,
+  };
+  const scale = newMagitude / oldMagitude;
+  return { offsetDelta, scale, centerOffset: relativePosition };
 }
 
 // Arbitrary value applied to the deltaY of the wheel zoom function to make it feel right
@@ -178,6 +213,10 @@ const RETICLE_SIZE = RETICLE_ORIGINAL_SIZE * 10;
 const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
+const pointerEvents: Map<number, PointerEvent> = new Map();
+// Used to handle pointer events when there are multiple pointers down
+let pointerSyncCounter = 0;
+
 function calculateReticleOffset(coords: Point | null): Point {
   if (!coords) return { x: 0, y: 0 };
   return {
@@ -198,6 +237,10 @@ export default function CanvasView() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLaunching, setIsLaunching] = useState(true);
   const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(0);
+  // Always have access to the most up to date zoom value
+  zoomRef.current = zoom;
+
   const [initialZoom, setInitialZoom] = useState(1);
   const [offset, setOffset] = useState(ORIGIN);
   const [velocity, setVelocity] = useState<Point>({ x: 0, y: 0 });
@@ -301,6 +344,50 @@ export default function CanvasView() {
    * ZOOMING FUNCTIONALITY.       *
    ********************************/
 
+  /**
+   * Performs zoom for both WheelEvent and PointerEvent pinching
+   *
+   * @param newZoom The new zoom level as a value from `initialZoom * MIN_ZOOM` to `MAX_ZOOM`
+   * @param pointerOffset The offset of the `Point` from the visual center of the wrapping container
+   */
+  const handleZoom = useCallback(
+    (scale: number, pointerPosition: Point, elem: HTMLElement) => {
+      // The mouse position's origin is in the top left of the container.
+      // Converts this to the offset from the center of the **visual** container
+      const pointerOffset = diffPoints(
+        { x: elem.offsetWidth / 2, y: elem.offsetHeight / 2 },
+        pointerPosition,
+      );
+
+      // Zoom here may not have been updated yet if it is pinch zoom
+      const newZoom = scale * zoomRef.current;
+      const clampedZoom = clamp(
+        newZoom,
+        MIN_ZOOM_FACTOR * initialZoom,
+        MAX_ZOOM,
+      );
+
+      // Clamping the zoom means the actual scale may be different.
+      const clampedScale = clampedZoom / zoomRef.current;
+
+      setOffset((prevOffset) => {
+        // Calculate the of the mouse position relative to the center of where the canvas is positioned.
+        const trueOffset = addPoints(prevOffset, pointerOffset);
+
+        // The amount we shift is scaled based on the amount we've zoomed in.
+        // Adds an extra shift based on the new scale of the canvas and the true offset
+        // Goodbye old comment with old implementation
+        const scaledOffsetDiff = multiplyPoint(trueOffset, clampedScale - 1);
+        return clampOffset(
+          addPoints(scaledOffsetDiff, prevOffset),
+          clampedZoom,
+        );
+      });
+      setZoom(clampedZoom);
+    },
+    [initialZoom],
+  );
+
   useEffect(() => {
     /**
      * When we zoom, not only do we need to scale the image, but to give the appearing of zooming
@@ -313,43 +400,20 @@ export default function CanvasView() {
       // Applying the handler to lower elements for some isn't consistently picked up in certain browsers (Firefox and Chrome).
       // Ideally, the scrolling should work outside of canvas-image-wrapper, but I can't seem to get the behaviour correct.
       const elem = event.currentTarget;
+      if (!(elem instanceof HTMLElement)) return;
       if (!(elem instanceof HTMLElement) || event.deltaY === 0) return;
-      const mousePositionOnCanvas = getRelativeMousePosition(elem, event);
+      const pointerPosition = getRelativePointerPosition(elem, event);
 
-      // The mouse position's origin is in the top left of the container.
-      // Converts this to the offset from the center of the visual container
-      const mouseOffset = diffPoints(
-        { x: elem.offsetWidth / 2, y: elem.offsetHeight / 2 },
-        mousePositionOnCanvas,
-      );
+      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
+      // Only apply zoom transition on wheel event
+      setIsZooming(true);
 
       // Inclusion of deltaY in calculation to account for different polling rate devices
       // Could try logarithmic scale for smoother increments
-      const scale = 1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
-      const newZoom = event.deltaY > 0 ? zoom / scale : zoom * scale;
-      const clampedZoom = clamp(
-        newZoom,
-        MIN_ZOOM_FACTOR * initialZoom,
-        MAX_ZOOM,
-      );
-
-      // Clamping the zoom means the actual scale may be different.
-      const clampedScale = clampedZoom / zoom;
-
-      setOffset((prevOffset) => {
-        // Calculate the of the mouse position relative to the center of the canvas in the container
-        const trueOffset = addPoints(prevOffset, mouseOffset);
-
-        // The amount we shift is scaled based on the amount we've zoomed in.
-        // Adds an extra shift based on the new scale of the canvas and the true offset
-        // Goodbye old comment with old implementation
-        const scaledOffsetDiff = multiplyPoint(trueOffset, clampedScale - 1);
-        return clampOffset(addPoints(scaledOffsetDiff, prevOffset), newZoom);
-      });
-
-      // Use css transition for zoom due to macOS trackpads having high polling rates resulting in laggy zooming if implemented differently
-      setIsZooming(true);
-      setZoom(clampedZoom);
+      const scaleMagnitude =
+        1 + SCALE_FACTOR * Math.max(Math.abs(event.deltaY), 1);
+      const scale = event.deltaY > 0 ? 1 / scaleMagnitude : 1 * scaleMagnitude;
+      handleZoom(scale, pointerPosition, elem);
     };
 
     containerRef.current?.addEventListener("wheel", handleWheel, {
@@ -358,7 +422,7 @@ export default function CanvasView() {
 
     return () =>
       containerRef.current?.removeEventListener("wheel", handleWheel);
-  }, [initialZoom, zoom]);
+  }, [handleZoom]);
 
   /********************************
    * PANNING FUNCTIONALITY.       *
@@ -384,27 +448,58 @@ export default function CanvasView() {
   const updateOffset = useCallback(
     (diff: Point): void => {
       // The more we're zoomed in, the less we've actually moved on the canvas
-      const scaledDiff = dividePoint(diff, zoom);
+      const scaledDiff = dividePoint(diff, zoomRef.current);
 
       setOffset((prevOffset) => {
         const newOffset = addPoints(prevOffset, scaledDiff);
-        return clampOffset(newOffset, zoom);
+        return clampOffset(newOffset, zoomRef.current);
       });
     },
-    [zoom, clampOffset],
+    [clampOffset],
   );
 
   const handlePan = useCallback(
-    (event: PointerEvent): void => {
+    (offsetDelta: { x: number; y: number }): void => {
       // Disable transitions while panning
       setIsZooming(false);
-
-      const offset = { x: event.movementX, y: event.movementY };
-      const scaledOffset = multiplyPoint(offset, zoom);
-      setVelocity({ x: scaledOffset.x, y: scaledOffset.y });
-      updateOffset(scaledOffset);
+      const scaledOffsetDelta = multiplyPoint(offsetDelta, zoomRef.current);
+      setVelocity({ x: scaledOffsetDelta.x, y: scaledOffsetDelta.y });
+      updateOffset(scaledOffsetDelta);
     },
-    [updateOffset, zoom],
+    [updateOffset],
+  );
+
+  /**
+   * Defaults to pan when a single pointer is down, and zoom when two pointers are down.
+   */
+  const handlePointerMove = useCallback(
+    (event: PointerEvent): void => {
+      const elem = event.currentTarget;
+      // Only handle primary pointers to prevent duplicate handling
+      if (!(elem instanceof HTMLElement)) return;
+
+      if (pointerEvents.size === 2) {
+        pointerSyncCounter++;
+        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
+        // Only checks every second pointerEvent to ensure both pointermove events are fired
+        if (pointerSyncCounter === 2) {
+          const pointerEventValues = pointerEvents.values();
+          const { offsetDelta, scale, centerOffset } =
+            calculateTouchOffsetDelta(
+              pointerEventValues.next().value,
+              pointerEventValues.next().value,
+              elem,
+            );
+          pointerSyncCounter = 0;
+          if (!offsetDelta || !scale || !centerOffset) return;
+          handlePan(offsetDelta);
+          handleZoom(scale, centerOffset, elem);
+        }
+      } else {
+        handlePan({ x: event.movementX, y: event.movementY });
+      }
+    },
+    [handlePan, handleZoom],
   );
 
   /**
@@ -412,17 +507,20 @@ export default function CanvasView() {
    */
   const handlePointerUp = useCallback(
     (event: PointerEvent): void => {
+      pointerEvents.delete(event.pointerId);
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
 
+      // Don't disable handlers if there are still pointers down
+      if (pointerEvents.size > 0) return;
       setControlledPan(false);
 
-      elem.removeEventListener("pointermove", handlePan);
+      elem.removeEventListener("pointermove", handlePointerMove);
       elem.removeEventListener("pointerup", handlePointerUp);
       elem.removeEventListener("pointercancel", handlePointerUp);
     },
-    [handlePan],
+    [handlePointerMove],
   );
 
   /**
@@ -433,13 +531,18 @@ export default function CanvasView() {
     (event: React.PointerEvent<HTMLDivElement>) => {
       const elem = event.currentTarget;
       elem.setPointerCapture(event.pointerId);
+      // Don't store more than 2 pointers for pinch handling
+      if (pointerEvents.size < 2) {
+        // No idea if this is the right way to define the pointerEvents
+        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
+      }
       setControlledPan(true);
 
-      elem.addEventListener("pointermove", handlePan);
+      elem.addEventListener("pointermove", handlePointerMove);
       elem.addEventListener("pointerup", handlePointerUp);
       elem.addEventListener("pointercancel", handlePointerUp);
     },
-    [handlePan, handlePointerUp],
+    [handlePointerMove, handlePointerUp],
   );
 
   // Could potentially get replaced by a transition animation with ease, however this will work on Safari
@@ -474,7 +577,7 @@ export default function CanvasView() {
         return;
       const canvas = event.currentTarget;
       // Use boundingClientRect for more accurate pixel positioning
-      const relativeMousePos = getRelativeMousePosition(canvas, event);
+      const relativeMousePos = getRelativePointerPosition(canvas, event);
       const canvasPos = dividePoint(relativeMousePos, zoom);
 
       const boundedCanvasPos = {
