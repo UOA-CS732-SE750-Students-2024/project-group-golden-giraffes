@@ -466,7 +466,7 @@ export default function CanvasView() {
       setVelocity({ x: scaledOffsetDelta.x, y: scaledOffsetDelta.y });
       updateOffset(scaledOffsetDelta);
     },
-    [updateOffset, zoom],
+    [updateOffset],
   );
 
   /**
@@ -578,6 +578,7 @@ export default function CanvasView() {
       const canvas = event.currentTarget;
       // Use boundingClientRect for more accurate pixel positioning
       const relativeMousePos = getRelativePointerPosition(canvas, event);
+      const canvasPos = dividePoint(relativeMousePos, zoom);
 
       const boundedCanvasPos = {
         x: clamp(Math.floor(canvasPos.x), 0, canvas.offsetWidth - 1),
