@@ -15,7 +15,11 @@ const Select = styled(NativeSelect)`
   font-size: inherit;
   font-weight: 500;
   justify-self: flex-start;
-  min-inline-size: 16rem;
+  min-inline-size: 100%;
+
+  ${({ theme }) => theme.breakpoints.up("sm")} {
+    min-inline-size: 16rem;
+  }
 
   &,
   & * {

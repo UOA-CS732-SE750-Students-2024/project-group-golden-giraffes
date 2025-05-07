@@ -20,7 +20,7 @@ import ColorInfoCard from "./SelectedColorInfoCard";
 const ColorPicker = styled("div")`
   display: grid;
   gap: 0.25rem;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
 `;
 
 const PlacePixelTabBlock = styled(TabBlock)`
