@@ -10,8 +10,7 @@ import { PixelInfoTab, PlacePixelTab } from "./tabs";
 const Wrapper = styled("div")`
   --padding-width: 1rem;
   background-color: var(--discord-legacy-not-quite-black);
-  border-start-start-radius: var(--card-border-radius);
-  border-start-end-radius: var(--card-border-radius);
+  border-radius: var(--card-border-radius);
   border: var(--card-border);
   display: grid;
   gap: 0.5rem;
@@ -24,8 +23,9 @@ const Wrapper = styled("div")`
     border-radius: calc(var(--card-border-radius) - var(--padding-width));
   }
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    border-radius: var(--card-border-radius);
+  ${({ theme }) => theme.breakpoints.down("md")} {
+    border-radius: 0;
+    border: initial;
   }
 `;
 

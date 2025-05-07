@@ -25,6 +25,7 @@ const CanvasContainer = styled("div")`
   border-radius: var(--card-border-radius);
   border: var(--card-border);
   display: flex;
+  grid-row: 1 / -1;
   overflow: hidden;
   place-content: center;
   place-items: center;
@@ -39,8 +40,8 @@ const CanvasContainer = styled("div")`
     user-select: none;
   }
 
-  ${({ theme }) => theme.breakpoints.up("md")} {
-    grid-row: 1 / -1;
+  ${({ theme }) => theme.breakpoints.down("md")} {
+    border-radius: 0;
   }
 
   :active {
@@ -76,7 +77,6 @@ const InviteButton = styled(Button)`
     from var(--discord-legacy-dark-but-not-black) l c h / 80%
   );
   border-radius: 0.5rem 0.5rem 1rem 0.5rem;
-  bottom: 0.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   color: white;
   font-size: 1.2rem;
@@ -90,6 +90,14 @@ const InviteButton = styled(Button)`
 
   :hover {
     background-color: var(--discord-blurple);
+  }
+
+  ${({ theme }) => theme.breakpoints.up("md")} {
+    bottom: 0.5rem;
+  }
+
+  ${({ theme }) => theme.breakpoints.down("md")} {
+    top: 0.5rem;
   }
 `;
 
