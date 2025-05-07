@@ -117,7 +117,7 @@ export async function getCanvases(): Promise<CanvasSummary[]> {
  */
 export async function getCurrentCanvasInfo(): Promise<CanvasInfo> {
   const info = await prisma.info.findFirst({
-    select: { default_canvas_id: true },
+    select: { default_canvas_id: true, all_colors_global: true },
   });
 
   // To get rid of the nullable type from info. This should never happen
@@ -166,6 +166,7 @@ export async function getCanvasInfo(canvasId: number): Promise<CanvasInfo> {
     isLocked: canvas.locked,
     eventId: canvas.event_id,
     webPlacingEnabled: config.webPlacingEnabled,
+    allColorsGlobal: config.allColorsGlobal,
   };
 }
 
