@@ -93,7 +93,8 @@ const InviteButton = styled(Button)`
 `;
 
 const CanvasImageWrapper = styled("div", {
-  shouldForwardProps: (prop) => !["isLaunching", "isLoading"].includes(prop),
+  shouldForwardProp: (prop: string) =>
+    !["isLaunching", "isLoading"].includes(prop),
 })<{
   isLoading: boolean;
   isLaunching: boolean;
