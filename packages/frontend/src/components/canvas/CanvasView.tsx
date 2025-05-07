@@ -554,23 +554,27 @@ export default function CanvasView() {
   );
 
   // Could potentially get replaced by a transition animation with ease, however this will work on Safari
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only create the interval when controlledPan changes to prevent recursive calls
   useEffect(() => {
-    const decayVelocity = () => {
-      if (velocity.x < 0.1 && velocity.y < 0.1) return;
-      if (controlledPan) return;
-      updateOffset(velocity);
-      setVelocity((prevVelocity) => ({
-        x: prevVelocity.x * PAN_DECAY,
-        y: prevVelocity.y * PAN_DECAY,
-      }));
-    };
-
-    const interval = setInterval(decayVelocity, 16); // Run every 16 milliseconds (60 FPS)
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [velocity, controlledPan, updateOffset]);
+    if (controlledPan) return;
+    // could use a circular buffer to store the max velocity over the last few DOM event triggers for a smoother decay
+    // extracting the `currentVelocity` like this just seems to make it work over using straight up `velocity`. Thanks ChatSkibidi
+    let currentVelocity = { ...velocity };
+    const interval = setInterval(() => {
+      if (currentVelocity.x < 0.1 && currentVelocity.y < 0.1) {
+        setVelocity({ x: 0, y: 0 });
+        clearInterval(interval);
+        return;
+      }
+      updateOffset(currentVelocity);
+      currentVelocity = {
+        x: currentVelocity.x * PAN_DECAY,
+        y: currentVelocity.y * PAN_DECAY,
+      };
+      setVelocity(currentVelocity);
+    }, 16);
+    return () => clearInterval(interval);
+  }, [controlledPan]); // Only restart if `controlledPan` changes
 
   /***********************************
    * SELECTING PIXEL FUNCTIONALITY.  *
