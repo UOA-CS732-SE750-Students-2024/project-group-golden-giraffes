@@ -682,6 +682,8 @@ export default function CanvasView() {
               ref={imageRef}
               src={imageUrl}
               crossOrigin="anonymous"
+              // Minimum width and height need to be forced to prevent incorrect clampScale and reticle placements
+              style={{ minWidth: canvas.width, minHeight: canvas.height }}
             />
           </CanvasImageWrapper>
         </div>
