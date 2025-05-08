@@ -19,15 +19,15 @@ const TitleBlock = styled("div")`
 `;
 
 const Table = styled("table")`
-  font-size: 1.75rem;
+  font-size: min(4svw, 1.75rem);
   font-variant-numeric: tabular-nums;
   font-weight: 500;
-  inline-size: 40rem;
+  inline-size: min(40rem, 100svw);
   max-inline-size: 100%;
 
   th,
   td {
-    padding: 1rem;
+    padding: min(1.5svw, 1rem);
   }
 `;
 
