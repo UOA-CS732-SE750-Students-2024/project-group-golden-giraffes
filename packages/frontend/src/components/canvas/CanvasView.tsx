@@ -76,7 +76,6 @@ const InviteButton = styled(Button)`
   background-color: oklch(
     from var(--discord-legacy-dark-but-not-black) l c h / 80%
   );
-  border-radius: 0.5rem 0.5rem 1rem 0.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   color: white;
   font-size: 1.2rem;
@@ -94,10 +93,12 @@ const InviteButton = styled(Button)`
 
   ${({ theme }) => theme.breakpoints.up("md")} {
     bottom: 0.5rem;
+    border-radius: 0.5rem 0.5rem 1rem 0.5rem;
   }
 
   ${({ theme }) => theme.breakpoints.down("md")} {
     top: 0.5rem;
+    border-radius: 0.5rem 0.5rem 0.5rem 1rem;
   }
 `;
 

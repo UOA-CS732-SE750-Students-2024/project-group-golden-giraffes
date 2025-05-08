@@ -1,5 +1,6 @@
 import { styled } from "@mui/material";
 
+import { useCanvasContext } from "@/contexts";
 import { PaletteColor } from "@blurple-canvas-web/types";
 
 const Wrapper = styled("div")`
@@ -44,9 +45,16 @@ export default function ColorInfoCard({
 }) {
   if (!color) return <Wrapper>No color selected</Wrapper>;
 
+  const { canvas } = useCanvasContext();
+
   const { name: colorName, code: colorCode } = color;
 
   const guildName = color.guildName ?? "a partnered server";
+
+  const text =
+    canvas.allColorsGlobal ? "This color is from"
+    : !userInServer ? "This color can be used in"
+    : "You can use this color in";
 
   return (
     <Wrapper>
@@ -56,9 +64,7 @@ export default function ColorInfoCard({
       <Code>{colorCode}</Code>
       {!color.global && (
         <Subtitle>
-          {!userInServer ?
-            "This color can be used in"
-          : "You can use this color in"}{" "}
+          {text}{" "}
           {invite ?
             <a href={invite}>{guildName}</a>
           : guildName}
