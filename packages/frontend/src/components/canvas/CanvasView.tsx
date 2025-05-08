@@ -326,13 +326,20 @@ export default function CanvasView() {
       const [r, g, b, a] = payload.rgba;
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
       ctx.fillRect(payload.x, payload.y, 1, 1);
-      offscreenCanvas.convertToBlob().then((blob) => {
-        const pixelImage = new Image();
-        pixelImage.src = URL.createObjectURL(blob);
-        pixelImage.onload = () => {
-          canvasImageWrapperRef.current?.appendChild(pixelImage);
-        };
-      });
+      const start = performance.now();
+      // Keeping this there for performance testing reasons
+      const max_iter = 1000;
+      for (let i = 0; i < max_iter; i++) {
+        offscreenCanvas.convertToBlob().then((blob) => {
+          const pixelImage = new Image();
+          pixelImage.src = URL.createObjectURL(blob);
+          pixelImage.onload = () => {
+            canvasImageWrapperRef.current?.appendChild(pixelImage);
+          };
+        });
+      }
+      const end = performance.now();
+      console.log(`Conversion took ${end - start} ms`);
     };
 
     const pixelPlaceEvent = `place pixel ${canvas.id}`;
