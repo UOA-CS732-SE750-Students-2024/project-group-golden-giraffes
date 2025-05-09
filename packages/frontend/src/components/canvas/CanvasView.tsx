@@ -259,8 +259,10 @@ export default function CanvasView() {
   // const canvasCtxRef = useRef<OffscreenCanvasRenderingContext2D | null>(null);
   const offscreenCanvasRef = useRef<OffscreenCanvas | null>(null);
   const currentCanvasIDRef = useRef(0);
+  // Counts the number of pixels that have been overlaid over the canvas from live updates
   const overlayCountRef = useRef(0);
-  const maxPixelOvelayAmount = 99;
+  // Maximum amount of pixels that can be overlaid. From testing on an M1 Pro, seems to be around 100
+  const maxPixelOvelayAmount = 100;
 
   const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
   const handleLoadImage = useCallback(
@@ -402,7 +404,13 @@ export default function CanvasView() {
     };
   }, [canvas]);
 
+  /**
+   * Clears all overlayed pixels from the canvas image wrapper
+   */
   const clearOverlay = () => {
+    // canvasImageWrapper.children only gets populated per DOM update.
+    // This means that if the pixels are overlaid in a for loop, `clearOverlay` doesn't run during the loop.
+    // Keep this in mind when testing for performance.
     const canvasImageWrapper = canvasImageWrapperRef.current;
     if (!canvasImageWrapper) return;
     console.log(canvasImageWrapper.children.length);
