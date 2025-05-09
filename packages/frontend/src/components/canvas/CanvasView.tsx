@@ -17,6 +17,7 @@ import {
   distanceBetweenPoints,
   dividePoint,
   multiplyPoint,
+  getMovementDelta,
 } from "./point";
 
 const CanvasContainer = styled("div")`
@@ -163,17 +164,6 @@ function getDefaultZoom(
 function getRelativePointerPosition(element: HTMLElement, event: MouseEvent) {
   const rect = element.getBoundingClientRect();
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-}
-
-/**
- * Relpaces the usage of PointerEvent.movementX and PointerEvent.movementY due to issues outlined in
- * https://github.com/w3c/pointerlock/issues/42#issuecomment-1886587107
- */
-function getMovementDelta(prevEvent: PointerEvent, event: PointerEvent) {
-  return {
-    x: event.clientX - prevEvent.clientX,
-    y: event.clientY - prevEvent.clientY,
-  };
 }
 
 /**
