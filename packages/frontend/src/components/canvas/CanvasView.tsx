@@ -207,13 +207,6 @@ const MAX_ZOOM = 100;
 const MIN_ZOOM_FACTOR = 0.9;
 
 const PAN_DECAY = 0.75;
-// Transition animation on canvas pan and zoom is blurred on Safari and needs to be disabled.
-// If the user spoof their user agent, this is not my problem.
-// Bug in question https://bugs.webkit.org/show_bug.cgi?id=27684
-const IS_SAFARI =
-  navigator.userAgent.includes("Safari/") &&
-  !navigator.userAgent.includes("Chrome/") &&
-  !navigator.userAgent.includes("Chromium/");
 
 // This is to avoid weird business with the reticle not sizing properly
 const RETICLE_ORIGINAL_SCALE = 10;
@@ -263,6 +256,7 @@ export default function CanvasView() {
   const overlayCountRef = useRef(0);
   // Maximum amount of pixels that can be overlaid. From testing on an M1 Pro, seems to be around 100
   const pixelOverlayThreshold = 50;
+  const [isSafari, setIsSafari] = useState(false);
 
   const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
   const handleLoadImage = useCallback(
@@ -300,6 +294,17 @@ export default function CanvasView() {
       handleLoadImage(imageRef.current);
     }
   }, [handleLoadImage, imageUrl]);
+
+  useEffect(() => {
+    // Transition animation on canvas pan and zoom is blurred on Safari and needs to be disabled.
+    // If the user spoof their user agent, this is not my problem.
+    // Bug in question https://bugs.webkit.org/show_bug.cgi?id=27684
+    setIsSafari(
+      navigator.userAgent.includes("Safari/") &&
+        !navigator.userAgent.includes("Chrome/") &&
+        !navigator.userAgent.includes("Chromium/"),
+    );
+  });
 
   /********************************
    * SOCKET FUNCTIONALITY.       *
@@ -701,7 +706,7 @@ export default function CanvasView() {
             transform: `matrix(${zoom}, 0, 0, ${zoom}, ${offset.x}, ${offset.y})`,
             // Only apply transition when zooming is triggered by wheel event
             transition:
-              !IS_SAFARI && isZooming ?
+              !isSafari && isZooming ?
                 "transform var(--transition-duration-fast) ease-out"
               : undefined,
           }}
