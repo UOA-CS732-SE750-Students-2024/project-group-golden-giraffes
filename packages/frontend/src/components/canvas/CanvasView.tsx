@@ -166,6 +166,17 @@ function getRelativePointerPosition(element: HTMLElement, event: MouseEvent) {
 }
 
 /**
+ * Relpaces the usage of PointerEvent.movementX and PointerEvent.movementY due to issues outlined in
+ * https://github.com/w3c/pointerlock/issues/42#issuecomment-1886587107
+ */
+function getMovementDelta(prevEvent: PointerEvent, event: PointerEvent) {
+  return {
+    x: event.clientX - prevEvent.clientX,
+    y: event.clientY - prevEvent.clientY,
+  };
+}
+
+/**
  * Calculates the various variables required to get pan pinch working
  */
 function calculateTouchOffsetDelta(
@@ -536,16 +547,6 @@ export default function CanvasView() {
     [clampOffset],
   );
 
-  const getMovementDelta = useCallback(
-    (prevEvent: PointerEvent, event: PointerEvent) => {
-      return {
-        x: event.clientX - prevEvent.clientX,
-        y: event.clientY - prevEvent.clientY,
-      };
-    },
-    [],
-  );
-
   const handlePan = useCallback(
     (offsetDelta: { x: number; y: number }): void => {
       // Disable transitions while panning
@@ -591,7 +592,7 @@ export default function CanvasView() {
         handlePan(movementDelta);
       }
     },
-    [handlePan, handleZoom, getMovementDelta],
+    [handlePan, handleZoom],
   );
 
   /**
