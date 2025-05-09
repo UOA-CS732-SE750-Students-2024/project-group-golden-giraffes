@@ -186,15 +186,25 @@ function calculateTouchOffsetDelta(
 ) {
   if (event1 === undefined || event2 === undefined)
     return { offset: undefined, scale: undefined, centerOffset: undefined };
+
+  const previousEvent1 = previousPointerEvents.get(event1.pointerId);
+  const previousEvent2 = previousPointerEvents.get(event2.pointerId);
+  if (!previousEvent1 || !previousEvent2)
+    return { offset: undefined, scale: undefined, centerOffset: undefined };
+
   const oldPosition1 = getRelativePointerPosition(elem, event1);
   const oldPosition2 = getRelativePointerPosition(elem, event2);
+
+  const movementDelta1 = getMovementDelta(previousEvent1, event1);
+  const movementDelta2 = getMovementDelta(previousEvent2, event2);
+
   const newPosition1 = addPoints(oldPosition1, {
-    x: event1.movementX,
-    y: event1.movementY,
+    x: movementDelta1.x,
+    y: movementDelta1.y,
   });
   const newPosition2 = addPoints(oldPosition2, {
-    x: event2.movementX,
-    y: event2.movementY,
+    x: movementDelta2.x,
+    y: movementDelta2.y,
   });
   const oldMagitude = distanceBetweenPoints(oldPosition1, oldPosition2);
   const newMagitude = distanceBetweenPoints(newPosition1, newPosition2);
@@ -203,8 +213,8 @@ function calculateTouchOffsetDelta(
     2,
   );
   const offsetDelta = {
-    x: (event1.movementX + event2.movementX) / 2,
-    y: (event1.movementY + event2.movementY) / 2,
+    x: movementDelta1.x + movementDelta2.x / 2,
+    y: movementDelta1.y + movementDelta2.y / 2,
   };
   const scale = newMagitude / oldMagitude;
   return { offsetDelta, scale, centerOffset: relativePosition };
