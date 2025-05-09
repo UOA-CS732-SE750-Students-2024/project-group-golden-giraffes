@@ -1,26 +1,35 @@
+version: "3.8"
+networks:
+  blurple_canvas_container_network:
+    driver: bridge
 services:
-  backend:
+  blurple_canvas_server:
     build:
       context: .
-      dockerfile: Dockerfile.backend
-    ports:
-      - "8000:8000"
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "3000:3000"
-
-  caddy:
-    image: caddy:2.7-alpine
-
+      dockerfile: Dockerfile
+    container_name: blurple_canvas_server
+    networks:
+      - blurple_canvas_container_network
+    env_file:
+      - packages/backend/.env
+      - packages/frontend/.env
     restart: unless-stopped
+    expose:
+      - "3000"
+      - "8000"
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    networks:
+      - blurple_canvas_container_network
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      # copy local ./Caddyfile to /etc/caddy/Caddyfile on docker
-      - ./Caddyfile:/etc/caddy/Caddyfile
-    network_mode: host
+      - ./Caddyfile:/etc/caddy/Caddyfile:Z
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+volumes:
+  caddy_data:
+  caddy_config:

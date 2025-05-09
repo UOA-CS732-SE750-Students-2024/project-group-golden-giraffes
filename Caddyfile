@@ -1,5 +1,18 @@
-canvas.projectblurple.com {
-  reverse_proxy /api/* localhost:8000
-  reverse_proxy /socket.io* localhost:8000
-  reverse_proxy /* localhost:3000
+{
+	local_certs
+}
+
+# you should replace the localhost with your actual domain
+localhost {
+	handle_path /api/* {
+		reverse_proxy blurple_canvas_server:8000
+	}
+
+	handle_path /socket.io* {
+		reverse_proxy blurple_canvas_server:8000
+	}
+
+	handle /* {
+		reverse_proxy blurple_canvas_server:3000
+	}
 }
