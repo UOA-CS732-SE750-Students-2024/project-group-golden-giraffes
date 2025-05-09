@@ -60,9 +60,7 @@ export default function PlacePixelButton({ isVerbose }: PlacePixelButtonProps) {
       .then((data) => {
         const cooldown = data.cooldownEndTime;
         if (cooldown) {
-          setTimeLeft(
-            Math.ceil((new Date(cooldown).valueOf() - Date.now()) / 1000),
-          );
+          setTimeLeft(Math.ceil(cooldown / 1000));
         }
         setIsPlacing(false);
       })
