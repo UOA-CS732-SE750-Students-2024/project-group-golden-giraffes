@@ -262,7 +262,7 @@ export default function CanvasView() {
   // Counts the number of pixels that have been overlaid over the canvas from live updates
   const overlayCountRef = useRef(0);
   // Maximum amount of pixels that can be overlaid. From testing on an M1 Pro, seems to be around 100
-  const pixelOverlayThreshold = 100;
+  const pixelOverlayThreshold = 50;
 
   const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
   const handleLoadImage = useCallback(
