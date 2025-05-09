@@ -265,9 +265,7 @@ export default function CanvasView() {
   const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
   const handleLoadImage = useCallback(
     (image: HTMLImageElement): void => {
-      console.log(currentCanvasIDRef.current, canvas.id);
       if (currentCanvasIDRef.current === canvas.id) return;
-      console.log("Loading new image");
       currentCanvasIDRef.current = canvas.id;
       const zoom =
         containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
