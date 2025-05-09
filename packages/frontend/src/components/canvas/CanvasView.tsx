@@ -223,6 +223,7 @@ const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
 const pointerEvents: Map<number, PointerEvent> = new Map();
+const previousPointerEvents: Map<number, PointerEvent> = new Map();
 // Used to handle pointer events when there are multiple pointers down
 let pointerSyncCounter = 0;
 
@@ -535,6 +536,16 @@ export default function CanvasView() {
     [clampOffset],
   );
 
+  const getMovementDelta = useCallback(
+    (prevEvent: PointerEvent, event: PointerEvent) => {
+      return {
+        x: event.clientX - prevEvent.clientX,
+        y: event.clientY - prevEvent.clientY,
+      };
+    },
+    [],
+  );
+
   const handlePan = useCallback(
     (offsetDelta: { x: number; y: number }): void => {
       // Disable transitions while panning
@@ -555,9 +566,12 @@ export default function CanvasView() {
       // Only handle primary pointers to prevent duplicate handling
       if (!(elem instanceof HTMLElement)) return;
 
+      const previousEvent = pointerEvents.get(event.pointerId);
+      if (!previousEvent) return;
+      previousPointerEvents.set(previousEvent.pointerId, previousEvent);
+      pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
       if (pointerEvents.size === 2) {
         pointerSyncCounter++;
-        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
         // Only checks every second pointerEvent to ensure both pointermove events are fired
         if (pointerSyncCounter === 2) {
           const pointerEventValues = pointerEvents.values();
@@ -573,10 +587,11 @@ export default function CanvasView() {
           handleZoom(scale, centerOffset, elem);
         }
       } else {
-        handlePan({ x: event.movementX, y: event.movementY });
+        const movementDelta = getMovementDelta(previousEvent, event);
+        handlePan(movementDelta);
       }
     },
-    [handlePan, handleZoom],
+    [handlePan, handleZoom, getMovementDelta],
   );
 
   /**
