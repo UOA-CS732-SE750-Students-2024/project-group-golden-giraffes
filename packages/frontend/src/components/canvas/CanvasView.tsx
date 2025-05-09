@@ -407,7 +407,6 @@ export default function CanvasView() {
     // Keep this in mind when testing for performance.
     const canvasImageWrapper = canvasImageWrapperRef.current;
     if (!canvasImageWrapper) return;
-    console.log(canvasImageWrapper.children.length);
     // Clears all overlayed pixels and retains the original image
     while (canvasImageWrapper.children.length > 1) {
       const lastChild = canvasImageWrapper.lastChild;
