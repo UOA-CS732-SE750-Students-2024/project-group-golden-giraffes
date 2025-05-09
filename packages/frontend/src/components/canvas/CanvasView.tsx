@@ -601,6 +601,7 @@ export default function CanvasView() {
   const handlePointerUp = useCallback(
     (event: PointerEvent): void => {
       pointerEvents.delete(event.pointerId);
+      previousPointerEvents.delete(event.pointerId);
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
