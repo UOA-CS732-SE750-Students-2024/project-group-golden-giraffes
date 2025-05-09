@@ -256,22 +256,42 @@ export default function CanvasView() {
   const [controlledPan, setControlledPan] = useState(false);
   // Only applies to when zooming is triggered by wheel event
   const [isZooming, setIsZooming] = useState(false);
+  // const canvasCtxRef = useRef<OffscreenCanvasRenderingContext2D | null>(null);
+  const offscreenCanvasRef = useRef<OffscreenCanvas | null>(null);
+  const currentCanvasIDRef = useRef(0);
+  // Counts the number of pixels that have been overlaid over the canvas from live updates
+  const overlayCountRef = useRef(0);
+  // Maximum amount of pixels that can be overlaid. From testing on an M1 Pro, seems to be around 100
+  const pixelOverlayThreshold = 50;
 
   const imageUrl = `${config.apiUrl}/api/v1/canvas/${canvas.id}`;
-  const handleLoadImage = useCallback((image: HTMLImageElement): void => {
-    const zoom =
-      containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
+  const handleLoadImage = useCallback(
+    (image: HTMLImageElement): void => {
+      if (currentCanvasIDRef.current === canvas.id) return;
+      currentCanvasIDRef.current = canvas.id;
+      const zoom =
+        containerRef.current ? getDefaultZoom(containerRef.current, image) : 1;
 
-    setInitialZoom(zoom);
-    setZoom(zoom);
-    setVelocity(ORIGIN);
-    setOffset(ORIGIN);
-    setIsLoading(false);
-    setIsLaunching(false);
-  }, []);
+      const offscreenCanvas = new OffscreenCanvas(image.width, image.height);
+      const ctx = offscreenCanvas.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(image, 0, 0, image.width, image.height);
+      offscreenCanvasRef.current = offscreenCanvas;
+      setInitialZoom(zoom);
+      setZoom(zoom);
+      setVelocity(ORIGIN);
+      setOffset(ORIGIN);
+      setIsLoading(false);
+      setIsLaunching(false);
+      clearOverlay();
+    },
+    [canvas.id],
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: We want to show the loader when switching canvases
   useEffect(() => {
+    // Stops placing pixels from reloading the canvas
+    if (currentCanvasIDRef.current === canvas.id) return;
     setIsLoading(true);
     // The image onLoad doesn't always seem to fire, especially on reloads. Instead, the image
     // seems pre-loaded. This may have something to do with SSR, or browser image caching. We'll
@@ -318,8 +338,37 @@ export default function CanvasView() {
         pixelTimestamp,
       };
 
-      // Creates a single pixel png using `OffscreenCanvas` based on the payload,
-      // and overlays it over the canvas as a child node.
+      // Updates the canvas `canvas` which is used as the source of truth for the canvas
+      const ctx = offscreenCanvasRef.current?.getContext("2d");
+      if (!ctx) return;
+      const [r, g, b, a] = payload.rgba;
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+      ctx.fillRect(payload.x, payload.y, 1, 1);
+
+      // This method prevents the need to convert an N×M canvas to a png on every update
+      // while also preventing an inordinate amount of overlaid pixels from causing lag
+      if (overlayCountRef.current >= pixelOverlayThreshold) {
+        // flush the overlayed pixels and update canvas image
+        clearOverlay();
+        offscreenCanvasRef.current?.convertToBlob().then((blob) => {
+          if (!imageRef.current) return;
+          const oldSrc = imageRef.current.src;
+          imageRef.current.src = URL.createObjectURL(blob);
+          URL.revokeObjectURL(oldSrc);
+        });
+        overlayCountRef.current = 0;
+      } else {
+        // overlay the pixel without any changes
+        overlayCountRef.current++;
+        overlayPixel(payload);
+      }
+    };
+
+    /**
+     * Creates a single pixel png using `OffscreenCanvas` based on the payload,
+     * and overlays it over the canvas as a child node.
+     */
+    const overlayPixel = (payload: PlacePixelSocket.Payload) => {
       const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
       const ctx = offscreenCanvas.getContext("2d");
       if (!ctx) return;
@@ -348,6 +397,25 @@ export default function CanvasView() {
       socket.disconnect();
     };
   }, [canvas]);
+
+  /**
+   * Clears all overlayed pixels from the canvas image wrapper
+   */
+  const clearOverlay = () => {
+    // canvasImageWrapper.children only gets populated per DOM update.
+    // This means that if the pixels are overlaid in a for loop, `clearOverlay` doesn't run during the loop.
+    // Keep this in mind when testing for performance.
+    const canvasImageWrapper = canvasImageWrapperRef.current;
+    if (!canvasImageWrapper) return;
+    // Clears all overlayed pixels and retains the original image
+    while (canvasImageWrapper.children.length > 1) {
+      const lastChild = canvasImageWrapper.lastChild;
+      if (lastChild && lastChild instanceof HTMLImageElement) {
+        URL.revokeObjectURL(lastChild.src);
+        canvasImageWrapper.removeChild(lastChild);
+      }
+    }
+  };
 
   /********************************
    * ZOOMING FUNCTIONALITY.       *
