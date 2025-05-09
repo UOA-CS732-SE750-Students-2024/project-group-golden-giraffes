@@ -1,7 +1,8 @@
 "use client";
 
 import { styled } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getMovementDelta } from "../canvas/point";
 
 const Wrapper = styled("div")`
   ${({ theme }) => theme.breakpoints.down("md")} {
@@ -63,6 +64,8 @@ interface SlideableDrawerProps {
 
 export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   const [maxHeight, setMaxHeight] = useState(0);
+  // Needed to use custom getMovementDelta function
+  const previousPointerEventRef = useRef<PointerEvent | null>(null);
   const drawerWrapperRef = useCallback((elem: HTMLDivElement | null) => {
     if (!elem || !elem.parentElement) return;
     const resizeObserver = new ResizeObserver((entries) => {
@@ -132,8 +135,11 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
    */
   const handlePointerMove = useCallback((event: PointerEvent): void => {
     // Shouldn't occur, but don't handle non-primary pointers
-    if (!event.isPrimary) return;
-    setDrawerHeight((prevHeight) => prevHeight - event.movementY);
+    const previousEvent = previousPointerEventRef.current;
+    if (!event.isPrimary || !previousEvent) return;
+    const movementDelta = getMovementDelta(previousEvent, event);
+    setDrawerHeight((prevHeight) => prevHeight - movementDelta.y);
+    previousPointerEventRef.current = event;
   }, []);
 
   /**
@@ -144,6 +150,7 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);
+      previousPointerEventRef.current = null;
 
       setDrawerHeight((prevHeight) => {
         return snapToBounds(prevHeight);
@@ -163,6 +170,7 @@ export default function SlideableDrawer({ children }: SlideableDrawerProps) {
   const handlePointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       // Only handle primary pointers
+      previousPointerEventRef.current = event as unknown as PointerEvent;
       if (!event.isPrimary) return;
       const currentTarget = event.currentTarget;
       let elemTarget: EventTarget | null = event.target;
