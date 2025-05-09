@@ -338,49 +338,43 @@ export default function CanvasView() {
         pixelTimestamp,
       };
 
-      // Creates a single pixel png using `OffscreenCanvas` based on the payload,
-      // and overlays it over the canvas as a child node.
+      // Updates the canvas `canvas` which is used as the source of truth for the canvas
       const ctx = offscreenCanvasRef.current?.getContext("2d");
       if (!ctx) return;
       const [r, g, b, a] = payload.rgba;
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
       ctx.fillRect(payload.x, payload.y, 1, 1);
-      const start = performance.now();
-      // Keeping this there for performance testing reasons
-      const max_iter = 100;
-      for (let i = 0; i < max_iter; i++) {
-        // This method prevents the need to convert an N×M canvas to a png on every update
-        // while also preventing an inordinate amount of overlaid pixels from causing lag
-        if (overlayCountRef.current >= maxPixelOvelayAmount) {
-          // flush the overlayed pixels and update canvas image
-          clearOverlay();
-          offscreenCanvasRef.current?.convertToBlob().then((blob) => {
-            if (!imageRef.current) return;
-            const oldSrc = imageRef.current.src;
-            imageRef.current.src = URL.createObjectURL(blob);
-            URL.revokeObjectURL(oldSrc);
-          });
-          overlayCountRef.current = 0;
-        } else {
-          // overlay the pixel without any changes
-          overlayCountRef.current++;
-          overlayPixel(payload);
-        }
+
+      // This method prevents the need to convert an N×M canvas to a png on every update
+      // while also preventing an inordinate amount of overlaid pixels from causing lag
+      if (overlayCountRef.current >= maxPixelOvelayAmount) {
+        // flush the overlayed pixels and update canvas image
+        clearOverlay();
+        offscreenCanvasRef.current?.convertToBlob().then((blob) => {
+          if (!imageRef.current) return;
+          const oldSrc = imageRef.current.src;
+          imageRef.current.src = URL.createObjectURL(blob);
+          URL.revokeObjectURL(oldSrc);
+        });
+        overlayCountRef.current = 0;
+      } else {
+        // overlay the pixel without any changes
+        overlayCountRef.current++;
+        overlayPixel(payload);
       }
-      const end = performance.now();
-      console.log(`Conversion took ${end - start} ms`);
     };
 
+    /**
+     * Creates a single pixel png using `OffscreenCanvas` based on the payload,
+     * and overlays it over the canvas as a child node.
+     */
     const overlayPixel = (payload: PlacePixelSocket.Payload) => {
-      // Creates a single pixel png using `OffscreenCanvas` based on the payload,
-      // and overlays it over the canvas as a child node.
       const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
       const ctx = offscreenCanvas.getContext("2d");
       if (!ctx) return;
       const [r, g, b, a] = payload.rgba;
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
       ctx.fillRect(payload.x, payload.y, 1, 1);
-      // Keeping this there for performance testing reasons
       offscreenCanvas.convertToBlob().then((blob) => {
         const pixelImage = new Image();
         pixelImage.src = URL.createObjectURL(blob);
