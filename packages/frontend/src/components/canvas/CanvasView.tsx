@@ -16,6 +16,7 @@ import {
   diffPoints,
   distanceBetweenPoints,
   dividePoint,
+  getMovementDelta,
   multiplyPoint,
 } from "./point";
 
@@ -175,15 +176,25 @@ function calculateTouchOffsetDelta(
 ) {
   if (event1 === undefined || event2 === undefined)
     return { offset: undefined, scale: undefined, centerOffset: undefined };
+
+  const previousEvent1 = previousPointerEvents.get(event1.pointerId);
+  const previousEvent2 = previousPointerEvents.get(event2.pointerId);
+  if (!previousEvent1 || !previousEvent2)
+    return { offset: undefined, scale: undefined, centerOffset: undefined };
+
   const oldPosition1 = getRelativePointerPosition(elem, event1);
   const oldPosition2 = getRelativePointerPosition(elem, event2);
+
+  const movementDelta1 = getMovementDelta(previousEvent1, event1);
+  const movementDelta2 = getMovementDelta(previousEvent2, event2);
+
   const newPosition1 = addPoints(oldPosition1, {
-    x: event1.movementX,
-    y: event1.movementY,
+    x: movementDelta1.x,
+    y: movementDelta1.y,
   });
   const newPosition2 = addPoints(oldPosition2, {
-    x: event2.movementX,
-    y: event2.movementY,
+    x: movementDelta2.x,
+    y: movementDelta2.y,
   });
   const oldMagitude = distanceBetweenPoints(oldPosition1, oldPosition2);
   const newMagitude = distanceBetweenPoints(newPosition1, newPosition2);
@@ -192,8 +203,8 @@ function calculateTouchOffsetDelta(
     2,
   );
   const offsetDelta = {
-    x: (event1.movementX + event2.movementX) / 2,
-    y: (event1.movementY + event2.movementY) / 2,
+    x: movementDelta1.x + movementDelta2.x / 2,
+    y: movementDelta1.y + movementDelta2.y / 2,
   };
   const scale = newMagitude / oldMagitude;
   return { offsetDelta, scale, centerOffset: relativePosition };
@@ -223,6 +234,7 @@ const RETICLE_SCALE = 1 / (RETICLE_ORIGINAL_SCALE * 10);
 const PREVIEW_PIXEL_SIZE = 0.8 * RETICLE_ORIGINAL_SCALE * 10;
 
 const pointerEvents: Map<number, PointerEvent> = new Map();
+const previousPointerEvents: Map<number, PointerEvent> = new Map();
 // Used to handle pointer events when there are multiple pointers down
 let pointerSyncCounter = 0;
 
@@ -555,9 +567,12 @@ export default function CanvasView() {
       // Only handle primary pointers to prevent duplicate handling
       if (!(elem instanceof HTMLElement)) return;
 
+      const previousEvent = pointerEvents.get(event.pointerId);
+      if (!previousEvent) return;
+      previousPointerEvents.set(previousEvent.pointerId, previousEvent);
+      pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
       if (pointerEvents.size === 2) {
         pointerSyncCounter++;
-        pointerEvents.set(event.pointerId, event as unknown as PointerEvent);
         // Only checks every second pointerEvent to ensure both pointermove events are fired
         if (pointerSyncCounter === 2) {
           const pointerEventValues = pointerEvents.values();
@@ -573,7 +588,8 @@ export default function CanvasView() {
           handleZoom(scale, centerOffset, elem);
         }
       } else {
-        handlePan({ x: event.movementX, y: event.movementY });
+        const movementDelta = getMovementDelta(previousEvent, event);
+        handlePan(movementDelta);
       }
     },
     [handlePan, handleZoom],
@@ -585,6 +601,7 @@ export default function CanvasView() {
   const handlePointerUp = useCallback(
     (event: PointerEvent): void => {
       pointerEvents.delete(event.pointerId);
+      previousPointerEvents.delete(event.pointerId);
       const elem = event.currentTarget;
       if (!(elem instanceof HTMLElement)) return;
       elem.releasePointerCapture(event.pointerId);

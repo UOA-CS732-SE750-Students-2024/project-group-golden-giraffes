@@ -37,3 +37,14 @@ export function tupleToPoint([x, y]: [number, number]): Point {
 export function distanceBetweenPoints(p1: Point, p2: Point): number {
   return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 }
+
+/**
+ * Relpaces the usage of PointerEvent.movementX and PointerEvent.movementY due to issues outlined in
+ * https://github.com/w3c/pointerlock/issues/42#issuecomment-1886587107
+ */
+export function getMovementDelta(prevEvent: PointerEvent, event: PointerEvent) {
+  return {
+    x: event.clientX - prevEvent.clientX,
+    y: event.clientY - prevEvent.clientY,
+  };
+}
