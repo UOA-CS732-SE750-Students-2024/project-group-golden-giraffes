@@ -16,8 +16,8 @@ import {
   diffPoints,
   distanceBetweenPoints,
   dividePoint,
-  multiplyPoint,
   getMovementDelta,
+  multiplyPoint,
 } from "./point";
 
 const CanvasContainer = styled("div")`
