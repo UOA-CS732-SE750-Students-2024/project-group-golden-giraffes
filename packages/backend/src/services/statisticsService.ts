@@ -62,6 +62,11 @@ export async function getLeaderboard(
     },
     where: {
       canvas_id: canvasId,
+      user: {
+        blacklist: {
+          is: null,
+        },
+      },
     },
     select: {
       rank: true,
