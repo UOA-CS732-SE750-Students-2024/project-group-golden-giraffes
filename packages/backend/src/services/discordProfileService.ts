@@ -29,12 +29,6 @@ export async function createOrUpdateDiscordProfile(
     update: profile,
     create: profile,
   });
-
-  await prisma.user.upsert({
-    where: { id: profile.user_id },
-    update: {},
-    create: { id: profile.user_id },
-  });
 }
 
 export function createDefaultAvatarUrl(userId: bigint): string {
