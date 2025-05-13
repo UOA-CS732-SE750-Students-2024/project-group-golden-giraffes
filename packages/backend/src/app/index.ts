@@ -23,6 +23,7 @@ export function createApp(): App {
   };
   app.use(cors(corsOptions));
 
+  app.set('trust proxy', 1 /* number of proxies between user and server */)
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
