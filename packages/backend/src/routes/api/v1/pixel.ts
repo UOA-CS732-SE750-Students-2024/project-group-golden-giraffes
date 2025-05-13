@@ -2,6 +2,7 @@ import config from "@/config";
 import { ApiError, ForbiddenError } from "@/errors";
 import { BadRequestError, UnauthorizedError } from "@/errors";
 import { socketHandler } from "@/index";
+import { tenSecondLimiter } from "@/middleware/ratelimit";
 import {
   PlacePixelArrayBodyModel,
   PlacePixelBodyModel,
@@ -86,7 +87,7 @@ pixelRouter.post<CanvasIdParam>("/bot", async (req, res) => {
  * Endpoint for placing a pixel on the canvas
  * Requires the user to be authenticated and not blacklisted
  */
-pixelRouter.post<CanvasIdParam>("/", async (req, res) => {
+pixelRouter.post<CanvasIdParam>("/", tenSecondLimiter, async (req, res) => {
   if (!config.webPlacingEnabled) {
     throw new ForbiddenError("Web placing is disabled");
   }
