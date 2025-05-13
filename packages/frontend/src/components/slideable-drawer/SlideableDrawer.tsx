@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getMovementDelta } from "../canvas/point";
 
 const Wrapper = styled("div")`
+  /* Consider this a direct child of Main, which fixes scoll overflow not working */
+  display: contents;
   ${({ theme }) => theme.breakpoints.down("md")} {
     display: none;
   }
