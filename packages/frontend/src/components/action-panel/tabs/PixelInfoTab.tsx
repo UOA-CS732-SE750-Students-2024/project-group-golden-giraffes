@@ -71,10 +71,9 @@ export default function PixelInfoTab({
   canvasId,
 }: PixelInfoTabProps) {
   const { coords, adjustedCoords } = useCanvasContext();
-  const { data: pixelHistory = [], isLoading } = usePixelHistory(
-    canvasId,
-    coords,
-  );
+  const { data, isLoading } = usePixelHistory(canvasId, coords);
+
+  const pixelHistory = data?.pixelHistory ?? [];
 
   return (
     <PixelInfoTabBlock active={active}>
