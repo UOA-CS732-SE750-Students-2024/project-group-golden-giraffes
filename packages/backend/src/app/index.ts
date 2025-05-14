@@ -3,7 +3,7 @@ import express from "express";
 
 import config from "@/config";
 import { apiRouter } from "@/routes";
-import "@/utils"; // Make BigInt JSON serializable
+import "@/utils";
 import { createServer } from "node:http";
 import { initializeAuth } from "@/middleware/auth";
 import { initializeCache } from "@/services/canvasService";
@@ -23,7 +23,7 @@ export function createApp(): App {
   };
   app.use(cors(corsOptions));
 
-  app.set('trust proxy', 1 /* number of proxies between user and server */)
+  app.set("trust proxy", 1 /* number of proxies between user and server */);
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
