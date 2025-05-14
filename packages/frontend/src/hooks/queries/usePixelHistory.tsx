@@ -11,7 +11,8 @@ export function usePixelHistory(
   coordinates: Point | null,
 ) {
   const fetchHistory = async ({ signal }: { signal: AbortSignal }) => {
-    if (!coordinates) return [] as HistoryRequest.ResBody;
+    if (!coordinates)
+      return { pixelHistory: [], totalEntries: 0 } as HistoryRequest.ResBody;
 
     const { x, y } = coordinates;
     const response = await axios.get<HistoryRequest.ResBody>(
